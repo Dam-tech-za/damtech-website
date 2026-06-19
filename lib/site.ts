@@ -1,10 +1,23 @@
+/** Canonical site origin (non-www). Set `NEXT_PUBLIC_SITE_URL` in Vercel → Production. */
+import { SITE_URL } from "./site-url";
+
+export { SITE_URL };
+
+function resolveSiteOrigin(): string {
+  return SITE_URL;
+}
+
 export const siteConfig = {
   name: "Damtech",
-  domain: "https://dam-tech.co.za",
-  defaultTitle:
-    "Dam Liners, Steel Water Tanks & Waterproofing | Damtech South Africa",
+  domain: resolveSiteOrigin(),
+  defaultTitle: "Dam Liners & Steel Water Tanks | Damtech South Africa",
   defaultDescription:
-    "Expert dam liner, corrugated steel tank and bitumen waterproofing contractors serving farms and properties across South Africa.",
+    "Damtech installs HDPE and PVC dam liners, corrugated steel reservoirs and bitumen waterproofing for farms, mines and properties across South Africa. Request a free quote.",
+  defaultOgDescription:
+    "Expert dam lining, reservoir and waterproofing contractors serving farms, mines and properties nationwide.",
+  defaultTwitterTitle: "Damtech – Dam Liners & Water Storage Solutions",
+  defaultTwitterDescription:
+    "HDPE and PVC dam liners, steel tanks and waterproofing. Free quotes across South Africa.",
   phone: "+27 82 853 1026",
   email: "info@dam-tech.co.za",
   location: "South Africa",
@@ -12,6 +25,9 @@ export const siteConfig = {
 
 /** E.164 tel link for the business phone. */
 export const phoneTel = siteConfig.phone.replace(/\s/g, "");
+
+/** WhatsApp click-to-chat (no + prefix in wa.me path). */
+export const whatsAppUrl = "https://wa.me/27828531026";
 
 export type NavLink = {
   href: string;
@@ -29,36 +45,45 @@ export const HEADER_NAV_LINKS: NavLink[] = [
   { href: "/dam-liners", label: "Dam Liners" },
   { href: "/steel-water-storage-tanks", label: "Steel Tanks" },
   { href: "/bitumen-waterproofing", label: "Waterproofing" },
-  { href: "/bitumen-waterproofing-services-and-more", label: "Services" },
-  { href: "/projects", label: "Projects" },
+  { href: "/services", label: "Services" },
   { href: "/blog", label: "Blog" },
   { href: "/contact", label: "Contact" },
 ];
 
-/** @deprecated Use HEADER_NAV_LINKS or FOOTER_LINKS */
+/** @deprecated Use HEADER_NAV_LINKS */
 export const NAV_LINKS = HEADER_NAV_LINKS;
 
-export const FOOTER_LINKS: NavLink[] = [
-  { href: "/", label: "Home" },
+export const FOOTER_SERVICE_LINKS: NavLink[] = [
   { href: "/dam-liners", label: "Dam Liners" },
   { href: "/steel-water-storage-tanks", label: "Steel Water Tanks" },
   { href: "/bitumen-waterproofing", label: "Bitumen Waterproofing" },
-  { href: "/bitumen-waterproofing-services-and-more", label: "Services" },
+  { href: "/services", label: "All Services" },
+];
+
+export const FOOTER_COMPANY_LINKS: NavLink[] = [
+  { href: "/about-us-waterproofing-company", label: "About Damtech" },
   { href: "/projects", label: "Projects" },
   { href: "/blog", label: "Blog" },
-  { href: "/waterproofing-and-dam-liners", label: "FAQ" },
   { href: "/contact", label: "Contact" },
+  { href: "/waterproofing-and-dam-liners", label: "FAQ" },
+];
+
+/** @deprecated Use FOOTER_SERVICE_LINKS and FOOTER_COMPANY_LINKS */
+export const FOOTER_LINKS: NavLink[] = [
+  { href: "/", label: "Home" },
+  ...FOOTER_SERVICE_LINKS,
+  ...FOOTER_COMPANY_LINKS,
   { href: "/quote", label: "Request a Quote" },
 ];
 
 export const SERVICE_LINKS = [
   { href: "/dam-liners", label: "Dam Liners (HDPE, PVC, Torch-On)" },
+  { href: "/hdpe-dam-lining", label: "HDPE Dam Lining" },
   { href: "/steel-water-storage-tanks", label: "Steel Water Storage Tanks" },
   { href: "/bitumen-waterproofing", label: "Bitumen Waterproofing" },
-  {
-    href: "/bitumen-waterproofing-services-and-more",
-    label: "All Services",
-  },
+  { href: "/services", label: "All Services" },
+  { href: "/dam-repair-services", label: "Leaking Dam Repair" },
+  { href: "/reservoir-lining", label: "Reservoir Lining" },
   { href: "/waterproofing-and-dam-liners", label: "FAQ" },
 ] as const;
 
@@ -90,11 +115,20 @@ export const PROJECTS = [
   },
 ] as const;
 
+/** Paths disallowed in robots.txt — must not be listed in sitemap.xml. */
+export const ROBOTS_DISALLOW_PATHS = [
+  "/thank-you/",
+  "/_next/",
+  "/api/",
+  "/category/",
+  "/author/",
+] as const;
+
 /** Indexable static routes for sitemap generation. */
 export const INDEXABLE_STATIC_PATHS = [
   "/",
   "/about-us-waterproofing-company",
-  "/bitumen-waterproofing-services-and-more",
+  "/services",
   "/dam-liners",
   "/steel-water-storage-tanks",
   "/bitumen-waterproofing",
@@ -111,4 +145,10 @@ export const INDEXABLE_STATIC_PATHS = [
   "/farm-dam-liners",
   "/mining-dam-liners",
   "/agricultural-water-storage",
+  "/hdpe-dam-lining",
+  "/pvc-dam-lining",
+  "/torch-on-dam-lining",
+  "/dam-repair-services",
+  "/reservoir-lining",
+  "/dam-lining-cost-south-africa",
 ] as const;

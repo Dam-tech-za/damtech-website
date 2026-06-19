@@ -1,13 +1,16 @@
+import { SectionHeading } from "@/components/SectionHeading";
 import Link from "next/link";
-import { CTA } from "@/components/CTA";
 import { Hero } from "@/components/Hero";
-import { InternalServiceLinks } from "@/components/InternalServiceLinks";
 import { PageImage } from "@/components/PageImage";
 import { PageSeo } from "@/components/PageSeo";
 import {
   ServiceFaqSection,
   ServiceProseSections,
 } from "@/components/ServicePageSections";
+import {
+  LazyCTA as CTA,
+  LazyInternalServiceLinks as InternalServiceLinks,
+} from "@/components/lazy";
 import { createFaqPageSchema } from "@/lib/seo";
 import { createPageMetadata, PAGE_SEO } from "@/lib/pages";
 import { SITE_IMAGES } from "@/lib/images";
@@ -40,7 +43,9 @@ export default function AboutPage() {
               {ABOUT_CONTENT.intro}
             </p>
 
-            <h2 className="section-heading mt-10">Who Are We?</h2>
+            <SectionHeading id="who-we-are" className="mt-10">
+              Who Are We?
+            </SectionHeading>
             <p className="mt-4 leading-relaxed text-slate-600">
               We are your trusted experts in earth dam liners, waterproofing and
               steel water storage tank suppliers with over 30 years of experience
@@ -49,7 +54,9 @@ export default function AboutPage() {
               longevity.
             </p>
 
-            <h2 className="section-heading mt-10">Our Mission</h2>
+            <SectionHeading id="our-mission" className="mt-10">
+              Our Mission
+            </SectionHeading>
             <p className="mt-4 leading-relaxed text-slate-600">
               To provide top-tier waterproofing and lining solutions that stand the
               test of time. We strive to exceed our clients&apos; expectations by
@@ -66,10 +73,12 @@ export default function AboutPage() {
         <div className="content-wrap">
           <ServiceProseSections sections={ABOUT_CONTENT.sections.slice(0, 2)} />
 
-          <h2 className="section-heading mt-12">What We Do</h2>
-          <div className="mt-8 grid gap-6 md:grid-cols-3">
+          <SectionHeading id="what-we-do" className="mt-12">
+            What We Do
+          </SectionHeading>
+          <div className="mt-8 content-grid-3">
             <div className="rounded-2xl border border-slate-200 bg-white p-6">
-              <h3 className="font-semibold text-navy">Earth Dam Liners</h3>
+              <h3 className="subsection-heading !mt-0">Earth Dam Liners</h3>
               <p className="mt-2 text-sm leading-relaxed text-slate-600">
                 HDPE, PVC and bitumen torch-on lining for agricultural farm dams,
                 mining ponds and irrigation storage nationwide.
@@ -82,7 +91,7 @@ export default function AboutPage() {
               </Link>
             </div>
             <div className="rounded-2xl border border-slate-200 bg-white p-6">
-              <h3 className="font-semibold text-navy">Steel Water Tanks</h3>
+              <h3 className="subsection-heading !mt-0">Steel Water Tanks</h3>
               <p className="mt-2 text-sm leading-relaxed text-slate-600">
                 Corrugated galvanised reservoirs from 11 kL to 500 kL+ with PVC
                 lining, columns and optional roofs.
@@ -95,7 +104,7 @@ export default function AboutPage() {
               </Link>
             </div>
             <div className="rounded-2xl border border-slate-200 bg-white p-6">
-              <h3 className="font-semibold text-navy">Waterproofing</h3>
+              <h3 className="subsection-heading !mt-0">Waterproofing</h3>
               <p className="mt-2 text-sm leading-relaxed text-slate-600">
                 Bitumen torch-on and maintenance for roofs, foundations and
                 retaining structures on farms and commercial buildings.
@@ -114,7 +123,9 @@ export default function AboutPage() {
       <section className="content-wrap">
         <ServiceProseSections sections={ABOUT_CONTENT.sections.slice(2)} />
 
-        <h2 className="section-heading mt-12">Specialised Services</h2>
+        <SectionHeading id="specialised-services" className="mt-12">
+          Specialised Services
+        </SectionHeading>
         <ul className="mt-6 grid gap-4 sm:grid-cols-2">
           {[
             "Steel water storage tanks with custom sizes, roofs and support columns",
@@ -139,7 +150,7 @@ export default function AboutPage() {
 
         <div className="mt-10 flex flex-wrap gap-3">
           <Link
-            href="/bitumen-waterproofing-services-and-more"
+            href="/services"
             className="btn-primary"
           >
             View All Services

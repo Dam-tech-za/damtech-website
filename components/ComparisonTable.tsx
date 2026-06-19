@@ -16,7 +16,7 @@ export function ComparisonTable({
 }: ComparisonTableProps) {
   return (
     <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-      <h3 className="border-b border-slate-200 bg-slate-50 px-4 py-3 text-base font-semibold text-navy sm:px-6">
+      <h3 className="subsection-heading border-b border-slate-200 bg-slate-50 px-4 py-3 text-base sm:px-6">
         {title}
       </h3>
       <div className="overflow-x-auto">

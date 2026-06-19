@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { BlogPost } from "@/lib/posts";
+import { resolvePostExcerpt } from "@/lib/posts";
 
 type BlogCardProps = {
   post: BlogPost;
@@ -29,7 +30,7 @@ export function BlogCard({ post }: BlogCardProps) {
         </Link>
       </h2>
       <p className="mt-3 line-clamp-3 flex-1 text-sm leading-relaxed text-slate-600">
-        {post.excerpt}
+        {resolvePostExcerpt(post)}
       </p>
       <Link
         href={`/${post.slug}`}

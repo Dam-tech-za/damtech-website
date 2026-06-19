@@ -2,10 +2,10 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { PageShell } from "@/components/PageShell";
 import { SEOJsonLd } from "@/components/SEOJsonLd";
-import { siteConfig } from "@/lib/site";
 import {
   createLocalBusinessSchema,
   createOrganizationSchema,
+  createRootMetadata,
   createWebSiteSchema,
 } from "@/lib/seo";
 import "./globals.css";
@@ -16,9 +16,7 @@ const inter = Inter({
   display: "swap",
 });
 
-export const metadata: Metadata = {
-  metadataBase: new URL(siteConfig.domain),
-};
+export const metadata: Metadata = createRootMetadata();
 
 const globalSchemas = [
   createOrganizationSchema(),

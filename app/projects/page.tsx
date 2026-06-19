@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { CTA } from "@/components/CTA";
 import { Hero } from "@/components/Hero";
 import { PageSeo } from "@/components/PageSeo";
 import { createPageMetadata } from "@/lib/pages";
@@ -7,6 +6,9 @@ import {
   PROJECT_CASE_STUDIES,
   PROJECTS_INDEX_SEO,
 } from "@/lib/projects";
+import {
+  LazyCTA as CTA,
+} from "@/components/lazy";
 
 export const metadata = createPageMetadata(PROJECTS_INDEX_SEO);
 
@@ -28,7 +30,7 @@ export default function ProjectsIndexPage() {
       />
 
       <section className="content-wrap">
-        <div className="grid gap-6 md:grid-cols-2">
+        <div className="content-grid">
           {PROJECT_CASE_STUDIES.map((project) => (
             <article
               key={project.slug}
@@ -57,6 +59,11 @@ export default function ProjectsIndexPage() {
               </Link>
             </article>
           ))}
+        </div>
+        <div className="mt-12 text-center">
+          <Link href="/quote" className="btn-primary">
+            Need similar work? Request a Free Quote
+          </Link>
         </div>
       </section>
 

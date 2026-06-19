@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { SectionHeading } from "@/components/SectionHeading";
 
 export type ProjectProofItem = {
   href: string;
@@ -18,7 +19,7 @@ export function ProjectProofStrip({
   return (
     <div className="mt-12">
       <div className="flex flex-wrap items-end justify-between gap-3">
-        <h2 className="section-heading">{title}</h2>
+        <SectionHeading className="!mt-0">{title}</SectionHeading>
         <Link
           href="/projects"
           className="text-sm font-semibold text-water hover:text-navy"

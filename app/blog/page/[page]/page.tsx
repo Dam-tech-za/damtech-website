@@ -2,12 +2,14 @@ import { notFound } from "next/navigation";
 import { BlogCategoryFilter } from "@/components/BlogCategoryFilter";
 import { BlogCard } from "@/components/BlogCard";
 import { BlogPagination } from "@/components/BlogPagination";
-import { CTA } from "@/components/CTA";
 import { Hero } from "@/components/Hero";
-import { InternalServiceLinks } from "@/components/InternalServiceLinks";
 import { PageSeo } from "@/components/PageSeo";
 import { createPageMetadata, PAGE_SEO } from "@/lib/pages";
 import { POSTS_PER_PAGE, paginatePosts, posts } from "@/lib/posts";
+import {
+  LazyCTA as CTA,
+  LazyInternalServiceLinks as InternalServiceLinks,
+} from "@/components/lazy";
 
 type Props = {
   params: Promise<{ page: string }>;
@@ -69,7 +71,7 @@ export default async function BlogPaginatedPage({ params }: Props) {
 
       <section className="content-wrap">
         <BlogCategoryFilter activeCategory="all" />
-        <div className="mt-8 grid gap-6 md:grid-cols-2">
+        <div className="mt-8 content-grid">
           {items.map((post) => (
             <BlogCard key={post.slug} post={post} />
           ))}

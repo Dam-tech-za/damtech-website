@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { SectionHeading } from "@/components/SectionHeading";
 import type { BlogPost } from "@/lib/posts";
 
 type RelatedPostsProps = {
@@ -15,8 +16,8 @@ export function RelatedPosts({
   return (
     <section className="bg-slate-50">
       <div className="content-wrap">
-        <h2 className="section-heading">{heading}</h2>
-        <ul className="mt-6 grid gap-4 md:grid-cols-3">
+        <SectionHeading className="!mt-0">{heading}</SectionHeading>
+        <ul className="mt-6 content-grid-3">
           {posts.map((post) => (
             <li
               key={post.slug}

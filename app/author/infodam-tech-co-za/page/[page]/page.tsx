@@ -1,11 +1,13 @@
 import { notFound } from "next/navigation";
 import { BlogCard } from "@/components/BlogCard";
 import { BlogPagination } from "@/components/BlogPagination";
-import { CTA } from "@/components/CTA";
 import { Hero } from "@/components/Hero";
 import { PageSeo } from "@/components/PageSeo";
 import { createPageMetadata, PAGE_SEO } from "@/lib/pages";
 import { POSTS_PER_PAGE, paginatePosts, posts } from "@/lib/posts";
+import {
+  LazyCTA as CTA,
+} from "@/components/lazy";
 
 type Props = {
   params: Promise<{ page: string }>;
@@ -69,7 +71,7 @@ export default async function AuthorPaginatedPage({ params }: Props) {
       />
 
       <section className="content-wrap">
-        <div className="grid gap-6 md:grid-cols-2">
+        <div className="content-grid">
           {items.map((post) => (
             <BlogCard key={post.slug} post={post} />
           ))}

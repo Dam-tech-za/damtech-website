@@ -1,7 +1,6 @@
+import { SectionHeading } from "@/components/SectionHeading";
 import Link from "next/link";
-import { CTA } from "@/components/CTA";
 import { Hero } from "@/components/Hero";
-import { InternalServiceLinks } from "@/components/InternalServiceLinks";
 import { PageSeo } from "@/components/PageSeo";
 import { ProjectProofStrip } from "@/components/ProjectProofStrip";
 import { SectionCta } from "@/components/SectionCta";
@@ -9,9 +8,13 @@ import {
   ServiceFaqSection,
   ServiceProseSections,
 } from "@/components/ServicePageSections";
+import {
+  LazyCTA as CTA,
+  LazyInternalServiceLinks as InternalServiceLinks,
+} from "@/components/lazy";
 import { createFaqPageSchema, createServiceSchema } from "@/lib/seo";
 import { createPageMetadata, PAGE_SEO } from "@/lib/pages";
-import { SERVICES_HUB_CONTENT } from "@/lib/service-pages-content";
+import { SERVICES_HUB_CONTENT, SERVICES_HUB_SCHEMA_OFFERS } from "@/lib/service-pages-content";
 import { PROJECTS } from "@/lib/site";
 
 const seo = PAGE_SEO.services;
@@ -29,8 +32,10 @@ export default function ServicesPage() {
         schemas={[
           createServiceSchema({
             name: seo.serviceName ?? seo.title,
+            serviceType: seo.serviceName ?? "Dam Liners, Water Tanks & Waterproofing",
             description: seo.description,
             path: seo.path,
+            offers: [...SERVICES_HUB_SCHEMA_OFFERS],
           }),
           createFaqPageSchema(SERVICES_HUB_CONTENT.faqs),
         ]}
@@ -52,7 +57,9 @@ export default function ServicesPage() {
       <section className="bg-slate-50">
         <div className="content-wrap space-y-16">
           <div>
-            <h2 className="section-heading">Waterproofing</h2>
+            <SectionHeading id="waterproofing" className="!mt-0">
+              Waterproofing
+            </SectionHeading>
             {SERVICES_HUB_CONTENT.sections[0]!.paragraphs.map((paragraph) => (
               <p
                 key={paragraph.slice(0, 48)}
@@ -82,7 +89,7 @@ export default function ServicesPage() {
           </div>
 
           <div>
-            <h2 className="section-heading">Dam Liners</h2>
+            <SectionHeading id="dam-liners">Dam Liners</SectionHeading>
             {SERVICES_HUB_CONTENT.sections[1]!.paragraphs.map((paragraph) => (
               <p
                 key={paragraph.slice(0, 48)}
@@ -102,7 +109,7 @@ export default function ServicesPage() {
           </div>
 
           <div>
-            <h2 className="section-heading">Corrugated Zinc Reservoirs</h2>
+            <SectionHeading id="steel-reservoirs">Corrugated Zinc Reservoirs</SectionHeading>
             {SERVICES_HUB_CONTENT.sections[2]!.paragraphs.map((paragraph) => (
               <p
                 key={paragraph.slice(0, 48)}
@@ -120,7 +127,7 @@ export default function ServicesPage() {
           </div>
 
           <div>
-            <h2 className="section-heading">Maintenance</h2>
+            <SectionHeading id="maintenance">Maintenance</SectionHeading>
             {SERVICES_HUB_CONTENT.sections[3]!.paragraphs.map((paragraph) => (
               <p
                 key={paragraph.slice(0, 48)}

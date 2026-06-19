@@ -1,13 +1,19 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { CTA } from "@/components/CTA";
-import { InternalServiceLinks } from "@/components/InternalServiceLinks";
 import { PageSeo } from "@/components/PageSeo";
 import { Prose } from "@/components/Prose";
-import { RelatedPosts } from "@/components/RelatedPosts";
+import { getPostCta, getPostServiceLinks } from "@/lib/internal-links";
 import { createArticleSchema, createMetadata } from "@/lib/seo";
 import { DEFAULT_OG_IMAGE } from "@/lib/images";
-import { getPostBySlug, getPostSlugs, getRelatedPosts } from "@/lib/posts";
+import { getPostBySlug, getPostSlugs, getRelatedPosts, resolvePostDescription } from "@/lib/posts";
+import { getSubServiceSlugs } from "@/lib/sub-service-pages";
+import {
+  LazyCTA as CTA,
+  LazyInternalServiceLinks as InternalServiceLinks,
+  LazyPostCallToAction as PostCallToAction,
+  LazyPostServiceLinks as PostServiceLinks,
+  LazyRelatedPosts as RelatedPosts,
+} from "@/components/lazy";
 
 type Props = {
   params: Promise<{ slug: string }>;
@@ -15,15 +21,31 @@ type Props = {
 
 const RESERVED = new Set([
   "about-us-waterproofing-company",
+  "agricultural-water-storage",
   "bitumen-waterproofing-services-and-more",
   "bitumen-waterproofing",
   "blog",
   "category",
   "contact",
   "dam-liners",
+  "dam-lining-cost-south-africa",
+  "dam-repair-services",
+  "farm-dam-liners",
+  "johannesburg-dam-liners",
+  "limpopo-dam-liners",
+  "mining-dam-liners",
+  "mpumalanga-dam-liners",
+  "pretoria-dam-liners",
+  "projects",
+  "quote",
+  "reservoir-lining",
+  "services",
   "steel-water-storage-tanks",
+  "thank-you",
   "waterproofing-and-dam-liners",
+  "western-cape-dam-liners",
   "author",
+  ...getSubServiceSlugs(),
 ]);
 
 export async function generateStaticParams() {
@@ -35,12 +57,9 @@ export async function generateMetadata({ params }: Props) {
   const post = getPostBySlug(slug);
   if (!post) return {};
 
-  const description =
-    post.metaDescription?.trim() || post.excerpt.trim() || "";
-
   return createMetadata({
     title: post.metaTitle || post.title,
-    description,
+    description: resolvePostDescription(post),
     path: `/${post.slug}`,
     image: DEFAULT_OG_IMAGE,
     ogType: "article",
@@ -61,9 +80,10 @@ export default async function BlogPostPage({ params }: Props) {
     notFound();
   }
 
-  const description =
-    post.metaDescription?.trim() || post.excerpt.trim() || "";
+  const description = resolvePostDescription(post);
   const relatedPosts = getRelatedPosts(slug, 3);
+  const serviceLinks = getPostServiceLinks(post);
+  const postCta = getPostCta(post);
 
   return (
     <>
@@ -85,7 +105,7 @@ export default async function BlogPostPage({ params }: Props) {
 
       <article>
         <header className="bg-gradient-to-br from-navy to-slate-800 py-12 text-white sm:py-16">
-          <div className="mx-auto max-w-3xl px-4 sm:px-6">
+          <div className="site-container max-w-3xl">
             <p className="text-sm text-sky-200">
               <Link href="/blog" className="hover:text-white">
                 Blog
@@ -109,14 +129,24 @@ export default async function BlogPostPage({ params }: Props) {
           </div>
         </header>
 
-        <div className="mx-auto max-w-3xl px-4 py-10 sm:px-6">
+        <div className="site-container max-w-3xl py-10 lg:py-12">
           <Prose html={post.content} />
+          <PostServiceLinks links={serviceLinks} />
+          <PostCallToAction
+            heading={postCta.heading}
+            description={postCta.description}
+            buttonText={postCta.buttonText}
+            buttonHref={postCta.buttonHref}
+          />
         </div>
       </article>
 
       <RelatedPosts posts={relatedPosts} />
       <InternalServiceLinks heading="Explore Our Services" />
-      <CTA />
+      <CTA
+        title={postCta.heading}
+        description={postCta.description}
+      />
     </>
   );
 }

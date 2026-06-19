@@ -1,10 +1,15 @@
 import Link from "next/link";
-import { CTA } from "@/components/CTA";
 import { Hero } from "@/components/Hero";
 import { PageImage } from "@/components/PageImage";
 import { PageSeo } from "@/components/PageSeo";
+import { SectionHeading } from "@/components/SectionHeading";
 import { createFaqPageSchema, createServiceSchema } from "@/lib/seo";
+import { altForImagePath } from "@/lib/images";
+import { DAM_LINERS_SCHEMA_OFFERS } from "@/lib/service-pages-content";
 import type { LocalLandingPage } from "@/lib/local-pages";
+import {
+  LazyCTA as CTA,
+} from "@/components/lazy";
 
 type LocalSeoPageProps = {
   page: LocalLandingPage;
@@ -35,8 +40,10 @@ export function LocalSeoPage({ page }: LocalSeoPageProps) {
         schemas={[
           createServiceSchema({
             name: page.serviceName,
+            serviceType: page.serviceName,
             description: page.description,
             path: `/${page.slug}`,
+            offers: [...(page.schemaOffers ?? DAM_LINERS_SCHEMA_OFFERS)],
           }),
           createFaqPageSchema(page.faqs),
         ]}
@@ -51,7 +58,7 @@ export function LocalSeoPage({ page }: LocalSeoPageProps) {
 
             {CONTENT_SECTIONS.map((section) => (
               <div key={section.key}>
-                <h2 className="section-heading">{section.heading}</h2>
+                <SectionHeading>{section.heading}</SectionHeading>
                 <p className="mt-4 leading-relaxed text-slate-600">
                   {page[section.key]}
                 </p>
@@ -59,7 +66,7 @@ export function LocalSeoPage({ page }: LocalSeoPageProps) {
             ))}
 
             <div>
-              <h2 className="section-heading">Damtech Services in This Area</h2>
+              <SectionHeading>Damtech Services in This Area</SectionHeading>
               <ul className="mt-4 space-y-2">
                 {page.services.map((service) => (
                   <li
@@ -75,14 +82,14 @@ export function LocalSeoPage({ page }: LocalSeoPageProps) {
 
           <PageImage
             src={page.image}
-            alt={page.h1}
+            alt={altForImagePath(page.image) || page.h1}
             caption="Damtech dam lining and water storage installations."
           />
         </div>
 
         {page.relatedProjects.length > 0 ? (
           <div className="mt-16">
-            <h2 className="section-heading">Related Projects</h2>
+            <SectionHeading>Related Projects</SectionHeading>
             <ul className="mt-4 flex flex-wrap gap-3">
               {page.relatedProjects.map((link) => (
                 <li key={link.href}>
@@ -99,7 +106,7 @@ export function LocalSeoPage({ page }: LocalSeoPageProps) {
         ) : null}
 
         <div className="mt-16">
-          <h2 className="section-heading">Frequently Asked Questions</h2>
+          <SectionHeading>Frequently Asked Questions</SectionHeading>
           <div className="mt-6 space-y-4">
             {page.faqs.map((faq) => (
               <details
@@ -118,7 +125,7 @@ export function LocalSeoPage({ page }: LocalSeoPageProps) {
         </div>
 
         <div className="mt-12">
-          <h2 className="section-heading">Explore Further</h2>
+          <SectionHeading>Explore Further</SectionHeading>
           <ul className="mt-4 flex flex-wrap gap-3">
             {page.relatedLocations.map((link) => (
               <li key={link.href}>

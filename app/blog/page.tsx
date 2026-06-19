@@ -1,12 +1,14 @@
 import { BlogCard } from "@/components/BlogCard";
 import { BlogCategoryFilter } from "@/components/BlogCategoryFilter";
 import { BlogPagination } from "@/components/BlogPagination";
-import { CTA } from "@/components/CTA";
 import { Hero } from "@/components/Hero";
-import { InternalServiceLinks } from "@/components/InternalServiceLinks";
 import { PageSeo } from "@/components/PageSeo";
 import { createPageMetadata, PAGE_SEO } from "@/lib/pages";
 import { POSTS_PER_PAGE, paginatePosts, posts } from "@/lib/posts";
+import {
+  LazyCTA as CTA,
+  LazyInternalServiceLinks as InternalServiceLinks,
+} from "@/components/lazy";
 
 const seo = PAGE_SEO.blog;
 const pagination = paginatePosts(posts, 1, POSTS_PER_PAGE);
@@ -47,7 +49,7 @@ export default function BlogPage() {
           Showing {pagination.items.length} of {pagination.totalItems} articles
         </p>
 
-        <div className="mt-6 grid gap-6 md:grid-cols-2">
+        <div className="mt-6 content-grid">
           {pagination.items.map((post) => (
             <BlogCard key={post.slug} post={post} />
           ))}

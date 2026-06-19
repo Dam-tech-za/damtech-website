@@ -1,5 +1,6 @@
 import type { CreateMetadataInput } from "./seo";
 import { createMetadata } from "./seo";
+import { IMAGE_PATHS } from "./images";
 
 export type StaticPageKey =
   | "home"
@@ -12,75 +13,71 @@ export type StaticPageKey =
   | "contact"
   | "blog"
   | "category"
-  | "author";
+  | "author"
+  | "quote";
 
 export type PageSeoEntry = {
-  /** Full browser/OG title (include brand where appropriate). */
   title: string;
   description: string;
   path: string;
-  /** Visible H1 on the page (one per route). */
   h1: string;
-  /** Open Graph / Twitter image path under /public. */
   image?: string;
-  /** Short name for Service JSON-LD (service pages only). */
   serviceName?: string;
   noIndex?: boolean;
 };
 
-/** SEO metadata for static routes — unique titles and descriptions per page. */
 export const PAGE_SEO: Record<StaticPageKey, PageSeoEntry> = {
   home: {
-    title: "Dam Liners, Steel Water Tanks & Waterproofing | Damtech South Africa",
+    title: "Dam Liners & Steel Water Tanks | Damtech South Africa",
     description:
-      "Expert dam liner, corrugated steel tank and bitumen waterproofing contractors serving farms and properties across South Africa. Request a free quote.",
+      "Damtech supplies and installs HDPE and PVC dam liners, corrugated steel reservoirs and bitumen waterproofing for farms, mines and properties across South Africa. Request a free quote.",
     path: "/",
-    h1: "Leaders In Dam Liners And Water Storage Solutions",
-    image: "/images/damtech-dam-liners-water-storage-solutions.webp",
+    h1: "Dam Lining & Water Storage Solutions in South Africa",
+    image: IMAGE_PATHS.damtechWaterStorageHero,
   },
   about: {
     title: "About Damtech | Dam Lining & Waterproofing Experts",
     description:
-      "Learn about Damtech — 30+ years installing HDPE dam liners, steel water reservoirs and bitumen waterproofing for agricultural and commercial clients nationwide.",
+      "Learn about Damtech, a South African contractor providing dam liners, steel water tanks and waterproofing solutions for farms, mines and commercial properties.",
     path: "/about-us-waterproofing-company",
-    h1: "About Our Company",
-    image: "/images/damtech-waterproofing-dam-liner-specialists.webp",
+    h1: "About Damtech",
+    image: IMAGE_PATHS.damtechContractors,
   },
   services: {
-    title: "Dam Liners, Water Tanks & Waterproofing Services | Damtech",
+    title: "Dam Lining & Water Storage Services | Damtech South Africa",
     description:
-      "Full water storage and protection services: HDPE dam liners, corrugated steel tanks, bitumen waterproofing, leak repair and preventative maintenance.",
-    path: "/bitumen-waterproofing-services-and-more",
-    h1: "Dam Liners, Water Tanks & Waterproofing Services",
-    serviceName: "Dam Liners, Water Tanks & Waterproofing",
-    image: "/images/hdpe-dam-liner-farm-water-storage.webp",
+      "Damtech provides HDPE and PVC dam liners, corrugated steel water tanks, reservoir lining, leaking dam repair and bitumen waterproofing across South Africa. Request a free quote.",
+    path: "/services",
+    h1: "Dam Lining, Water Storage & Waterproofing Services",
+    serviceName: "Dam Lining and Water Storage Services",
+    image: IMAGE_PATHS.hdpeDamLinerEarthDam,
   },
   "dam-liners": {
-    title: "HDPE Dam Liners & Dam Lining Contractors | Damtech",
+    title: "HDPE & PVC Dam Liners | Damtech South Africa",
     description:
-      "Professional HDPE, PVC and bitumen torch-on dam liner supply and installation for farm dams, earth dams and reservoirs across South Africa.",
+      "Protect your earth dam or reservoir with HDPE, PVC and torch-on dam liners. Damtech installs durable geomembrane lining for farms, mines and ponds across South Africa.",
     path: "/dam-liners",
-    h1: "Quality Dam Liners For Every Application",
+    h1: "HDPE, PVC & Torch-On Dam Liners",
     serviceName: "HDPE Dam Liner Installation",
-    image: "/images/hdpe-dam-liner-farm-water-storage.webp",
+    image: IMAGE_PATHS.hdpeDamLinerInstallationLimpopo,
   },
   "steel-tanks": {
     title: "Corrugated Steel Water Tanks | Damtech South Africa",
     description:
-      "Corrugated galvanised steel water tanks from 11 kL to 500 kL+, supplied with PVC lining. Built for farms, game reserves and rural water storage.",
+      "Corrugated galvanised steel water tanks with PVC lining from 11 kL to 500 kL+. Damtech supplies and installs farm, mine and rural water storage tanks nationwide.",
     path: "/steel-water-storage-tanks",
     h1: "Corrugated Steel Water Tanks",
     serviceName: "Corrugated Steel Water Tank Installation",
-    image: "/images/corrugated-steel-water-tank-installation.webp",
+    image: IMAGE_PATHS.corrugatedSteelWaterTank,
   },
   bitumen: {
-    title: "Bitumen Waterproofing Specialists | Damtech",
+    title: "Bitumen Waterproofing Contractors | Damtech South Africa",
     description:
-      "Bitumen torch-on, self-adhesive and liquid waterproofing for roofs, foundations, retaining walls and reservoirs. Installed by Damtech specialists.",
+      "Torch-on, self-adhesive and liquid bitumen waterproofing for roofs, foundations, reservoirs and retaining walls across South Africa. Request a free inspection.",
     path: "/bitumen-waterproofing",
-    h1: "Bitumen Waterproofing",
+    h1: "Bitumen Waterproofing for Roofs, Foundations & Reservoirs",
     serviceName: "Bitumen Waterproofing",
-    image: "/images/bitumen-waterproofing-roof-reservoir-repair.webp",
+    image: IMAGE_PATHS.bitumenWaterproofingRoof,
   },
   faq: {
     title: "Dam Liner & Waterproofing FAQ | Damtech",
@@ -88,30 +85,38 @@ export const PAGE_SEO: Record<StaticPageKey, PageSeoEntry> = {
       "Answers to common questions about dam liners, zinc reservoirs, waterproofing warranties, maintenance and leak repair from the Damtech team.",
     path: "/waterproofing-and-dam-liners",
     h1: "Dam Liner & Waterproofing FAQ",
-    image: "/images/hdpe-dam-liner-farm-water-storage.webp",
+    image: IMAGE_PATHS.hdpeDamLinerEarthDam,
   },
   contact: {
-    title: "Contact Damtech | Request a Dam Liner Quote",
+    title: "Contact Damtech | Dam Liner & Water Storage Quotes",
     description:
-      "Request a free dam liner or waterproofing quote. Contact Damtech by phone, email or our online form — serving clients across South Africa.",
+      "Contact Damtech for HDPE dam liners, steel water tanks, reservoir lining, leak repairs and waterproofing services across South Africa.",
     path: "/contact",
     h1: "Contact Damtech",
-    image: "/images/hdpe-dam-liner-farm-water-storage.webp",
+    image: IMAGE_PATHS.hdpeDamLinerEarthDam,
   },
   blog: {
-    title: "Damtech Blog | Dam Liners & Water Storage Guides",
+    title: "Dam Liner & Water Storage Guides | Damtech Blog",
     description:
-      "Practical articles on farm dam liners, steel reservoir maintenance, leak repair, borehole integration and water storage for South African agriculture.",
+      "Practical guides on dam liners, leaking dam repairs, borehole integration, steel reservoirs and water storage for South African farms and properties.",
     path: "/blog",
-    h1: "Damtech Blog",
-    image: "/images/damtech-dam-liners-water-storage-solutions.webp",
+    h1: "Dam Liner & Water Storage Guides",
+    image: IMAGE_PATHS.damtechWaterStorageHero,
+  },
+  quote: {
+    title: "Request a Quote | Damtech Dam Liners & Water Storage",
+    description:
+      "Request a free quote for HDPE dam lining, PVC liners, corrugated steel water tanks, leaking dam repair or bitumen waterproofing from Damtech.",
+    path: "/quote",
+    h1: "Request a Free Quote",
+    image: IMAGE_PATHS.hdpeDamLinerEarthDam,
   },
   category: {
-    title: "Uncategorized Archives | Damtech",
+    title: "Dam Liner Guides | Damtech Blog",
     description:
-      "Archive of Damtech articles on farm dam liners, waterproofing and water storage.",
+      "Articles on farm dam liners, leak repair, steel reservoirs and water storage for South African agriculture.",
     path: "/category/uncategorized",
-    h1: "Uncategorized",
+    h1: "Dam Liner Guides",
     noIndex: true,
   },
   author: {
@@ -176,7 +181,7 @@ export const CONTACT_SERVICES = [
   {
     title: "Leak Repair & Maintenance",
     description: "Inspections, repairs and preventative maintenance for roofs and dams.",
-    href: "/bitumen-waterproofing-services-and-more",
+    href: "/dam-repair-services",
   },
 ] as const;
 

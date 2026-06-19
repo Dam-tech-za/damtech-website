@@ -39,8 +39,17 @@ export function MobileNav({ links }: MobileNavProps) {
     return () => document.removeEventListener("keydown", onKey);
   }, [open]);
 
+  useEffect(() => {
+    if (!open) return;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [open]);
+
   return (
-    <div className="lg:hidden">
+    <div className="relative lg:hidden">
       <button
         type="button"
         className="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-slate-200 text-navy transition hover:border-water hover:text-water"
@@ -56,21 +65,21 @@ export function MobileNav({ links }: MobileNavProps) {
         <>
           <button
             type="button"
-            className="fixed inset-0 z-40 bg-navy/20 backdrop-blur-[1px]"
+            className="fixed inset-0 top-16 z-40 bg-navy/30 backdrop-blur-[1px] lg:hidden"
             aria-label="Close menu"
             onClick={() => setOpen(false)}
           />
           <nav
             id="mobile-nav-panel"
-            className="absolute right-0 top-full z-50 mt-2 w-[min(100vw-2rem,18rem)] rounded-xl border border-slate-200 bg-white p-4 shadow-xl"
+            className="fixed inset-x-0 top-16 z-50 max-h-[calc(100dvh-4rem)] overflow-y-auto border-b border-slate-200 bg-white px-4 py-4 shadow-lg sm:px-6 lg:hidden"
             aria-label="Mobile"
           >
-            <ul className="flex flex-col gap-1">
+            <ul className="site-container flex flex-col gap-1 !px-0">
               {links.map((link) => (
                 <li key={link.href}>
                   <Link
                     href={link.href}
-                    className="block rounded-lg px-3 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-water"
+                    className="block rounded-lg px-3 py-3 text-base font-medium text-slate-700 hover:bg-slate-50 hover:text-water"
                     onClick={() => setOpen(false)}
                   >
                     {link.label}
@@ -78,13 +87,13 @@ export function MobileNav({ links }: MobileNavProps) {
                 </li>
               ))}
             </ul>
-            <div className="mt-3 border-t border-slate-100 pt-3">
+            <div className="site-container mt-3 border-t border-slate-100 pt-4 !px-0">
               <Link
                 href="/quote"
-                className="btn-primary w-full text-center text-sm"
+                className="btn-primary w-full text-center"
                 onClick={() => setOpen(false)}
               >
-                Get a Quote
+                Request a Free Quote
               </Link>
             </div>
           </nav>

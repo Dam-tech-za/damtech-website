@@ -9,7 +9,7 @@ type HeroProps = {
   description: string;
   children?: ReactNode;
   compact?: boolean;
-  image?: Pick<SiteImage, "src" | "alt" | "width" | "height">;
+  image?: Pick<SiteImage, "image" | "alt">;
   /** Render primary + secondary CTAs below intro (default true). */
   showActions?: boolean;
 };
@@ -36,10 +36,12 @@ export function Hero({
         <div className="absolute inset-0 z-0" aria-hidden>
           <div className="relative h-full w-full">
             <Image
-              src={image.src}
+              src={image.image}
               alt={image.alt}
               fill
               priority
+              fetchPriority="high"
+              placeholder="blur"
               className="object-cover"
               sizes="100vw"
             />
@@ -57,7 +59,7 @@ export function Hero({
         />
       )}
 
-      <div className="relative z-[1] mx-auto max-w-6xl px-4 sm:px-6">
+      <div className="relative z-[1] site-container">
         {eyebrow ? (
           <p className="text-xs font-semibold uppercase tracking-[0.14em] text-sky-200 sm:text-sm">
             {eyebrow}

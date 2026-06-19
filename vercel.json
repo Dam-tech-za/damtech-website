@@ -5,6 +5,12 @@
       "has": [{ "type": "host", "value": "www.dam-tech.co.za" }],
       "destination": "https://dam-tech.co.za/:path*",
       "permanent": true
+    },
+    {
+      "source": "/:path*",
+      "has": [{ "type": "host", "value": "damtech-website-six.vercel.app" }],
+      "destination": "https://dam-tech.co.za/:path*",
+      "permanent": true
     }
   ]
 }

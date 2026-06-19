@@ -1,7 +1,13 @@
+import { IMAGE_ALTS, IMAGE_PATHS, type ImagePath } from "./images";
+
 export type ProjectImage = {
   src: string;
   alt: string;
 };
+
+function projectImage(path: ImagePath, alt?: string): ProjectImage {
+  return { src: path, alt: alt ?? IMAGE_ALTS[path] };
+}
 
 export type ProjectCaseStudy = {
   slug: string;
@@ -66,10 +72,10 @@ export const PROJECT_CASE_STUDIES: ProjectCaseStudy[] = [
       "Verify completion date and retention outcome",
     ],
     images: [
-      {
-        src: "/images/hdpe-dam-liner-farm-water-storage.webp",
-        alt: "HDPE dam liner installation for agricultural water storage dam",
-      },
+      projectImage(
+        IMAGE_PATHS.hdpeDamLinerEarthDam,
+        "HDPE dam liner installation on a North West game lodge earth dam",
+      ),
     ],
     relatedServices: [
       { href: "/dam-liners", label: "Dam Liners" },
@@ -110,14 +116,11 @@ export const PROJECT_CASE_STUDIES: ProjectCaseStudy[] = [
     summary:
       "Large-scale HDPE earth dam lining in the Stellenbosch wine and agricultural district — 13,360 m² installed for reliable farm water storage.",
     images: [
-      {
-        src: "/images/hdpe-dam-liner-farm-water-storage.webp",
-        alt: "HDPE dam liner installed on a farm earth dam",
-      },
-      {
-        src: "/images/blog/hdpe-dam-liner-installation-farm-dam.webp",
-        alt: "HDPE dam liner installation for agricultural water storage in South Africa",
-      },
+      projectImage(
+        IMAGE_PATHS.hdpeDamLinerEarthDam,
+        "HDPE dam liner installed on a Stellenbosch farm earth dam",
+      ),
+      projectImage(IMAGE_PATHS.hdpeDamLinerInstallationLimpopo),
     ],
     relatedServices: [
       { href: "/dam-liners", label: "Dam Liners" },
@@ -157,14 +160,8 @@ export const PROJECT_CASE_STUDIES: ProjectCaseStudy[] = [
     summary:
       "Six 60 kL corrugated steel reservoirs installed in Witbank for industrial on-site water storage in Mpumalanga.",
     images: [
-      {
-        src: "/images/corrugated-steel-water-tank-installation.webp",
-        alt: "Corrugated steel water tank installed for farm water storage",
-      },
-      {
-        src: "/images/blog/corrugated-steel-reservoir-leak-repair-maintenance.webp",
-        alt: "Corrugated steel reservoir maintenance and leak repair",
-      },
+      projectImage(IMAGE_PATHS.corrugatedSteelWaterTank),
+      projectImage(IMAGE_PATHS.corrugatedSteelReservoirRepair),
     ],
     relatedServices: [
       { href: "/steel-water-storage-tanks", label: "Steel Water Tanks" },
@@ -203,12 +200,7 @@ export const PROJECT_CASE_STUDIES: ProjectCaseStudy[] = [
     ],
     summary:
       "Grabouw farm dam lined with 10,520 m² HDPE to protect irrigation reserves in the Western Cape fruit belt.",
-    images: [
-      {
-        src: "/images/blog/bonsmara-cattle-beside-hdpe-lined-farm-dam.webp",
-        alt: "Cattle beside an HDPE-lined farm dam used for livestock water storage",
-      },
-    ],
+    images: [projectImage(IMAGE_PATHS.hdpeLinedFarmReservoirCattle)],
     relatedServices: [
       { href: "/dam-liners", label: "Dam Liners" },
       { href: "/western-cape-dam-liners", label: "Western Cape Dam Liners" },
@@ -246,12 +238,7 @@ export const PROJECT_CASE_STUDIES: ProjectCaseStudy[] = [
     ],
     summary:
       "Hoedspruit structured dam waterproofed with 9,240 m² bitumen torch-on lining for Lowveld water storage.",
-    images: [
-      {
-        src: "/images/bitumen-waterproofing-roof-reservoir-repair.webp",
-        alt: "Bitumen waterproofing application on concrete water-retaining structure",
-      },
-    ],
+    images: [projectImage(IMAGE_PATHS.bitumenWaterproofingRoof)],
     relatedServices: [
       { href: "/bitumen-waterproofing", label: "Bitumen Waterproofing" },
       { href: "/limpopo-dam-liners", label: "Limpopo Dam Liners" },
@@ -290,10 +277,10 @@ export const PROJECT_CASE_STUDIES: ProjectCaseStudy[] = [
     summary:
       "Hartswater farm dam lined with 3,472 m² HDPE to protect scarce irrigation water in the Northern Cape.",
     images: [
-      {
-        src: "/images/hdpe-dam-liner-farm-water-storage.webp",
-        alt: "HDPE dam liner installation for agricultural water storage dam",
-      },
+      projectImage(
+        IMAGE_PATHS.hdpeDamLinerInstallationLimpopo,
+        "HDPE dam liner installation on a Hartswater farm dam in the Northern Cape",
+      ),
     ],
     relatedServices: [
       { href: "/dam-liners", label: "Dam Liners" },
@@ -317,10 +304,10 @@ export function getProjectSlugs(): string[] {
 }
 
 export const PROJECTS_INDEX_SEO = {
-  title: "Damtech Projects | Dam Liners, Tanks & Waterproofing",
+  title: "Dam Lining & Water Storage Projects | Damtech",
   description:
-    "Explore Damtech installation projects across South Africa — HDPE dam liners, bitumen lining and corrugated steel water tanks for farms, lodges and industry.",
+    "View Damtech case studies for HDPE dam liner installations, corrugated steel water tanks and waterproofing projects completed across South Africa.",
   path: "/projects",
-  h1: "Our Projects",
-  image: "/images/damtech-dam-liners-water-storage-solutions.webp",
+  h1: "Damtech Project Case Studies",
+  image: IMAGE_PATHS.damtechWaterStorageHero,
 };

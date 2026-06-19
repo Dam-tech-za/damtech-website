@@ -1,6 +1,5 @@
-import { CTA } from "@/components/CTA";
+import { SectionHeading } from "@/components/SectionHeading";
 import { Hero } from "@/components/Hero";
-import { InternalServiceLinks } from "@/components/InternalServiceLinks";
 import { PageImage } from "@/components/PageImage";
 import { PageSeo } from "@/components/PageSeo";
 import { ProjectProofStrip } from "@/components/ProjectProofStrip";
@@ -10,10 +9,14 @@ import {
   ServiceFaqSection,
   ServiceProseSections,
 } from "@/components/ServicePageSections";
+import {
+  LazyCTA as CTA,
+  LazyInternalServiceLinks as InternalServiceLinks,
+} from "@/components/lazy";
 import { createFaqPageSchema, createServiceSchema } from "@/lib/seo";
 import { createPageMetadata, PAGE_SEO } from "@/lib/pages";
 import { SITE_IMAGES } from "@/lib/images";
-import { STEEL_TANKS_CONTENT } from "@/lib/service-pages-content";
+import { STEEL_TANKS_CONTENT, STEEL_TANKS_SCHEMA_OFFERS } from "@/lib/service-pages-content";
 import { PROJECTS } from "@/lib/site";
 
 const seo = PAGE_SEO["steel-tanks"];
@@ -47,7 +50,7 @@ function TankTable({
 }) {
   return (
     <div className="overflow-x-auto rounded-2xl border border-slate-200 bg-white">
-      <h3 className="border-b border-slate-200 px-4 py-3 font-semibold text-navy">
+      <h3 className="subsection-heading border-b border-slate-200 bg-slate-50 px-4 py-3 sm:px-6">
         {title}
       </h3>
       <table className="min-w-full text-sm">
@@ -85,8 +88,10 @@ export default function SteelTanksPage() {
         schemas={[
           createServiceSchema({
             name: seo.serviceName ?? seo.title,
+            serviceType: seo.serviceName ?? "Corrugated Steel Water Tank Installation",
             description: seo.description,
             path: seo.path,
+            offers: [...STEEL_TANKS_SCHEMA_OFFERS],
           }),
           createFaqPageSchema(STEEL_TANKS_CONTENT.faqs),
         ]}
@@ -125,7 +130,7 @@ export default function SteelTanksPage() {
       </section>
 
       <section className="content-wrap">
-        <h2 className="section-heading">Tank Capacity Tables</h2>
+        <SectionHeading id="tank-capacity">Tank Capacity Tables</SectionHeading>
         <p className="mt-4 max-w-3xl text-slate-600">
           Select a diameter and ring height to match your daily water demand,
           borehole refill rate and available site footprint. Full schedules are

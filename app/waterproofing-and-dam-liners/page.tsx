@@ -1,13 +1,16 @@
 import Link from "next/link";
-import { CTA } from "@/components/CTA";
 import { Hero } from "@/components/Hero";
-import { InternalServiceLinks } from "@/components/InternalServiceLinks";
 import { PageSeo } from "@/components/PageSeo";
 import { ServiceProseSections } from "@/components/ServicePageSections";
 import { createFaqPageSchema } from "@/lib/seo";
 import { createPageMetadata, FAQ_ITEMS, PAGE_SEO } from "@/lib/pages";
 import { FAQ_PAGE_CONTENT } from "@/lib/service-pages-content";
 import { siteConfig } from "@/lib/site";
+import {
+  LazyCTA as CTA,
+  LazyFAQ as FAQ,
+  LazyInternalServiceLinks as InternalServiceLinks,
+} from "@/components/lazy";
 
 const seo = PAGE_SEO.faq;
 
@@ -57,21 +60,8 @@ export default function FaqPage() {
           </Link>
         </div>
 
-        <h2 className="section-heading mt-16">Common Questions</h2>
-        <div className="mt-6 space-y-4">
-          {ALL_FAQS.map((item) => (
-            <details
-              key={item.question}
-              className="group rounded-2xl border border-slate-200 bg-white p-5 open:shadow-sm"
-            >
-              <summary className="cursor-pointer list-none font-semibold text-navy marker:content-none [&::-webkit-details-marker]:hidden">
-                {item.question}
-              </summary>
-              <p className="mt-3 text-sm leading-relaxed text-slate-600">
-                {item.answer}
-              </p>
-            </details>
-          ))}
+        <div className="mt-16">
+          <FAQ items={ALL_FAQS} heading="Common Questions" />
         </div>
       </section>
 

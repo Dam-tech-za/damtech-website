@@ -85,6 +85,8 @@ export function Prose({ html }: ProseProps) {
                 src={block.src}
                 alt={block.alt}
                 fill
+                loading="lazy"
+                fetchPriority="low"
                 className="object-cover"
                 sizes="(max-width: 768px) 100vw, 720px"
               />

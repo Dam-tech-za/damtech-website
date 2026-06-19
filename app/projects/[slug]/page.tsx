@@ -1,12 +1,15 @@
+import { SectionHeading } from "@/components/SectionHeading";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { CTA } from "@/components/CTA";
 import { Hero } from "@/components/Hero";
-import { InternalServiceLinks } from "@/components/InternalServiceLinks";
 import { PageSeo } from "@/components/PageSeo";
-import { ProjectGallery } from "@/components/ProjectGallery";
 import { createMetadata } from "@/lib/seo";
 import { getProjectBySlug, getProjectSlugs } from "@/lib/projects";
+import {
+  LazyCTA as CTA,
+  LazyInternalServiceLinks as InternalServiceLinks,
+  LazyProjectGallery as ProjectGallery,
+} from "@/components/lazy";
 
 type Props = {
   params: Promise<{ slug: string }>;
@@ -82,14 +85,14 @@ export default async function ProjectDetailPage({ params }: Props) {
 
         <div className="mt-12 space-y-10">
           <div>
-            <h2 className="section-heading">Background</h2>
+            <SectionHeading id="background">Background</SectionHeading>
             <p className="mt-4 max-w-3xl leading-relaxed text-slate-600">
               {project.background}
             </p>
           </div>
 
           <div>
-            <h2 className="section-heading">Site Conditions</h2>
+            <SectionHeading id="site-conditions">Site Conditions</SectionHeading>
             <p className="mt-4 max-w-3xl leading-relaxed text-slate-600">
               {project.siteConditions}
             </p>
@@ -97,13 +100,13 @@ export default async function ProjectDetailPage({ params }: Props) {
 
           <div className="grid gap-10 lg:grid-cols-2">
             <div>
-              <h2 className="section-heading">Challenge</h2>
+              <SectionHeading id="challenge">Challenge</SectionHeading>
               <p className="mt-4 leading-relaxed text-slate-600">
                 {project.challenge}
               </p>
             </div>
             <div>
-              <h2 className="section-heading">Our Approach</h2>
+              <SectionHeading id="our-approach">Our Approach</SectionHeading>
               <p className="mt-4 leading-relaxed text-slate-600">
                 {project.approach}
               </p>
@@ -111,7 +114,7 @@ export default async function ProjectDetailPage({ params }: Props) {
           </div>
 
           <div>
-            <h2 className="section-heading">Result</h2>
+            <SectionHeading id="result">Result</SectionHeading>
             <p className="mt-4 max-w-3xl leading-relaxed text-slate-600">
               {project.result}
             </p>
@@ -131,14 +134,14 @@ export default async function ProjectDetailPage({ params }: Props) {
         </div>
 
         <div className="mt-12">
-          <h2 className="section-heading">Project Gallery</h2>
+          <SectionHeading id="project-gallery">Project Gallery</SectionHeading>
           <div className="mt-6">
             <ProjectGallery images={project.images} />
           </div>
         </div>
 
         <div className="mt-12">
-          <h2 className="section-heading">Related Services</h2>
+          <SectionHeading id="related-services">Related Services</SectionHeading>
           <ul className="mt-4 flex flex-wrap gap-3">
             {project.relatedServices.map((link) => (
               <li key={link.href}>

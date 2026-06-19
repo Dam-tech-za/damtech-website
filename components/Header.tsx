@@ -1,18 +1,14 @@
 import Link from "next/link";
+import { DamtechLogo } from "@/components/DamtechLogo";
 import { MobileNav } from "@/components/MobileNav";
 import { HEADER_NAV_LINKS, siteConfig } from "@/lib/site";
 
 export function Header() {
   return (
     <header className="sticky top-0 z-50 border-b border-slate-200/80 bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/90">
-      <div className="relative mx-auto flex max-w-6xl items-center justify-between gap-6 px-4 py-3.5 sm:px-6 lg:py-4">
+      <div className="site-container relative flex items-center justify-between gap-4 py-3.5 lg:gap-6 lg:py-4">
         <Link href="/" className="group flex min-w-0 shrink-0 items-center gap-3">
-          <span
-            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-navy text-sm font-bold text-white"
-            aria-hidden
-          >
-            DT
-          </span>
+          <DamtechLogo size={40} className="shrink-0" />
           <span className="min-w-0 leading-tight">
             <span className="block truncate text-lg font-bold tracking-tight text-navy">
               {siteConfig.name}
@@ -39,8 +35,8 @@ export function Header() {
         </nav>
 
         <div className="flex items-center gap-2">
-          <Link href="/quote" className="btn-primary hidden text-sm lg:inline-flex">
-            Get a Quote
+          <Link href="/quote" className="btn-primary hidden text-sm sm:inline-flex">
+            Request a Free Quote
           </Link>
           <MobileNav links={HEADER_NAV_LINKS} />
         </div>

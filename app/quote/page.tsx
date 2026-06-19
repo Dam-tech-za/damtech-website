@@ -1,20 +1,15 @@
 import Link from "next/link";
-import { CTA } from "@/components/CTA";
 import { Hero } from "@/components/Hero";
-import { InternalServiceLinks } from "@/components/InternalServiceLinks";
-import { LeadForm } from "@/components/LeadForm";
 import { PageSeo } from "@/components/PageSeo";
-import { createPageMetadata } from "@/lib/pages";
+import { createPageMetadata, PAGE_SEO } from "@/lib/pages";
 import { phoneTel, siteConfig } from "@/lib/site";
+import {
+  LazyCTA as CTA,
+  LazyFormSection as FormSection,
+  LazyInternalServiceLinks as InternalServiceLinks,
+} from "@/components/lazy";
 
-const seo = {
-  title: "Request a Quote | Damtech Dam Liners & Water Storage",
-  description:
-    "Request a free quote for HDPE dam liners, steel water tanks, bitumen waterproofing or reservoir repair. Tell us about your project and we will respond promptly.",
-  path: "/quote",
-  h1: "Request a Free Quote",
-  image: "/images/hdpe-dam-liner-farm-water-storage.webp",
-};
+const seo = PAGE_SEO.quote;
 
 export const metadata = createPageMetadata(seo);
 
@@ -36,21 +31,17 @@ export default function QuotePage() {
       />
 
       <section className="content-wrap">
-        <div className="grid items-start gap-10 lg:grid-cols-[1.1fr_0.9fr]">
-          <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
-            <h2 className="text-xl font-bold text-navy">Project Enquiry Form</h2>
-            <p className="mt-2 text-sm text-slate-600">
-              Fields marked with <span className="text-red-600">*</span> are
-              required. We typically respond within one business day.
-            </p>
-            <div className="mt-6">
-              <LeadForm sourcePage="/quote" submitLabel="Request My Quote" />
-            </div>
-          </div>
+        <div className="grid items-start gap-8 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)]">
+          <FormSection
+            title="Request Your Free Quote"
+            subtitle="Tell us about your project and we'll respond within one business day."
+            sourcePage="/quote"
+            id="quote-form"
+          />
 
-          <aside className="space-y-6">
+          <aside className="space-y-6 lg:sticky lg:top-24">
             <div className="rounded-2xl border border-sky-100 bg-sky-50 p-6">
-              <h2 className="text-lg font-semibold text-navy">What to include</h2>
+              <h3 className="text-lg font-semibold text-navy">What to include</h3>
               <ul className="mt-3 space-y-2 text-sm text-slate-700">
                 <li>Dam or tank dimensions (or approximate surface area)</li>
                 <li>Current condition — new build, leak repair or re-lining</li>
@@ -59,7 +50,7 @@ export default function QuotePage() {
               </ul>
             </div>
             <div className="rounded-2xl border border-slate-200 bg-white p-6 text-sm">
-              <h2 className="font-semibold text-navy">Prefer to talk?</h2>
+              <h3 className="font-semibold text-navy">Prefer to talk?</h3>
               <p className="mt-2 text-slate-600">
                 Call{" "}
                 <a href={`tel:${phoneTel}`} className="font-semibold text-water">

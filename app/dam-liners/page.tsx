@@ -1,7 +1,7 @@
-import { CTA } from "@/components/CTA";
+import Link from "next/link";
+import { SectionHeading } from "@/components/SectionHeading";
 import { ComparisonTable } from "@/components/ComparisonTable";
 import { Hero } from "@/components/Hero";
-import { InternalServiceLinks } from "@/components/InternalServiceLinks";
 import { PageImage } from "@/components/PageImage";
 import { PageSeo } from "@/components/PageSeo";
 import { ProjectProofStrip } from "@/components/ProjectProofStrip";
@@ -11,11 +11,18 @@ import {
   ServiceFaqSection,
   ServiceProseSections,
 } from "@/components/ServicePageSections";
+import {
+  LazyCTA as CTA,
+  LazyInternalServiceLinks as InternalServiceLinks,
+} from "@/components/lazy";
 import { createFaqPageSchema, createServiceSchema } from "@/lib/seo";
 import { createPageMetadata, PAGE_SEO } from "@/lib/pages";
 import { SITE_IMAGES } from "@/lib/images";
 import { PROJECTS } from "@/lib/site";
-import { DAM_LINERS_CONTENT } from "@/lib/service-pages-content";
+import {
+  DAM_LINERS_CONTENT,
+  DAM_LINERS_SCHEMA_OFFERS,
+} from "@/lib/service-pages-content";
 
 const seo = PAGE_SEO["dam-liners"];
 
@@ -25,6 +32,7 @@ const LINER_TYPES = [
   {
     id: "hdpe",
     title: "HDPE",
+    href: "/hdpe-dam-lining",
     summary:
       "High tensile strength, UV resistance and puncture resistance — ideal for large farm and mining dams.",
     sizes: "1 mm, 1.5 mm and 2 mm",
@@ -34,6 +42,7 @@ const LINER_TYPES = [
   {
     id: "bitumen",
     title: "Bitumen Torch-On",
+    href: "/torch-on-dam-lining",
     summary:
       "Heat-bonded membrane with strong adhesion to prepared cement and rigid dam surfaces.",
     sizes: "3 mm and 4 mm",
@@ -43,6 +52,7 @@ const LINER_TYPES = [
   {
     id: "pvc",
     title: "PVC",
+    href: "/pvc-dam-lining",
     summary:
       "Flexible liner for ponds, steel tanks and smaller reservoirs where ease of handling matters.",
     sizes: "550–850 gsm",
@@ -66,8 +76,10 @@ export default function DamLinersPage() {
         schemas={[
           createServiceSchema({
             name: seo.serviceName ?? seo.title,
+            serviceType: seo.serviceName ?? "HDPE Dam Lining",
             description: seo.description,
             path: seo.path,
+            offers: [...DAM_LINERS_SCHEMA_OFFERS],
           }),
           createFaqPageSchema(DAM_LINERS_CONTENT.faqs),
         ]}
@@ -97,7 +109,7 @@ export default function DamLinersPage() {
 
       <section className="bg-slate-50">
         <div className="content-wrap space-y-10">
-          <h2 className="section-heading">Compare Dam Liner Types</h2>
+          <SectionHeading id="compare-liners">Compare Dam Liner Types</SectionHeading>
           <ComparisonTable
             title="At-a-glance comparison"
             columns={[
@@ -113,16 +125,26 @@ export default function DamLinersPage() {
               lifespan: liner.lifespan,
             }))}
           />
-          <div className="grid gap-6 md:grid-cols-3">
+          <div className="content-grid-3">
             {LINER_TYPES.map((liner) => (
               <article
                 key={liner.id}
                 className="flex h-full flex-col rounded-2xl border border-slate-200 bg-white p-6"
               >
-                <h3 className="text-lg font-semibold text-navy">{liner.title}</h3>
+                <h3 className="subsection-heading !mt-0">
+                  <Link href={liner.href} className="hover:text-water">
+                    {liner.title}
+                  </Link>
+                </h3>
                 <p className="mt-2 flex-1 text-sm leading-relaxed text-slate-600">
                   {liner.summary}
                 </p>
+                <Link
+                  href={liner.href}
+                  className="mt-4 text-sm font-semibold text-water hover:text-navy"
+                >
+                  Learn more →
+                </Link>
               </article>
             ))}
           </div>
@@ -130,7 +152,7 @@ export default function DamLinersPage() {
       </section>
 
       <section className="content-wrap">
-        <h2 className="section-heading">Why Choose Damtech?</h2>
+        <SectionHeading id="why-damtech">Why Choose Damtech?</SectionHeading>
         <ul className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {[
             "Expert installation by certified professionals",

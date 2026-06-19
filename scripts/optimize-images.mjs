@@ -16,13 +16,13 @@ const HERO_MAX_KB = 300;
 const LOCAL_ASSETS = [
   {
     source: "dam-liner-hero.svg",
-    output: "hdpe-dam-liner-farm-water-storage.webp",
+    output: "hdpe-dam-liner-earth-dam-south-africa.webp",
     width: 1200,
     hero: false,
   },
   {
     source: "about-company.svg",
-    output: "damtech-waterproofing-dam-liner-specialists.webp",
+    output: "damtech-dam-liner-contractors-south-africa.webp",
     width: 1200,
     hero: false,
   },

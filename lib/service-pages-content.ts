@@ -3,8 +3,53 @@ export type ServiceFaqItem = {
   answer: string;
 };
 
+/** Offer names for Service JSON-LD `hasOfferCatalog` on each service page. */
+export const DAM_LINERS_SCHEMA_OFFERS = [
+  "1 mm HDPE liner installation",
+  "1.5 mm HDPE liner installation",
+  "2 mm HDPE liner installation",
+  "PVC dam liner installation",
+  "Bitumen torch-on dam lining",
+] as const;
+
+export const STEEL_TANKS_SCHEMA_OFFERS = [
+  "Corrugated steel tank supply",
+  "PVC-lined reservoir installation",
+  "Steel tank roof installation",
+  "Reservoir leak repair and relining",
+] as const;
+
+export const BITUMEN_SCHEMA_OFFERS = [
+  "Torch-on bitumen waterproofing",
+  "Self-adhesive membrane installation",
+  "Liquid bitumen waterproofing",
+  "Roof and foundation leak repair",
+] as const;
+
+export const SERVICES_HUB_SCHEMA_OFFERS = [
+  "HDPE dam liner installation",
+  "Corrugated steel water tank installation",
+  "Bitumen waterproofing",
+  "Leak repair and maintenance",
+] as const;
+
+export const MINING_LINERS_SCHEMA_OFFERS = [
+  "HDPE mining pond lining",
+  "Tailings dam geomembrane installation",
+  "Process water containment lining",
+  "Leak detection and liner repair",
+] as const;
+
+export const AGRICULTURAL_STORAGE_SCHEMA_OFFERS = [
+  "Farm dam HDPE lining",
+  "Irrigation reservoir installation",
+  "Corrugated steel tank supply",
+  "Borehole and dam water integration",
+] as const;
+
 export type ServiceSection = {
   heading: string;
+  id?: string;
   paragraphs: string[];
 };
 
@@ -13,7 +58,8 @@ export const DAM_LINERS_CONTENT = {
     "South African farms, mines and game reserves lose thousands of litres each year through seepage in unlined earth dams. Clay soils that look watertight often crack in dry seasons; sandy pockets drain faster than evaporation alone can explain. A correctly specified and installed dam liner stops that loss, protects groundwater and keeps stored water available for irrigation, livestock and firefighting when boreholes or municipal supply are under pressure.",
   sections: [
     {
-      heading: "Why Dam Liners Matter on South African Properties",
+      id: "why-liners",
+      heading: "Why Dam Liners Matter in South Africa",
       paragraphs: [
         "Rainfall in much of the country is seasonal and unpredictable. Farmers buffer dry months by storing runoff and borehole water in farm dams, but an unlined dam can lose 30% or more of its volume to seepage depending on soil type. In Limpopo, Mpumalanga and the Western Cape, clients routinely combine HDPE-lined earth dams with corrugated steel tanks so irrigation and stock water continue through droughts and load-shedding.",
         "Liners also contain water that might otherwise pick up salts, iron or sediment from the dam floor — important where water is pumped to pivots, drip lines or drinking troughs. For mining and industrial sites, geomembrane lining helps meet containment expectations and reduces the risk of uncontrolled seepage into surrounding land.",
@@ -76,6 +122,9 @@ export const DAM_LINERS_CONTENT = {
     },
   ] satisfies ServiceFaqItem[],
   relatedLinks: [
+    { href: "/hdpe-dam-lining", label: "HDPE Dam Lining" },
+    { href: "/pvc-dam-lining", label: "PVC Dam Lining" },
+    { href: "/torch-on-dam-lining", label: "Torch-On Dam Lining" },
     { href: "/farm-dam-liners", label: "Farm Dam Liners" },
     { href: "/mining-dam-liners", label: "Mining Dam Liners" },
     { href: "/steel-water-storage-tanks", label: "Steel Water Tanks" },
@@ -138,7 +187,7 @@ export const BITUMEN_CONTENT = {
     },
   ] satisfies ServiceFaqItem[],
   relatedLinks: [
-    { href: "/bitumen-waterproofing-services-and-more", label: "All Waterproofing Services" },
+    { href: "/services", label: "All Waterproofing Services" },
     { href: "/dam-liners", label: "Dam Liners" },
     { href: "/waterproofing-and-dam-liners", label: "Waterproofing FAQ" },
     { href: "/projects", label: "Recent Projects" },
@@ -267,8 +316,86 @@ export const SERVICES_HUB_CONTENT = {
       answer:
         "Material warranties of up to 10 years apply on qualifying liner and waterproofing products. Workmanship is covered per project agreement — ask for details on your quote.",
     },
+    {
+      question: "Can you repair a leaking dam without a full reline?",
+      answer:
+        "Often yes, if damage is localised and the liner is otherwise sound. We patch HDPE, repair torch-on sections or recommend relining when UV degradation or widespread failure makes patching uneconomical.",
+    },
+    {
+      question: "Do you line steel and concrete reservoirs?",
+      answer:
+        "Yes. Steel tanks receive PVC lining as standard; concrete and cement dams may use bitumen torch-on or HDPE depending on structure and use. See our reservoir lining page for options.",
+    },
   ] satisfies ServiceFaqItem[],
 };
+
+export const SERVICES_OVERVIEW_CARDS = [
+  {
+    title: "HDPE & PVC Dam Liners",
+    description:
+      "Geomembrane lining for farm dams, mining ponds and earth reservoirs — HDPE, PVC and torch-on options.",
+    href: "/dam-liners",
+    cta: "Dam liner services",
+  },
+  {
+    title: "Corrugated Steel Water Tanks",
+    description:
+      "Galvanised steel reservoirs with PVC lining from 11 kL to 500 kL+ for farms, mines and rural storage.",
+    href: "/steel-water-storage-tanks",
+    cta: "Steel tank installation",
+  },
+  {
+    title: "Bitumen Waterproofing",
+    description:
+      "Torch-on, self-adhesive and liquid systems for roofs, foundations, retaining walls and reservoirs.",
+    href: "/bitumen-waterproofing",
+    cta: "Waterproofing services",
+  },
+  {
+    title: "Leaking Dam Repair & Maintenance",
+    description:
+      "Assess failed liners, patch HDPE, reline dams and maintain roofs and reservoirs before small leaks worsen.",
+    href: "/dam-repair-services",
+    cta: "Dam repair services",
+  },
+  {
+    title: "Reservoir & Pond Lining",
+    description:
+      "Line or reline steel, concrete and farm ponds with PVC, HDPE or bitumen systems suited to the structure.",
+    href: "/reservoir-lining",
+    cta: "Reservoir lining",
+  },
+  {
+    title: "Agricultural Water Storage",
+    description:
+      "Integrated dam, tank and irrigation storage for farms, game lodges and borehole backup systems.",
+    href: "/agricultural-water-storage",
+    cta: "Farm water storage",
+  },
+] as const;
+
+export const SERVICES_PROCESS_STEPS = [
+  {
+    title: "Submit enquiry",
+    text: "Call, email or use our quote form with location, photos and approximate dimensions.",
+  },
+  {
+    title: "Site inspection",
+    text: "We assess on site or from your photos — soil, slopes, access and how water will be used.",
+  },
+  {
+    title: "Material recommendation",
+    text: "HDPE, PVC, steel tank or bitumen — specified for your dam size, use and budget.",
+  },
+  {
+    title: "Installation",
+    text: "Prepared subgrades, welded seams, anchored liners and commissioned tanks or membranes.",
+  },
+  {
+    title: "Handover",
+    text: "Maintenance guidance, warranty documentation and support after project completion.",
+  },
+] as const;
 
 export const FAQ_PAGE_CONTENT = {
   intro:

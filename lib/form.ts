@@ -85,7 +85,7 @@ export function parseLeadFormData(
   if (!message) {
     return {
       ok: false,
-      error: "Please describe your project or enquiry in the message field.",
+      error: "Please describe your project or message so we can quote accurately.",
     };
   }
 

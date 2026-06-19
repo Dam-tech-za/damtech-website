@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { SectionHeading } from "@/components/SectionHeading";
 import { SERVICE_LINKS } from "@/lib/site";
 
 type InternalServiceLinksProps = {
@@ -14,8 +15,8 @@ export function InternalServiceLinks({
 
   return (
     <section className="content-wrap border-t border-slate-200 pt-10">
-      <h2 className="section-heading">{heading}</h2>
-      <ul className="mt-6 grid gap-3 sm:grid-cols-2">
+      <SectionHeading className="!mt-0">{heading}</SectionHeading>
+      <ul className="mt-6 grid gap-4 sm:grid-cols-2 sm:gap-6 lg:gap-8">
         {links.map((link) => (
           <li key={link.href}>
             <Link

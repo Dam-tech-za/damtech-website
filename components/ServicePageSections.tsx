@@ -1,5 +1,7 @@
 import Link from "next/link";
 import type { ServiceFaqItem, ServiceSection } from "@/lib/service-pages-content";
+import { LazyFAQ } from "@/components/lazy";
+import { SectionHeading } from "@/components/SectionHeading";
 
 export function ServiceProseSections({
   sections,
@@ -11,8 +13,8 @@ export function ServiceProseSections({
   return (
     <div className={`space-y-12 ${className}`}>
       {sections.map((section) => (
-        <div key={section.heading}>
-          <h2 className="section-heading">{section.heading}</h2>
+        <div key={section.id ?? section.heading}>
+          <SectionHeading id={section.id}>{section.heading}</SectionHeading>
           {section.paragraphs.map((paragraph) => (
             <p
               key={paragraph.slice(0, 48)}
@@ -34,26 +36,7 @@ export function ServiceFaqSection({
   faqs: ServiceFaqItem[];
   heading?: string;
 }) {
-  return (
-    <div>
-      <h2 className="section-heading">{heading}</h2>
-      <div className="mt-6 space-y-4">
-        {faqs.map((item) => (
-          <details
-            key={item.question}
-            className="group rounded-2xl border border-slate-200 bg-white p-5 open:shadow-sm"
-          >
-            <summary className="cursor-pointer list-none font-semibold text-navy marker:content-none [&::-webkit-details-marker]:hidden">
-              {item.question}
-            </summary>
-            <p className="mt-3 text-sm leading-relaxed text-slate-600">
-              {item.answer}
-            </p>
-          </details>
-        ))}
-      </div>
-    </div>
-  );
+  return <LazyFAQ items={faqs} heading={heading} />;
 }
 
 export function RelatedPageLinks({
@@ -65,7 +48,7 @@ export function RelatedPageLinks({
 }) {
   return (
     <div>
-      <h2 className="section-heading">{heading}</h2>
+      <SectionHeading>{heading}</SectionHeading>
       <ul className="mt-4 flex flex-wrap gap-3">
         {links.map((link) => (
           <li key={link.href}>

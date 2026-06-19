@@ -20,6 +20,8 @@ export function ProjectGallery({ images }: ProjectGalleryProps) {
               src={image.src}
               alt={image.alt}
               fill
+              loading="lazy"
+              fetchPriority="low"
               className="object-cover"
               sizes="(max-width: 768px) 100vw, 480px"
             />

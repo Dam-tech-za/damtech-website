@@ -1,3 +1,10 @@
+import { IMAGE_PATHS } from "./images";
+import {
+  AGRICULTURAL_STORAGE_SCHEMA_OFFERS,
+  MINING_LINERS_SCHEMA_OFFERS,
+  SERVICES_HUB_SCHEMA_OFFERS,
+} from "./service-pages-content";
+
 export type LocalFaqItem = {
   question: string;
   answer: string;
@@ -11,6 +18,8 @@ export type LocalLandingPage = {
   heroDescription: string;
   image: string;
   serviceName: string;
+  /** Offer names for Service JSON-LD; defaults to dam liner offers. */
+  schemaOffers?: readonly string[];
   intro: string;
   climate: string;
   soil: string;
@@ -32,7 +41,7 @@ export const LOCAL_LANDING_PAGES: LocalLandingPage[] = [
     h1: "Dam Liners & Water Storage in Pretoria",
     heroDescription:
       "Serving Pretoria, Centurion, Hammanskraal and the greater Tshwane metro with HDPE dam liners, reservoir repairs and steel water tanks for farms, estates and commercial sites.",
-    image: "/images/hdpe-dam-liner-farm-water-storage.webp",
+    image: IMAGE_PATHS.hdpeDamLinerEarthDam,
     serviceName: "Dam Liner Installation — Pretoria",
     intro:
       "Pretoria sits on the Highveld at roughly 1,300 m elevation — a city where thunderstorms can dump summer rain in hours, yet winter days stay dry for weeks. That pattern favours farm dams and estate ponds as storage, but iron-rich soils around Bronkhorstspruit and clay-loam belts near the Apies catchment often seep unless lined. Peri-urban smallholdings along the N1 and R21 corridor increasingly rely on boreholes with municipal supply as backup, which makes on-site retention a practical priority rather than an optional upgrade.",
@@ -99,7 +108,7 @@ export const LOCAL_LANDING_PAGES: LocalLandingPage[] = [
     h1: "Dam Liners & Reservoir Solutions in Johannesburg",
     heroDescription:
       "Johannesburg, the West Rand and East Rand rely on Damtech for dam liners, steel reservoir farms and waterproofing where municipal pressure, mining landscapes and industrial compliance intersect.",
-    image: "/images/corrugated-steel-water-tank-installation.webp",
+    image: IMAGE_PATHS.corrugatedSteelWaterTank,
     serviceName: "Dam Liner Installation — Johannesburg",
     intro:
       "Johannesburg’s water story is defined by demand exceeding local supply, legacy mining landscapes and development pushing agriculture and industry onto the same dolomitic fringe. Properties on the West Rand near Krugersdorp and Randfontein often store process and irrigation water on disturbed ground. On the East Rand, logistics hubs and agribusiness packhouses need tanks and lined ponds where space is measured in metres, not hectares.",
@@ -166,7 +175,7 @@ export const LOCAL_LANDING_PAGES: LocalLandingPage[] = [
     h1: "Dam Liners for Limpopo Farms & Game Reserves",
     heroDescription:
       "Hoedspruit, Tzaneen, Phalaborwa and the Limpopo Lowveld and Bushveld — Damtech installs liners built for heat, wildlife pressure and long dry seasons.",
-    image: "/images/bitumen-waterproofing-roof-reservoir-repair.webp",
+    image: IMAGE_PATHS.bitumenWaterproofingRoof,
     serviceName: "Dam Liner Installation — Limpopo",
     intro:
       "Limpopo stretches from misty Letaba citrus valleys to hot Bushveld game reserves along the Kruger western fence. Rainfall varies sharply: Tzaneen can record generous summer totals while Hoedspruit and the Olifants valley see prolonged dry spells. Farm dams and lodge reservoirs are the backbone of irrigation and wildlife water — unlined basins in sandy granite soils can lose water faster than managers realise until borehole bills spike.",
@@ -229,8 +238,9 @@ export const LOCAL_LANDING_PAGES: LocalLandingPage[] = [
     h1: "Dam Liners & Steel Tanks in Mpumalanga",
     heroDescription:
       "From eMalahleni coal-belt yards to Lowveld sugar and Komatiland forestry — Damtech delivers lining and steel tank solutions for Mpumalanga’s mixed industrial and agricultural economy.",
-    image: "/images/corrugated-steel-water-tank-installation.webp",
+    image: IMAGE_PATHS.corrugatedSteelWaterTank,
     serviceName: "Water Storage Solutions — Mpumalanga",
+    schemaOffers: SERVICES_HUB_SCHEMA_OFFERS,
     intro:
       "Mpumalanga divides cleanly into a cool Highveld grassland — Witbank, Middelburg, Ermelo — and a subtropical Lowveld corridor toward Nelspruit and Malelane. Coal mining, steel-related industry and power generation cluster on the Highveld; sugar, citrus and forestry dominate the east. Both zones store water differently: earth dams feed irrigation and process circuits, while steel tank farms serve compact mine and mill yards where dams are impractical on leased land.",
     climate:
@@ -292,7 +302,7 @@ export const LOCAL_LANDING_PAGES: LocalLandingPage[] = [
     h1: "Dam Liners for the Western Cape",
     heroDescription:
       "Wine, fruit and livestock farms from the Boland to the Overberg rely on Damtech HDPE lining to keep scarce summer water in farm dams for irrigation and stock.",
-    image: "/images/blog/hdpe-dam-liner-installation-farm-dam.webp",
+    image: IMAGE_PATHS.hdpeDamLinerInstallationLimpopo,
     serviceName: "HDPE Dam Liner Installation — Western Cape",
     intro:
       "Western Cape agriculture operates under some of the country’s tightest water scrutiny. Winter cold fronts fill dams between June and August; summers are dry, windy and unforgiving on open water. Farmers in Stellenbosch, Franschhoek, Grabouw and the Swartland cannot treat seepage as acceptable losses — many dams sit on sandstone-derived soils and weathered granite that drink water year-round without a visible leak on the surface.",
@@ -352,13 +362,13 @@ export const LOCAL_LANDING_PAGES: LocalLandingPage[] = [
   },
   {
     slug: "farm-dam-liners",
-    title: "Farm Dam Liners South Africa | HDPE & PVC | Damtech",
+    title: "Farm Dam Liners | HDPE & PVC Dam Lining South Africa",
     description:
-      "Farm dam liners across South Africa — HDPE, PVC and bitumen options to stop seepage, protect irrigation water and support livestock on agricultural properties.",
-    h1: "Farm Dam Liners for South African Agriculture",
+      "Protect irrigation, livestock and borehole water storage with farm dam liners installed by Damtech. HDPE and PVC lining solutions for farms across South Africa.",
+    h1: "Farm Dam Liners",
     heroDescription:
       "Stop losing irrigation and livestock water to seepage. Damtech installs farm dam liners matched to soil type, herd pressure, pivot schedules and how you actually use stored water.",
-    image: "/images/blog/bonsmara-cattle-beside-hdpe-lined-farm-dam.webp",
+    image: IMAGE_PATHS.hdpeLinedFarmReservoirCattle,
     serviceName: "Farm Dam Liner Installation",
     intro:
       "A farm dam is often the largest capital asset on a property after land itself — yet many remain unlined on soils that were never watertight. South African producers face municipal cost pressure, load-shedding that stops borehole pumps mid-irrigation, and drought cycles that make every megalitre in January worth more than the same megalitre in June. Lining is how you keep winter rain and borehole top-up available for cattle, pivots and packhouses without rebuilding the entire embankment.",
@@ -420,8 +430,9 @@ export const LOCAL_LANDING_PAGES: LocalLandingPage[] = [
     h1: "Mining Dam Liners & Process Water Containment",
     heroDescription:
       "Contain process, storm and runoff water on mining and industrial sites with HDPE lining designed for puncture protection, chemical compatibility review and long service life.",
-    image: "/images/hdpe-dam-liner-farm-water-storage.webp",
+    image: IMAGE_PATHS.hdpeDamLinerEarthDam,
     serviceName: "Mining Dam Liner Installation",
+    schemaOffers: MINING_LINERS_SCHEMA_OFFERS,
     intro:
       "Mining and quarrying move earth, expose groundwater paths and concentrate water in dams that were never part of the original landscape. Whether coal on the Mpumalanga Highveld, platinum on the Bushveld or aggregate in Gauteng, operators store process water, storm runoff and sometimes attenuation volumes that cannot be allowed to seep unchecked. HDPE geomembrane is the default barrier — but thickness, underlay and leak detection must follow site-specific review, not catalogue defaults.",
     climate:
@@ -487,8 +498,9 @@ export const LOCAL_LANDING_PAGES: LocalLandingPage[] = [
     h1: "Agricultural Water Storage Solutions",
     heroDescription:
       "Plan farm water security with lined earth dams, steel reservoirs and maintenance — integrated storage for irrigation, livestock and borehole backup.",
-    image: "/images/damtech-dam-liners-water-storage-solutions.webp",
+    image: IMAGE_PATHS.damtechWaterStorageHero,
     serviceName: "Agricultural Water Storage",
+    schemaOffers: AGRICULTURAL_STORAGE_SCHEMA_OFFERS,
     intro:
       "Single-dam thinking leaves farms exposed. A typical resilient layout combines catchment storage in a lined earth dam, pressurised or clean water in a steel tank near the homestead, and borehole pumping timed around load-shedding. Agricultural water storage is not only about volume — it is about where water sits in the system when pivots start, when calving season peaks, and when municipal supply throttles back.",
     climate:

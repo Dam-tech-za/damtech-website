@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Hero } from "@/components/Hero";
 import { PageSeo } from "@/components/PageSeo";
+import { IMAGE_PATHS } from "@/lib/images";
 import { createPageMetadata } from "@/lib/pages";
 import { phoneTel, siteConfig } from "@/lib/site";
 
@@ -10,7 +11,7 @@ const seo = {
     "Thank you for contacting Damtech. We have received your enquiry and will be in touch shortly regarding your dam liner, tank or waterproofing project.",
   path: "/thank-you",
   h1: "Thank You",
-  image: "/images/damtech-dam-liners-water-storage-solutions.webp",
+  image: IMAGE_PATHS.damtechWaterStorageHero,
   noIndex: true,
 };
 
@@ -30,13 +31,13 @@ export default function ThankYouPage() {
         compact
         showActions={false}
         title={seo.h1}
-        description="Your enquiry has been received. A member of the Damtech team will review your project details and contact you soon."
+        description="Your enquiry has been received. Thank you — Damtech has received your enquiry and will contact you shortly."
       />
 
       <section className="content-wrap max-w-2xl">
         <div className="rounded-2xl border border-green-200 bg-green-50 p-8 text-center">
           <p className="text-lg font-medium text-navy">
-            We appreciate you reaching out.
+            Thank you. Damtech has received your enquiry and will contact you shortly.
           </p>
           <p className="mt-3 text-slate-600">
             For urgent enquiries, call{" "}

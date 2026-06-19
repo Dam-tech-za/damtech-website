@@ -1,13 +1,17 @@
 import Link from "next/link";
-import { CTA } from "@/components/CTA";
+import { SectionHeading } from "@/components/SectionHeading";
 import { HomeHero } from "@/components/HomeHero";
-import { InternalServiceLinks } from "@/components/InternalServiceLinks";
+import { TrustStrip } from "@/components/TrustStrip";
 import { PageImage } from "@/components/PageImage";
 import { PageSeo } from "@/components/PageSeo";
 import { ServiceCard } from "@/components/ServiceCard";
 import { createPageMetadata, PAGE_SEO } from "@/lib/pages";
 import { PROJECTS } from "@/lib/site";
 import { SITE_IMAGES } from "@/lib/images";
+import {
+  LazyCTA as CTA,
+  LazyInternalServiceLinks as InternalServiceLinks,
+} from "@/components/lazy";
 
 export const metadata = createPageMetadata(PAGE_SEO.home);
 
@@ -58,6 +62,8 @@ export default function HomePage() {
 
       <HomeHero />
 
+      <TrustStrip />
+
       <section className="content-wrap">
         <div className="grid items-center gap-8 lg:grid-cols-2">
           <PageImage
@@ -65,7 +71,7 @@ export default function HomePage() {
             priority
           />
           <div className="rounded-2xl border border-sky-100 bg-sky-50 p-6 sm:p-8">
-            <h2 className="section-heading">10-Year Warranty On All Our Services</h2>
+            <SectionHeading className="!mt-0">10-Year Warranty On All Our Services</SectionHeading>
             <p className="mt-3 text-slate-600">
               We stand behind the quality of our work with a comprehensive 10-year
               warranty. This warranty covers all aspects of our waterproofing
@@ -78,8 +84,8 @@ export default function HomePage() {
 
       <section className="bg-slate-50">
         <div className="content-wrap">
-          <h2 className="section-heading">What We Offer</h2>
-          <div className="mt-8 grid gap-6 md:grid-cols-3">
+          <SectionHeading className="!mt-0">What We Offer</SectionHeading>
+          <div className="mt-8 content-grid-3">
             {SERVICES.map((service) => (
               <ServiceCard key={service.href} {...service} />
             ))}
@@ -88,7 +94,7 @@ export default function HomePage() {
       </section>
 
       <section className="content-wrap">
-        <h2 className="section-heading">We Do Maintenance</h2>
+        <SectionHeading>We Do Maintenance</SectionHeading>
         <p className="mt-3 max-w-3xl text-slate-600">
           Protect your home with comprehensive waterproofing maintenance and
           services. Our experts ensure your property remains safe from water
@@ -116,8 +122,8 @@ export default function HomePage() {
 
       <section className="bg-slate-50">
         <div className="content-wrap">
-          <h2 className="section-heading">How It Works</h2>
-          <div className="mt-8 grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+          <SectionHeading className="!mt-0">How It Works</SectionHeading>
+          <div className="mt-8 content-grid-4">
             {STEPS.map((item, index) => (
               <article
                 key={item.title}
@@ -138,12 +144,12 @@ export default function HomePage() {
 
       <section className="content-wrap">
         <div className="flex flex-wrap items-end justify-between gap-4">
-          <h2 className="section-heading">Explore Some Of Our Work</h2>
+          <SectionHeading className="!mt-0">Explore Some Of Our Work</SectionHeading>
           <Link href="/projects" className="text-sm font-semibold text-water hover:text-navy">
             View all projects →
           </Link>
         </div>
-        <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-8 content-grid-3">
           {PROJECTS.map((project) => (
             <Link
               key={project.href}
@@ -164,7 +170,7 @@ export default function HomePage() {
 
       <section className="bg-navy text-white">
         <div className="content-wrap">
-          <h2 className="text-2xl font-bold sm:text-3xl">Why Choose Us</h2>
+          <SectionHeading className="!mt-0 text-white">Why Choose Us</SectionHeading>
           <p className="mt-4 max-w-3xl text-slate-200">
             With years of experience in the dam liner, waterproofing and
             reservoir industry, we bring unparalleled knowledge and skill to
