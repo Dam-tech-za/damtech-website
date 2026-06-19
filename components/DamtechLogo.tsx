@@ -19,7 +19,7 @@ export function DamtechLogo({ size = 40, className }: DamtechLogoProps) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 170 170"
+      viewBox="18 -7 138 138"
       width={size}
       height={size}
       fill="none"

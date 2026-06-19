@@ -7,9 +7,9 @@ export function Header() {
   return (
     <header className="sticky top-0 z-50 border-b border-slate-200/80 bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/90">
       <div className="site-container relative flex items-center justify-between gap-4 py-3.5 lg:gap-6 lg:py-4">
-        <Link href="/" className="group flex min-w-0 shrink-0 items-center gap-3">
-          <DamtechLogo size={40} className="shrink-0" />
-          <span className="min-w-0 leading-tight">
+        <Link href="/" className="group flex min-w-0 shrink-0 items-center gap-2.5 sm:gap-3">
+          <DamtechLogo size={40} className="block shrink-0 translate-y-0.5" />
+          <span className="flex min-w-0 flex-col justify-center leading-tight">
             <span className="block truncate text-lg font-bold tracking-tight text-navy">
               {siteConfig.name}
             </span>
