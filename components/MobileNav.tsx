@@ -65,13 +65,13 @@ export function MobileNav({ links }: MobileNavProps) {
         <>
           <button
             type="button"
-            className="fixed inset-0 top-16 z-40 bg-navy/30 backdrop-blur-[1px] lg:hidden"
+            className="fixed inset-0 top-[var(--site-header-height)] z-40 bg-navy/30 backdrop-blur-[1px] lg:hidden"
             aria-label="Close menu"
             onClick={() => setOpen(false)}
           />
           <nav
             id="mobile-nav-panel"
-            className="fixed inset-x-0 top-16 z-50 max-h-[calc(100dvh-4rem)] overflow-y-auto border-b border-slate-200 bg-white px-4 py-4 shadow-lg sm:px-6 lg:hidden"
+            className="scrollbar-hide fixed inset-x-0 top-[var(--site-header-height)] z-50 max-h-[calc(100dvh-var(--site-header-height))] overflow-y-auto border-b border-slate-200 bg-white px-4 py-4 shadow-lg sm:px-6 lg:hidden"
             aria-label="Mobile"
           >
             <ul className="site-container flex flex-col gap-1 !px-0">

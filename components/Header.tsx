@@ -1,11 +1,56 @@
+"use client";
+
 import Link from "next/link";
+import { useEffect, useRef, useState } from "react";
 import { DamtechLogo } from "@/components/DamtechLogo";
 import { MobileNav } from "@/components/MobileNav";
 import { HEADER_NAV_LINKS, siteConfig } from "@/lib/site";
 
+const SCROLL_DELTA = 10;
+const REVEAL_AT_TOP_PX = 72;
+
 export function Header() {
+  const [visible, setVisible] = useState(true);
+  const lastScrollY = useRef(0);
+  const ticking = useRef(false);
+
+  useEffect(() => {
+    lastScrollY.current = window.scrollY;
+
+    const onScroll = () => {
+      if (ticking.current) {
+        return;
+      }
+
+      ticking.current = true;
+
+      window.requestAnimationFrame(() => {
+        const currentY = window.scrollY;
+        const delta = currentY - lastScrollY.current;
+
+        if (currentY <= REVEAL_AT_TOP_PX) {
+          setVisible(true);
+        } else if (delta > SCROLL_DELTA) {
+          setVisible(false);
+        } else if (delta < -SCROLL_DELTA) {
+          setVisible(true);
+        }
+
+        lastScrollY.current = currentY;
+        ticking.current = false;
+      });
+    };
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
   return (
-    <header className="sticky top-0 z-50 border-b border-slate-200/80 bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/90">
+    <header
+      className={`site-header fixed inset-x-0 top-0 z-50 border-b border-white/35 bg-white/60 shadow-[0_8px_32px_rgba(15,39,68,0.06)] backdrop-blur-xl transition-transform duration-300 ease-out supports-[backdrop-filter]:bg-white/50 ${
+        visible ? "translate-y-0" : "-translate-y-full"
+      }`}
+    >
       <div className="site-container relative flex items-center justify-between gap-4 py-3.5 lg:gap-6 lg:py-4">
         <Link href="/" className="group flex min-w-0 shrink-0 items-center gap-2.5 sm:gap-3">
           <DamtechLogo size={40} className="block shrink-0 translate-y-0.5" />

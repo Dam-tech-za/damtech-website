@@ -9,8 +9,24 @@
 }
 
 @layer base {
+  :root {
+    --site-header-height: 4.25rem;
+  }
+
+  @media (min-width: 1024px) {
+    :root {
+      --site-header-height: 4.5rem;
+    }
+  }
+
   html {
     scroll-behavior: smooth;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  html::-webkit-scrollbar {
+    display: none;
   }
 
   body {
@@ -354,6 +370,20 @@
 
   .site-container {
     @apply mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8;
+  }
+
+  .site-header-spacer {
+    height: var(--site-header-height);
+    flex-shrink: 0;
+  }
+
+  .scrollbar-hide {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
   }
 
   .content-wrap {
