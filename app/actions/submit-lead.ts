@@ -1,7 +1,8 @@
 "use server";
 
+import { sendLeadEmail, leadEmailChannel } from "@/lib/email";
 import { parseLeadFormData } from "@/lib/form";
-import { insertLead } from "@/lib/supabase/server";
+import { insertLead, isSupabaseConfigured } from "@/lib/supabase/server";
 
 export type SubmitLeadResult =
   | { success: true }
@@ -18,26 +19,30 @@ export async function submitLead(
   }
 
   const { data } = parsed;
+  const channel = leadEmailChannel(sourcePage);
 
-  const result = await insertLead({
-    name: data.name,
-    company: data.company || null,
-    phone: data.phone || null,
-    email: data.email || null,
-    province: data.province || null,
-    service_required: data.serviceRequired,
-    project_size: data.projectSize || null,
-    project_location: data.projectLocation || null,
-    message: data.message,
-    source_page: data.sourcePage,
-  });
+  const emailResult = await sendLeadEmail(data, channel);
+  if (!emailResult.ok) {
+    return { success: false, error: emailResult.error };
+  }
 
-  if (!result.ok) {
-    return {
-      success: false,
-      error:
-        "We could not save your enquiry right now. Please call us directly or try again shortly.",
-    };
+  if (isSupabaseConfigured()) {
+    const result = await insertLead({
+      name: data.name,
+      company: data.company || null,
+      phone: data.phone || null,
+      email: data.email || null,
+      province: data.province || null,
+      service_required: data.serviceRequired,
+      project_size: data.projectSize || null,
+      project_location: data.projectLocation || null,
+      message: data.message,
+      source_page: data.sourcePage,
+    });
+
+    if (!result.ok) {
+      console.error("[leads] Supabase insert failed after email sent:", result.error);
+    }
   }
 
   return { success: true };
