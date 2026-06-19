@@ -13,25 +13,43 @@ export const siteConfig = {
 /** E.164 tel link for the business phone. */
 export const phoneTel = siteConfig.phone.replace(/\s/g, "");
 
+export type NavLink = {
+  href: string;
+  label: string;
+};
+
 export const OFFICES = [
   { name: "Head Office — Pretoria", phone: "+27 (0) 82 853 1026" },
   { name: "Regional Office — Western Cape", phone: "+27 (0) 82 853 1026" },
 ] as const;
 
-export const NAV_LINKS = [
+/** Desktop header navigation (quote button is separate). */
+export const HEADER_NAV_LINKS: NavLink[] = [
   { href: "/", label: "Home" },
   { href: "/dam-liners", label: "Dam Liners" },
   { href: "/steel-water-storage-tanks", label: "Steel Tanks" },
   { href: "/bitumen-waterproofing", label: "Waterproofing" },
-  {
-    href: "/bitumen-waterproofing-services-and-more",
-    label: "Services",
-  },
-  { href: "/about-us-waterproofing-company", label: "About" },
+  { href: "/bitumen-waterproofing-services-and-more", label: "Services" },
+  { href: "/projects", label: "Projects" },
   { href: "/blog", label: "Blog" },
   { href: "/contact", label: "Contact" },
-  { href: "/quote", label: "Get a Quote" },
-] as const;
+];
+
+/** @deprecated Use HEADER_NAV_LINKS or FOOTER_LINKS */
+export const NAV_LINKS = HEADER_NAV_LINKS;
+
+export const FOOTER_LINKS: NavLink[] = [
+  { href: "/", label: "Home" },
+  { href: "/dam-liners", label: "Dam Liners" },
+  { href: "/steel-water-storage-tanks", label: "Steel Water Tanks" },
+  { href: "/bitumen-waterproofing", label: "Bitumen Waterproofing" },
+  { href: "/bitumen-waterproofing-services-and-more", label: "Services" },
+  { href: "/projects", label: "Projects" },
+  { href: "/blog", label: "Blog" },
+  { href: "/waterproofing-and-dam-liners", label: "FAQ" },
+  { href: "/contact", label: "Contact" },
+  { href: "/quote", label: "Request a Quote" },
+];
 
 export const SERVICE_LINKS = [
   { href: "/dam-liners", label: "Dam Liners (HDPE, PVC, Torch-On)" },
@@ -44,22 +62,32 @@ export const SERVICE_LINKS = [
   { href: "/waterproofing-and-dam-liners", label: "FAQ" },
 ] as const;
 
-export const BLOG_LINKS = [
-  { href: "/blog", label: "Latest Articles" },
-  { href: "/category/uncategorized", label: "Uncategorized" },
-  {
-    href: "/author/infodam-tech-co-za",
-    label: "Author: Tiaan",
-  },
-] as const;
-
 export const PROJECTS = [
-  { location: "Hartswater", detail: "HDPE Dam Liner — 3,472 m²" },
-  { location: "Grabouw", detail: "HDPE Dam Liner — 10,520 m²" },
-  { location: "Hoedspruit", detail: "Bitumen Torch-On Dam Liner — 9,240 m²" },
-  { location: "Stellenbosch", detail: "HDPE Dam Liner — 13,360 m²" },
-  { location: "Bloemfontein", detail: "HDPE Dam Liner — 8,760 m²" },
-  { location: "Witbank", detail: "Steel Water Tanks — 6 × 60 kL" },
+  {
+    href: "/projects/hartswater-hdpe-dam-liner",
+    location: "Hartswater",
+    detail: "HDPE Dam Liner — 3,472 m²",
+  },
+  {
+    href: "/projects/grabouw-hdpe-farm-dam",
+    location: "Grabouw",
+    detail: "HDPE Dam Liner — 10,520 m²",
+  },
+  {
+    href: "/projects/hoedspruit-bitumen-dam-lining",
+    location: "Hoedspruit",
+    detail: "Bitumen Torch-On — 9,240 m²",
+  },
+  {
+    href: "/projects/hdpe-dam-liner-installation",
+    location: "Stellenbosch",
+    detail: "HDPE Dam Liner — 13,360 m²",
+  },
+  {
+    href: "/projects/corrugated-steel-water-tank-installation",
+    location: "Witbank",
+    detail: "Steel Water Tanks — 6 × 60 kL",
+  },
 ] as const;
 
 /** Indexable static routes for sitemap generation. */

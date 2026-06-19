@@ -28,6 +28,7 @@ export default function ThankYouPage() {
 
       <Hero
         compact
+        showActions={false}
         title={seo.h1}
         description="Your enquiry has been received. A member of the Damtech team will review your project details and contact you soon."
       />

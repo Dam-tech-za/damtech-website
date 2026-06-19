@@ -3,9 +3,18 @@ import { Hero } from "@/components/Hero";
 import { InternalServiceLinks } from "@/components/InternalServiceLinks";
 import { PageImage } from "@/components/PageImage";
 import { PageSeo } from "@/components/PageSeo";
-import { createServiceSchema } from "@/lib/seo";
+import { ProjectProofStrip } from "@/components/ProjectProofStrip";
+import { SectionCta } from "@/components/SectionCta";
+import {
+  RelatedPageLinks,
+  ServiceFaqSection,
+  ServiceProseSections,
+} from "@/components/ServicePageSections";
+import { createFaqPageSchema, createServiceSchema } from "@/lib/seo";
 import { createPageMetadata, PAGE_SEO } from "@/lib/pages";
 import { SITE_IMAGES } from "@/lib/images";
+import { STEEL_TANKS_CONTENT } from "@/lib/service-pages-content";
+import { PROJECTS } from "@/lib/site";
 
 const seo = PAGE_SEO["steel-tanks"];
 
@@ -73,34 +82,55 @@ export default function SteelTanksPage() {
           { name: "Home", path: "/" },
           { name: "Steel Water Tanks", path: seo.path },
         ]}
-        schemas={createServiceSchema({
-          name: seo.serviceName ?? seo.title,
-          description: seo.description,
-          path: seo.path,
-        })}
+        schemas={[
+          createServiceSchema({
+            name: seo.serviceName ?? seo.title,
+            description: seo.description,
+            path: seo.path,
+          }),
+          createFaqPageSchema(STEEL_TANKS_CONTENT.faqs),
+        ]}
       />
 
       <Hero
         compact
+        eyebrow="11 kL – 500 kL+"
         title={seo.h1}
-        description="Our steel water tanks are known for robust construction and long-lasting performance. Made from high-quality corrugated galvanised steel for reliable water storage."
+        description="Corrugated galvanised steel water tanks from 11 kL to 500 kL+, supplied with PVC lining. Built for farms, game reserves, mines and rural water storage."
       />
 
       <section className="content-wrap">
-        <div className="grid items-start gap-8 lg:grid-cols-2">
+        <div className="grid items-start gap-10 lg:grid-cols-2">
           <div>
-            <h2 className="section-heading">What You Can Expect</h2>
-            <p className="mt-4 text-slate-600">
-          We specialise in delivering high-quality, durable water storage
-          solutions tailored to your needs. Our tanks are crafted from 0.8 mm
-          thick corrugated hot dip galvanised steel sheets, available from 3 m
-          to 17 m in diameter. Each tank includes a standard 850 gsm PVC lining,
-          bidem floor sheet, sturdy upright columns, and an optional roof for
-              additional protection.
+            <p className="text-lg leading-relaxed text-slate-700">
+              {STEEL_TANKS_CONTENT.intro}
+            </p>
+            <p className="mt-4 leading-relaxed text-slate-600">
+              We specialise in delivering high-quality, durable water storage
+              solutions tailored to your needs. Our tanks are crafted from 0.8 mm
+              thick corrugated hot dip galvanised steel sheets, available from 3 m
+              to 17 m in diameter. Each tank includes a standard 850 gsm PVC
+              lining, bidem floor sheet, sturdy upright columns, and an optional
+              roof for additional protection.
             </p>
           </div>
           <PageImage {...SITE_IMAGES.steelTank} />
         </div>
+      </section>
+
+      <section className="bg-slate-50">
+        <div className="content-wrap">
+          <ServiceProseSections sections={STEEL_TANKS_CONTENT.sections.slice(0, 2)} />
+        </div>
+      </section>
+
+      <section className="content-wrap">
+        <h2 className="section-heading">Tank Capacity Tables</h2>
+        <p className="mt-4 max-w-3xl text-slate-600">
+          Select a diameter and ring height to match your daily water demand,
+          borehole refill rate and available site footprint. Full schedules are
+          available on request for sizes above 500 kL.
+        </p>
       </section>
 
       <section className="bg-slate-50">
@@ -131,8 +161,31 @@ export default function SteelTanksPage() {
         </div>
       </section>
 
+      <section className="content-wrap">
+        <ServiceProseSections sections={STEEL_TANKS_CONTENT.sections.slice(2)} />
+        <div className="mt-10">
+          <SectionCta
+            title="Need help sizing a tank?"
+            description="Tell us daily water use, borehole output and site footprint — we will recommend diameter, ring height and optional roof."
+          />
+        </div>
+        <ProjectProofStrip
+          title="Steel tank installations"
+          projects={PROJECTS.filter((project) => project.detail.includes("Steel"))}
+        />
+        <div className="mt-12">
+          <ServiceFaqSection faqs={STEEL_TANKS_CONTENT.faqs} />
+        </div>
+        <div className="mt-12">
+          <RelatedPageLinks links={STEEL_TANKS_CONTENT.relatedLinks} />
+        </div>
+      </section>
+
       <InternalServiceLinks currentPath={seo.path} />
-      <CTA />
+      <CTA
+        title="Need Help Sizing a Reservoir?"
+        description="Share your daily water use, pump details and site photos — we will recommend a tank diameter and height that fits."
+      />
     </>
   );
 }

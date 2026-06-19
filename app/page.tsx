@@ -34,22 +34,18 @@ const SERVICES = [
 
 const STEPS = [
   {
-    step: "1",
     title: "Request Your Free Quote",
     text: "Fill out the contact form or call us at +27 82 853 1026 to schedule a free quote and inspection.",
   },
   {
-    step: "2",
     title: "Free Site Inspection",
     text: "A waterproofing expert from our team will visit the site and complete a detailed inspection.",
   },
   {
-    step: "3",
     title: "Tailored Solution",
     text: "We provide a personalised solution outlining the problem, proposed service and expected outcomes.",
   },
   {
-    step: "4",
     title: "Service Delivery",
     text: "Our technicians visit your property to deliver the required service depending on your needs.",
   },
@@ -121,22 +117,22 @@ export default function HomePage() {
       <section className="bg-slate-50">
         <div className="content-wrap">
           <h2 className="section-heading">How It Works</h2>
-          <ol className="mt-8 grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-            {STEPS.map((item) => (
-              <li
-                key={item.step}
-                className="rounded-2xl border border-slate-200 bg-white p-6"
+          <div className="mt-8 grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+            {STEPS.map((item, index) => (
+              <article
+                key={item.title}
+                className="flex h-full flex-col rounded-2xl border border-slate-200 bg-white p-6"
               >
                 <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-water text-sm font-bold text-white">
-                  {item.step}
+                  {index + 1}
                 </span>
                 <h3 className="mt-4 font-semibold text-navy">{item.title}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-slate-600">
+                <p className="mt-2 flex-1 text-sm leading-relaxed text-slate-600">
                   {item.text}
                 </p>
-              </li>
+              </article>
             ))}
-          </ol>
+          </div>
         </div>
       </section>
 
@@ -149,13 +145,19 @@ export default function HomePage() {
         </div>
         <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {PROJECTS.map((project) => (
-            <article
-              key={project.location}
-              className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm"
+            <Link
+              key={project.href}
+              href={project.href}
+              className="group rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:border-water/40 hover:shadow-md"
             >
-              <h3 className="font-semibold text-navy">{project.location}</h3>
+              <h3 className="font-semibold text-navy group-hover:text-water">
+                {project.location}
+              </h3>
               <p className="mt-1 text-sm text-slate-600">{project.detail}</p>
-            </article>
+              <span className="mt-3 inline-block text-sm font-semibold text-water">
+                View project →
+              </span>
+            </Link>
           ))}
         </div>
       </section>

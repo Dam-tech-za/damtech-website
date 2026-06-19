@@ -1,11 +1,21 @@
 import { CTA } from "@/components/CTA";
+import { ComparisonTable } from "@/components/ComparisonTable";
 import { Hero } from "@/components/Hero";
 import { InternalServiceLinks } from "@/components/InternalServiceLinks";
 import { PageImage } from "@/components/PageImage";
 import { PageSeo } from "@/components/PageSeo";
-import { createServiceSchema } from "@/lib/seo";
+import { ProjectProofStrip } from "@/components/ProjectProofStrip";
+import { SectionCta } from "@/components/SectionCta";
+import {
+  RelatedPageLinks,
+  ServiceFaqSection,
+  ServiceProseSections,
+} from "@/components/ServicePageSections";
+import { createFaqPageSchema, createServiceSchema } from "@/lib/seo";
 import { createPageMetadata, PAGE_SEO } from "@/lib/pages";
 import { SITE_IMAGES } from "@/lib/images";
+import { PROJECTS } from "@/lib/site";
+import { DAM_LINERS_CONTENT } from "@/lib/service-pages-content";
 
 const seo = PAGE_SEO["dam-liners"];
 
@@ -16,30 +26,34 @@ const LINER_TYPES = [
     id: "hdpe",
     title: "HDPE",
     summary:
-      "High-Density Polyethylene liners offer high tensile strength, UV resistance and puncture resistance — ideal for large-scale farm and mining dams.",
-    sizes: "1 mm, 1.5 mm and 2 mm thicknesses",
-    uses: "Agricultural farm or earth dams and mining industry applications.",
-    lifespan: "20 to 30 years with proper installation and maintenance.",
+      "High tensile strength, UV resistance and puncture resistance — ideal for large farm and mining dams.",
+    sizes: "1 mm, 1.5 mm and 2 mm",
+    uses: "Earth dams, mining ponds, irrigation storage",
+    lifespan: "20–30 years",
   },
   {
     id: "bitumen",
-    title: "Bitumen Torch On",
+    title: "Bitumen Torch-On",
     summary:
-      "Modified bitumen applied with a torch for a seamless waterproof membrane with strong adhesion to cement surfaces.",
-    sizes: "3 mm and 4 mm thicknesses",
-    uses: "Cement dams requiring a strong bond to the surface.",
-    lifespan: "15 to 20 years with proper application and maintenance.",
+      "Heat-bonded membrane with strong adhesion to prepared cement and rigid dam surfaces.",
+    sizes: "3 mm and 4 mm",
+    uses: "Cement dams, canals, rigid reservoirs",
+    lifespan: "15–20 years",
   },
   {
     id: "pvc",
     title: "PVC",
     summary:
-      "Lightweight, flexible polyvinyl chloride liners suited to ponds, steel tanks and smaller reservoirs.",
-    sizes: "550 gsm, 600 gsm, 700 gsm, 800 gsm and 850 gsm",
-    uses: "Steel and rainwater storage tanks, cement reservoirs and small ponds.",
-    lifespan: "10 to 15 years; a roof can extend lifespan further.",
+      "Flexible liner for ponds, steel tanks and smaller reservoirs where ease of handling matters.",
+    sizes: "550–850 gsm",
+    uses: "Steel tanks, ponds, small reservoirs",
+    lifespan: "10–15 years",
   },
 ];
+
+const DAM_PROJECTS = PROJECTS.filter((project) =>
+  project.detail.includes("HDPE") || project.detail.includes("Bitumen"),
+);
 
 export default function DamLinersPage() {
   return (
@@ -49,23 +63,74 @@ export default function DamLinersPage() {
           { name: "Home", path: "/" },
           { name: "Dam Liners", path: seo.path },
         ]}
-        schemas={createServiceSchema({
-          name: seo.serviceName ?? seo.title,
-          description: seo.description,
-          path: seo.path,
-        })}
+        schemas={[
+          createServiceSchema({
+            name: seo.serviceName ?? seo.title,
+            description: seo.description,
+            path: seo.path,
+          }),
+          createFaqPageSchema(DAM_LINERS_CONTENT.faqs),
+        ]}
       />
 
       <Hero
         compact
+        eyebrow="HDPE · PVC · Bitumen"
         title={seo.h1}
-        description="Dam liners are essential for ensuring the integrity and longevity of water storage systems. They prevent leaks, reduce maintenance costs and protect the surrounding environment."
+        description="Professional HDPE, PVC and bitumen torch-on dam liner supply and installation for farm dams, earth dams and reservoirs across South Africa."
       />
 
       <section className="content-wrap">
-        <div className="grid items-start gap-8 lg:grid-cols-2">
+        <div className="grid items-start gap-10 lg:grid-cols-2">
           <div>
-            <h2 className="section-heading">Why Choose Us?</h2>
+            <p className="text-lg leading-relaxed text-slate-700">
+              {DAM_LINERS_CONTENT.intro}
+            </p>
+            <ServiceProseSections
+              sections={[DAM_LINERS_CONTENT.sections[0]!]}
+              className="mt-10"
+            />
+          </div>
+          <PageImage {...SITE_IMAGES.damLiners} />
+        </div>
+      </section>
+
+      <section className="bg-slate-50">
+        <div className="content-wrap space-y-10">
+          <h2 className="section-heading">Compare Dam Liner Types</h2>
+          <ComparisonTable
+            title="At-a-glance comparison"
+            columns={[
+              { key: "type", label: "Liner type" },
+              { key: "sizes", label: "Sizes" },
+              { key: "uses", label: "Best for" },
+              { key: "lifespan", label: "Typical lifespan" },
+            ]}
+            rows={LINER_TYPES.map((liner) => ({
+              type: liner.title,
+              sizes: liner.sizes,
+              uses: liner.uses,
+              lifespan: liner.lifespan,
+            }))}
+          />
+          <div className="grid gap-6 md:grid-cols-3">
+            {LINER_TYPES.map((liner) => (
+              <article
+                key={liner.id}
+                className="flex h-full flex-col rounded-2xl border border-slate-200 bg-white p-6"
+              >
+                <h3 className="text-lg font-semibold text-navy">{liner.title}</h3>
+                <p className="mt-2 flex-1 text-sm leading-relaxed text-slate-600">
+                  {liner.summary}
+                </p>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="content-wrap">
+        <h2 className="section-heading">Why Choose Damtech?</h2>
         <ul className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {[
             "Expert installation by certified professionals",
@@ -83,43 +148,37 @@ export default function DamLinersPage() {
             </li>
           ))}
         </ul>
-          </div>
-          <PageImage {...SITE_IMAGES.damLiners} />
+        <div className="mt-10">
+          <SectionCta
+            title="Not sure which liner fits your dam?"
+            description="Share photos, approximate dimensions and how you use stored water — we will recommend HDPE, PVC or bitumen torch-on."
+          />
         </div>
       </section>
 
-      {LINER_TYPES.map((liner, index) => (
-        <section
-          key={liner.id}
-          className={index % 2 === 0 ? "bg-slate-50" : ""}
-        >
-          <div className="content-wrap">
-            <h2 className="section-heading">{liner.title}</h2>
-            <p className="mt-4 max-w-3xl text-slate-600">{liner.summary}</p>
-            <dl className="mt-6 grid gap-4 sm:grid-cols-3">
-              <div className="rounded-xl border border-slate-200 bg-white p-4">
-                <dt className="text-sm font-semibold text-navy">Sizes</dt>
-                <dd className="mt-1 text-sm text-slate-600">{liner.sizes}</dd>
-              </div>
-              <div className="rounded-xl border border-slate-200 bg-white p-4">
-                <dt className="text-sm font-semibold text-navy">Uses</dt>
-                <dd className="mt-1 text-sm text-slate-600">{liner.uses}</dd>
-              </div>
-              <div className="rounded-xl border border-slate-200 bg-white p-4">
-                <dt className="text-sm font-semibold text-navy">Lifespan</dt>
-                <dd className="mt-1 text-sm text-slate-600">
-                  {liner.lifespan}
-                </dd>
-              </div>
-            </dl>
-          </div>
-        </section>
-      ))}
+      <section className="bg-slate-50">
+        <div className="content-wrap">
+          <ServiceProseSections sections={DAM_LINERS_CONTENT.sections.slice(1)} />
+        </div>
+      </section>
+
+      <section className="content-wrap">
+        <ProjectProofStrip
+          title="Dam liner projects"
+          projects={DAM_PROJECTS}
+        />
+        <div className="mt-12">
+          <ServiceFaqSection faqs={DAM_LINERS_CONTENT.faqs} />
+        </div>
+        <div className="mt-12">
+          <RelatedPageLinks links={DAM_LINERS_CONTENT.relatedLinks} />
+        </div>
+      </section>
 
       <InternalServiceLinks currentPath={seo.path} />
       <CTA
-        title="Have Questions?"
-        description="Call us on +27 82 853 1026 or submit our contact form and we'll be in touch."
+        title="Have Questions About Your Dam?"
+        description="Call us on +27 82 853 1026 or submit our quote form with dam dimensions and photos for a tailored liner recommendation."
       />
     </>
   );

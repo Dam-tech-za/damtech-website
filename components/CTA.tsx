@@ -22,11 +22,11 @@ export function CTA({
                 {title}
               </h2>
               <p className="mt-3 text-slate-600">{description}</p>
-              <div className="mt-6 flex flex-wrap gap-3">
-                <Link href="/quote" className="btn-primary">
+              <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+                <Link href="/quote" className="btn-primary w-full sm:w-auto">
                   Request a Quote
                 </Link>
-                <Link href="/contact" className="btn-secondary">
+                <Link href="/contact" className="btn-secondary w-full sm:w-auto">
                   Contact Damtech
                 </Link>
               </div>

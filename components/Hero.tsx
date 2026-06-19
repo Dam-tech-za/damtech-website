@@ -10,6 +10,8 @@ type HeroProps = {
   children?: ReactNode;
   compact?: boolean;
   image?: Pick<SiteImage, "src" | "alt" | "width" | "height">;
+  /** Render primary + secondary CTAs below intro (default true). */
+  showActions?: boolean;
 };
 
 /** Compact inner-page hero. Homepage uses `HomeHero` instead. */
@@ -20,11 +22,14 @@ export function Hero({
   children,
   compact = false,
   image,
+  showActions = true,
 }: HeroProps) {
+  const actions = children ?? (showActions ? <HeroActions /> : null);
+
   return (
     <section
-      className={`relative isolate overflow-hidden bg-gradient-to-br from-navy via-slate-800 to-water text-white ${
-        compact ? "py-12 sm:py-14" : "py-16 sm:py-20"
+      className={`hero-section relative isolate overflow-hidden bg-gradient-to-br from-navy via-slate-800 to-water text-white ${
+        compact ? "py-14 sm:py-16 lg:py-20" : "py-16 sm:py-20 lg:py-24"
       }`}
     >
       {image ? (
@@ -54,18 +59,24 @@ export function Hero({
 
       <div className="relative z-[1] mx-auto max-w-6xl px-4 sm:px-6">
         {eyebrow ? (
-          <p className="text-sm font-semibold uppercase tracking-widest text-sky-200">
+          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-sky-200 sm:text-sm">
             {eyebrow}
           </p>
         ) : null}
-        <h1 className="mt-2 max-w-3xl text-3xl font-bold tracking-tight sm:text-4xl lg:text-5xl">
+        <h1
+          className={`hero-title max-w-4xl font-bold tracking-tight text-balance text-white ${
+            eyebrow ? "mt-3" : "mt-0"
+          }`}
+        >
           {title}
         </h1>
         <p className="mt-4 max-w-2xl text-base leading-relaxed text-slate-200 sm:text-lg">
           {description}
         </p>
-        {children ? (
-          <div className="mt-8 flex flex-wrap gap-3">{children}</div>
+        {actions ? (
+          <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+            {actions}
+          </div>
         ) : null}
       </div>
     </section>
@@ -75,13 +86,10 @@ export function Hero({
 export function HeroActions() {
   return (
     <>
-      <Link href="/quote" className="btn-primary">
+      <Link href="/quote" className="hero-btn-primary w-full sm:w-auto">
         Request a Quote
       </Link>
-      <Link
-        href="/contact"
-        className="inline-flex items-center justify-center rounded-lg border border-white/30 bg-white/10 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-white/20"
-      >
+      <Link href="/contact" className="hero-btn-secondary w-full sm:w-auto">
         Contact Damtech
       </Link>
     </>

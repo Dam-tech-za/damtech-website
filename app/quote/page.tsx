@@ -30,6 +30,7 @@ export default function QuotePage() {
 
       <Hero
         compact
+        eyebrow="Free quote"
         title={seo.h1}
         description="Share your project details and our team will recommend a practical lining, tank or waterproofing solution with a tailored quote."
       />

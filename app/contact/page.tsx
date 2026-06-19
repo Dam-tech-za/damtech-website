@@ -39,6 +39,7 @@ export default function ContactPage() {
 
       <Hero
         compact
+        eyebrow="Contact Damtech"
         title={seo.h1}
         description="Tell us about your dam lining, steel tank or waterproofing project. We respond to quote requests and can arrange a free site inspection where needed."
       />

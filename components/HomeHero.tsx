@@ -146,13 +146,13 @@ export function HomeHero() {
 
       {/* ── z-[3]: main content ── */}
       <div className="relative z-[3] flex min-h-[88vh] items-center lg:min-h-[92vh]">
-        <div className="mx-auto w-full max-w-6xl px-4 py-24 sm:px-6 sm:py-28">
+        <div className="mx-auto w-full max-w-6xl px-4 py-28 sm:px-6 sm:py-32">
           <div className="max-w-[42rem] lg:max-w-[47rem]">
             <p className="text-xs font-semibold uppercase tracking-[0.14em] text-sky-200/90 sm:text-[0.8125rem]">
               {eyebrow}
             </p>
 
-            <h1 className="mt-3 text-[clamp(1.875rem,4.8vw,3.25rem)] font-extrabold leading-[1.08] tracking-tight text-white text-balance">
+            <h1 className="hero-title mt-3 text-white text-balance">
               {title}
             </h1>
 

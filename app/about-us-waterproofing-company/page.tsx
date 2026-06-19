@@ -4,8 +4,14 @@ import { Hero } from "@/components/Hero";
 import { InternalServiceLinks } from "@/components/InternalServiceLinks";
 import { PageImage } from "@/components/PageImage";
 import { PageSeo } from "@/components/PageSeo";
+import {
+  ServiceFaqSection,
+  ServiceProseSections,
+} from "@/components/ServicePageSections";
+import { createFaqPageSchema } from "@/lib/seo";
 import { createPageMetadata, PAGE_SEO } from "@/lib/pages";
 import { SITE_IMAGES } from "@/lib/images";
+import { ABOUT_CONTENT } from "@/lib/service-pages-content";
 
 export const metadata = createPageMetadata(PAGE_SEO.about);
 
@@ -17,28 +23,34 @@ export default function AboutPage() {
           { name: "Home", path: "/" },
           { name: "About Us", path: "/about-us-waterproofing-company" },
         ]}
+        schemas={createFaqPageSchema(ABOUT_CONTENT.faqs)}
       />
 
       <Hero
         compact
+        eyebrow="30+ years experience"
         title={PAGE_SEO.about.h1}
-        description="At Damtech, we excel in delivering top-tier solutions for earth dam liners, steel water tanks and waterproofing systems. Innovation, reliability and exceptional customer service drive everything we do."
+        description="At Damtech, we deliver earth dam liners, steel water tanks and waterproofing systems for farms, mines and commercial properties across South Africa."
       />
 
       <section className="content-wrap">
-        <div className="grid items-start gap-8 lg:grid-cols-2">
+        <div className="grid items-start gap-10 lg:grid-cols-2">
           <div>
-            <h2 className="section-heading">Who Are We?</h2>
-            <p className="mt-4 text-slate-600">
+            <p className="text-lg leading-relaxed text-slate-700">
+              {ABOUT_CONTENT.intro}
+            </p>
+
+            <h2 className="section-heading mt-10">Who Are We?</h2>
+            <p className="mt-4 leading-relaxed text-slate-600">
               We are your trusted experts in earth dam liners, waterproofing and
-              steel water storage tank suppliers with over 30+ years of experience
+              steel water storage tank suppliers with over 30 years of experience
               in the industry. With a legacy rooted in excellence, we deliver
               innovative solutions that safeguard your investment and enhance its
               longevity.
             </p>
 
-            <h2 className="section-heading mt-12">Our Mission</h2>
-            <p className="mt-4 text-slate-600">
+            <h2 className="section-heading mt-10">Our Mission</h2>
+            <p className="mt-4 leading-relaxed text-slate-600">
               To provide top-tier waterproofing and lining solutions that stand the
               test of time. We strive to exceed our clients&apos; expectations by
               offering reliable, effective and tailored services — whether you need
@@ -52,40 +64,55 @@ export default function AboutPage() {
 
       <section className="bg-slate-50">
         <div className="content-wrap">
-          <h2 className="section-heading">What We Do</h2>
+          <ServiceProseSections sections={ABOUT_CONTENT.sections.slice(0, 2)} />
+
+          <h2 className="section-heading mt-12">What We Do</h2>
           <div className="mt-8 grid gap-6 md:grid-cols-3">
             <div className="rounded-2xl border border-slate-200 bg-white p-6">
               <h3 className="font-semibold text-navy">Earth Dam Liners</h3>
-              <p className="mt-2 text-sm text-slate-600">
-                We specialise in large earth dam liners for agriculture and
-                mining applications.
+              <p className="mt-2 text-sm leading-relaxed text-slate-600">
+                HDPE, PVC and bitumen torch-on lining for agricultural farm dams,
+                mining ponds and irrigation storage nationwide.
               </p>
+              <Link
+                href="/dam-liners"
+                className="mt-4 inline-block text-sm font-medium text-water hover:underline"
+              >
+                Dam liners →
+              </Link>
             </div>
             <div className="rounded-2xl border border-slate-200 bg-white p-6">
               <h3 className="font-semibold text-navy">Steel Water Tanks</h3>
-              <p className="mt-2 text-sm text-slate-600">
-                Steel and rainwater tanks in various sizes ranging from 10 to 550
-                kL.
+              <p className="mt-2 text-sm leading-relaxed text-slate-600">
+                Corrugated galvanised reservoirs from 11 kL to 500 kL+ with PVC
+                lining, columns and optional roofs.
               </p>
+              <Link
+                href="/steel-water-storage-tanks"
+                className="mt-4 inline-block text-sm font-medium text-water hover:underline"
+              >
+                Steel tanks →
+              </Link>
             </div>
             <div className="rounded-2xl border border-slate-200 bg-white p-6">
               <h3 className="font-semibold text-navy">Waterproofing</h3>
-              <p className="mt-2 text-sm text-slate-600">
-                From foundation to roof waterproofing — we do it all.
+              <p className="mt-2 text-sm leading-relaxed text-slate-600">
+                Bitumen torch-on and maintenance for roofs, foundations and
+                retaining structures on farms and commercial buildings.
               </p>
+              <Link
+                href="/bitumen-waterproofing"
+                className="mt-4 inline-block text-sm font-medium text-water hover:underline"
+              >
+                Waterproofing →
+              </Link>
             </div>
           </div>
         </div>
       </section>
 
       <section className="content-wrap">
-        <h2 className="section-heading">30 Years Of Experience In The Industry</h2>
-        <p className="mt-4 max-w-3xl text-slate-600">
-          At Damtech, we provide top-quality dam liners with exceptional
-          expertise and innovative solutions. Our extensive experience in HDPE,
-          PVC and Bitumen Torch-On liners make us the top choice for superior dam
-          lining in South Africa.
-        </p>
+        <ServiceProseSections sections={ABOUT_CONTENT.sections.slice(2)} />
 
         <h2 className="section-heading mt-12">Specialised Services</h2>
         <ul className="mt-6 grid gap-4 sm:grid-cols-2">
@@ -105,12 +132,25 @@ export default function AboutPage() {
             </li>
           ))}
         </ul>
-        <Link
-          href="/bitumen-waterproofing-services-and-more"
-          className="btn-primary mt-8 inline-flex"
-        >
-          Learn More
-        </Link>
+
+        <div className="mt-12">
+          <ServiceFaqSection faqs={ABOUT_CONTENT.faqs} />
+        </div>
+
+        <div className="mt-10 flex flex-wrap gap-3">
+          <Link
+            href="/bitumen-waterproofing-services-and-more"
+            className="btn-primary"
+          >
+            View All Services
+          </Link>
+          <Link href="/projects" className="btn-secondary">
+            Project Case Studies
+          </Link>
+          <Link href="/quote" className="btn-secondary">
+            Request a Quote
+          </Link>
+        </div>
       </section>
 
       <InternalServiceLinks currentPath="/about-us-waterproofing-company" />

@@ -22,8 +22,9 @@ export default function ProjectsIndexPage() {
 
       <Hero
         compact
+        eyebrow="Case studies"
         title={PROJECTS_INDEX_SEO.h1}
-        description="Selected dam liner, steel tank and waterproofing installations across South Africa — from farm dams and game lodges to industrial water storage."
+        description="Case studies from Damtech dam liner, steel tank and waterproofing work across South Africa — farms, game lodges, fruit districts and industrial yards."
       />
 
       <section className="content-wrap">

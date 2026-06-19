@@ -6,15 +6,36 @@ import { submitLead } from "@/app/actions/submit-lead";
 import { PROVINCE_OPTIONS, SERVICE_OPTIONS } from "@/lib/form";
 import { phoneTel, siteConfig } from "@/lib/site";
 
-const inputClass =
-  "mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-slate-900 focus:border-water focus:outline-none focus:ring-2 focus:ring-water/30";
-const labelClass = "block text-sm font-medium text-slate-700";
-
 type LeadFormProps = {
   id?: string;
   sourcePage: string;
   submitLabel?: string;
 };
+
+function Field({
+  id,
+  label,
+  required,
+  hint,
+  children,
+}: {
+  id: string;
+  label: string;
+  required?: boolean;
+  hint?: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="form-field">
+      <label htmlFor={id} className="form-label">
+        {label}
+        {required ? <span className="text-red-600"> *</span> : null}
+      </label>
+      {children}
+      {hint ? <p className="text-xs text-slate-500">{hint}</p> : null}
+    </div>
+  );
+}
 
 export function LeadForm({
   id = "lead-form",
@@ -45,63 +66,66 @@ export function LeadForm({
   }
 
   return (
-    <form id={id} onSubmit={handleSubmit} className="space-y-4" noValidate>
-      <div className="grid gap-4 sm:grid-cols-2">
-        <label className={labelClass}>
-          Name <span className="text-red-600">*</span>
+    <form id={id} onSubmit={handleSubmit} className="space-y-6" noValidate>
+      <div className="grid gap-6 md:grid-cols-2">
+        <Field id="lead-name" label="Name" required>
           <input
+            id="lead-name"
             required
             name="name"
             type="text"
             autoComplete="name"
-            className={inputClass}
+            className="form-input"
             disabled={isPending}
           />
-        </label>
-        <label className={labelClass}>
-          Company / Farm / Organisation
+        </Field>
+        <Field id="lead-company" label="Company / Farm / Organisation">
           <input
+            id="lead-company"
             name="company"
             type="text"
             autoComplete="organization"
-            className={inputClass}
+            className="form-input"
             disabled={isPending}
           />
-        </label>
+        </Field>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2">
-        <label className={labelClass}>
-          Phone
+      <div className="grid gap-6 md:grid-cols-2">
+        <Field id="lead-phone" label="Phone">
           <input
+            id="lead-phone"
             name="phone"
             type="tel"
             autoComplete="tel"
-            className={inputClass}
+            className="form-input"
             disabled={isPending}
           />
-        </label>
-        <label className={labelClass}>
-          Email
+        </Field>
+        <Field id="lead-email" label="Email">
           <input
+            id="lead-email"
             name="email"
             type="email"
             autoComplete="email"
-            className={inputClass}
+            className="form-input"
             disabled={isPending}
           />
-        </label>
+        </Field>
       </div>
 
       <p className="text-xs text-slate-500">
-        <span className="text-red-600">*</span> Provide at least one of phone or
-        email so we can respond.
+        Provide at least one of phone or email so we can respond.
       </p>
 
-      <div className="grid gap-4 sm:grid-cols-2">
-        <label className={labelClass}>
-          Province
-          <select name="province" className={inputClass} disabled={isPending}>
+      <div className="grid gap-6 md:grid-cols-2">
+        <Field id="lead-province" label="Province">
+          <select
+            id="lead-province"
+            name="province"
+            className="form-input"
+            disabled={isPending}
+          >
             <option value="">Select province</option>
             {PROVINCE_OPTIONS.map((province) => (
               <option key={province} value={province}>
@@ -109,13 +133,13 @@ export function LeadForm({
               </option>
             ))}
           </select>
-        </label>
-        <label className={labelClass}>
-          Service required <span className="text-red-600">*</span>
+        </Field>
+        <Field id="lead-service" label="Service required" required>
           <select
+            id="lead-service"
             required
             name="serviceRequired"
-            className={inputClass}
+            className="form-input"
             disabled={isPending}
             defaultValue=""
           >
@@ -128,56 +152,55 @@ export function LeadForm({
               </option>
             ))}
           </select>
-        </label>
+        </Field>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2">
-        <label className={labelClass}>
-          Approximate dam / tank / project size
+      <div className="grid gap-6 md:grid-cols-2">
+        <Field
+          id="lead-size"
+          label="Approximate dam / tank / project size"
+        >
           <input
+            id="lead-size"
             name="projectSize"
             type="text"
             placeholder="e.g. 5 000 m² liner or 250 kL tank"
-            className={inputClass}
+            className="form-input"
             disabled={isPending}
           />
-        </label>
-        <label className={labelClass}>
-          Project location
+        </Field>
+        <Field id="lead-location" label="Project location">
           <input
+            id="lead-location"
             name="projectLocation"
             type="text"
             placeholder="Town, district or farm name"
-            className={inputClass}
+            className="form-input"
             disabled={isPending}
           />
-        </label>
+        </Field>
       </div>
 
-      <label className={labelClass}>
-        Message / project description <span className="text-red-600">*</span>
+      <Field
+        id="lead-message"
+        label="Message / project description"
+        required
+      >
         <textarea
+          id="lead-message"
           required
           name="message"
           rows={5}
           placeholder="Describe your dam, tank or waterproofing requirements, site access, and timeline."
-          className={inputClass}
+          className="form-input"
           disabled={isPending}
         />
-      </label>
-
-      <button
-        type="submit"
-        className="btn-primary w-full sm:w-auto disabled:opacity-60"
-        disabled={isPending}
-      >
-        {isPending ? "Sending…" : submitLabel}
-      </button>
+      </Field>
 
       {error ? (
-        <p className="text-sm text-red-600" role="alert">
+        <p className="form-error" role="alert">
           {error}{" "}
-          <span className="block mt-1 text-slate-600">
+          <span className="mt-1 block text-slate-600">
             Or call{" "}
             <a href={`tel:${phoneTel}`} className="font-semibold text-water">
               {siteConfig.phone}
@@ -186,6 +209,14 @@ export function LeadForm({
           </span>
         </p>
       ) : null}
+
+      <button
+        type="submit"
+        className="btn-primary w-full md:w-auto disabled:opacity-60"
+        disabled={isPending}
+      >
+        {isPending ? "Sending…" : submitLabel}
+      </button>
     </form>
   );
 }

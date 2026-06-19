@@ -1,9 +1,7 @@
 import Link from "next/link";
 import {
-  BLOG_LINKS,
-  NAV_LINKS,
+  FOOTER_LINKS,
   OFFICES,
-  SERVICE_LINKS,
   phoneTel,
   siteConfig,
 } from "@/lib/site";
@@ -11,19 +9,21 @@ import {
 export function Footer() {
   return (
     <footer className="mt-auto border-t border-slate-200 bg-navy text-slate-200">
-      <div className="mx-auto grid max-w-6xl gap-10 px-4 py-12 sm:px-6 md:grid-cols-2 lg:grid-cols-4">
+      <div className="mx-auto grid max-w-6xl gap-10 px-4 py-12 sm:px-6 md:grid-cols-2 lg:grid-cols-3">
         <div>
           <p className="text-lg font-bold text-white">{siteConfig.name}</p>
           <p className="mt-3 text-sm leading-relaxed text-slate-300">
             {siteConfig.defaultDescription}
           </p>
-          <div className="mt-4 space-y-1 text-sm">
+          <div className="mt-5 space-y-2 text-sm">
             <p>
+              <span className="font-medium text-white">Phone: </span>
               <a href={`tel:${phoneTel}`} className="hover:text-white">
                 {siteConfig.phone}
               </a>
             </p>
             <p>
+              <span className="font-medium text-white">Email: </span>
               <a
                 href={`mailto:${siteConfig.email}`}
                 className="hover:text-white"
@@ -36,37 +36,10 @@ export function Footer() {
 
         <div>
           <h2 className="text-sm font-semibold uppercase tracking-wide text-white">
-            Services
+            Quick Links
           </h2>
-          <ul className="mt-4 space-y-2">
-            {SERVICE_LINKS.map((link) => (
-              <li key={link.href}>
-                <Link href={link.href} className="text-sm hover:text-white">
-                  {link.label}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        <div>
-          <h2 className="text-sm font-semibold uppercase tracking-wide text-white">
-            Blog
-          </h2>
-          <ul className="mt-4 space-y-2">
-            {BLOG_LINKS.map((link) => (
-              <li key={link.href}>
-                <Link href={link.href} className="text-sm hover:text-white">
-                  {link.label}
-                </Link>
-              </li>
-            ))}
-          </ul>
-          <h2 className="mt-8 text-sm font-semibold uppercase tracking-wide text-white">
-            Navigation
-          </h2>
-          <ul className="mt-4 space-y-2">
-            {NAV_LINKS.slice(0, 5).map((link) => (
+          <ul className="mt-4 grid gap-2 sm:grid-cols-2">
+            {FOOTER_LINKS.map((link) => (
               <li key={link.href}>
                 <Link href={link.href} className="text-sm hover:text-white">
                   {link.label}
@@ -101,12 +74,8 @@ export function Footer() {
             &copy; {new Date().getFullYear()} {siteConfig.name}. All rights reserved.
           </p>
           <p>
-            <Link href="/waterproofing-and-dam-liners" className="hover:text-white">
-              FAQ
-            </Link>
-            {" · "}
-            <Link href="/quote" className="hover:text-white">
-              Request a Quote
+            <Link href="/about-us-waterproofing-company" className="hover:text-white">
+              About Damtech
             </Link>
           </p>
         </div>

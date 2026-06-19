@@ -47,7 +47,12 @@ export default async function ProjectDetailPage({ params }: Props) {
         ]}
       />
 
-      <Hero compact title={project.h1} description={project.summary} />
+      <Hero
+        compact
+        eyebrow={project.location}
+        title={project.h1}
+        description={project.summary}
+      />
 
       <section className="content-wrap">
         <dl className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -75,20 +80,54 @@ export default async function ProjectDetailPage({ params }: Props) {
           </p>
         ) : null}
 
-        <div className="mt-12 grid gap-10 lg:grid-cols-2">
+        <div className="mt-12 space-y-10">
           <div>
-            <h2 className="section-heading">Challenge</h2>
-            <p className="mt-4 text-slate-600 leading-relaxed">{project.challenge}</p>
+            <h2 className="section-heading">Background</h2>
+            <p className="mt-4 max-w-3xl leading-relaxed text-slate-600">
+              {project.background}
+            </p>
           </div>
-          <div>
-            <h2 className="section-heading">Solution</h2>
-            <p className="mt-4 text-slate-600 leading-relaxed">{project.solution}</p>
-          </div>
-        </div>
 
-        <div className="mt-10">
-          <h2 className="section-heading">Result</h2>
-          <p className="mt-4 max-w-3xl text-slate-600 leading-relaxed">{project.result}</p>
+          <div>
+            <h2 className="section-heading">Site Conditions</h2>
+            <p className="mt-4 max-w-3xl leading-relaxed text-slate-600">
+              {project.siteConditions}
+            </p>
+          </div>
+
+          <div className="grid gap-10 lg:grid-cols-2">
+            <div>
+              <h2 className="section-heading">Challenge</h2>
+              <p className="mt-4 leading-relaxed text-slate-600">
+                {project.challenge}
+              </p>
+            </div>
+            <div>
+              <h2 className="section-heading">Our Approach</h2>
+              <p className="mt-4 leading-relaxed text-slate-600">
+                {project.approach}
+              </p>
+            </div>
+          </div>
+
+          <div>
+            <h2 className="section-heading">Result</h2>
+            <p className="mt-4 max-w-3xl leading-relaxed text-slate-600">
+              {project.result}
+            </p>
+            {project.outcomes.length > 0 ? (
+              <ul className="mt-6 grid gap-3 sm:grid-cols-2">
+                {project.outcomes.map((outcome) => (
+                  <li
+                    key={outcome}
+                    className="rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700"
+                  >
+                    {outcome}
+                  </li>
+                ))}
+              </ul>
+            ) : null}
+          </div>
         </div>
 
         <div className="mt-12">

@@ -3,8 +3,16 @@ import { CTA } from "@/components/CTA";
 import { Hero } from "@/components/Hero";
 import { InternalServiceLinks } from "@/components/InternalServiceLinks";
 import { PageSeo } from "@/components/PageSeo";
-import { createServiceSchema } from "@/lib/seo";
+import { ProjectProofStrip } from "@/components/ProjectProofStrip";
+import { SectionCta } from "@/components/SectionCta";
+import {
+  ServiceFaqSection,
+  ServiceProseSections,
+} from "@/components/ServicePageSections";
+import { createFaqPageSchema, createServiceSchema } from "@/lib/seo";
 import { createPageMetadata, PAGE_SEO } from "@/lib/pages";
+import { SERVICES_HUB_CONTENT } from "@/lib/service-pages-content";
+import { PROJECTS } from "@/lib/site";
 
 const seo = PAGE_SEO.services;
 
@@ -18,100 +26,147 @@ export default function ServicesPage() {
           { name: "Home", path: "/" },
           { name: "Services", path: seo.path },
         ]}
-        schemas={createServiceSchema({
-          name: seo.serviceName ?? seo.title,
-          description: seo.description,
-          path: seo.path,
-        })}
+        schemas={[
+          createServiceSchema({
+            name: seo.serviceName ?? seo.title,
+            description: seo.description,
+            path: seo.path,
+          }),
+          createFaqPageSchema(SERVICES_HUB_CONTENT.faqs),
+        ]}
       />
 
       <Hero
         compact
+        eyebrow="Full-service contractor"
         title={seo.h1}
-        description="We specialise in bitumen waterproofing, earth dam liners and steel reservoirs for residential and agricultural clients across South Africa."
+        description="Full water storage and protection services: HDPE dam liners, corrugated steel tanks, bitumen waterproofing, leak repair and preventative maintenance."
       />
 
-      <section className="content-wrap space-y-16">
-        <div>
-          <h2 className="section-heading">Waterproofing</h2>
-          <p className="mt-4 max-w-3xl text-slate-600">
-            We offer advanced waterproofing solutions designed to protect your
-            property from water damage, including bitumen waterproofing for
-            concrete slabs and metal roofs, foundation waterproofing, and
-            liquid rubber applications for flexible, seamless membranes.
-          </p>
-          <ul className="mt-4 flex flex-wrap gap-2">
-            {["Metal Roofs", "Foundations", "Chimneys", "Concrete Slabs"].map(
-              (item) => (
+      <section className="content-wrap">
+        <p className="max-w-3xl text-lg leading-relaxed text-slate-700">
+          {SERVICES_HUB_CONTENT.intro}
+        </p>
+      </section>
+
+      <section className="bg-slate-50">
+        <div className="content-wrap space-y-16">
+          <div>
+            <h2 className="section-heading">Waterproofing</h2>
+            {SERVICES_HUB_CONTENT.sections[0]!.paragraphs.map((paragraph) => (
+              <p
+                key={paragraph.slice(0, 48)}
+                className="mt-4 max-w-3xl leading-relaxed text-slate-600"
+              >
+                {paragraph}
+              </p>
+            ))}
+            <ul className="mt-4 flex flex-wrap gap-2">
+              {["Metal Roofs", "Foundations", "Chimneys", "Concrete Slabs"].map(
+                (item) => (
+                  <li
+                    key={item}
+                    className="rounded-full bg-sky-50 px-3 py-1 text-sm text-navy"
+                  >
+                    {item}
+                  </li>
+                ),
+              )}
+            </ul>
+            <Link
+              href="/bitumen-waterproofing"
+              className="btn-secondary mt-6 inline-flex"
+            >
+              Bitumen Waterproofing
+            </Link>
+          </div>
+
+          <div>
+            <h2 className="section-heading">Dam Liners</h2>
+            {SERVICES_HUB_CONTENT.sections[1]!.paragraphs.map((paragraph) => (
+              <p
+                key={paragraph.slice(0, 48)}
+                className="mt-4 max-w-3xl leading-relaxed text-slate-600"
+              >
+                {paragraph}
+              </p>
+            ))}
+            <ul className="mt-4 space-y-2 text-sm text-slate-700">
+              <li>HDPE Geomembrane (2 mm, 1.5 mm and 1 mm)</li>
+              <li>PVC Lining (850 gsm, 700 gsm and 550 gsm)</li>
+              <li>Bitumen Torch-On (4 mm or 3 mm)</li>
+            </ul>
+            <Link href="/dam-liners" className="btn-secondary mt-6 inline-flex">
+              Dam Liners
+            </Link>
+          </div>
+
+          <div>
+            <h2 className="section-heading">Corrugated Zinc Reservoirs</h2>
+            {SERVICES_HUB_CONTENT.sections[2]!.paragraphs.map((paragraph) => (
+              <p
+                key={paragraph.slice(0, 48)}
+                className="mt-4 max-w-3xl leading-relaxed text-slate-600"
+              >
+                {paragraph}
+              </p>
+            ))}
+            <Link
+              href="/steel-water-storage-tanks"
+              className="btn-secondary mt-6 inline-flex"
+            >
+              Steel Water Tanks
+            </Link>
+          </div>
+
+          <div>
+            <h2 className="section-heading">Maintenance</h2>
+            {SERVICES_HUB_CONTENT.sections[3]!.paragraphs.map((paragraph) => (
+              <p
+                key={paragraph.slice(0, 48)}
+                className="mt-4 max-w-3xl leading-relaxed text-slate-600"
+              >
+                {paragraph}
+              </p>
+            ))}
+            <ul className="mt-4 flex flex-wrap gap-2">
+              {[
+                "Leaking Roofs",
+                "Damp / water seepage",
+                "Preventative Maintenance",
+                "FREE Inspection",
+              ].map((item) => (
                 <li
                   key={item}
-                  className="rounded-full bg-sky-50 px-3 py-1 text-sm text-navy"
+                  className="rounded-full bg-green-50 px-3 py-1 text-sm text-navy"
                 >
                   {item}
                 </li>
-              ),
-            )}
-          </ul>
-          <Link href="/bitumen-waterproofing" className="btn-secondary mt-6 inline-flex">
-            Bitumen Waterproofing
-          </Link>
+              ))}
+            </ul>
+          </div>
         </div>
+      </section>
 
-        <div>
-          <h2 className="section-heading">Dam Liners</h2>
-          <p className="mt-4 max-w-3xl text-slate-600">
-            Robust dam lining solutions including HDPE geomembranes for large
-            farm dams, PVC linings for ponds and zinc reservoirs, and bitumen
-            torch-on linings for cement or gravel dams.
-          </p>
-          <ul className="mt-4 space-y-2 text-sm text-slate-700">
-            <li>HDPE Geomembrane (2 mm, 1.5 mm and 1 mm)</li>
-            <li>PVC Lining (850 gsm, 700 gsm and 550 gsm)</li>
-            <li>Bitumen Torch-On (4 mm or 3 mm)</li>
-          </ul>
-          <Link href="/dam-liners" className="btn-secondary mt-6 inline-flex">
-            Dam Liners
-          </Link>
+      <section className="content-wrap">
+        <ServiceProseSections sections={[SERVICES_HUB_CONTENT.sections[4]!]} />
+        <div className="mt-10">
+          <SectionCta />
         </div>
-
-        <div>
-          <h2 className="section-heading">Corrugated Zinc Reservoirs</h2>
-          <p className="mt-4 max-w-3xl text-slate-600">
-            Built with 0.8 mm thick corrugated steel sheets, available from 3 m
-            to 17 m in diameter. Each reservoir includes standard 850 gsm PVC
-            lining, 50 mm inlet and outlet, overflow, optional roof, and sturdy
-            upright columns with a bidem floor sheet.
-          </p>
-          <Link
-            href="/steel-water-storage-tanks"
-            className="btn-secondary mt-6 inline-flex"
-          >
-            Steel Water Tanks
-          </Link>
+        <ProjectProofStrip title="Selected installations" projects={PROJECTS.slice(0, 3)} />
+        <div className="mt-12">
+          <ServiceFaqSection faqs={SERVICES_HUB_CONTENT.faqs} />
         </div>
-
-        <div>
-          <h2 className="section-heading">Maintenance</h2>
-          <p className="mt-4 max-w-3xl text-slate-600">
-            Expert maintenance for leaking roofs and damp walls. We assess root
-            causes of moisture infiltration, apply effective treatments, and
-            offer preventative maintenance with regular inspections.
-          </p>
-          <ul className="mt-4 flex flex-wrap gap-2">
-            {[
-              "Leaking Roofs",
-              "Damp / water seepage",
-              "Preventative Maintenance",
-              "FREE Inspection",
-            ].map((item) => (
-              <li
-                key={item}
-                className="rounded-full bg-green-50 px-3 py-1 text-sm text-navy"
-              >
-                {item}
-              </li>
-            ))}
-          </ul>
+        <div className="mt-10 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+          <Link href="/quote" className="btn-primary w-full sm:w-auto">
+            Request a Quote
+          </Link>
+          <Link href="/waterproofing-and-dam-liners" className="btn-secondary w-full sm:w-auto">
+            Read the FAQ
+          </Link>
+          <Link href="/projects" className="btn-secondary w-full sm:w-auto">
+            View Projects
+          </Link>
         </div>
       </section>
 
