@@ -1,0 +1,65 @@
+import Link from "next/link";
+import { CTA } from "@/components/CTA";
+import { Hero } from "@/components/Hero";
+import { PageSeo } from "@/components/PageSeo";
+import { createPageMetadata } from "@/lib/pages";
+import {
+  PROJECT_CASE_STUDIES,
+  PROJECTS_INDEX_SEO,
+} from "@/lib/projects";
+
+export const metadata = createPageMetadata(PROJECTS_INDEX_SEO);
+
+export default function ProjectsIndexPage() {
+  return (
+    <>
+      <PageSeo
+        breadcrumbs={[
+          { name: "Home", path: "/" },
+          { name: "Projects", path: "/projects" },
+        ]}
+      />
+
+      <Hero
+        compact
+        title={PROJECTS_INDEX_SEO.h1}
+        description="Selected dam liner, steel tank and waterproofing installations across South Africa — from farm dams and game lodges to industrial water storage."
+      />
+
+      <section className="content-wrap">
+        <div className="grid gap-6 md:grid-cols-2">
+          {PROJECT_CASE_STUDIES.map((project) => (
+            <article
+              key={project.slug}
+              className="flex h-full flex-col rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition hover:border-water/40"
+            >
+              <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                {project.location}
+              </p>
+              <h2 className="mt-2 text-lg font-semibold text-navy">
+                <Link
+                  href={`/projects/${project.slug}`}
+                  className="hover:text-water"
+                >
+                  {project.title}
+                </Link>
+              </h2>
+              <p className="mt-2 flex-1 text-sm text-slate-600">{project.summary}</p>
+              <p className="mt-3 text-sm font-medium text-water">
+                {project.serviceType} · {project.material}
+              </p>
+              <Link
+                href={`/projects/${project.slug}`}
+                className="mt-4 inline-flex text-sm font-semibold text-navy hover:text-water"
+              >
+                View project →
+              </Link>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <CTA />
+    </>
+  );
+}

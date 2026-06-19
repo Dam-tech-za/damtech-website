@@ -1,26 +1,69 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-navy: #0f2744;
+  --color-charcoal: #1e293b;
+  --color-water: #0ea5e9;
+  --color-accent: #16a34a;
+  --font-sans: var(--font-inter);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-white text-charcoal antialiased;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@layer components {
+  .btn-primary {
+    @apply inline-flex items-center justify-center rounded-lg bg-water px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-sky-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-water;
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center rounded-lg border border-slate-300 bg-white px-5 py-2.5 text-sm font-semibold text-navy transition hover:border-water hover:text-water focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-water;
+  }
+
+  .section-heading {
+    @apply text-2xl font-bold tracking-tight text-navy sm:text-3xl;
+  }
+
+  .content-wrap {
+    @apply mx-auto max-w-6xl px-4 py-12 sm:px-6;
+  }
+
+  .prose {
+    @apply text-slate-700 leading-relaxed;
+  }
+
+  .prose h2 {
+    @apply mt-10 mb-4 text-2xl font-bold text-navy;
+  }
+
+  .prose h3 {
+    @apply mt-8 mb-3 text-xl font-semibold text-navy;
+  }
+
+  .prose p {
+    @apply mb-4;
+  }
+
+  .prose ul {
+    @apply mb-4 list-disc space-y-2 pl-6;
+  }
+
+  .prose ol {
+    @apply mb-4 list-decimal space-y-2 pl-6;
+  }
+
+  .prose a {
+    @apply font-medium text-water underline-offset-2 hover:text-navy hover:underline;
+  }
+
+  .prose strong {
+    @apply font-semibold text-navy;
+  }
 }
