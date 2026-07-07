@@ -8,6 +8,7 @@ import {
   HEAD_OFFICE_MAP_EMBED_URL,
   formatOfficeLocality,
   OFFICES,
+  phoneTel,
   SERVICE_AREA_PROVINCES,
   siteConfig,
   SOCIAL_LINKS,
@@ -278,7 +279,7 @@ export function createLocalBusinessSchema() {
     telephone: siteConfig.phone || undefined,
     email: siteConfig.email,
     description: siteConfig.defaultDescription,
-    image: absoluteUrl(DEFAULT_OG_IMAGE),
+    image: absoluteAssetUrl(DEFAULT_OG_IMAGE),
     logo: absoluteAssetUrl(IMAGE_PATHS.damtechLogo),
     priceRange: "$$",
     areaServed,
@@ -300,7 +301,7 @@ export function createLocalBusinessSchema() {
       const place: Record<string, unknown> = {
         "@type": "Place",
         name: office.name,
-        telephone: office.phone.replace(/\s/g, ""),
+        telephone: phoneTel,
       };
 
       if ("googleBusinessProfileUrl" in office && office.googleBusinessProfileUrl) {
