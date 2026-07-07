@@ -15,7 +15,7 @@ export function CTA({
 }: CTAProps) {
   return (
     <section className="bg-slate-50">
-      <div className="site-container py-12 lg:py-16">
+      <div className="site-container content-wrap--sm">
         <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8 lg:p-10">
           <div className="grid gap-8 lg:grid-cols-[1.2fr_1fr] lg:items-center">
             <div>

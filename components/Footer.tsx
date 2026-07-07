@@ -10,7 +10,7 @@ import {
 
 export function Footer() {
   return (
-    <footer className="mt-auto border-t border-slate-200 bg-navy text-slate-200">
+    <footer className="mt-auto border-t border-slate-200 bg-navy pb-[4.5rem] text-slate-200 lg:pb-0">
       <div className="site-container grid gap-10 py-12 sm:grid-cols-2 lg:grid-cols-4 lg:py-16">
         <div className="sm:col-span-2 lg:col-span-1">
           <p className="text-lg font-bold text-white">{siteConfig.name}</p>

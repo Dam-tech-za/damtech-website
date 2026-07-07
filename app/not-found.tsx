@@ -10,7 +10,7 @@ const QUICK_LINKS = [
 
 export default function NotFound() {
   return (
-    <main className="content-wrap flex min-h-[50vh] flex-col items-center justify-center py-16 text-center">
+    <main className="content-wrap flex min-h-[50vh] flex-col items-center justify-center text-center">
       <p className="text-sm font-semibold uppercase tracking-wide text-water">
         404
       </p>

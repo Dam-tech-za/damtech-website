@@ -9,7 +9,7 @@ const TRUST_ITEMS = [
 export function TrustStrip() {
   return (
     <section className="border-y border-slate-200 bg-white" aria-label="Why Damtech">
-      <div className="site-container py-8 lg:py-10">
+      <div className="site-container content-wrap--sm">
         <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
           {TRUST_ITEMS.map((item) => (
             <li

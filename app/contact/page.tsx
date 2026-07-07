@@ -158,7 +158,7 @@ export default function ContactPage() {
           {CONTACT_SERVICES.map((service) => (
             <li
               key={service.href}
-              className="flex h-full flex-col rounded-2xl border border-slate-200 bg-white p-5 shadow-sm"
+              className="card flex h-full flex-col"
             >
               <h3 className="font-semibold text-navy">
                 <Link href={service.href} className="hover:text-water">
@@ -170,7 +170,7 @@ export default function ContactPage() {
               </p>
               <Link
                 href={service.href}
-                className="mt-4 text-sm font-semibold text-water hover:text-navy"
+                className="link-row mt-1"
               >
                 Learn more →
               </Link>

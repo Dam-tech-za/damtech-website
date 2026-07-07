@@ -71,7 +71,7 @@ export function FormSection({
 
   return (
     <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6 lg:p-8">
-      <h2 className="text-2xl font-bold tracking-tight text-navy sm:text-3xl">
+      <h2 className="section-heading !mt-0">
         {title}
       </h2>
       {subtitle ? (

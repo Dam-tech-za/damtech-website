@@ -1,16 +1,80 @@
 @import "tailwindcss";
 
 @theme inline {
-  --color-navy: #0f2744;
-  --color-charcoal: #1e293b;
-  --color-water: #0ea5e9;
+  /* === Brand + UI tokens (single source of truth) === */
+  --color-navy-950: #020a16;
+  --color-navy-900: #0a1d33;
+  --color-navy-800: #0f2744;
+
+  --color-brand-700: #075e8d;
+  --color-brand-600: #0369a1;
+  --color-brand-500: #0ea5e9;
+  --color-brand-300: #7dd3fc;
+
+  --color-ink-900: #0f2744;
+  --color-ink-700: #334155;
+  --color-ink-500: #64748b;
+
+  --color-line-200: #e2e8f0;
+  --color-surface-50: #f8fafc;
+  --color-white: #ffffff;
+
+  /* Compatibility aliases (existing Tailwind utilities in TSX rely on these). */
+  --color-navy: var(--color-navy-800);
+  --color-charcoal: var(--color-ink-700);
+  /* IMPORTANT: "water" now maps to contrast-safe primary action/links on white. */
+  --color-water: var(--color-brand-600);
   --color-accent: #16a34a;
+
+  /* Overlay tokens (avoid ad-hoc alpha hex / rgba usage). */
+  --overlay-white-90: color-mix(in srgb, var(--color-white) 90%, transparent);
+  --overlay-white-88: color-mix(in srgb, var(--color-white) 88%, transparent);
+  --overlay-white-86: color-mix(in srgb, var(--color-white) 86%, transparent);
+  --overlay-white-85: color-mix(in srgb, var(--color-white) 85%, transparent);
+  --overlay-white-42: color-mix(in srgb, var(--color-white) 42%, transparent);
+  --overlay-white-35: color-mix(in srgb, var(--color-white) 35%, transparent);
+  --overlay-white-28: color-mix(in srgb, var(--color-white) 28%, transparent);
+  --overlay-white-16: color-mix(in srgb, var(--color-white) 16%, transparent);
+  --overlay-white-13: color-mix(in srgb, var(--color-white) 13%, transparent);
+  --overlay-white-08: color-mix(in srgb, var(--color-white) 8%, transparent);
+
+  --overlay-navy-950-96: color-mix(in srgb, var(--color-navy-950) 96%, transparent);
+  --overlay-navy-950-94: color-mix(in srgb, var(--color-navy-950) 94%, transparent);
+  --overlay-navy-950-90: color-mix(in srgb, var(--color-navy-950) 90%, transparent);
+  --overlay-navy-950-88: color-mix(in srgb, var(--color-navy-950) 88%, transparent);
+  --overlay-navy-950-72: color-mix(in srgb, var(--color-navy-950) 72%, transparent);
+  --overlay-navy-950-70: color-mix(in srgb, var(--color-navy-950) 70%, transparent);
+  --overlay-navy-950-68: color-mix(in srgb, var(--color-navy-950) 68%, transparent);
+  --overlay-navy-950-55: color-mix(in srgb, var(--color-navy-950) 55%, transparent);
+  --overlay-navy-950-35: color-mix(in srgb, var(--color-navy-950) 35%, transparent);
+  --overlay-navy-950-32: color-mix(in srgb, var(--color-navy-950) 32%, transparent);
+  --overlay-navy-950-14: color-mix(in srgb, var(--color-navy-950) 14%, transparent);
+  --overlay-navy-950-12: color-mix(in srgb, var(--color-navy-950) 12%, transparent);
+  --overlay-navy-950-05: color-mix(in srgb, var(--color-navy-950) 5%, transparent);
+
+  /* Type scale tokens (used in later batches; defined here to centralize). */
+  --text-display: clamp(2.5rem, 3.2vw + 1.5rem, 4.25rem);
+  --text-h2: clamp(1.75rem, 1.2vw + 1.35rem, 2.25rem);
+  --text-h3: clamp(1.25rem, 0.5vw + 1.1rem, 1.5rem);
+  --text-h4: 1.125rem;
+  --text-body: 1rem;
+  --text-sm: 0.875rem;
+  --text-eyebrow: 0.8125rem;
+
+  /* Spacing/rhythm tokens (used in later batches). */
+  --section-y: clamp(4rem, 8vw, 6rem);
+  --section-y-sm: clamp(3rem, 6vw, 4rem);
+  --gutter: clamp(1rem, 3vw, 2rem);
+
   --font-sans: var(--font-inter);
 }
 
 @layer base {
   :root {
     --site-header-height: 4.25rem;
+    /* Fallback before JS measures the real header box; Header.tsx overrides this
+       with the header's actual offsetHeight via ResizeObserver so it never drifts. */
+    --header-height: var(--site-header-height);
   }
 
   @media (min-width: 1024px) {
@@ -35,25 +99,167 @@
 }
 
 @layer components {
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 whitespace-nowrap font-semibold shadow-sm transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 disabled:pointer-events-none disabled:opacity-60;
+    border-radius: 0.5rem; /* 8px */
+  }
+
+  .btn--md {
+    min-height: 44px;
+    padding-inline: 20px;
+    font-size: 0.875rem;
+    font-weight: 600;
+  }
+
+  .btn--lg {
+    min-height: 52px;
+    padding-inline: 28px;
+    font-size: 1rem;
+    font-weight: 600;
+  }
+
+  .btn--primary {
+    @apply text-white;
+    background-color: var(--color-brand-600);
+  }
+
+  .btn--primary:hover {
+    background-color: var(--color-brand-700);
+  }
+
+  .btn--primary:focus-visible {
+    outline-color: var(--color-brand-600);
+  }
+
+  .btn--secondary {
+    @apply bg-white;
+    color: var(--color-ink-900);
+    border: 1px solid var(--color-line-200);
+  }
+
+  .btn--secondary:hover {
+    border-color: color-mix(in srgb, var(--color-brand-600) 55%, var(--color-line-200));
+    color: var(--color-brand-600);
+  }
+
+  .btn--secondary:focus-visible {
+    outline-color: var(--color-brand-600);
+  }
+
+  .btn--ghost-dark {
+    @apply text-white;
+    background-color: var(--overlay-white-10);
+    border: 1px solid var(--overlay-white-35);
+    backdrop-filter: blur(8px);
+  }
+
+  .btn--ghost-dark:hover {
+    background-color: var(--overlay-white-20);
+    border-color: var(--overlay-white-42);
+  }
+
+  .btn--ghost-dark:focus-visible {
+    outline-color: var(--color-white);
+  }
+
+  /* Old button classes (avoid TSX churn).
+     NOTE: Tailwind doesn't allow @apply-ing component classes, so these are defined directly. */
   .btn-primary {
-    @apply inline-flex items-center justify-center rounded-lg bg-water px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-sky-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-water;
+    @apply inline-flex items-center justify-center gap-2 whitespace-nowrap font-semibold shadow-sm transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 disabled:pointer-events-none disabled:opacity-60;
+    min-height: 44px;
+    padding-inline: 20px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    border-radius: 0.5rem;
+    color: var(--color-white);
+    background-color: var(--color-brand-600);
+  }
+
+  .btn-primary:hover {
+    background-color: var(--color-brand-700);
+  }
+
+  .btn-primary:focus-visible {
+    outline-color: var(--color-brand-600);
   }
 
   .btn-secondary {
-    @apply inline-flex items-center justify-center rounded-lg border border-slate-300 bg-white px-5 py-2.5 text-sm font-semibold text-navy transition hover:border-water hover:text-water focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-water;
+    @apply inline-flex items-center justify-center gap-2 whitespace-nowrap font-semibold shadow-sm transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 disabled:pointer-events-none disabled:opacity-60;
+    min-height: 44px;
+    padding-inline: 20px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    border-radius: 0.5rem;
+    background-color: var(--color-white);
+    color: var(--color-ink-900);
+    border: 1px solid var(--color-line-200);
+  }
+
+  .btn-secondary:hover {
+    border-color: color-mix(in srgb, var(--color-brand-600) 55%, var(--color-line-200));
+    color: var(--color-brand-600);
+  }
+
+  .btn-secondary:focus-visible {
+    outline-color: var(--color-brand-600);
   }
 
   .hero-title {
-    font-size: clamp(2.25rem, 4vw + 1rem, 4.5rem);
-    line-height: 1.1;
+    font-size: var(--text-display);
+    line-height: 1.05;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+  }
+
+  .hero-section {
+    background:
+      linear-gradient(
+        135deg,
+        color-mix(in srgb, var(--color-navy-950) 95%, transparent) 0%,
+        var(--color-navy-800) 55%,
+        color-mix(in srgb, var(--color-brand-600) 22%, var(--color-navy-800)) 100%
+      );
   }
 
   .hero-btn-primary {
-    @apply inline-flex items-center justify-center rounded-lg bg-water px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-sky-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white;
+    @apply inline-flex items-center justify-center gap-2 whitespace-nowrap font-semibold shadow-sm transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 disabled:pointer-events-none disabled:opacity-60;
+    min-height: 52px;
+    padding-inline: 28px;
+    font-size: 1rem;
+    font-weight: 600;
+    border-radius: 0.5rem;
+    color: var(--color-white);
+    background-color: var(--color-brand-600);
+  }
+
+  .hero-btn-primary:hover {
+    background-color: var(--color-brand-700);
+  }
+
+  .hero-btn-primary:focus-visible {
+    outline-color: var(--color-white);
   }
 
   .hero-btn-secondary {
-    @apply inline-flex items-center justify-center rounded-lg border border-white/35 bg-white/10 px-5 py-3 text-sm font-semibold text-white backdrop-blur-sm transition hover:bg-white/20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white;
+    @apply inline-flex items-center justify-center gap-2 whitespace-nowrap font-semibold shadow-sm transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 disabled:pointer-events-none disabled:opacity-60;
+    min-height: 52px;
+    padding-inline: 28px;
+    font-size: 1rem;
+    font-weight: 600;
+    border-radius: 0.5rem;
+    color: var(--color-white);
+    background-color: var(--overlay-white-10);
+    border: 1px solid var(--overlay-white-35);
+    backdrop-filter: blur(8px);
+  }
+
+  .hero-btn-secondary:hover {
+    background-color: var(--overlay-white-20);
+    border-color: var(--overlay-white-42);
+  }
+
+  .hero-btn-secondary:focus-visible {
+    outline-color: var(--color-white);
   }
 
   /* Homepage hero — image background + left content only (no floating badges) */
@@ -62,7 +268,7 @@
     isolation: isolate;
     overflow: hidden;
     min-height: clamp(560px, 70svh, 680px);
-    background-color: #020a16;
+    background-color: var(--color-navy-950);
   }
 
   @media (min-width: 768px) {
@@ -85,11 +291,11 @@
     pointer-events: none;
     background: linear-gradient(
       90deg,
-      rgba(2, 10, 22, 0.96) 0%,
-      rgba(2, 12, 26, 0.9) 26%,
-      rgba(2, 14, 28, 0.7) 52%,
-      rgba(2, 14, 28, 0.32) 76%,
-      rgba(2, 14, 28, 0.14) 100%
+      var(--overlay-navy-950-96) 0%,
+      var(--overlay-navy-950-90) 26%,
+      var(--overlay-navy-950-70) 52%,
+      var(--overlay-navy-950-32) 76%,
+      var(--overlay-navy-950-14) 100%
     );
   }
 
@@ -101,10 +307,10 @@
     pointer-events: none;
     background: linear-gradient(
       180deg,
-      rgba(2, 10, 22, 0.1) 0%,
-      transparent 55%,
-      rgba(255, 255, 255, 0.35) 90%,
-      rgba(255, 255, 255, 0.82) 100%
+      var(--overlay-navy-950-12) 0%,
+      var(--overlay-navy-950-05) 45%,
+      var(--overlay-navy-950-35) 80%,
+      var(--overlay-navy-950-55) 100%
     );
   }
 
@@ -127,20 +333,24 @@
     display: flex;
     align-items: center;
     min-height: clamp(560px, 70svh, 680px);
-    padding-block: 2rem 1.75rem;
+    /* Keep content visually centered while the header overlaps the hero. */
+    padding-top: calc(var(--header-height) + 3rem);
+    padding-bottom: 3rem;
   }
 
   @media (min-width: 768px) {
     .home-hero__inner {
       min-height: clamp(600px, 74vh, 720px);
-      padding-block: 2.25rem 1.75rem;
+      padding-top: calc(var(--header-height) + 3.5rem);
+      padding-bottom: 3.5rem;
     }
   }
 
   @media (min-width: 1024px) {
     .home-hero__inner {
       min-height: clamp(640px, 78vh, 820px);
-      padding-block: 2rem 1.25rem;
+      padding-top: calc(var(--header-height) + 3.5rem);
+      padding-bottom: 3.5rem;
     }
   }
 
@@ -150,34 +360,28 @@
     text-align: left;
   }
 
-  @media (min-width: 1024px) {
-    .home-hero__copy {
-      transform: translateY(-20px);
-    }
-  }
-
   .home-hero__eyebrow {
     margin: 0 0 1.25rem;
     font-size: 0.8125rem;
     font-weight: 700;
     letter-spacing: 0.14em;
     text-transform: uppercase;
-    color: #38bdf8;
+    color: var(--color-brand-300);
     opacity: 0.95;
   }
 
   .home-hero__title {
     margin: 0;
-    font-size: clamp(2.25rem, 5vw, 4.5rem);
-    line-height: 1;
+    font-size: var(--text-display);
+    line-height: 1.05;
     font-weight: 800;
-    letter-spacing: -0.04em;
-    color: #fff;
+    letter-spacing: -0.03em;
+    color: var(--color-white);
     text-wrap: balance;
   }
 
   .home-hero__accent {
-    color: #38bdf8;
+    color: var(--color-brand-300);
   }
 
   .home-hero__description {
@@ -185,7 +389,7 @@
     max-width: 36.25rem;
     font-size: clamp(1rem, 1.1vw + 0.8rem, 1.25rem);
     line-height: 1.6;
-    color: rgba(255, 255, 255, 0.85);
+    color: var(--overlay-white-85);
   }
 
   .home-hero__actions {
@@ -199,11 +403,11 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    min-height: 2.75rem;
-    padding: 0.875rem 1.5rem;
-    border-radius: 0.625rem;
-    font-size: 0.9375rem;
-    font-weight: 700;
+    min-height: 52px;
+    padding-inline: 28px;
+    border-radius: 0.5rem;
+    font-size: 1rem;
+    font-weight: 600;
     text-decoration: none;
     transition:
       background-color 0.15s ease,
@@ -213,38 +417,65 @@
   }
 
   .home-hero__btn:focus-visible {
-    outline: 2px solid #38bdf8;
+    outline: 2px solid var(--color-white);
     outline-offset: 2px;
   }
 
   .home-hero__btn--primary {
-    color: #fff;
-    background-color: #0ea5e9;
-    box-shadow: 0 14px 34px rgba(0, 145, 220, 0.28);
+    color: var(--color-white);
+    background-color: var(--color-brand-600);
   }
 
   .home-hero__btn--primary:hover {
-    background-color: #38bdf8;
+    background-color: var(--color-brand-700);
     transform: translateY(-1px);
-    box-shadow: 0 16px 38px rgba(0, 145, 220, 0.34);
   }
 
   .home-hero__btn--secondary {
-    color: #fff;
-    background: rgba(255, 255, 255, 0.08);
-    border: 1px solid rgba(255, 255, 255, 0.28);
+    color: var(--color-white);
+    background: var(--overlay-white-10);
+    border: 1px solid var(--overlay-white-35);
+    backdrop-filter: blur(8px);
   }
 
   .home-hero__btn--secondary:hover {
-    background: rgba(255, 255, 255, 0.13);
-    border-color: rgba(255, 255, 255, 0.42);
+    background: var(--overlay-white-20);
+    border-color: var(--overlay-white-42);
+  }
+
+  .link-row {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding-block: 0.25rem;
+    color: var(--color-brand-600);
+    font-weight: 600;
+    text-decoration: none;
+    transition: color 0.15s ease;
+  }
+
+  .link-row:hover {
+    color: var(--color-ink-900);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  .card {
+    @apply rounded-2xl bg-white shadow-sm transition;
+    border: 1px solid var(--color-line-200);
+    padding: 24px;
+  }
+
+  .card:hover {
+    border-color: color-mix(in srgb, var(--color-brand-600) 40%, var(--color-line-200));
+    @apply shadow-md;
   }
 
   .home-hero__phone {
     margin: 0.9375rem 0 0;
     font-size: 0.9375rem;
     line-height: 1.5;
-    color: rgba(255, 255, 255, 0.88);
+    color: var(--overlay-white-88);
   }
 
   .home-hero__phone-prompt {
@@ -253,19 +484,19 @@
 
   .home-hero__phone-link {
     font-weight: 700;
-    color: #7dd3fc;
+    color: var(--color-brand-300);
     text-decoration: none;
     transition: color 0.15s ease;
   }
 
   .home-hero__phone-link:hover {
-    color: #fff;
+    color: var(--color-white);
     text-decoration: underline;
     text-underline-offset: 2px;
   }
 
   .home-hero__phone-link:focus-visible {
-    outline: 2px solid #38bdf8;
+    outline: 2px solid var(--color-brand-300);
     outline-offset: 2px;
     border-radius: 2px;
   }
@@ -284,11 +515,11 @@
     align-items: center;
     padding: 0.5rem 0.75rem;
     border-radius: 9999px;
-    border: 1px solid rgba(255, 255, 255, 0.16);
-    background: rgba(5, 18, 34, 0.55);
+    border: 1px solid var(--overlay-white-16);
+    background: var(--overlay-navy-950-55);
     font-size: 0.8125rem;
     font-weight: 500;
-    color: rgba(255, 255, 255, 0.86);
+    color: var(--overlay-white-86);
     text-decoration: none;
     transition:
       border-color 0.15s ease,
@@ -297,9 +528,9 @@
   }
 
   .home-hero__chip:hover {
-    border-color: rgba(255, 255, 255, 0.28);
-    background: rgba(5, 18, 34, 0.68);
-    color: #fff;
+    border-color: var(--overlay-white-28);
+    background: var(--overlay-navy-950-68);
+    color: var(--color-white);
   }
 
   .home-hero__trust {
@@ -317,20 +548,21 @@
     gap: 0.4375rem;
     font-size: 0.875rem;
     font-weight: 700;
-    color: rgba(255, 255, 255, 0.87);
+    color: color-mix(in srgb, var(--color-white) 87%, transparent);
   }
 
   .home-hero__trust-icon {
     height: 1rem;
     width: 1rem;
     flex-shrink: 0;
-    color: #38bdf8;
+    color: var(--color-brand-500);
     opacity: 0.9;
   }
 
   @media (max-width: 639px) {
     .home-hero__inner {
-      padding-block: 1.75rem 1.5rem;
+      padding-top: calc(var(--header-height) + 2.25rem);
+      padding-bottom: 2.25rem;
     }
 
     .home-hero__image {
@@ -340,9 +572,9 @@
     .home-hero::before {
       background: linear-gradient(
         180deg,
-        rgba(2, 10, 22, 0.94) 0%,
-        rgba(2, 14, 28, 0.88) 50%,
-        rgba(2, 14, 28, 0.72) 100%
+        var(--overlay-navy-950-94) 0%,
+        var(--overlay-navy-950-88) 50%,
+        var(--overlay-navy-950-72) 100%
       );
     }
 
@@ -361,11 +593,18 @@
   }
 
   .section-heading {
-    @apply mt-8 scroll-mt-24 text-2xl font-semibold tracking-tight text-navy text-balance first:mt-0 sm:text-3xl;
+    @apply mt-8 scroll-mt-24 text-navy text-balance first:mt-0;
+    font-size: var(--text-h2);
+    line-height: 1.15;
+    font-weight: 700;
+    letter-spacing: -0.02em;
   }
 
   .subsection-heading {
-    @apply mt-6 text-xl font-semibold text-navy;
+    @apply mt-6 text-navy;
+    font-size: var(--text-h3);
+    line-height: 1.3;
+    font-weight: 600;
   }
 
   .site-container {
@@ -373,7 +612,7 @@
   }
 
   .site-header-spacer {
-    height: var(--site-header-height);
+    height: var(--header-height);
     flex-shrink: 0;
   }
 
@@ -387,7 +626,12 @@
   }
 
   .content-wrap {
-    @apply mx-auto w-full max-w-6xl px-4 py-12 sm:px-6 lg:px-8 lg:py-20;
+    @apply mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8;
+    padding-block: var(--section-y);
+  }
+
+  .content-wrap--sm {
+    padding-block: var(--section-y-sm);
   }
 
   .content-grid {

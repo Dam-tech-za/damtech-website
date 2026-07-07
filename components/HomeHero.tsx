@@ -59,11 +59,11 @@ export function HomeHero() {
   const title = PAGE_SEO.home.h1;
 
   return (
-    <section className="home-hero" aria-label="Hero">
+    <section className="home-hero -mt-[var(--header-height)]" aria-label="Hero">
       <div className="home-hero__media" aria-hidden>
         <Image
           src={homeHero.image}
-          alt=""
+          alt="Dam liner installation work on a water storage site in South Africa."
           fill
           priority
           fetchPriority="high"

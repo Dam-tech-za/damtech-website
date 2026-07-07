@@ -92,7 +92,7 @@ export function ScrollToTop() {
       aria-label="Scroll to top"
       aria-hidden={!visible}
       tabIndex={visible ? 0 : -1}
-      className={`fixed right-4 z-[100] flex h-12 w-12 items-center justify-center rounded-full border-2 border-slate-200/90 bg-navy text-white shadow-[0_8px_24px_rgba(15,39,68,0.28)] transition-[opacity,transform] duration-300 hover:border-water hover:bg-water focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-water bottom-[calc(4.75rem+env(safe-area-inset-bottom))] lg:bottom-6 ${
+      className={`fixed right-4 z-[100] flex h-12 w-12 items-center justify-center rounded-full border-2 border-slate-200/90 bg-navy text-white shadow-[0_8px_24px_rgba(15,39,68,0.28)] transition-[opacity,transform] duration-300 hover:border-water hover:bg-water focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white bottom-[calc(4.75rem+env(safe-area-inset-bottom))] lg:bottom-6 ${
         visible
           ? "pointer-events-auto translate-y-0 scale-100 opacity-100"
           : "pointer-events-none translate-y-3 scale-95 opacity-0"

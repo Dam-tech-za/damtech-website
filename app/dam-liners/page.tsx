@@ -129,7 +129,7 @@ export default function DamLinersPage() {
             {LINER_TYPES.map((liner) => (
               <article
                 key={liner.id}
-                className="flex h-full flex-col rounded-2xl border border-slate-200 bg-white p-6"
+                className="card flex h-full flex-col"
               >
                 <h3 className="subsection-heading !mt-0">
                   <Link href={liner.href} className="hover:text-water">
@@ -141,7 +141,7 @@ export default function DamLinersPage() {
                 </p>
                 <Link
                   href={liner.href}
-                  className="mt-4 text-sm font-semibold text-water hover:text-navy"
+                  className="link-row mt-1"
                 >
                   Learn more →
                 </Link>

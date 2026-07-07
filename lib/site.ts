@@ -29,6 +29,28 @@ export const phoneTel = siteConfig.phone.replace(/\s/g, "");
 /** WhatsApp click-to-chat (no + prefix in wa.me path). */
 export const whatsAppUrl = "https://wa.me/27828531026";
 
+/** Social profiles for Organization JSON-LD `sameAs` — matches the live site. */
+export const SOCIAL_LINKS = [
+  "https://www.facebook.com/profile.php?id=100063672332953",
+  "https://www.linkedin.com/company/dam-tec/",
+] as const;
+
+/** Schema.org-format opening hours — matches the live site's LocalBusiness listing. */
+export const BUSINESS_HOURS =
+  "Monday,Tuesday,Wednesday,Thursday,Friday,Saturday,Sunday 09:00-17:00";
+
+/** Search Console ownership token. Override via env if re-verifying under a new property. */
+export const GOOGLE_SITE_VERIFICATION =
+  process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION?.trim() ||
+  "aLSxHIbJjQvqWMlqoUV0gYoBNXu2UL7N4USs2hb0Igk";
+
+/** Google Tag Manager container — same container used on the live site. */
+export const GTM_ID = process.env.NEXT_PUBLIC_GTM_ID?.trim() || "GTM-M5RQM6JW";
+
+/** Meta (Facebook) Pixel ID — same pixel used on the live site. */
+export const META_PIXEL_ID =
+  process.env.NEXT_PUBLIC_META_PIXEL_ID?.trim() || "1955529471712055";
+
 export type NavLink = {
   href: string;
   label: string;

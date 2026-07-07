@@ -21,7 +21,7 @@ export function RelatedPosts({
           {posts.map((post) => (
             <li
               key={post.slug}
-              className="rounded-2xl border border-slate-200 bg-white p-5"
+              className="card"
             >
               <time
                 dateTime={post.date}
@@ -43,7 +43,7 @@ export function RelatedPosts({
               </p>
               <Link
                 href={`/${post.slug}`}
-                className="mt-3 inline-flex text-sm font-semibold text-water hover:text-navy"
+                className="link-row mt-1"
               >
                 Read More →
               </Link>

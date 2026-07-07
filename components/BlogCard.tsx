@@ -8,7 +8,7 @@ type BlogCardProps = {
 
 export function BlogCard({ post }: BlogCardProps) {
   return (
-    <article className="flex h-full flex-col rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition hover:border-water/40 hover:shadow-md">
+    <article className="card flex h-full flex-col">
       <div className="flex items-center justify-between gap-2">
         <time
           dateTime={post.date}
@@ -24,17 +24,17 @@ export function BlogCard({ post }: BlogCardProps) {
           {post.category}
         </span>
       </div>
-      <h2 className="mt-3 text-lg font-semibold leading-snug text-navy">
+      <h3 className="mt-3 text-[length:var(--text-h4)] font-semibold leading-snug text-navy">
         <Link href={`/${post.slug}`} className="hover:text-water">
           {post.title}
         </Link>
-      </h2>
+      </h3>
       <p className="mt-3 line-clamp-3 flex-1 text-sm leading-relaxed text-slate-600">
         {resolvePostExcerpt(post)}
       </p>
       <Link
         href={`/${post.slug}`}
-        className="mt-4 inline-flex text-sm font-semibold text-water hover:text-navy"
+        className="link-row mt-2"
       >
         Read More →
       </Link>

@@ -1,6 +1,11 @@
 import type { Metadata } from "next";
 import { DEFAULT_OG_IMAGE, DEFAULT_OG_IMAGE_ALT, IMAGE_PATHS } from "./images";
-import { siteConfig } from "./site";
+import {
+  BUSINESS_HOURS,
+  GOOGLE_SITE_VERIFICATION,
+  siteConfig,
+  SOCIAL_LINKS,
+} from "./site";
 
 const MAX_TITLE_LENGTH = 70;
 const MAX_DESCRIPTION_LENGTH = 160;
@@ -134,6 +139,9 @@ export function createRootMetadata(): Metadata {
     alternates: {
       canonical: absoluteUrl("/"),
     },
+    verification: {
+      google: GOOGLE_SITE_VERIFICATION,
+    },
     robots: {
       index: true,
       follow: true,
@@ -242,6 +250,7 @@ export function createOrganizationSchema() {
     description: siteConfig.defaultDescription,
     logo: absoluteAssetUrl(IMAGE_PATHS.damtechLogo),
     areaServed: siteConfig.location,
+    sameAs: SOCIAL_LINKS,
   };
 }
 
@@ -257,6 +266,7 @@ export function createLocalBusinessSchema() {
     description: siteConfig.defaultDescription,
     image: absoluteUrl(DEFAULT_OG_IMAGE),
     areaServed: siteConfig.location,
+    openingHours: [BUSINESS_HOURS],
     parentOrganization: {
       "@id": `${siteConfig.domain}/#organization`,
     },

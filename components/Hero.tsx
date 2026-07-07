@@ -28,8 +28,10 @@ export function Hero({
 
   return (
     <section
-      className={`hero-section relative isolate overflow-hidden bg-gradient-to-br from-navy via-slate-800 to-water text-white ${
-        compact ? "py-14 sm:py-16 lg:py-20" : "py-16 sm:py-20 lg:py-24"
+      className={`hero-section relative isolate -mt-[var(--header-height)] overflow-hidden text-white ${
+        compact
+          ? "pt-[calc(var(--header-height)+2.5rem)] pb-14 sm:pt-[calc(var(--header-height)+3rem)] sm:pb-16 lg:pt-[calc(var(--header-height)+3.5rem)] lg:pb-20"
+          : "pt-[calc(var(--header-height)+3rem)] pb-16 sm:pt-[calc(var(--header-height)+3.5rem)] sm:pb-20 lg:pt-[calc(var(--header-height)+4rem)] lg:pb-24"
       }`}
     >
       {image ? (
@@ -54,7 +56,7 @@ export function Hero({
           aria-hidden
           style={{
             backgroundImage:
-              "radial-gradient(circle at 20% 20%, #38bdf8 0%, transparent 45%), radial-gradient(circle at 80% 0%, #4ade80 0%, transparent 35%)",
+              "radial-gradient(circle at 20% 20%, var(--color-brand-300) 0%, transparent 45%), radial-gradient(circle at 80% 0%, var(--color-brand-600) 0%, transparent 35%)",
           }}
         />
       )}
@@ -66,7 +68,7 @@ export function Hero({
           </p>
         ) : null}
         <h1
-          className={`hero-title max-w-4xl font-bold tracking-tight text-balance text-white ${
+          className={`hero-title max-w-4xl text-balance text-white ${
             eyebrow ? "mt-3" : "mt-0"
           }`}
         >

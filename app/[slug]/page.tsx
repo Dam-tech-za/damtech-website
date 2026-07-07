@@ -104,7 +104,7 @@ export default async function BlogPostPage({ params }: Props) {
       />
 
       <article>
-        <header className="bg-gradient-to-br from-navy to-slate-800 py-12 text-white sm:py-16">
+        <header className="-mt-[var(--header-height)] bg-gradient-to-br from-navy to-slate-800 pt-[calc(var(--header-height)+3rem)] pb-12 text-white sm:pt-[calc(var(--header-height)+3.5rem)] sm:pb-16">
           <div className="site-container max-w-3xl">
             <p className="text-sm text-sky-200">
               <Link href="/blog" className="hover:text-white">
