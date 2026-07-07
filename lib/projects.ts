@@ -42,35 +42,30 @@ export const PROJECT_CASE_STUDIES: ProjectCaseStudy[] = [
     slug: "marico-hill-game-lodge-dam-lining",
     title: "Marico Hill Game Lodge Dam Lining",
     h1: "Marico Hill Game Lodge Dam Lining Project",
-    location: "North West Province",
+    location: "Rustenburg, North West",
     serviceType: "HDPE dam liner installation",
-    material: "HDPE geomembrane",
+    material: "1 mm HDPE geomembrane",
     scope:
-      "Supply and installation of an HDPE liner for a game-lodge earth dam supporting wildlife water supply and operational reserves.",
+      "Supply and installation of 1 mm HDPE geomembrane across three earth dams (Dam 1, Dam 2 and Dam 3) for Marico Hill Game Lodge (Pty) Ltd — 2,098 m² total.",
     background:
-      "Game lodges in the North West Bushveld depend on dependable dam water for wildlife viewing, fire protection and staff operations. Marico Hill Game Lodge required improved retention on an earth dam that was losing water through the basin soils — reducing usable volume through dry months when borehole and rainfall top-up are both costly.",
+      "Marico Hill Game Lodge (Pty) Ltd near Rustenburg depends on dependable dam water for wildlife, fire protection and lodge operations. Three earth dams on the property needed improved retention through the Bushveld dry season, when borehole top-up and rainfall capture are both costly if seepage losses remain unchecked.",
     siteConditions:
-      "[TODO: Confirm exact lodge location, dam name and catchment description.] The site sits in warm Bushveld conditions with seasonal rainfall and extended dry periods. Wildlife uses the dam margin — edge protection and anchor detail must account for animal traffic once the liner is installed. [TODO: Confirm substrate type — sandy, clay or mixed — and whether the dam holds a permanent pool or seasonal drawdown.]",
+      "The site sits in warm North West Bushveld conditions with seasonal rainfall and extended dry periods. Wildlife uses the dam margins, so edge protection and crest anchoring had to suit animal traffic once the liners were installed. Each dam required vegetation, root and organic material cleared, with profiles trimmed into smooth, uniform side slopes before lining.",
     challenge:
-      "[TODO: Confirm dam surface area, depth range and existing embankment condition.] The primary challenge was stopping seepage while maintaining a safe installation programme around lodge operations and wildlife movement. Without verified dimensions, we cannot publish final m² or thickness here — those figures will be added once project records are confirmed with the client.",
+      "All three dams needed subgrade compaction and inspection to remove sharp objects and voids before liner deployment. The combined 2,098 m² footprint had to be lined while coordinating safe access around active lodge operations and wildlife movement on the property.",
     approach:
-      "Damtech followed our standard earth-dam workflow: drawdown or partial dewatering where agreed, removal of debris and sharp objects from the prepared bed, deployment of HDPE panels sized to the dam profile, heat-welded seams and crest anchoring to manufacturer practice. High-wear zones at the waterline were flagged for additional protection measures suitable for game activity. [TODO: Confirm liner thickness specified and whether geotextile underlay was used.]",
+      "Damtech cleared vegetation, roots and organic material from each basin, trimmed and shaped dam profiles, and compacted subgrades before liner placement. 1 mm HDPE panels were deployed to each dam profile and joined with extrusion and wedge welding into continuous watertight seams, with crest anchoring completed to manufacturer practice.",
     result:
-      "[TODO: Add verified m² installed, completion date and measured change in water retention after refill.] The lodge received a continuous HDPE barrier designed to reduce seepage losses and stabilise stored volume for wildlife and operational use through the dry season.",
+      "Installation was completed on 5 March 2026 and signed off on 18 March 2026. Dam 1 (980 m²), Dam 2 (712 m²) and Dam 3 (406 m²) were lined with 1 mm HDPE geomembrane — 2,098 m² in total — creating continuous barriers designed to reduce seepage and stabilise stored volume through the dry season. The system is rated for 20+ years with a 10-year supplier material warranty on qualifying installations.",
     outcomes: [
-      "[TODO: Confirm post-installation water-level stability over first dry season.]",
-      "HDPE liner installed as a continuous waterproof membrane across the prepared dam bed.",
-      "Anchoring and edge detailing planned for Bushveld wildlife pressure at the waterline.",
-      "Lodge operations coordinated around phased access during installation.",
+      "2,098 m² of 1 mm HDPE installed across three lodge dams (980 m² + 712 m² + 406 m²).",
+      "Thermally welded extrusion and wedge seams forming continuous watertight membranes.",
+      "Vegetation clearance, profiling and subgrade preparation completed on all three basins.",
+      "Crest anchoring and edge detailing suited to Bushveld wildlife pressure at the waterline.",
+      "Signed off 18 March 2026 with 10-year supplier material warranty on qualifying materials.",
     ],
     summary:
-      "North West game lodge earth dam lined with HDPE to improve water retention for wildlife and lodge operations — client details and final measurements pending confirmation.",
-    todo: [
-      "Confirm exact location name and dam identity",
-      "Add final m² and liner thickness",
-      "Add client-approved photos",
-      "Verify completion date and retention outcome",
-    ],
+      "Marico Hill Game Lodge — three Rustenburg dams lined with 2,098 m² of 1 mm HDPE for improved water retention.",
     images: [
       projectImage(
         IMAGE_PATHS.hdpeDamLinerEarthDam,
@@ -80,13 +75,13 @@ export const PROJECT_CASE_STUDIES: ProjectCaseStudy[] = [
     relatedServices: [
       { href: "/dam-liners", label: "Dam Liners" },
       { href: "/farm-dam-liners", label: "Farm Dam Liners" },
-      { href: "/limpopo-dam-liners", label: "Limpopo & Bushveld" },
+      { href: "/mining-dam-liners", label: "Mining & Game Lodge Dams" },
       { href: "/contact", label: "Contact" },
     ],
     seo: {
       title: "Marico Hill Game Lodge Dam Lining Project | Damtech",
       description:
-        "HDPE dam liner installation for a North West game lodge earth dam — improving water retention for wildlife and lodge operations.",
+        "2,098 m² of 1 mm HDPE dam liner installed across three dams at Marico Hill Game Lodge, Rustenburg — completed March 2026.",
     },
   },
   {

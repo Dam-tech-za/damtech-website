@@ -16,7 +16,7 @@ import {
   PAGE_SEO,
 } from "@/lib/pages";
 import { SITE_IMAGES } from "@/lib/images";
-import { OFFICES, phoneTel, siteConfig } from "@/lib/site";
+import { OFFICES, formatOfficeAddressLines, phoneTel, siteConfig } from "@/lib/site";
 
 const seo = PAGE_SEO.contact;
 
@@ -81,13 +81,18 @@ function ContactAside() {
         <ul className="mt-3 space-y-3">
           {OFFICES.map((office) => (
             <li
-              key={office.name}
+              key={office.id}
               className="rounded-xl border border-slate-200 bg-white p-4"
             >
               <p className="font-semibold text-navy">{office.name}</p>
+              {formatOfficeAddressLines(office).map((line) => (
+                <p key={line} className="mt-1 text-slate-600">
+                  {line}
+                </p>
+              ))}
               <a
                 href={`tel:${office.phone.replace(/\s/g, "")}`}
-                className="mt-1 block text-water hover:text-navy"
+                className="mt-2 block text-water hover:text-navy"
               >
                 {office.phone}
               </a>

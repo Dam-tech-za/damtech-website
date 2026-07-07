@@ -68,9 +68,42 @@ export const BLOG_AUTHOR = {
 } as const;
 
 export const OFFICES = [
-  { name: "Head Office — Pretoria", phone: "+27 (0) 82 853 1026" },
-  { name: "Regional Office — Western Cape", phone: "+27 (0) 82 853 1026" },
+  {
+    id: "pretoria",
+    name: "Head Office — Pretoria",
+    phone: "+27 (0) 82 853 1026",
+    address: {
+      streetAddress: "926, 33rd Avenue",
+      suburb: "Villieria",
+      city: "Pretoria",
+      province: "Gauteng",
+      postalCode: "0186",
+      country: "South Africa",
+    },
+  },
+  {
+    id: "western-cape",
+    name: "Western Cape",
+    phone: "+27 (0) 82 853 1026",
+    coverageNote:
+      "Mobile project teams across the Western Cape — contact our head office to schedule a site visit.",
+  },
 ] as const;
+
+export type Office = (typeof OFFICES)[number];
+
+export function formatOfficeAddressLines(office: Office): string[] {
+  if ("address" in office && office.address) {
+    const { streetAddress, suburb, city, postalCode, province } = office.address;
+    return [`${streetAddress}`, `${suburb}, ${city} ${postalCode}`, province];
+  }
+  if ("coverageNote" in office && office.coverageNote) {
+    return [office.coverageNote];
+  }
+  return [];
+}
+
+export const HEAD_OFFICE = OFFICES[0];
 
 export type NavLink = {
   href: string;

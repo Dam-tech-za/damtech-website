@@ -4,6 +4,7 @@ import {
   BUSINESS_HOURS,
   BLOG_AUTHOR,
   GOOGLE_SITE_VERIFICATION,
+  HEAD_OFFICE,
   OFFICES,
   SERVICE_AREA_PROVINCES,
   siteConfig,
@@ -284,21 +285,42 @@ export function createLocalBusinessSchema() {
     parentOrganization: {
       "@id": `${siteConfig.domain}/#organization`,
     },
-    location: OFFICES.map((office) => ({
-      "@type": "Place",
-      name: office.name,
-      telephone: office.phone.replace(/\s/g, ""),
-      address: {
-        "@type": "PostalAddress",
-        addressLocality: office.name.includes("Pretoria")
-          ? "Pretoria"
-          : "Western Cape",
-        addressRegion: office.name.includes("Pretoria")
-          ? "Gauteng"
-          : "Western Cape",
-        addressCountry: "ZA",
-      },
-    })),
+    address: {
+      "@type": "PostalAddress",
+      streetAddress: HEAD_OFFICE.address.streetAddress,
+      addressLocality: `${HEAD_OFFICE.address.suburb}, ${HEAD_OFFICE.address.city}`,
+      addressRegion: HEAD_OFFICE.address.province,
+      postalCode: HEAD_OFFICE.address.postalCode,
+      addressCountry: "ZA",
+    },
+    location: OFFICES.map((office) => {
+      if ("address" in office && office.address) {
+        return {
+          "@type": "Place",
+          name: office.name,
+          telephone: office.phone.replace(/\s/g, ""),
+          address: {
+            "@type": "PostalAddress",
+            streetAddress: office.address.streetAddress,
+            addressLocality: `${office.address.suburb}, ${office.address.city}`,
+            addressRegion: office.address.province,
+            postalCode: office.address.postalCode,
+            addressCountry: "ZA",
+          },
+        };
+      }
+
+      return {
+        "@type": "Place",
+        name: `${office.name} service area`,
+        telephone: office.phone.replace(/\s/g, ""),
+        address: {
+          "@type": "PostalAddress",
+          addressRegion: "Western Cape",
+          addressCountry: "ZA",
+        },
+      };
+    }),
     serviceType: [
       "Dam liners",
       "HDPE dam lining",

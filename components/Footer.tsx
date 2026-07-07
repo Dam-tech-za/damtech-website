@@ -2,6 +2,7 @@ import Link from "next/link";
 import {
   FOOTER_COMPANY_LINKS,
   FOOTER_SERVICE_LINKS,
+  formatOfficeAddressLines,
   OFFICES,
   phoneTel,
   siteConfig,
@@ -87,14 +88,18 @@ export function Footer() {
         <div className="site-container flex flex-col gap-4 px-4 py-6 sm:flex-row sm:items-start sm:justify-between sm:px-6 lg:px-8">
           <div>
             <p className="text-sm font-semibold text-white">Offices</p>
-            <ul className="mt-2 space-y-2 text-sm text-slate-300">
+            <ul className="mt-2 space-y-3 text-sm text-slate-300">
               {OFFICES.map((office) => (
-                <li key={office.name}>
-                  <span className="text-slate-200">{office.name}</span>
-                  {" — "}
+                <li key={office.id}>
+                  <p className="font-medium text-slate-200">{office.name}</p>
+                  {formatOfficeAddressLines(office).map((line) => (
+                    <p key={line} className="mt-0.5">
+                      {line}
+                    </p>
+                  ))}
                   <a
                     href={`tel:${office.phone.replace(/\s/g, "")}`}
-                    className="hover:text-white"
+                    className="mt-1 inline-block hover:text-white"
                   >
                     {office.phone}
                   </a>
