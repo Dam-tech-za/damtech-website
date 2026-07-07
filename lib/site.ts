@@ -69,8 +69,22 @@ export const BLOG_AUTHOR = {
 
 export const OFFICES = [
   {
+    id: "western-cape",
+    name: "Head Office — Betty's Bay",
+    phone: "+27 (0) 82 853 1026",
+    googleBusinessProfileUrl: "https://share.google/Xbvr3S0ksWMMyIEuL",
+    address: {
+      streetAddress: "2484 Anglers Rd",
+      suburb: "Betty's Bay",
+      city: "Betty's Bay",
+      province: "Western Cape",
+      postalCode: "7141",
+      country: "South Africa",
+    },
+  },
+  {
     id: "pretoria",
-    name: "Head Office — Pretoria",
+    name: "Regional Office — Pretoria",
     phone: "+27 (0) 82 853 1026",
     googleBusinessProfileUrl: "https://share.google/NxSGti3zXVB01SI3Z",
     address: {
@@ -82,34 +96,56 @@ export const OFFICES = [
       country: "South Africa",
     },
   },
-  {
-    id: "western-cape",
-    name: "Western Cape",
-    phone: "+27 (0) 82 853 1026",
-    googleBusinessProfileUrl: "https://share.google/Xbvr3S0ksWMMyIEuL",
-    coverageNote:
-      "Mobile project teams across the Western Cape — contact our head office to schedule a site visit.",
-  },
 ] as const;
 
-/** Google Maps embed for the Pretoria head office (no API key required). */
+/** Google Maps embed for the head office (no API key required). */
 export const HEAD_OFFICE_MAP_EMBED_URL =
-  "https://maps.google.com/maps?q=926+33rd+Avenue,+Villieria,+Pretoria,+0186,+South+Africa&hl=en&z=15&output=embed";
+  "https://maps.google.com/maps?q=2484+Anglers+Rd,+Betty's+Bay,+7141,+South+Africa&hl=en&z=15&output=embed";
 
 export type Office = (typeof OFFICES)[number];
 
+export function formatOfficeLocality(
+  address: Extract<Office, { address: object }>["address"],
+): string {
+  const { suburb, city } = address;
+  return suburb && suburb !== city ? `${suburb}, ${city}` : city;
+}
+
 export function formatOfficeAddressLines(office: Office): string[] {
   if ("address" in office && office.address) {
-    const { streetAddress, suburb, city, postalCode, province } = office.address;
-    return [`${streetAddress}`, `${suburb}, ${city} ${postalCode}`, province];
-  }
-  if ("coverageNote" in office && office.coverageNote) {
-    return [office.coverageNote];
+    const { streetAddress, postalCode, province } = office.address;
+    return [
+      `${streetAddress}`,
+      `${formatOfficeLocality(office.address)} ${postalCode}`,
+      province,
+    ];
   }
   return [];
 }
 
 export const HEAD_OFFICE = OFFICES[0];
+
+/** Towns and districts named on regional service pages — contact page “Areas we work in”. */
+export const CONTACT_SERVICE_AREAS = {
+  "Western Cape": [
+    "Betty's Bay",
+    "Stellenbosch",
+    "Franschhoek",
+    "Grabouw",
+    "Swartland",
+    "Boland",
+    "Overberg",
+  ],
+  Gauteng: [
+    "Pretoria",
+    "Centurion",
+    "Johannesburg",
+    "Hammanskraal",
+    "Cullinan",
+    "Roodepoort",
+    "Alberton",
+  ],
+} as const;
 
 export type NavLink = {
   href: string;

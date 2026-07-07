@@ -16,24 +16,22 @@ import {
   PAGE_SEO,
 } from "@/lib/pages";
 import { SITE_IMAGES } from "@/lib/images";
-import { OFFICES, formatOfficeAddressLines, HEAD_OFFICE_MAP_EMBED_URL, phoneTel, siteConfig } from "@/lib/site";
+import {
+  CONTACT_SERVICE_AREAS,
+  OFFICES,
+  formatOfficeAddressLines,
+  HEAD_OFFICE_MAP_EMBED_URL,
+  phoneTel,
+  siteConfig,
+} from "@/lib/site";
 
 const seo = PAGE_SEO.contact;
 
 export const metadata = createPageMetadata(seo);
 
-const AREAS_SERVED = [
-  "Agricultural farms and game farms",
-  "Industrial and commercial properties",
-  "Mining and earth dam applications",
-  "Residential waterproofing projects",
-  "Rural water storage and irrigation",
-  "Nationwide — Pretoria, Western Cape and surrounds",
-] as const;
-
-function ContactAside() {
+function ContactQuickActions() {
   return (
-    <aside className="space-y-6 lg:sticky lg:top-24">
+    <aside className="lg:sticky lg:top-24">
       <div className="rounded-2xl border border-sky-200 bg-gradient-to-br from-sky-50 to-white p-6 shadow-sm">
         <SectionHeading as="h3" id="contact-details" className="!mt-0 text-xl">
           Prefer to talk first?
@@ -57,32 +55,26 @@ function ContactAside() {
           Monday – Friday 08:00 – 17:00 (SAST) · Saturday by appointment
         </p>
       </div>
+    </aside>
+  );
+}
 
-      <div className="rounded-2xl border border-slate-200 bg-white p-6 text-sm">
-        <SectionHeading as="h3" id="areas-served" className="!mt-0 text-lg">
-          Areas we serve
-        </SectionHeading>
-        <ul className="mt-3 grid gap-2">
-          {AREAS_SERVED.map((area) => (
-            <li
-              key={area}
-              className="rounded-lg bg-slate-50 px-3 py-2 text-slate-700 ring-1 ring-slate-200"
-            >
-              {area}
-            </li>
-          ))}
-        </ul>
-      </div>
-
-      <div className="rounded-2xl border border-slate-200 bg-slate-50 p-6 text-sm">
-        <SectionHeading as="h3" id="our-locations" className="!mt-0 text-lg">
+function ContactLocationsSection() {
+  return (
+    <section
+      id="our-locations"
+      className="scroll-mt-24 border-b border-slate-200 bg-white"
+      aria-labelledby="our-locations-heading"
+    >
+      <div className="content-wrap py-12 sm:py-16">
+        <SectionHeading id="our-locations-heading" className="!mt-0">
           Our offices
         </SectionHeading>
-        <ul className="mt-3 space-y-3">
+        <ul className="mt-6 grid gap-4 md:grid-cols-2">
           {OFFICES.map((office) => (
             <li
               key={office.id}
-              className="rounded-xl border border-slate-200 bg-white p-4"
+              className="rounded-2xl border border-slate-200 bg-slate-50 p-6 text-sm"
             >
               <p className="font-semibold text-navy">{office.name}</p>
               {formatOfficeAddressLines(office).map((line) => (
@@ -96,7 +88,8 @@ function ContactAside() {
               >
                 {office.phone}
               </a>
-              {"googleBusinessProfileUrl" in office && office.googleBusinessProfileUrl ? (
+              {"googleBusinessProfileUrl" in office &&
+              office.googleBusinessProfileUrl ? (
                 <a
                   href={office.googleBusinessProfileUrl}
                   target="_blank"
@@ -109,19 +102,48 @@ function ContactAside() {
             </li>
           ))}
         </ul>
-      </div>
 
-      <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white">
-        <iframe
-          title="Damtech head office on Google Maps"
-          src={HEAD_OFFICE_MAP_EMBED_URL}
-          className="aspect-[4/3] w-full border-0"
-          loading="lazy"
-          referrerPolicy="no-referrer-when-downgrade"
-          allowFullScreen
-        />
+        <SectionHeading id="areas-served" className="mt-12">
+          Areas we work in
+        </SectionHeading>
+        <p className="mt-3 max-w-3xl text-sm text-slate-600">
+          Damtech mobilises project teams across Gauteng and the Western Cape,
+          with nationwide coverage for larger dam, tank and waterproofing
+          contracts.
+        </p>
+        <div className="mt-6 grid gap-4 md:grid-cols-2">
+          {Object.entries(CONTACT_SERVICE_AREAS).map(([region, towns]) => (
+            <div
+              key={region}
+              className="rounded-2xl border border-slate-200 bg-slate-50 p-6"
+            >
+              <h3 className="text-sm font-semibold text-navy">{region}</h3>
+              <ul className="mt-3 flex flex-wrap gap-2">
+                {towns.map((town) => (
+                  <li
+                    key={town}
+                    className="rounded-lg bg-white px-3 py-1.5 text-sm text-slate-700 ring-1 ring-slate-200"
+                  >
+                    {town}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-10 overflow-hidden rounded-2xl border border-slate-200">
+          <iframe
+            title="Damtech head office on Google Maps"
+            src={HEAD_OFFICE_MAP_EMBED_URL}
+            className="h-[28rem] w-full border-0 sm:h-[32rem]"
+            loading="lazy"
+            referrerPolicy="no-referrer-when-downgrade"
+            allowFullScreen
+          />
+        </div>
       </div>
-    </aside>
+    </section>
   );
 }
 
@@ -160,17 +182,19 @@ export default function ContactPage() {
         id="request-quote"
         className="scroll-mt-24 border-b border-slate-200 bg-gradient-to-b from-sky-50/80 to-white"
       >
-        <div className="content-wrap">
+        <div className="content-wrap py-12 sm:py-16">
           <div className="grid items-start gap-8 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)]">
             <FormSection
               title="Request Your Free Quote"
               subtitle="Tell us about your project and we'll respond within one business day."
-            sourcePage="/contact"
-          />
-            <ContactAside />
+              sourcePage="/contact"
+            />
+            <ContactQuickActions />
           </div>
         </div>
       </section>
+
+      <ContactLocationsSection />
 
       <section className="content-wrap">
         <SectionHeading id="services-we-quote" className="!mt-0">
@@ -183,10 +207,7 @@ export default function ContactPage() {
         </p>
         <ul className="mt-8 content-grid-4">
           {CONTACT_SERVICES.map((service) => (
-            <li
-              key={service.href}
-              className="card flex h-full flex-col"
-            >
+            <li key={service.href} className="card flex h-full flex-col">
               <h3 className="font-semibold text-navy">
                 <Link href={service.href} className="hover:text-water">
                   {service.title}
@@ -195,10 +216,7 @@ export default function ContactPage() {
               <p className="mt-2 flex-1 text-sm text-slate-600">
                 {service.description}
               </p>
-              <Link
-                href={service.href}
-                className="link-row mt-1"
-              >
+              <Link href={service.href} className="link-row mt-1">
                 Learn more →
               </Link>
             </li>
@@ -217,10 +235,7 @@ export default function ContactPage() {
           </SectionHeading>
           <p className="mt-3 max-w-3xl text-slate-600">
             Quick answers before you call. Read our full{" "}
-            <Link
-              href="/faq"
-              className="text-water hover:text-navy"
-            >
+            <Link href="/faq" className="text-water hover:text-navy">
               FAQ page
             </Link>{" "}
             for more on liners, tanks and warranties.

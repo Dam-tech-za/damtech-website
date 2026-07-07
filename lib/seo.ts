@@ -6,6 +6,7 @@ import {
   GOOGLE_SITE_VERIFICATION,
   HEAD_OFFICE,
   HEAD_OFFICE_MAP_EMBED_URL,
+  formatOfficeLocality,
   OFFICES,
   SERVICE_AREA_PROVINCES,
   siteConfig,
@@ -289,7 +290,7 @@ export function createLocalBusinessSchema() {
     address: {
       "@type": "PostalAddress",
       streetAddress: HEAD_OFFICE.address.streetAddress,
-      addressLocality: `${HEAD_OFFICE.address.suburb}, ${HEAD_OFFICE.address.city}`,
+      addressLocality: formatOfficeLocality(HEAD_OFFICE.address),
       addressRegion: HEAD_OFFICE.address.province,
       postalCode: HEAD_OFFICE.address.postalCode,
       addressCountry: "ZA",
@@ -310,7 +311,7 @@ export function createLocalBusinessSchema() {
         place.address = {
           "@type": "PostalAddress",
           streetAddress: office.address.streetAddress,
-          addressLocality: `${office.address.suburb}, ${office.address.city}`,
+          addressLocality: formatOfficeLocality(office.address),
           addressRegion: office.address.province,
           postalCode: office.address.postalCode,
           addressCountry: "ZA",
