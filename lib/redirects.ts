@@ -1,7 +1,24 @@
 import type { Redirect } from "next/dist/lib/load-custom-routes";
 
+/** Apex → www canonical redirect (must run before path redirects). */
+const CANONICAL_HOST_REDIRECTS: Redirect[] = [
+  {
+    source: "/",
+    has: [{ type: "host", value: "dam-tech.co.za" }],
+    destination: "https://www.dam-tech.co.za/",
+    permanent: true,
+  },
+  {
+    source: "/:path+",
+    has: [{ type: "host", value: "dam-tech.co.za" }],
+    destination: "https://www.dam-tech.co.za/:path/",
+    permanent: true,
+  },
+];
+
 /** Legacy WordPress URLs — permanent 301 redirects. */
 export const redirects: Redirect[] = [
+  ...CANONICAL_HOST_REDIRECTS,
   { source: "/linings", destination: "/dam-liners/", permanent: true },
   { source: "/hdpe-linings", destination: "/hdpe-dam-lining/", permanent: true },
   { source: "/torch-on-linings", destination: "/torch-on-dam-lining/", permanent: true },

@@ -13,6 +13,11 @@ const nextConfig: NextConfig = {
         hostname: "dam-tech.co.za",
         pathname: "/wp-content/uploads/**",
       },
+      {
+        protocol: "https",
+        hostname: "www.dam-tech.co.za",
+        pathname: "/wp-content/uploads/**",
+      },
     ],
   },
   async redirects() {

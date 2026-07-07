@@ -1,4 +1,4 @@
-/** Canonical site origin (non-www). Set `NEXT_PUBLIC_SITE_URL` in Vercel → Production. */
+/** Canonical site origin (www). Set `NEXT_PUBLIC_SITE_URL` in Vercel → Production. */
 import { SITE_URL } from "./site-url";
 
 export { SITE_URL };

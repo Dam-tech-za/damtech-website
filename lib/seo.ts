@@ -55,7 +55,7 @@ export function absoluteAssetUrl(path: string): string {
   return clean === "/" ? `${base}/` : `${base}${clean}`;
 }
 
-/** Normalise a path and build a non-www absolute URL. */
+/** Normalise a path and build a canonical absolute URL (www + trailing slash). */
 export function absoluteUrl(path: string): string {
   const base = siteConfig.domain.replace(/\/$/, "");
   const clean = normalizePath(path);
