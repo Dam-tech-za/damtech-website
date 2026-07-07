@@ -172,7 +172,7 @@ export function FormSection({
               <span className="text-sm font-normal text-slate-500 group-open:hidden">
                 Company, province, size, location
               </span>
-              <span className="hidden text-sm font-normal text-water group-open:inline">
+              <span className="hidden text-sm font-normal text-slate-500 group-open:inline">
                 Hide details
               </span>
             </span>

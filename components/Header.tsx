@@ -1,19 +1,26 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { DamtechLogo } from "@/components/DamtechLogo";
 import { MobileNav } from "@/components/MobileNav";
-import { HEADER_NAV_LINKS, siteConfig } from "@/lib/site";
+import { HEADER_NAV_LINKS } from "@/lib/site";
 
 const SCROLL_DELTA = 12;
 const REVEAL_AT_TOP_PX = 120;
-const SOLID_AT_PX = 8;
+const SCROLLED_AT_PX = 8;
 const HIDE_AFTER_PX = 56;
 const REVEAL_AFTER_PX = 28;
 const HIDE_MIN_Y = 180;
 
+function isActiveNav(href: string, pathname: string): boolean {
+  if (href === "/") return pathname === "/";
+  return pathname === href || pathname.startsWith(`${href}/`);
+}
+
 export function Header() {
+  const pathname = usePathname();
   const [visible, setVisible] = useState(true);
   const [scrolled, setScrolled] = useState(false);
   const headerRef = useRef<HTMLElement>(null);
@@ -41,7 +48,7 @@ export function Header() {
 
   useEffect(() => {
     lastScrollY.current = window.scrollY;
-    setScrolled(window.scrollY > SOLID_AT_PX);
+    setScrolled(window.scrollY > SCROLLED_AT_PX);
 
     const onScroll = () => {
       if (ticking.current) {
@@ -62,7 +69,6 @@ export function Header() {
           setVisible(true);
           scrollAccumulator.current = 0;
         } else if (delta > SCROLL_DELTA) {
-          // Accumulate downward scroll before hiding to prevent flicker.
           scrollAccumulator.current =
             scrollAccumulator.current >= 0
               ? scrollAccumulator.current + delta
@@ -72,7 +78,6 @@ export function Header() {
             scrollAccumulator.current = 0;
           }
         } else if (delta < -SCROLL_DELTA) {
-          // Accumulate upward scroll before revealing to prevent flicker.
           scrollAccumulator.current =
             scrollAccumulator.current <= 0
               ? scrollAccumulator.current + delta
@@ -83,7 +88,7 @@ export function Header() {
           }
         }
 
-        setScrolled(currentY > SOLID_AT_PX);
+        setScrolled(currentY > SCROLLED_AT_PX);
 
         lastScrollY.current = currentY;
         ticking.current = false;
@@ -97,44 +102,39 @@ export function Header() {
   return (
     <header
       ref={headerRef}
-      className={`site-header fixed inset-x-0 top-0 z-50 backdrop-blur-xl supports-[backdrop-filter]:backdrop-blur-xl transition-[transform,opacity,background-color,box-shadow,border-color] duration-300 ease-[cubic-bezier(.2,.8,.2,1)] motion-reduce:transition-none ${
-        visible ? "translate-y-0 opacity-100" : "-translate-y-full opacity-0"
-      } ${
-        scrolled
-          ? "border-b bg-[color:var(--header-bg-scrolled)] shadow-[var(--header-shadow-scrolled)] border-[color:var(--header-border-scrolled)]"
-          : "border-b bg-[color:var(--header-bg-top)] shadow-[var(--header-shadow-top)] border-[color:var(--header-border-top)]"
-      }`}
+      className={`site-header fixed inset-x-0 top-0 z-50 border-b transition-[transform,box-shadow] duration-300 ease-[cubic-bezier(.2,.8,.2,1)] motion-reduce:transition-none ${
+        visible ? "translate-y-0" : "-translate-y-full"
+      } ${scrolled ? "site-header--scrolled" : ""}`}
     >
-      <div className="site-container relative flex h-[var(--site-header-height)] items-center justify-between gap-4 lg:gap-6">
-        <Link href="/" className="group flex min-w-0 shrink-0 items-center gap-2.5 sm:gap-3">
-          <DamtechLogo size={36} className="block shrink-0" />
-          <span className="flex min-w-0 flex-col justify-center leading-tight">
-            <span className="block truncate text-lg font-bold tracking-tight text-navy">
-              {siteConfig.name}
-            </span>
-            <span className="hidden text-xs text-slate-600 sm:block">
+      <div className="site-shell site-header__inner">
+        <Link href="/" className="site-header__brand group">
+          <DamtechLogo size={38} className="site-header__logo" />
+          <span className="site-header__brand-text">
+            <span className="site-header__brand-title">Damtech</span>
+            <span className="site-header__brand-subtitle">
               Dam liners &amp; waterproofing
             </span>
           </span>
         </Link>
 
-        <nav
-          className="hidden items-center gap-5 lg:flex lg:flex-1 lg:justify-center xl:gap-6"
-          aria-label="Main"
-        >
-          {HEADER_NAV_LINKS.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className="whitespace-nowrap text-sm font-medium text-navy transition hover:text-water"
-            >
-              {link.label}
-            </Link>
-          ))}
+        <nav className="site-header__nav hidden lg:flex" aria-label="Main">
+          {HEADER_NAV_LINKS.map((link) => {
+            const active = isActiveNav(link.href, pathname);
+            return (
+              <Link
+                key={link.href}
+                href={link.href}
+                className={`site-header__nav-link${active ? " site-header__nav-link--active" : ""}`}
+                aria-current={active ? "page" : undefined}
+              >
+                {link.label}
+              </Link>
+            );
+          })}
         </nav>
 
-        <div className="flex items-center gap-2">
-          <Link href="/quote" className="btn-primary hidden text-sm sm:inline-flex">
+        <div className="site-header__actions">
+          <Link href="/quote" className="site-header__cta hidden sm:inline-flex">
             Request a Free Quote
           </Link>
           <MobileNav links={HEADER_NAV_LINKS} />

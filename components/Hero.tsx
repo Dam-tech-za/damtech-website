@@ -52,7 +52,7 @@ export function Hero({
               sizes="100vw"
             />
           </div>
-          <div className="absolute inset-0 bg-navy/75" />
+          <div className="hero-section__image-overlay absolute inset-0" />
         </div>
       ) : (
         <div
@@ -60,7 +60,7 @@ export function Hero({
           aria-hidden
           style={{
             backgroundImage:
-              "radial-gradient(circle at 20% 20%, var(--color-brand-300) 0%, transparent 45%), radial-gradient(circle at 80% 0%, var(--color-brand-600) 0%, transparent 35%)",
+              "radial-gradient(circle at 20% 20%, var(--color-accent-blue-light) 0%, transparent 45%), radial-gradient(circle at 80% 0%, var(--color-accent-blue) 0%, transparent 35%)",
           }}
         />
       )}
@@ -69,11 +69,7 @@ export function Hero({
         {breadcrumbs && breadcrumbs.length > 1 ? (
           <Breadcrumbs items={breadcrumbs} variant="dark" className="mb-4" />
         ) : null}
-        {eyebrow ? (
-          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-sky-200 sm:text-sm">
-            {eyebrow}
-          </p>
-        ) : null}
+        {eyebrow ? <p className="text-kicker">{eyebrow}</p> : null}
         <h1
           className={`hero-title max-w-4xl text-balance text-white ${
             eyebrow ? "mt-3" : "mt-0"
@@ -81,7 +77,7 @@ export function Hero({
         >
           {title}
         </h1>
-        <p className="mt-4 max-w-2xl text-base leading-relaxed text-slate-200 sm:text-lg">
+        <p className="mt-4 max-w-2xl text-base sm:text-lg" style={{ color: "var(--color-body-gray)" }}>
           {description}
         </p>
         {actions ? (

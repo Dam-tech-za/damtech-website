@@ -49,7 +49,7 @@ export default function ProjectsIndexPage() {
                 </Link>
               </h2>
               <p className="mt-2 flex-1 text-sm text-slate-600">{project.summary}</p>
-              <p className="mt-3 text-sm font-medium text-water">
+              <p className="mt-3 text-sm font-medium text-slate-600">
                 {project.serviceType} · {project.material}
               </p>
               <Link

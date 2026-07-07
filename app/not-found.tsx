@@ -11,7 +11,7 @@ const QUICK_LINKS = [
 export default function NotFound() {
   return (
     <main className="content-wrap flex min-h-[50vh] flex-col items-center justify-center text-center">
-      <p className="text-sm font-semibold uppercase tracking-wide text-water">
+      <p className="text-sm font-semibold uppercase tracking-[0.08em] text-body">
         404
       </p>
       <h1 className="mt-2 text-3xl font-bold tracking-tight text-navy sm:text-4xl">

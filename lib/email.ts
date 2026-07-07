@@ -1,5 +1,6 @@
 import { Resend } from "resend";
 import type { LeadFormData } from "@/lib/form";
+import { DAMTECH_THEME, DAMTECH_FONTS } from "@/lib/theme";
 
 const INBOX_EMAIL =
   process.env.LEAD_INBOX_EMAIL?.trim() || "info@dam-tech.co.za";
@@ -82,11 +83,11 @@ function buildLeadEmailHtml(data: LeadFormData, channel: LeadEmailChannel): stri
 
   return `<!DOCTYPE html>
 <html lang="en">
-  <body style="margin:0;padding:24px;font-family:system-ui,-apple-system,Segoe UI,sans-serif;background:#f8fafc;color:#0f172a;">
+  <body style="margin:0;padding:24px;font-family:${DAMTECH_FONTS.main};font-weight:${DAMTECH_FONTS.weightBody};background:#f8fafc;color:#0f172a;">
     <div style="max-width:640px;margin:0 auto;background:#ffffff;border:1px solid #e2e8f0;border-radius:12px;overflow:hidden;">
-      <div style="padding:20px 24px;background:#020a16;color:#ffffff;">
+      <div style="padding:20px 24px;background:${DAMTECH_THEME.navyDark};color:#ffffff;">
         <h1 style="margin:0;font-size:20px;font-weight:700;">${escapeHtml(title)}</h1>
-        <p style="margin:8px 0 0;font-size:14px;color:#bae6fd;">Submitted via dam-tech.co.za</p>
+        <p style="margin:8px 0 0;font-size:14px;color:${DAMTECH_THEME.accentBlueLight};">Submitted via dam-tech.co.za</p>
       </div>
       <table style="width:100%;border-collapse:collapse;padding:24px;" role="presentation">
         <tbody>${rows}</tbody>

@@ -6,6 +6,7 @@ import damtechContractors from "@/public/images/damtech-dam-liner-contractors-so
 import damtechWaterStorageHero from "@/public/images/damtech-dam-liners-water-storage-solutions.webp";
 import hdpeDamLinerEarthDam from "@/public/images/hdpe-dam-liner-earth-dam-south-africa.webp";
 import hdpeDamLinerInstallationLimpopo from "@/public/images/hdpe-dam-liner-installation-limpopo.webp";
+import hdpeGeomembraneLinedReservoir from "@/public/images/hdpe-geomembrane-lined-reservoir-south-africa.png";
 
 /** Stable public URLs for Open Graph, blog rewrites and JSON data. */
 export const IMAGE_PATHS = {
@@ -22,6 +23,8 @@ export const IMAGE_PATHS = {
   hdpeDamLinerEarthDam: "/images/hdpe-dam-liner-earth-dam-south-africa.webp",
   hdpeDamLinerInstallationLimpopo:
     "/images/hdpe-dam-liner-installation-limpopo.webp",
+  hdpeGeomembraneLinedReservoir:
+    "/images/hdpe-geomembrane-lined-reservoir-south-africa.png",
   hdpeLinedFarmReservoirCattle:
     "/images/hdpe-lined-farm-reservoir-cattle-south-africa.webp",
 } as const;
@@ -44,6 +47,8 @@ export const IMAGE_ALTS: Record<ImagePath, string> = {
     "HDPE dam linings installed on an earth farm dam in South Africa",
   [IMAGE_PATHS.hdpeDamLinerInstallationLimpopo]:
     "HDPE dam linings installation on a farm reservoir in Limpopo, South Africa",
+  [IMAGE_PATHS.hdpeGeomembraneLinedReservoir]:
+    "Large HDPE geomembrane-lined dam reservoir with mountain backdrop in South Africa",
   [IMAGE_PATHS.hdpeLinedFarmReservoirCattle]:
     "Bonsmara cattle beside an HDPE-lined farm reservoir in South Africa",
 };
@@ -71,9 +76,9 @@ function siteImage(
 /** Central registry for static page images (SEO filenames + alt text). */
 export const SITE_IMAGES = {
   homeHero: siteImage(
-    damtechWaterStorageHero,
-    IMAGE_PATHS.damtechWaterStorageHero,
-    IMAGE_ALTS[IMAGE_PATHS.damtechWaterStorageHero],
+    hdpeGeomembraneLinedReservoir,
+    IMAGE_PATHS.hdpeGeomembraneLinedReservoir,
+    IMAGE_ALTS[IMAGE_PATHS.hdpeGeomembraneLinedReservoir],
   ),
   homeDamLiner: siteImage(
     hdpeDamLinerInstallationLimpopo,

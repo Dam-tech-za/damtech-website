@@ -13,7 +13,7 @@ export default function AppleIcon() {
         viewBox="0 0 170 170"
         xmlns="http://www.w3.org/2000/svg"
       >
-        <rect width="170" height="170" fill="#020A16" />
+        <rect width="170" height="170" fill="#0A1929" />
         <path
           fill="#C4CBD4"
           d="M46 20 C29 34 27 52 29 68 C32 78 46 82 46 82 C46 82 60 78 63 68 C65 52 63 34 46 20 Z"
@@ -23,7 +23,7 @@ export default function AppleIcon() {
           d="M122 14 C98 32 94 58 96 80 C99 96 122 102 122 102 C122 102 145 96 148 80 C150 58 146 32 122 14 Z"
         />
         <path
-          fill="#0EA5E9"
+          fill="#2563EB"
           stroke="#FFFFFF"
           strokeWidth="7"
           strokeLinejoin="round"

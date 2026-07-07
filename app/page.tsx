@@ -171,7 +171,7 @@ export default function HomePage() {
       <section className="bg-navy text-white">
         <div className="content-wrap">
           <SectionHeading className="!mt-0 text-white">Why Choose Us</SectionHeading>
-          <p className="mt-4 max-w-3xl text-slate-200">
+          <p className="mt-4 max-w-3xl text-body-on-dark">
             With years of experience in the dam liner, waterproofing and
             reservoir industry, we bring unparalleled knowledge and skill to
             every project. Our team is dedicated to delivering solutions that
