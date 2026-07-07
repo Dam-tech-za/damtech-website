@@ -5,6 +5,7 @@ import {
   BLOG_AUTHOR,
   GOOGLE_SITE_VERIFICATION,
   HEAD_OFFICE,
+  HEAD_OFFICE_MAP_EMBED_URL,
   OFFICES,
   SERVICE_AREA_PROVINCES,
   siteConfig,
@@ -293,33 +294,36 @@ export function createLocalBusinessSchema() {
       postalCode: HEAD_OFFICE.address.postalCode,
       addressCountry: "ZA",
     },
+    hasMap: HEAD_OFFICE_MAP_EMBED_URL.replace("&output=embed", ""),
     location: OFFICES.map((office) => {
-      if ("address" in office && office.address) {
-        return {
-          "@type": "Place",
-          name: office.name,
-          telephone: office.phone.replace(/\s/g, ""),
-          address: {
-            "@type": "PostalAddress",
-            streetAddress: office.address.streetAddress,
-            addressLocality: `${office.address.suburb}, ${office.address.city}`,
-            addressRegion: office.address.province,
-            postalCode: office.address.postalCode,
-            addressCountry: "ZA",
-          },
-        };
+      const place: Record<string, unknown> = {
+        "@type": "Place",
+        name: office.name,
+        telephone: office.phone.replace(/\s/g, ""),
+      };
+
+      if ("googleBusinessProfileUrl" in office && office.googleBusinessProfileUrl) {
+        place.hasMap = office.googleBusinessProfileUrl;
       }
 
-      return {
-        "@type": "Place",
-        name: `${office.name} service area`,
-        telephone: office.phone.replace(/\s/g, ""),
-        address: {
+      if ("address" in office && office.address) {
+        place.address = {
+          "@type": "PostalAddress",
+          streetAddress: office.address.streetAddress,
+          addressLocality: `${office.address.suburb}, ${office.address.city}`,
+          addressRegion: office.address.province,
+          postalCode: office.address.postalCode,
+          addressCountry: "ZA",
+        };
+      } else {
+        place.address = {
           "@type": "PostalAddress",
           addressRegion: "Western Cape",
           addressCountry: "ZA",
-        },
-      };
+        };
+      }
+
+      return place;
     }),
     serviceType: [
       "Dam liners",

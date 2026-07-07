@@ -103,6 +103,16 @@ export function Footer() {
                   >
                     {office.phone}
                   </a>
+                  {"googleBusinessProfileUrl" in office && office.googleBusinessProfileUrl ? (
+                    <a
+                      href={office.googleBusinessProfileUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="mt-1 block text-sky-200 hover:text-white"
+                    >
+                      Google Maps →
+                    </a>
+                  ) : null}
                 </li>
               ))}
             </ul>

@@ -72,6 +72,7 @@ export const OFFICES = [
     id: "pretoria",
     name: "Head Office — Pretoria",
     phone: "+27 (0) 82 853 1026",
+    googleBusinessProfileUrl: "https://share.google/NxSGti3zXVB01SI3Z",
     address: {
       streetAddress: "926, 33rd Avenue",
       suburb: "Villieria",
@@ -85,10 +86,15 @@ export const OFFICES = [
     id: "western-cape",
     name: "Western Cape",
     phone: "+27 (0) 82 853 1026",
+    googleBusinessProfileUrl: "https://share.google/Xbvr3S0ksWMMyIEuL",
     coverageNote:
       "Mobile project teams across the Western Cape — contact our head office to schedule a site visit.",
   },
 ] as const;
+
+/** Google Maps embed for the Pretoria head office (no API key required). */
+export const HEAD_OFFICE_MAP_EMBED_URL =
+  "https://maps.google.com/maps?q=926+33rd+Avenue,+Villieria,+Pretoria,+0186,+South+Africa&hl=en&z=15&output=embed";
 
 export type Office = (typeof OFFICES)[number];
 

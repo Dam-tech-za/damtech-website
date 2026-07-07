@@ -16,7 +16,7 @@ import {
   PAGE_SEO,
 } from "@/lib/pages";
 import { SITE_IMAGES } from "@/lib/images";
-import { OFFICES, formatOfficeAddressLines, phoneTel, siteConfig } from "@/lib/site";
+import { OFFICES, formatOfficeAddressLines, HEAD_OFFICE_MAP_EMBED_URL, phoneTel, siteConfig } from "@/lib/site";
 
 const seo = PAGE_SEO.contact;
 
@@ -96,9 +96,30 @@ function ContactAside() {
               >
                 {office.phone}
               </a>
+              {"googleBusinessProfileUrl" in office && office.googleBusinessProfileUrl ? (
+                <a
+                  href={office.googleBusinessProfileUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="link-row mt-1 !min-h-0 !px-0"
+                >
+                  View on Google Maps →
+                </a>
+              ) : null}
             </li>
           ))}
         </ul>
+      </div>
+
+      <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white">
+        <iframe
+          title="Damtech head office on Google Maps"
+          src={HEAD_OFFICE_MAP_EMBED_URL}
+          className="aspect-[4/3] w-full border-0"
+          loading="lazy"
+          referrerPolicy="no-referrer-when-downgrade"
+          allowFullScreen
+        />
       </div>
     </aside>
   );
