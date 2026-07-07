@@ -36,7 +36,9 @@
   --overlay-white-28: color-mix(in srgb, var(--color-white) 28%, transparent);
   --overlay-white-16: color-mix(in srgb, var(--color-white) 16%, transparent);
   --overlay-white-13: color-mix(in srgb, var(--color-white) 13%, transparent);
+  --overlay-white-10: color-mix(in srgb, var(--color-white) 10%, transparent);
   --overlay-white-08: color-mix(in srgb, var(--color-white) 8%, transparent);
+  --overlay-white-20: color-mix(in srgb, var(--color-white) 20%, transparent);
 
   --overlay-navy-950-96: color-mix(in srgb, var(--color-navy-950) 96%, transparent);
   --overlay-navy-950-94: color-mix(in srgb, var(--color-navy-950) 94%, transparent);

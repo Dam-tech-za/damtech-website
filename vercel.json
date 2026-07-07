@@ -1,15 +1,15 @@
 {
   "redirects": [
     {
-      "source": "/:path*",
-      "has": [{ "type": "host", "value": "www.dam-tech.co.za" }],
-      "destination": "https://dam-tech.co.za/:path*",
+      "source": "/",
+      "has": [{ "type": "host", "value": "damtech-website-six.vercel.app" }],
+      "destination": "https://www.dam-tech.co.za/",
       "permanent": true
     },
     {
-      "source": "/:path*",
+      "source": "/:path((?!_next/).+)",
       "has": [{ "type": "host", "value": "damtech-website-six.vercel.app" }],
-      "destination": "https://dam-tech.co.za/:path*",
+      "destination": "https://www.dam-tech.co.za/:path",
       "permanent": true
     }
   ]
