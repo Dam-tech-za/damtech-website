@@ -2,7 +2,10 @@ import type { Metadata } from "next";
 import { DEFAULT_OG_IMAGE, DEFAULT_OG_IMAGE_ALT, IMAGE_PATHS } from "./images";
 import {
   BUSINESS_HOURS,
+  BLOG_AUTHOR,
   GOOGLE_SITE_VERIFICATION,
+  OFFICES,
+  SERVICE_AREA_PROVINCES,
   siteConfig,
   SOCIAL_LINKS,
 } from "./site";
@@ -185,7 +188,6 @@ export function createMetadata({
   const canonical = absoluteUrl(canonicalPath ?? path);
   const isHome = normalizePath(path) === "/";
   const fullTitle = resolveFullTitle(title, isHome);
-  const pageTitle = isHome ? undefined : formatPageTitle(title);
   const metaDescription = ensureDescription(description);
   const ogImagePath = image ?? DEFAULT_OG_IMAGE;
   const ogImage = buildOgImage(ogImagePath);
@@ -193,7 +195,7 @@ export function createMetadata({
   const alternates: Metadata["alternates"] = { canonical };
 
   return {
-    ...(pageTitle ? { title: pageTitle } : {}),
+    ...(isHome ? {} : { title: { absolute: fullTitle } }),
     description: metaDescription,
     alternates,
     robots: noIndex
@@ -255,9 +257,18 @@ export function createOrganizationSchema() {
 }
 
 export function createLocalBusinessSchema() {
+  const areaServed = SERVICE_AREA_PROVINCES.map((province) => ({
+    "@type": "AdministrativeArea" as const,
+    name: province,
+    containedInPlace: {
+      "@type": "Country",
+      name: "South Africa",
+    },
+  }));
+
   return {
     "@context": "https://schema.org",
-    "@type": "LocalBusiness",
+    "@type": ["LocalBusiness", "GeneralContractor"],
     "@id": `${siteConfig.domain}/#localbusiness`,
     name: siteConfig.name,
     url: siteConfig.domain,
@@ -265,15 +276,29 @@ export function createLocalBusinessSchema() {
     email: siteConfig.email,
     description: siteConfig.defaultDescription,
     image: absoluteUrl(DEFAULT_OG_IMAGE),
-    areaServed: siteConfig.location,
+    logo: absoluteAssetUrl(IMAGE_PATHS.damtechLogo),
+    priceRange: "$$",
+    areaServed,
     openingHours: [BUSINESS_HOURS],
+    sameAs: [...SOCIAL_LINKS],
     parentOrganization: {
       "@id": `${siteConfig.domain}/#organization`,
     },
-    address: {
-      "@type": "PostalAddress",
-      addressCountry: "ZA",
-    },
+    location: OFFICES.map((office) => ({
+      "@type": "Place",
+      name: office.name,
+      telephone: office.phone.replace(/\s/g, ""),
+      address: {
+        "@type": "PostalAddress",
+        addressLocality: office.name.includes("Pretoria")
+          ? "Pretoria"
+          : "Western Cape",
+        addressRegion: office.name.includes("Pretoria")
+          ? "Gauteng"
+          : "Western Cape",
+        addressCountry: "ZA",
+      },
+    })),
     serviceType: [
       "Dam liners",
       "HDPE dam lining",
@@ -369,15 +394,16 @@ export function createArticleSchema({
 
   return {
     "@context": "https://schema.org",
-    "@type": "Article",
+    "@type": "BlogPosting",
     headline: title,
     description,
     image: imageUrl,
     datePublished,
     dateModified,
     author: {
-      "@type": "Person",
-      name: "Tiaan",
+      "@type": "Organization",
+      name: BLOG_AUTHOR.name,
+      url: absoluteUrl(BLOG_AUTHOR.path),
     },
     publisher: {
       "@type": "Organization",

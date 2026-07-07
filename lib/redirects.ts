@@ -53,4 +53,36 @@ export const redirects: Redirect[] = [
   { source: "/services/leak-repair/", destination: "/dam-repair-services/", permanent: true },
   { source: "/leak-repair-services/", destination: "/dam-repair-services/", permanent: true },
   { source: "/contact-us/", destination: "/contact/", permanent: true },
+  // FAQ route rename
+  {
+    source: "/waterproofing-and-dam-liners",
+    destination: "/faq/",
+    permanent: true,
+  },
+  {
+    source: "/waterproofing-and-dam-liners/",
+    destination: "/faq/",
+    permanent: true,
+  },
+  // Blog category slug rename
+  {
+    source: "/category/uncategorized",
+    destination: "/category/dam-liner-guides/",
+    permanent: true,
+  },
+  {
+    source: "/category/uncategorized/",
+    destination: "/category/dam-liner-guides/",
+    permanent: true,
+  },
+  {
+    source: "/category/uncategorized/page/:page",
+    destination: "/category/dam-liner-guides/page/:page/",
+    permanent: true,
+  },
+  {
+    source: "/category/uncategorized/page/:page/",
+    destination: "/category/dam-liner-guides/page/:page/",
+    permanent: true,
+  },
 ];

@@ -16,16 +16,18 @@ const seo = PAGE_SEO.faq;
 
 const ALL_FAQS = [...FAQ_ITEMS, ...FAQ_PAGE_CONTENT.extraFaqs];
 
+const FAQ_BREADCRUMBS = [
+  { name: "Home", path: "/" },
+  { name: "FAQ", path: seo.path },
+] as const;
+
 export const metadata = createPageMetadata(seo);
 
 export default function FaqPage() {
   return (
     <>
       <PageSeo
-        breadcrumbs={[
-          { name: "Home", path: "/" },
-          { name: "FAQ", path: seo.path },
-        ]}
+        breadcrumbs={[...FAQ_BREADCRUMBS]}
         schemas={createFaqPageSchema(ALL_FAQS)}
       />
 
@@ -34,6 +36,7 @@ export default function FaqPage() {
         eyebrow="Dam liners · Tanks · Waterproofing"
         title={seo.h1}
         description={`Answers about our waterproofing services, earth dam liners and steel water tanks. Call us on ${siteConfig.phone} if you need more help.`}
+        breadcrumbs={[...FAQ_BREADCRUMBS]}
       />
 
       <section className="content-wrap">

@@ -13,20 +13,21 @@ import {
 export const metadata = createPageMetadata(PROJECTS_INDEX_SEO);
 
 export default function ProjectsIndexPage() {
+  const breadcrumbs = [
+    { name: "Home", path: "/" },
+    { name: "Projects", path: "/projects" },
+  ];
+
   return (
     <>
-      <PageSeo
-        breadcrumbs={[
-          { name: "Home", path: "/" },
-          { name: "Projects", path: "/projects" },
-        ]}
-      />
+      <PageSeo breadcrumbs={breadcrumbs} />
 
       <Hero
         compact
         eyebrow="Case studies"
         title={PROJECTS_INDEX_SEO.h1}
         description="Case studies from Damtech dam liner, steel tank and waterproofing work across South Africa — farms, game lodges, fruit districts and industrial yards."
+        breadcrumbs={breadcrumbs}
       />
 
       <section className="content-wrap">

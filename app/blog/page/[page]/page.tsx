@@ -53,20 +53,21 @@ export default async function BlogPaginatedPage({ params }: Props) {
     notFound();
   }
 
+  const breadcrumbs = [
+    { name: "Home", path: "/" },
+    { name: "Blog", path: blogSeo.path },
+    { name: `Page ${currentPage}`, path: `/blog/page/${currentPage}` },
+  ];
+
   return (
     <>
-      <PageSeo
-        breadcrumbs={[
-          { name: "Home", path: "/" },
-          { name: "Blog", path: blogSeo.path },
-          { name: `Page ${currentPage}`, path: `/blog/page/${currentPage}` },
-        ]}
-      />
+      <PageSeo breadcrumbs={breadcrumbs} />
 
       <Hero
         compact
         title={blogSeo.h1}
         description={`Page ${currentPage} of ${totalPages} — farm dam, waterproofing and water storage articles.`}
+        breadcrumbs={breadcrumbs}
       />
 
       <section className="content-wrap">

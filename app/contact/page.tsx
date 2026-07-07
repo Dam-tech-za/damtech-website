@@ -100,14 +100,14 @@ function ContactAside() {
 }
 
 export default function ContactPage() {
+  const breadcrumbs = [
+    { name: "Home", path: "/" },
+    { name: "Contact", path: seo.path },
+  ];
+
   return (
     <>
-      <PageSeo
-        breadcrumbs={[
-          { name: "Home", path: "/" },
-          { name: "Contact", path: seo.path },
-        ]}
-      />
+      <PageSeo breadcrumbs={breadcrumbs} />
 
       <Hero
         compact
@@ -115,6 +115,7 @@ export default function ContactPage() {
         title={seo.h1}
         description="Request a free quote for dam liners, steel reservoirs or waterproofing — or call us to discuss your project."
         showActions={false}
+        breadcrumbs={breadcrumbs}
       >
         <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
           <Link href="#request-quote" className="hero-btn-primary w-full sm:w-auto">
@@ -191,7 +192,7 @@ export default function ContactPage() {
           <p className="mt-3 max-w-3xl text-slate-600">
             Quick answers before you call. Read our full{" "}
             <Link
-              href="/waterproofing-and-dam-liners"
+              href="/faq"
               className="text-water hover:text-navy"
             >
               FAQ page

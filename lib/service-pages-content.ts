@@ -129,7 +129,7 @@ export const DAM_LINERS_CONTENT = {
     { href: "/mining-dam-liners", label: "Mining Dam Liners" },
     { href: "/steel-water-storage-tanks", label: "Steel Water Tanks" },
     { href: "/projects", label: "Project Case Studies" },
-    { href: "/waterproofing-and-dam-liners", label: "Dam Liner FAQ" },
+    { href: "/faq", label: "Dam Liner FAQ" },
   ],
 };
 
@@ -189,7 +189,7 @@ export const BITUMEN_CONTENT = {
   relatedLinks: [
     { href: "/services", label: "All Waterproofing Services" },
     { href: "/dam-liners", label: "Dam Liners" },
-    { href: "/waterproofing-and-dam-liners", label: "Waterproofing FAQ" },
+    { href: "/faq", label: "Waterproofing FAQ" },
     { href: "/projects", label: "Recent Projects" },
   ],
 };
@@ -253,7 +253,7 @@ export const STEEL_TANKS_CONTENT = {
     { href: "/dam-liners", label: "Dam Liners" },
     { href: "/agricultural-water-storage", label: "Agricultural Water Storage" },
     { href: "/projects", label: "Tank Installation Projects" },
-    { href: "/waterproofing-and-dam-liners", label: "Reservoir FAQ" },
+    { href: "/faq", label: "Reservoir FAQ" },
   ],
 };
 

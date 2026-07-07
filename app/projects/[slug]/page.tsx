@@ -40,21 +40,22 @@ export default async function ProjectDetailPage({ params }: Props) {
     notFound();
   }
 
+  const breadcrumbs = [
+    { name: "Home", path: "/" },
+    { name: "Projects", path: "/projects" },
+    { name: project.title, path: `/projects/${project.slug}` },
+  ];
+
   return (
     <>
-      <PageSeo
-        breadcrumbs={[
-          { name: "Home", path: "/" },
-          { name: "Projects", path: "/projects" },
-          { name: project.title, path: `/projects/${project.slug}` },
-        ]}
-      />
+      <PageSeo breadcrumbs={breadcrumbs} />
 
       <Hero
         compact
         eyebrow={project.location}
         title={project.h1}
         description={project.summary}
+        breadcrumbs={breadcrumbs}
       />
 
       <section className="content-wrap">

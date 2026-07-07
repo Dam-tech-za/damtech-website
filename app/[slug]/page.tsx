@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { PageSeo } from "@/components/PageSeo";
 import { Prose } from "@/components/Prose";
 import { getPostCta, getPostServiceLinks } from "@/lib/internal-links";
@@ -7,6 +8,7 @@ import { createArticleSchema, createMetadata } from "@/lib/seo";
 import { DEFAULT_OG_IMAGE } from "@/lib/images";
 import { getPostBySlug, getPostSlugs, getRelatedPosts, resolvePostDescription } from "@/lib/posts";
 import { getSubServiceSlugs } from "@/lib/sub-service-pages";
+import { BLOG_AUTHOR } from "@/lib/site";
 import {
   LazyCTA as CTA,
   LazyInternalServiceLinks as InternalServiceLinks,
@@ -42,7 +44,7 @@ const RESERVED = new Set([
   "services",
   "steel-water-storage-tanks",
   "thank-you",
-  "waterproofing-and-dam-liners",
+  "faq",
   "western-cape-dam-liners",
   "author",
   ...getSubServiceSlugs(),
@@ -84,15 +86,16 @@ export default async function BlogPostPage({ params }: Props) {
   const relatedPosts = getRelatedPosts(slug, 3);
   const serviceLinks = getPostServiceLinks(post);
   const postCta = getPostCta(post);
+  const breadcrumbs = [
+    { name: "Home", path: "/" },
+    { name: "Blog", path: "/blog" },
+    { name: post.title, path: `/${post.slug}` },
+  ];
 
   return (
     <>
       <PageSeo
-        breadcrumbs={[
-          { name: "Home", path: "/" },
-          { name: "Blog", path: "/blog" },
-          { name: post.title, path: `/${post.slug}` },
-        ]}
+        breadcrumbs={breadcrumbs}
         schemas={createArticleSchema({
           title: post.title,
           description,
@@ -106,26 +109,26 @@ export default async function BlogPostPage({ params }: Props) {
       <article>
         <header className="-mt-[var(--header-height)] bg-gradient-to-br from-navy to-slate-800 pt-[calc(var(--header-height)+3rem)] pb-12 text-white sm:pt-[calc(var(--header-height)+3.5rem)] sm:pb-16">
           <div className="site-container max-w-3xl">
-            <p className="text-sm text-sky-200">
-              <Link href="/blog" className="hover:text-white">
-                Blog
-              </Link>
-              <span className="mx-2">/</span>
-              <span>{post.category}</span>
-            </p>
-            <h1 className="mt-3 text-3xl font-bold tracking-tight sm:text-4xl">
+            <Breadcrumbs items={breadcrumbs} variant="dark" className="mb-4" />
+            <h1 className="text-3xl font-bold tracking-tight text-balance sm:text-4xl">
               {post.title}
             </h1>
-            <time
-              dateTime={post.date}
-              className="mt-4 block text-sm text-slate-300"
-            >
-              {new Date(post.date).toLocaleDateString("en-ZA", {
-                year: "numeric",
-                month: "long",
-                day: "numeric",
-              })}
-            </time>
+            <p className="mt-4 text-sm text-slate-300">
+              By{" "}
+              <Link href={BLOG_AUTHOR.path} className="font-medium text-sky-200 hover:text-white">
+                {BLOG_AUTHOR.name}
+              </Link>
+              <span className="mx-2" aria-hidden>
+                ·
+              </span>
+              <time dateTime={post.date}>
+                {new Date(post.date).toLocaleDateString("en-ZA", {
+                  year: "numeric",
+                  month: "long",
+                  day: "numeric",
+                })}
+              </time>
+            </p>
           </div>
         </header>
 

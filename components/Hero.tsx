@@ -1,6 +1,8 @@
 import Link from "next/link";
 import Image from "next/image";
 import type { ReactNode } from "react";
+import { Breadcrumbs } from "@/components/Breadcrumbs";
+import type { BreadcrumbItem } from "@/lib/seo";
 import type { SiteImage } from "@/lib/images";
 
 type HeroProps = {
@@ -12,6 +14,7 @@ type HeroProps = {
   image?: Pick<SiteImage, "image" | "alt">;
   /** Render primary + secondary CTAs below intro (default true). */
   showActions?: boolean;
+  breadcrumbs?: BreadcrumbItem[];
 };
 
 /** Compact inner-page hero. Homepage uses `HomeHero` instead. */
@@ -23,6 +26,7 @@ export function Hero({
   compact = false,
   image,
   showActions = true,
+  breadcrumbs,
 }: HeroProps) {
   const actions = children ?? (showActions ? <HeroActions /> : null);
 
@@ -62,6 +66,9 @@ export function Hero({
       )}
 
       <div className="relative z-[1] site-container">
+        {breadcrumbs && breadcrumbs.length > 1 ? (
+          <Breadcrumbs items={breadcrumbs} variant="dark" className="mb-4" />
+        ) : null}
         {eyebrow ? (
           <p className="text-xs font-semibold uppercase tracking-[0.14em] text-sky-200 sm:text-sm">
             {eyebrow}

@@ -33,13 +33,15 @@ const APPLICATIONS = [
 ];
 
 export default function BitumenWaterproofingPage() {
+  const breadcrumbs = [
+    { name: "Home", path: "/" },
+    { name: "Bitumen Waterproofing", path: seo.path },
+  ];
+
   return (
     <>
       <PageSeo
-        breadcrumbs={[
-          { name: "Home", path: "/" },
-          { name: "Bitumen Waterproofing", path: seo.path },
-        ]}
+        breadcrumbs={breadcrumbs}
         schemas={[
           createServiceSchema({
             name: seo.serviceName ?? seo.title,
@@ -57,6 +59,7 @@ export default function BitumenWaterproofingPage() {
         eyebrow="Roofs · Foundations · Reservoirs"
         title={seo.h1}
         description="Torch-on, self-adhesive and liquid bitumen waterproofing for roofs, foundations, retaining walls and reservoirs — installed by Damtech specialists across South Africa."
+        breadcrumbs={breadcrumbs}
       />
 
       <section className="content-wrap">

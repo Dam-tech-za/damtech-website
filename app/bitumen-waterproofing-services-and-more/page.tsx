@@ -168,7 +168,7 @@ export default function ServicesPage() {
           <Link href="/quote" className="btn-primary w-full sm:w-auto">
             Request a Quote
           </Link>
-          <Link href="/waterproofing-and-dam-liners" className="btn-secondary w-full sm:w-auto">
+          <Link href="/faq" className="btn-secondary w-full sm:w-auto">
             Read the FAQ
           </Link>
           <Link href="/projects" className="btn-secondary w-full sm:w-auto">

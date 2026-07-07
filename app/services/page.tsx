@@ -28,13 +28,15 @@ const seo = PAGE_SEO.services;
 export const metadata = createPageMetadata(seo);
 
 export default function ServicesPage() {
+  const breadcrumbs = [
+    { name: "Home", path: "/" },
+    { name: "Services", path: seo.path },
+  ];
+
   return (
     <>
       <PageSeo
-        breadcrumbs={[
-          { name: "Home", path: "/" },
-          { name: "Services", path: seo.path },
-        ]}
+        breadcrumbs={breadcrumbs}
         schemas={[
           createServiceSchema({
             name: seo.serviceName ?? seo.title,
@@ -53,6 +55,7 @@ export default function ServicesPage() {
         title={seo.h1}
         description="HDPE and PVC dam liners, corrugated steel water tanks, reservoir lining, leaking dam repair and bitumen waterproofing for farms, mines and commercial properties across South Africa."
         showActions
+        breadcrumbs={breadcrumbs}
       />
 
       <section className="content-wrap">

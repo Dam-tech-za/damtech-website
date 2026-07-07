@@ -34,15 +34,16 @@ export function SubServicePage({ page }: SubServicePageProps) {
   const projects = PROJECTS.filter((project) =>
     page.projectDetailMatch.test(project.detail),
   );
+  const breadcrumbs = [
+    { name: "Home", path: "/" },
+    { name: page.parent.label, path: page.parent.href },
+    { name: page.h1, path },
+  ];
 
   return (
     <>
       <PageSeo
-        breadcrumbs={[
-          { name: "Home", path: "/" },
-          { name: page.parent.label, path: page.parent.href },
-          { name: page.h1, path },
-        ]}
+        breadcrumbs={breadcrumbs}
         schemas={[
           createServiceSchema({
             name: page.serviceName,
@@ -60,6 +61,7 @@ export function SubServicePage({ page }: SubServicePageProps) {
         eyebrow={page.heroEyebrow}
         title={page.h1}
         description={page.heroDescription}
+        breadcrumbs={breadcrumbs}
       />
 
       <section className="content-wrap">
@@ -68,7 +70,7 @@ export function SubServicePage({ page }: SubServicePageProps) {
             <p className="text-lg leading-relaxed text-slate-700">{page.intro}</p>
             <div className="mt-8">
               <SectionCta
-                title={`Need ${page.serviceName.toLowerCase()}?`}
+                title={`Need ${page.serviceName}?`}
                 description="Request a free quote with site photos and approximate dimensions."
               />
             </div>

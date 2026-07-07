@@ -17,6 +17,11 @@ export type BlogPost = {
 
 export const POSTS_PER_PAGE = 10;
 export const DEFAULT_CATEGORY = "Dam Liner Guides";
+export const DEFAULT_CATEGORY_SLUG = "dam-liner-guides";
+
+export function categoryPath(slug: string = DEFAULT_CATEGORY_SLUG): string {
+  return `/category/${slug}`;
+}
 
 export const BLOG_CATEGORIES = [
   "Dam Liner Guides",

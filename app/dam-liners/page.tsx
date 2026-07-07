@@ -66,13 +66,15 @@ const DAM_PROJECTS = PROJECTS.filter((project) =>
 );
 
 export default function DamLinersPage() {
+  const breadcrumbs = [
+    { name: "Home", path: "/" },
+    { name: "Dam Liners", path: seo.path },
+  ];
+
   return (
     <>
       <PageSeo
-        breadcrumbs={[
-          { name: "Home", path: "/" },
-          { name: "Dam Liners", path: seo.path },
-        ]}
+        breadcrumbs={breadcrumbs}
         schemas={[
           createServiceSchema({
             name: seo.serviceName ?? seo.title,
@@ -90,6 +92,7 @@ export default function DamLinersPage() {
         eyebrow="HDPE · PVC · Bitumen"
         title={seo.h1}
         description="Professional HDPE, PVC and bitumen torch-on dam liner supply and installation for farm dams, earth dams and reservoirs across South Africa."
+        breadcrumbs={breadcrumbs}
       />
 
       <section className="content-wrap">

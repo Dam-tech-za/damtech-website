@@ -78,13 +78,15 @@ function TankTable({
 }
 
 export default function SteelTanksPage() {
+  const breadcrumbs = [
+    { name: "Home", path: "/" },
+    { name: "Steel Water Tanks", path: seo.path },
+  ];
+
   return (
     <>
       <PageSeo
-        breadcrumbs={[
-          { name: "Home", path: "/" },
-          { name: "Steel Water Tanks", path: seo.path },
-        ]}
+        breadcrumbs={breadcrumbs}
         schemas={[
           createServiceSchema({
             name: seo.serviceName ?? seo.title,
@@ -102,6 +104,7 @@ export default function SteelTanksPage() {
         eyebrow="11 kL – 500 kL+"
         title={seo.h1}
         description="Corrugated galvanised steel water tanks from 11 kL to 500 kL+, supplied with PVC lining. Built for farms, game reserves, mines and rural water storage."
+        breadcrumbs={breadcrumbs}
       />
 
       <section className="content-wrap">

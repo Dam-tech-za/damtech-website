@@ -16,19 +16,20 @@ const pagination = paginatePosts(posts, 1, POSTS_PER_PAGE);
 export const metadata = createPageMetadata(seo);
 
 export default function BlogPage() {
+  const breadcrumbs = [
+    { name: "Home", path: "/" },
+    { name: "Blog", path: seo.path },
+  ];
+
   return (
     <>
-      <PageSeo
-        breadcrumbs={[
-          { name: "Home", path: "/" },
-          { name: "Blog", path: seo.path },
-        ]}
-      />
+      <PageSeo breadcrumbs={breadcrumbs} />
 
       <Hero
         compact
         title={seo.h1}
         description="Practical guides on farm dam liners, leak repair, borehole integration, steel reservoir maintenance and water storage for South African agriculture."
+        breadcrumbs={breadcrumbs}
       />
 
       <section className="content-wrap">

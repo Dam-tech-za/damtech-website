@@ -19,13 +19,15 @@ import { ABOUT_CONTENT } from "@/lib/service-pages-content";
 export const metadata = createPageMetadata(PAGE_SEO.about);
 
 export default function AboutPage() {
+  const breadcrumbs = [
+    { name: "Home", path: "/" },
+    { name: "About Us", path: "/about-us-waterproofing-company" },
+  ];
+
   return (
     <>
       <PageSeo
-        breadcrumbs={[
-          { name: "Home", path: "/" },
-          { name: "About Us", path: "/about-us-waterproofing-company" },
-        ]}
+        breadcrumbs={breadcrumbs}
         schemas={createFaqPageSchema(ABOUT_CONTENT.faqs)}
       />
 
@@ -34,6 +36,7 @@ export default function AboutPage() {
         eyebrow="30+ years experience"
         title={PAGE_SEO.about.h1}
         description="At Damtech, we deliver earth dam liners, steel water tanks and waterproofing systems for farms, mines and commercial properties across South Africa."
+        breadcrumbs={breadcrumbs}
       />
 
       <section className="content-wrap">

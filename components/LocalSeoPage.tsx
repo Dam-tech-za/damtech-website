@@ -30,13 +30,15 @@ const CONTENT_SECTIONS: Array<{
 ];
 
 export function LocalSeoPage({ page }: LocalSeoPageProps) {
+  const breadcrumbs = [
+    { name: "Home", path: "/" },
+    { name: page.h1, path: `/${page.slug}` },
+  ];
+
   return (
     <>
       <PageSeo
-        breadcrumbs={[
-          { name: "Home", path: "/" },
-          { name: page.h1, path: `/${page.slug}` },
-        ]}
+        breadcrumbs={breadcrumbs}
         schemas={[
           createServiceSchema({
             name: page.serviceName,
@@ -49,7 +51,13 @@ export function LocalSeoPage({ page }: LocalSeoPageProps) {
         ]}
       />
 
-      <Hero compact title={page.h1} description={page.heroDescription} eyebrow={page.serviceName} />
+      <Hero
+        compact
+        title={page.h1}
+        description={page.heroDescription}
+        eyebrow={page.serviceName}
+        breadcrumbs={breadcrumbs}
+      />
 
       <section className="content-wrap">
         <div className="grid items-start gap-10 lg:grid-cols-2">

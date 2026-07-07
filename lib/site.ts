@@ -51,15 +51,31 @@ export const GTM_ID = process.env.NEXT_PUBLIC_GTM_ID?.trim() || "GTM-M5RQM6JW";
 export const META_PIXEL_ID =
   process.env.NEXT_PUBLIC_META_PIXEL_ID?.trim() || "1955529471712055";
 
-export type NavLink = {
-  href: string;
-  label: string;
-};
+/** Provinces Damtech serves — used in LocalBusiness schema `areaServed`. */
+export const SERVICE_AREA_PROVINCES = [
+  "Gauteng",
+  "Western Cape",
+  "Limpopo",
+  "Mpumalanga",
+  "North West",
+  "Northern Cape",
+] as const;
+
+/** Blog author for visible bylines and Article/BlogPosting schema. */
+export const BLOG_AUTHOR = {
+  name: "Damtech Team",
+  path: "/about-us-waterproofing-company",
+} as const;
 
 export const OFFICES = [
   { name: "Head Office — Pretoria", phone: "+27 (0) 82 853 1026" },
   { name: "Regional Office — Western Cape", phone: "+27 (0) 82 853 1026" },
 ] as const;
+
+export type NavLink = {
+  href: string;
+  label: string;
+};
 
 /** Desktop header navigation (quote button is separate). */
 export const HEADER_NAV_LINKS: NavLink[] = [
@@ -87,7 +103,7 @@ export const FOOTER_COMPANY_LINKS: NavLink[] = [
   { href: "/projects", label: "Projects" },
   { href: "/blog", label: "Blog" },
   { href: "/contact", label: "Contact" },
-  { href: "/waterproofing-and-dam-liners", label: "FAQ" },
+  { href: "/faq", label: "FAQ" },
 ];
 
 /** @deprecated Use FOOTER_SERVICE_LINKS and FOOTER_COMPANY_LINKS */
@@ -106,7 +122,7 @@ export const SERVICE_LINKS = [
   { href: "/services", label: "All Services" },
   { href: "/dam-repair-services", label: "Leaking Dam Repair" },
   { href: "/reservoir-lining", label: "Reservoir Lining" },
-  { href: "/waterproofing-and-dam-liners", label: "FAQ" },
+  { href: "/faq", label: "FAQ" },
 ] as const;
 
 export const PROJECTS = [
@@ -154,7 +170,7 @@ export const INDEXABLE_STATIC_PATHS = [
   "/dam-liners",
   "/steel-water-storage-tanks",
   "/bitumen-waterproofing",
-  "/waterproofing-and-dam-liners",
+  "/faq",
   "/blog",
   "/contact",
   "/quote",

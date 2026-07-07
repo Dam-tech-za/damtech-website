@@ -80,10 +80,10 @@ export const PAGE_SEO: Record<StaticPageKey, PageSeoEntry> = {
     image: IMAGE_PATHS.bitumenWaterproofingRoof,
   },
   faq: {
-    title: "Dam Liner & Waterproofing FAQ | Damtech",
+    title: "Dam Liner & Waterproofing FAQ",
     description:
       "Answers to common questions about dam liners, zinc reservoirs, waterproofing warranties, maintenance and leak repair from the Damtech team.",
-    path: "/waterproofing-and-dam-liners",
+    path: "/faq",
     h1: "Dam Liner & Waterproofing FAQ",
     image: IMAGE_PATHS.hdpeDamLinerEarthDam,
   },
@@ -112,10 +112,10 @@ export const PAGE_SEO: Record<StaticPageKey, PageSeoEntry> = {
     image: IMAGE_PATHS.hdpeDamLinerEarthDam,
   },
   category: {
-    title: "Dam Liner Guides | Damtech Blog",
+    title: "Dam Liner Guides",
     description:
       "Articles on farm dam liners, leak repair, steel reservoirs and water storage for South African agriculture.",
-    path: "/category/uncategorized",
+    path: "/category/dam-liner-guides",
     h1: "Dam Liner Guides",
     noIndex: true,
   },

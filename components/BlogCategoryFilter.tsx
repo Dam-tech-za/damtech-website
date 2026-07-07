@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { DEFAULT_CATEGORY } from "@/lib/posts";
+import { DEFAULT_CATEGORY, categoryPath } from "@/lib/posts";
 
 type BlogCategoryFilterProps = {
   activeCategory?: string;
@@ -28,7 +28,7 @@ export function BlogCategoryFilter({
       {CATEGORIES.map((category) => (
         <Link
           key={category}
-          href="/category/uncategorized"
+          href={categoryPath()}
           className={`rounded-full px-4 py-1.5 text-sm font-medium transition ${
             activeCategory === category
               ? "bg-navy text-white"

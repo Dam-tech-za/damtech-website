@@ -4,7 +4,7 @@ import { BlogPagination } from "@/components/BlogPagination";
 import { Hero } from "@/components/Hero";
 import { PageSeo } from "@/components/PageSeo";
 import { createPageMetadata, PAGE_SEO } from "@/lib/pages";
-import { POSTS_PER_PAGE, paginatePosts, posts } from "@/lib/posts";
+import { categoryPath, POSTS_PER_PAGE, paginatePosts, posts } from "@/lib/posts";
 import {
   LazyCTA as CTA,
 } from "@/components/lazy";
@@ -14,6 +14,7 @@ type Props = {
 };
 
 const categorySeo = PAGE_SEO.category;
+const categoryBasePath = categoryPath();
 
 export async function generateStaticParams() {
   const { totalPages } = paginatePosts(posts, 1, POSTS_PER_PAGE);
@@ -28,7 +29,7 @@ export async function generateMetadata({ params }: Props) {
 
   return createPageMetadata(categorySeo, {
     title: `${categorySeo.title} — Page ${pageNumber}`,
-    path: `/category/uncategorized/page/${page}`,
+    path: `${categoryBasePath}/page/${page}`,
     noIndex: true,
     canonicalPath: "/blog",
   });
@@ -52,23 +53,25 @@ export default async function CategoryPaginatedPage({ params }: Props) {
     notFound();
   }
 
+  const breadcrumbs = [
+    { name: "Home", path: "/" },
+    { name: "Blog", path: "/blog" },
+    { name: categorySeo.h1, path: categorySeo.path },
+    {
+      name: `Page ${currentPage}`,
+      path: `${categoryBasePath}/page/${currentPage}`,
+    },
+  ];
+
   return (
     <>
-      <PageSeo
-        breadcrumbs={[
-          { name: "Home", path: "/" },
-          { name: "Uncategorized", path: categorySeo.path },
-          {
-            name: `Page ${currentPage}`,
-            path: `/category/uncategorized/page/${currentPage}`,
-          },
-        ]}
-      />
+      <PageSeo breadcrumbs={breadcrumbs} />
 
       <Hero
         compact
         title={categorySeo.h1}
         description={`Page ${currentPage} of ${totalPages}.`}
+        breadcrumbs={breadcrumbs}
       />
 
       <section className="content-wrap">
@@ -78,7 +81,7 @@ export default async function CategoryPaginatedPage({ params }: Props) {
           ))}
         </div>
         <BlogPagination
-          basePath="/category/uncategorized"
+          basePath={categoryBasePath}
           currentPage={currentPage}
           totalPages={totalPages}
         />
