@@ -6,11 +6,12 @@ import { DamtechLogo } from "@/components/DamtechLogo";
 import { MobileNav } from "@/components/MobileNav";
 import { HEADER_NAV_LINKS, siteConfig } from "@/lib/site";
 
-const SCROLL_DELTA = 10;
+const SCROLL_DELTA = 12;
 const REVEAL_AT_TOP_PX = 120;
 const SOLID_AT_PX = 8;
-const HIDE_AFTER_PX = 24;
-const REVEAL_AFTER_PX = 16;
+const HIDE_AFTER_PX = 56;
+const REVEAL_AFTER_PX = 28;
+const HIDE_MIN_Y = 180;
 
 export function Header() {
   const [visible, setVisible] = useState(true);
@@ -66,7 +67,7 @@ export function Header() {
             scrollAccumulator.current >= 0
               ? scrollAccumulator.current + delta
               : delta;
-          if (scrollAccumulator.current >= HIDE_AFTER_PX) {
+          if (currentY >= HIDE_MIN_Y && scrollAccumulator.current >= HIDE_AFTER_PX) {
             setVisible(false);
             scrollAccumulator.current = 0;
           }
@@ -96,12 +97,12 @@ export function Header() {
   return (
     <header
       ref={headerRef}
-      className={`site-header fixed inset-x-0 top-0 z-50 transition-[transform,opacity,background-color,box-shadow,border-color] duration-500 ease-in-out motion-reduce:transition-none ${
+      className={`site-header fixed inset-x-0 top-0 z-50 backdrop-blur-xl supports-[backdrop-filter]:backdrop-blur-xl transition-[transform,opacity,background-color,box-shadow,border-color] duration-300 ease-[cubic-bezier(.2,.8,.2,1)] motion-reduce:transition-none ${
         visible ? "translate-y-0 opacity-100" : "-translate-y-full opacity-0"
       } ${
         scrolled
-          ? "border-b border-slate-200 bg-white shadow-[0_2px_8px_rgba(0,0,0,0.1)]"
-          : "border-b border-white/35 bg-white/60 shadow-[0_8px_32px_rgba(15,39,68,0.06)] backdrop-blur-xl supports-[backdrop-filter]:bg-white/50"
+          ? "border-b bg-[color:var(--header-bg-scrolled)] shadow-[var(--header-shadow-scrolled)] border-[color:var(--header-border-scrolled)]"
+          : "border-b bg-[color:var(--header-bg-top)] shadow-[var(--header-shadow-top)] border-[color:var(--header-border-top)]"
       }`}
     >
       <div className="site-container relative flex h-[var(--site-header-height)] items-center justify-between gap-4 lg:gap-6">
@@ -111,7 +112,7 @@ export function Header() {
             <span className="block truncate text-lg font-bold tracking-tight text-navy">
               {siteConfig.name}
             </span>
-            <span className="hidden text-xs text-slate-500 sm:block">
+            <span className="hidden text-xs text-slate-600 sm:block">
               Dam liners &amp; waterproofing
             </span>
           </span>
@@ -125,7 +126,7 @@ export function Header() {
             <Link
               key={link.href}
               href={link.href}
-              className="whitespace-nowrap text-sm font-medium text-slate-700 transition hover:text-water"
+              className="whitespace-nowrap text-sm font-medium text-navy transition hover:text-water"
             >
               {link.label}
             </Link>

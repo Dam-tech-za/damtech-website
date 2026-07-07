@@ -75,6 +75,14 @@
     /* Fallback before JS measures the real header box; Header.tsx overrides this
        with the header's actual offsetHeight via ResizeObserver so it never drifts. */
     --header-height: var(--site-header-height);
+
+    /* Header visual system (light, stable, readable over any background). */
+    --header-bg-top: color-mix(in srgb, var(--color-surface-50) 94%, transparent);
+    --header-bg-scrolled: color-mix(in srgb, var(--color-white) 98%, transparent);
+    --header-border-top: color-mix(in srgb, var(--color-line-200) 65%, transparent);
+    --header-border-scrolled: var(--color-line-200);
+    --header-shadow-top: 0 10px 26px rgba(15, 39, 68, 0.06);
+    --header-shadow-scrolled: 0 6px 18px rgba(15, 39, 68, 0.12);
   }
 
   @media (min-width: 1024px) {
