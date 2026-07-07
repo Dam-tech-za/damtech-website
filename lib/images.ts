@@ -41,9 +41,9 @@ export const IMAGE_ALTS: Record<ImagePath, string> = {
     "Damtech dam liners, steel water tanks and waterproofing solutions in South Africa",
   [IMAGE_PATHS.damtechLogo]: "Damtech logo — water droplet mark",
   [IMAGE_PATHS.hdpeDamLinerEarthDam]:
-    "HDPE dam liner installed on an earth farm dam in South Africa",
+    "HDPE dam linings installed on an earth farm dam in South Africa",
   [IMAGE_PATHS.hdpeDamLinerInstallationLimpopo]:
-    "HDPE dam liner installation on a farm reservoir in Limpopo",
+    "HDPE dam linings installation on a farm reservoir in Limpopo, South Africa",
   [IMAGE_PATHS.hdpeLinedFarmReservoirCattle]:
     "Bonsmara cattle beside an HDPE-lined farm reservoir in South Africa",
 };
@@ -84,7 +84,7 @@ export const SITE_IMAGES = {
   damLiners: siteImage(
     hdpeDamLinerInstallationLimpopo,
     IMAGE_PATHS.hdpeDamLinerInstallationLimpopo,
-    "HDPE and PVC dam liners installed on a farm earth dam in South Africa",
+    "HDPE dam linings installed on a farm earth dam in South Africa",
     "HDPE, PVC and Bitumen Torch-On dam lining options.",
   ),
   contact: siteImage(

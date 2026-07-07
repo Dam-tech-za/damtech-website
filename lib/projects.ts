@@ -69,7 +69,7 @@ export const PROJECT_CASE_STUDIES: ProjectCaseStudy[] = [
     images: [
       projectImage(
         IMAGE_PATHS.hdpeDamLinerEarthDam,
-        "HDPE dam liner installation on a North West game lodge earth dam",
+        "HDPE dam linings installed on a North West game lodge earth dam",
       ),
     ],
     relatedServices: [
@@ -113,9 +113,12 @@ export const PROJECT_CASE_STUDIES: ProjectCaseStudy[] = [
     images: [
       projectImage(
         IMAGE_PATHS.hdpeDamLinerEarthDam,
-        "HDPE dam liner installed on a Stellenbosch farm earth dam",
+        "HDPE dam linings installed on a Stellenbosch farm earth dam",
       ),
-      projectImage(IMAGE_PATHS.hdpeDamLinerInstallationLimpopo),
+      projectImage(
+        IMAGE_PATHS.hdpeDamLinerInstallationLimpopo,
+        "HDPE dam linings being welded on a Stellenbosch farm reservoir",
+      ),
     ],
     relatedServices: [
       { href: "/dam-liners", label: "Dam Liners" },
@@ -195,7 +198,12 @@ export const PROJECT_CASE_STUDIES: ProjectCaseStudy[] = [
     ],
     summary:
       "Grabouw farm dam lined with 10,520 m² HDPE to protect irrigation reserves in the Western Cape fruit belt.",
-    images: [projectImage(IMAGE_PATHS.hdpeLinedFarmReservoirCattle)],
+    images: [
+      projectImage(
+        IMAGE_PATHS.hdpeLinedFarmReservoirCattle,
+        "HDPE dam linings on a Grabouw farm reservoir with cattle drinking in the Western Cape",
+      ),
+    ],
     relatedServices: [
       { href: "/dam-liners", label: "Dam Liners" },
       { href: "/western-cape-dam-liners", label: "Western Cape Dam Liners" },
@@ -274,7 +282,7 @@ export const PROJECT_CASE_STUDIES: ProjectCaseStudy[] = [
     images: [
       projectImage(
         IMAGE_PATHS.hdpeDamLinerInstallationLimpopo,
-        "HDPE dam liner installation on a Hartswater farm dam in the Northern Cape",
+        "HDPE dam linings installed on a Hartswater farm dam in the Northern Cape",
       ),
     ],
     relatedServices: [

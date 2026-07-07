@@ -91,7 +91,7 @@ export default function DamLinersPage() {
         compact
         eyebrow="HDPE · PVC · Bitumen"
         title={seo.h1}
-        description="Professional HDPE, PVC and bitumen torch-on dam liner supply and installation for farm dams, earth dams and reservoirs across South Africa."
+        description="Professional HDPE, PVC and bitumen torch-on dam liners and dam linings for farm dams, earth dams and reservoirs across South Africa."
         breadcrumbs={breadcrumbs}
       />
 
@@ -163,7 +163,7 @@ export default function DamLinersPage() {
             "Custom solutions tailored to your requirements",
             "Dedicated support from consultation to completion",
             "Competitive pricing with high-value outcomes",
-            "10-year material warranty on all dam liners",
+            "10-year material warranty on all dam linings",
           ].map((item) => (
             <li
               key={item}
@@ -189,7 +189,7 @@ export default function DamLinersPage() {
 
       <section className="content-wrap">
         <ProjectProofStrip
-          title="Dam liner projects"
+          title="Dam lining projects"
           projects={DAM_PROJECTS}
         />
         <div className="mt-12">

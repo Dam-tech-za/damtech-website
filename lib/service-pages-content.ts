@@ -55,25 +55,33 @@ export type ServiceSection = {
 
 export const DAM_LINERS_CONTENT = {
   intro:
-    "South African farms, mines and game reserves lose thousands of litres each year through seepage in unlined earth dams. Clay soils that look watertight often crack in dry seasons; sandy pockets drain faster than evaporation alone can explain. A correctly specified and installed dam liner stops that loss, protects groundwater and keeps stored water available for irrigation, livestock and firefighting when boreholes or municipal supply are under pressure.",
+    "South African farms, mines and game reserves lose thousands of litres each year through seepage in unlined earth dams. Clay soils that look watertight often crack in dry seasons; sandy pockets drain faster than evaporation alone can explain. Whether you refer to dam liners or dam linings, a correctly specified and installed geomembrane stops that loss, protects groundwater and keeps stored water available for irrigation, livestock and firefighting when boreholes or municipal supply are under pressure.",
   sections: [
+    {
+      id: "dam-liners-vs-linings",
+      heading: "Dam Liners and Dam Linings — What's the Difference?",
+      paragraphs: [
+        "In South Africa, contractors and farmers often use dam liners and dam linings interchangeably for the same geomembrane or membrane product installed inside an earth dam or reservoir. Both terms describe the sheet material and the completed waterproof lining work — not two different systems.",
+        "Damtech specifies and installs HDPE, PVC and bitumen torch-on dam linings (also called dam liners) using the same site preparation, welding and anchoring standards whether your quote says liner or lining.",
+      ],
+    },
     {
       id: "why-liners",
       heading: "Why Dam Liners Matter in South Africa",
       paragraphs: [
         "Rainfall in much of the country is seasonal and unpredictable. Farmers buffer dry months by storing runoff and borehole water in farm dams, but an unlined dam can lose 30% or more of its volume to seepage depending on soil type. In Limpopo, Mpumalanga and the Western Cape, clients routinely combine HDPE-lined earth dams with corrugated steel tanks so irrigation and stock water continue through droughts and load-shedding.",
-        "Liners also contain water that might otherwise pick up salts, iron or sediment from the dam floor — important where water is pumped to pivots, drip lines or drinking troughs. For mining and industrial sites, geomembrane lining helps meet containment expectations and reduces the risk of uncontrolled seepage into surrounding land.",
+        "Dam linings also contain water that might otherwise pick up salts, iron or sediment from the dam floor — important where water is pumped to pivots, drip lines or drinking troughs. For mining and industrial sites, geomembrane lining helps meet containment expectations and reduces the risk of uncontrolled seepage into surrounding land.",
       ],
     },
     {
-      heading: "Choosing the Right Liner for Your Dam",
+      heading: "Choosing the Right Dam Lining for Your Dam",
       paragraphs: [
         "HDPE geomembrane is our first choice for large farm and mining dams where UV exposure, puncture resistance and long service life matter. PVC suits smaller ponds, cement reservoirs and steel tanks where flexibility and cost per square metre are priorities. Bitumen torch-on works well on prepared cement or gunite surfaces where a heat-welded bond to the substrate is required.",
-        "Thickness, seam design and anchor trench detail depend on dam depth, slope angle and whether livestock will access the water. We measure your dam, review soil conditions and recommend a liner spec before quoting — not a one-size-fits-all roll-off-the-truck approach.",
+        "Thickness, seam design and anchor trench detail depend on dam depth, slope angle and whether livestock will access the water. We measure your dam, review soil conditions and recommend a lining spec before quoting — not a one-size-fits-all roll-off-the-truck approach.",
       ],
     },
     {
-      heading: "Our Dam Liner Installation Process",
+      heading: "Our Dam Lining Installation Process",
       paragraphs: [
         "Every project starts with a site visit or detailed drawings: dam capacity, freeboard, inlet/outlet positions and access for equipment. We prepare the subgrade — removing rock, grading batters and compacting where needed — then deploy liner panels with factory-quality welds and tested seams.",
         "Anchoring at the crest, around pipes and at the toe is completed to manufacturer standards. Where required we install geotextile underlay for puncture protection on rocky or stony ground. After installation we flood-test or inspect before handover, and we explain simple maintenance checks you can do after seasonal rains.",
@@ -82,15 +90,15 @@ export const DAM_LINERS_CONTENT = {
     {
       heading: "Industries and Applications We Line",
       paragraphs: [
-        "Agricultural clients use our liners on irrigation dams, cattle and game drinking dams, and balancing ponds for borehole systems. Mining and industrial sites specify HDPE for process water, runoff control and tailings-related containment. Estates, lodges and commercial nurseries line ornamental ponds and storage dams where leaks would damage landscaping or neighbouring properties.",
-        "We also reline existing dams where an older PVC or bitumen membrane has reached end of life, and patch or extend liners after earthworks or dam wall upgrades.",
+        "Agricultural clients use our dam linings on irrigation dams, cattle and game drinking dams, and balancing ponds for borehole systems. Mining and industrial sites specify HDPE for process water, runoff control and tailings-related containment. Estates, lodges and commercial nurseries line ornamental ponds and storage dams where leaks would damage landscaping or neighbouring properties.",
+        "We also reline existing dams where an older PVC or bitumen membrane has reached end of life, and patch or extend linings after earthworks or dam wall upgrades.",
       ],
     },
     {
-      heading: "When to Repair or Replace a Dam Liner",
+      heading: "When to Repair or Replace Dam Linings",
       paragraphs: [
         "Rising damp on the downstream face of a dam wall, unexplained water-level drops, or visible liner damage at the waterline are signs action is needed. Small punctures can often be welded or patched if caught early; widespread UV embrittlement or seam failure usually means a planned reline.",
-        "If you are expanding dam capacity or reshaping batters, it is often more economical to install new liner sections during that earthworks phase than to patch repeatedly. Our team can assess whether repair or full replacement is the practical route.",
+        "If you are expanding dam capacity or reshaping batters, it is often more economical to install new lining sections during that earthworks phase than to patch repeatedly. Our team can assess whether repair or full replacement is the practical route.",
       ],
     },
   ] satisfies ServiceSection[],
