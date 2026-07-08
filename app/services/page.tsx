@@ -53,7 +53,7 @@ export default function ServicesPage() {
         compact
         eyebrow="Nationwide contractor"
         title={seo.h1}
-        description="HDPE and PVC dam liners, corrugated steel water tanks, reservoir lining, leaking dam repair and bitumen waterproofing for farms, mines and commercial properties across South Africa."
+        description="HDPE and PVC dam linings, corrugated steel water tanks, reservoir lining, leaking dam repair and bitumen waterproofing for farms, mines and commercial properties across South Africa."
         showActions
         breadcrumbs={breadcrumbs}
       />
@@ -118,7 +118,7 @@ export default function ServicesPage() {
           <RelatedPageLinks
             heading="Explore our services"
             links={[
-              { href: "/dam-liners", label: "Dam Liners" },
+              { href: "/dam-liners", label: "Dam Linings" },
               { href: "/hdpe-dam-lining", label: "HDPE Dam Lining" },
               { href: "/steel-water-storage-tanks", label: "Steel Water Tanks" },
               { href: "/bitumen-waterproofing", label: "Bitumen Waterproofing" },

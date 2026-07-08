@@ -1,8 +1,17 @@
 import Link from "next/link";
+import { createMetadata } from "@/lib/seo";
 import { phoneTel, siteConfig } from "@/lib/site";
 
+export const metadata = createMetadata({
+  title: "Page Not Found",
+  description:
+    "The page you requested could not be found. Explore Damtech dam linings, steel water tanks and waterproofing services across South Africa.",
+  path: "/404",
+  noIndex: true,
+});
+
 const QUICK_LINKS = [
-  { href: "/dam-liners", label: "Dam Liners" },
+  { href: "/dam-liners", label: "Dam Linings" },
   { href: "/steel-water-storage-tanks", label: "Steel Water Tanks" },
   { href: "/bitumen-waterproofing", label: "Bitumen Waterproofing" },
   { href: "/projects", label: "Projects" },
@@ -18,7 +27,7 @@ export default function NotFound() {
         Page Not Found
       </h1>
       <p className="mt-4 max-w-lg text-slate-600">
-        The page may have moved, but Damtech can still help with dam liners,
+        The page may have moved, but Damtech can still help with dam linings,
         steel tanks and waterproofing.
       </p>
 

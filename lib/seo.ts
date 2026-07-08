@@ -157,7 +157,7 @@ export function createRootMetadata(): Metadata {
       "max-video-preview": -1,
     },
     openGraph: {
-      title: siteConfig.defaultTitle,
+      title: siteConfig.defaultOgTitle ?? siteConfig.defaultTitle,
       description: siteConfig.defaultOgDescription,
       url: absoluteUrl("/"),
       siteName: siteConfig.name,
@@ -212,8 +212,10 @@ export function createMetadata({
           "max-video-preview": -1,
         },
     openGraph: {
-      title: fullTitle,
-      description: metaDescription,
+      title: isHome
+        ? (siteConfig.defaultOgTitle ?? fullTitle)
+        : fullTitle,
+      description: isHome ? siteConfig.defaultOgDescription : metaDescription,
       url: canonical,
       siteName: siteConfig.name,
       locale: LOCALE,
@@ -224,8 +226,12 @@ export function createMetadata({
     },
     twitter: {
       card: "summary_large_image",
-      title: fullTitle,
-      description: metaDescription,
+      title: isHome
+        ? (siteConfig.defaultTwitterTitle ?? fullTitle)
+        : fullTitle,
+      description: isHome
+        ? (siteConfig.defaultTwitterDescription ?? metaDescription)
+        : metaDescription,
       images: [ogImage.url],
     },
   };
@@ -250,6 +256,7 @@ export function createOrganizationSchema() {
     "@type": "Organization",
     "@id": `${siteConfig.domain}/#organization`,
     name: siteConfig.name,
+    alternateName: "Damtech South Africa",
     url: siteConfig.domain,
     email: siteConfig.email,
     telephone: siteConfig.phone || undefined,
@@ -328,13 +335,13 @@ export function createLocalBusinessSchema() {
       return place;
     }),
     serviceType: [
-      "Dam liners",
+      "Dam linings",
       "HDPE dam lining",
       "PVC dam lining",
       "Bitumen waterproofing",
       "Steel water tanks",
-      "Leak repair",
-      "Reservoir maintenance",
+      "Leaking dam repair",
+      "Reservoir lining",
     ],
   };
 }
@@ -345,6 +352,7 @@ export function createWebSiteSchema() {
     "@type": "WebSite",
     "@id": `${siteConfig.domain}/#website`,
     name: siteConfig.name,
+    alternateName: "Damtech South Africa",
     url: siteConfig.domain,
     description: siteConfig.defaultDescription,
     publisher: {
@@ -464,5 +472,50 @@ export function createFaqPageSchema(
         text: item.answer,
       },
     })),
+  };
+}
+
+export function createProjectCaseStudySchema(project: {
+  title: string;
+  description: string;
+  path: string;
+  location: string;
+  serviceType: string;
+  images?: ReadonlyArray<{ src: string; alt: string }>;
+}) {
+  const primaryImage = project.images?.[0];
+
+  return {
+    "@context": "https://schema.org",
+    "@type": "CreativeWork",
+    "@id": `${absoluteUrl(project.path)}#project`,
+    name: project.title,
+    description: project.description,
+    url: absoluteUrl(project.path),
+    about: project.serviceType,
+    inLanguage: "en-ZA",
+    contentLocation: {
+      "@type": "Place",
+      name: project.location,
+      address: {
+        "@type": "PostalAddress",
+        addressCountry: "ZA",
+      },
+    },
+    ...(primaryImage
+      ? {
+          image: {
+            "@type": "ImageObject",
+            url: absoluteAssetUrl(primaryImage.src),
+            caption: primaryImage.alt,
+          },
+        }
+      : {}),
+    provider: {
+      "@id": `${siteConfig.domain}/#localbusiness`,
+    },
+    creator: {
+      "@id": `${siteConfig.domain}/#organization`,
+    },
   };
 }

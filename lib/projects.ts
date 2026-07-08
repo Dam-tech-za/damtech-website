@@ -43,7 +43,7 @@ export const PROJECT_CASE_STUDIES: ProjectCaseStudy[] = [
     title: "Marico Hill Game Lodge Dam Lining",
     h1: "Marico Hill Game Lodge Dam Lining Project",
     location: "Rustenburg, North West",
-    serviceType: "HDPE dam liner installation",
+    serviceType: "HDPE dam lining",
     material: "1 mm HDPE geomembrane",
     scope:
       "Supply and installation of 1 mm HDPE geomembrane across three earth dams (Dam 1, Dam 2 and Dam 3) for Marico Hill Game Lodge (Pty) Ltd — 2,098 m² total.",
@@ -73,15 +73,15 @@ export const PROJECT_CASE_STUDIES: ProjectCaseStudy[] = [
       ),
     ],
     relatedServices: [
-      { href: "/dam-liners", label: "Dam Liners" },
-      { href: "/farm-dam-liners", label: "Farm Dam Liners" },
+      { href: "/dam-liners", label: "Dam Linings" },
+      { href: "/farm-dam-liners", label: "Farm Dam Linings" },
       { href: "/mining-dam-liners", label: "Mining & Game Lodge Dams" },
       { href: "/contact", label: "Contact" },
     ],
     seo: {
       title: "Marico Hill Game Lodge Dam Lining Project | Damtech",
       description:
-        "2,098 m² of 1 mm HDPE dam liner installed across three dams at Marico Hill Game Lodge, Rustenburg — completed March 2026.",
+        "View Damtech's Marico Hill Game Lodge dam lining project — 2,098 m² of HDPE dam lining across three Rustenburg lodge dams.",
     },
   },
   {
@@ -89,7 +89,7 @@ export const PROJECT_CASE_STUDIES: ProjectCaseStudy[] = [
     title: "HDPE Dam Liner Installation — Stellenbosch",
     h1: "HDPE Dam Liner Installation in Stellenbosch",
     location: "Stellenbosch, Western Cape",
-    serviceType: "HDPE dam liner installation",
+    serviceType: "HDPE dam lining",
     material: "HDPE geomembrane (1.5 mm)",
     scope: "13,360 m² HDPE dam liner supply and installation for farm water storage.",
     background:
@@ -121,14 +121,14 @@ export const PROJECT_CASE_STUDIES: ProjectCaseStudy[] = [
       ),
     ],
     relatedServices: [
-      { href: "/dam-liners", label: "Dam Liners" },
-      { href: "/western-cape-dam-liners", label: "Western Cape Dam Liners" },
+      { href: "/dam-liners", label: "Dam Linings" },
+      { href: "/western-cape-dam-liners", label: "Western Cape Dam Linings" },
       { href: "/agricultural-water-storage", label: "Agricultural Water Storage" },
     ],
     seo: {
-      title: "HDPE Dam Liner Installation Stellenbosch | Damtech Project",
+      title: "HDPE Dam Lining Stellenbosch Project | Damtech South Africa",
       description:
-        "13,360 m² HDPE dam liner installed in Stellenbosch — a Damtech earth dam lining project for reliable farm water storage in the Western Cape.",
+        "View Damtech's Stellenbosch HDPE dam lining project — 13,360 m² of farm water storage lining in the Western Cape.",
     },
   },
   {
@@ -164,20 +164,20 @@ export const PROJECT_CASE_STUDIES: ProjectCaseStudy[] = [
     relatedServices: [
       { href: "/steel-water-storage-tanks", label: "Steel Water Tanks" },
       { href: "/mpumalanga-dam-liners", label: "Mpumalanga Water Storage" },
-      { href: "/mining-dam-liners", label: "Mining Dam Liners" },
+      { href: "/mining-dam-liners", label: "Mining Dam Linings" },
     ],
     seo: {
-      title: "Steel Water Tank Installation Witbank | Damtech Project",
+      title: "Steel Water Tank Installation Witbank | Damtech South Africa",
       description:
-        "Six 60 kL corrugated steel water tanks installed in Witbank — Damtech reservoir supply and installation for Mpumalanga water storage.",
+        "View Damtech's Witbank steel water tank project — six 60 kL corrugated steel reservoirs for Mpumalanga water storage.",
     },
   },
   {
     slug: "grabouw-hdpe-farm-dam",
-    title: "Grabouw HDPE Farm Dam Lining",
-    h1: "HDPE Farm Dam Lining in Grabouw",
+    title: "Grabouw HDPE Dam Lining",
+    h1: "Grabouw HDPE Dam Lining Project",
     location: "Grabouw, Western Cape",
-    serviceType: "HDPE dam liner installation",
+    serviceType: "HDPE dam lining",
     material: "HDPE geomembrane",
     scope: "10,520 m² HDPE liner installation for agricultural water storage.",
     background:
@@ -205,20 +205,20 @@ export const PROJECT_CASE_STUDIES: ProjectCaseStudy[] = [
       ),
     ],
     relatedServices: [
-      { href: "/dam-liners", label: "Dam Liners" },
-      { href: "/western-cape-dam-liners", label: "Western Cape Dam Liners" },
-      { href: "/farm-dam-liners", label: "Farm Dam Liners" },
+      { href: "/dam-liners", label: "Dam Linings" },
+      { href: "/western-cape-dam-liners", label: "Western Cape Dam Linings" },
+      { href: "/farm-dam-liners", label: "Farm Dam Linings" },
     ],
     seo: {
-      title: "Grabouw HDPE Farm Dam Lining | Damtech Project",
+      title: "Grabouw HDPE Dam Lining Project | Damtech South Africa",
       description:
-        "10,520 m² HDPE dam liner installed in Grabouw for agricultural water storage — reducing seepage on a Western Cape farm dam.",
+        "View Damtech's Grabouw HDPE dam lining project, a 10,520 m² dam lining and water storage installation.",
     },
   },
   {
     slug: "hoedspruit-bitumen-dam-lining",
-    title: "Hoedspruit Bitumen Torch-On Dam Lining",
-    h1: "Bitumen Torch-On Dam Lining in Hoedspruit",
+    title: "Hoedspruit Bitumen Torch-On Waterproofing",
+    h1: "Hoedspruit Bitumen Torch-On Waterproofing Project",
     location: "Hoedspruit, Limpopo",
     serviceType: "Bitumen torch-on dam lining",
     material: "Bitumen torch-on membrane",
@@ -226,7 +226,7 @@ export const PROJECT_CASE_STUDIES: ProjectCaseStudy[] = [
     background:
       "A Hoedspruit-area client needed to waterproof a rigid dam structure in the Lowveld heat — a common requirement on older cement or gunite farm and commercial dams where flexible HDPE profile lining is not the right fit for the prepared surface. Reliable retention supports agricultural and operational water use through long dry spells typical of the Olifants valley climate.",
     siteConditions:
-      "Hoedspruit experiences high summer temperatures and strong UV, which stress exposed waterproofing if surfaces are not prepared and detailed correctly. The dam’s rigid walls and floor required adhesion-focused membrane work rather than loose-laid geomembrane. [TODO: Confirm whether the structure is cement, gunite or composite if publishing further detail.]",
+      "Hoedspruit experiences high summer temperatures and strong UV, which stress exposed waterproofing if surfaces are not prepared and detailed correctly. The dam's rigid cement or gunite walls and floor required adhesion-focused membrane work rather than loose-laid geomembrane.",
     challenge:
       "Torch-on application over a large 9,240 m² area demands controlled overlap, corner detailing and penetration seals that stay watertight under thermal movement. Surface preparation — clean, dry and primed — determines whether the membrane bonds or fails within seasons.",
     approach:
@@ -244,21 +244,21 @@ export const PROJECT_CASE_STUDIES: ProjectCaseStudy[] = [
     images: [projectImage(IMAGE_PATHS.bitumenWaterproofingRoof)],
     relatedServices: [
       { href: "/bitumen-waterproofing", label: "Bitumen Waterproofing" },
-      { href: "/limpopo-dam-liners", label: "Limpopo Dam Liners" },
-      { href: "/dam-liners", label: "Dam Liners" },
+      { href: "/limpopo-dam-liners", label: "Limpopo Dam Linings" },
+      { href: "/dam-liners", label: "Dam Linings" },
     ],
     seo: {
-      title: "Hoedspruit Bitumen Dam Lining Project | Damtech",
+      title: "Hoedspruit Bitumen Torch-On Waterproofing Project | Damtech",
       description:
-        "9,240 m² bitumen torch-on dam lining in Hoedspruit, Limpopo — waterproofing for reliable water storage in a warm, dry climate.",
+        "View Damtech's Hoedspruit bitumen torch-on waterproofing project, a 9,240 m² waterproofing solution for water-retaining infrastructure.",
     },
   },
   {
     slug: "hartswater-hdpe-dam-liner",
-    title: "Hartswater HDPE Dam Liner",
-    h1: "HDPE Dam Liner Installation in Hartswater",
+    title: "Hartswater HDPE Dam Lining",
+    h1: "Hartswater HDPE Dam Lining Project",
     location: "Hartswater, Northern Cape",
-    serviceType: "HDPE dam liner installation",
+    serviceType: "HDPE dam lining",
     material: "HDPE geomembrane",
     scope: "3,472 m² HDPE dam liner for farm water storage in an arid agricultural district.",
     background:
@@ -286,14 +286,14 @@ export const PROJECT_CASE_STUDIES: ProjectCaseStudy[] = [
       ),
     ],
     relatedServices: [
-      { href: "/dam-liners", label: "Dam Liners" },
-      { href: "/farm-dam-liners", label: "Farm Dam Liners" },
+      { href: "/dam-liners", label: "Dam Linings" },
+      { href: "/farm-dam-liners", label: "Farm Dam Linings" },
       { href: "/agricultural-water-storage", label: "Agricultural Water Storage" },
     ],
     seo: {
-      title: "Hartswater HDPE Dam Liner Project | Damtech",
+      title: "Hartswater HDPE Dam Lining Project | Damtech South Africa",
       description:
-        "3,472 m² HDPE dam liner installed in Hartswater — farm water storage lining to reduce seepage in the Northern Cape.",
+        "View Damtech's Hartswater HDPE dam lining project, a 3,472 m² water storage and leak-prevention solution in South Africa.",
     },
   },
 ];
@@ -307,9 +307,9 @@ export function getProjectSlugs(): string[] {
 }
 
 export const PROJECTS_INDEX_SEO = {
-  title: "Dam Lining & Water Storage Projects | Damtech",
+  title: "Damtech Projects | Dam Linings, Waterproofing & Water Storage Work",
   description:
-    "View Damtech case studies for HDPE dam liner installations, corrugated steel water tanks and waterproofing projects completed across South Africa.",
+    "View Damtech project examples including HDPE dam linings, bitumen waterproofing and water storage projects completed for South African clients.",
   path: "/projects",
   h1: "Damtech Project Case Studies",
   image: IMAGE_PATHS.damtechWaterStorageHero,

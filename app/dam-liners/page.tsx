@@ -68,7 +68,8 @@ const DAM_PROJECTS = PROJECTS.filter((project) =>
 export default function DamLinersPage() {
   const breadcrumbs = [
     { name: "Home", path: "/" },
-    { name: "Dam Liners", path: seo.path },
+    { name: "Services", path: "/services" },
+    { name: "Dam Linings", path: seo.path },
   ];
 
   return (
@@ -91,7 +92,7 @@ export default function DamLinersPage() {
         compact
         eyebrow="HDPE · PVC · Bitumen"
         title={seo.h1}
-        description="Professional HDPE, PVC and bitumen torch-on dam liners and dam linings for farm dams, earth dams and reservoirs across South Africa."
+        description="Damtech supplies and installs HDPE, PVC and torch-on dam linings for earth dams, reservoirs, ponds and water storage applications across South Africa."
         breadcrumbs={breadcrumbs}
       />
 
@@ -112,7 +113,7 @@ export default function DamLinersPage() {
 
       <section className="bg-slate-50">
         <div className="content-wrap space-y-10">
-          <SectionHeading id="compare-liners">Compare Dam Liner Types</SectionHeading>
+          <SectionHeading id="compare-liners">Compare Dam Lining Types</SectionHeading>
           <ComparisonTable
             title="At-a-glance comparison"
             columns={[

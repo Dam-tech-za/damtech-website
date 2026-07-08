@@ -35,7 +35,8 @@ const APPLICATIONS = [
 export default function BitumenWaterproofingPage() {
   const breadcrumbs = [
     { name: "Home", path: "/" },
-    { name: "Bitumen Waterproofing", path: seo.path },
+    { name: "Services", path: "/services" },
+    { name: "Waterproofing", path: seo.path },
   ];
 
   return (
@@ -58,7 +59,7 @@ export default function BitumenWaterproofingPage() {
         compact
         eyebrow="Roofs · Foundations · Reservoirs"
         title={seo.h1}
-        description="Torch-on, self-adhesive and liquid bitumen waterproofing for roofs, foundations, retaining walls and reservoirs — installed by Damtech specialists across South Africa."
+        description="Damtech offers bitumen torch-on waterproofing, leak prevention and maintenance waterproofing services for water-retaining structures and commercial properties across South Africa."
         breadcrumbs={breadcrumbs}
       />
 

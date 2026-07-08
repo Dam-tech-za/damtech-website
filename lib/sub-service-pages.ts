@@ -44,7 +44,7 @@ export const HDPE_DAM_LINING_PAGE: SubServicePageConfig = {
     "HDPE dam re-lining and repair",
     "Geomembrane seam welding and testing",
   ],
-  parent: { href: "/dam-liners", label: "Dam Liners" },
+  parent: { href: "/dam-liners", label: "Dam Linings" },
   heroEyebrow: "Geomembrane · UV-stable · Low seepage",
   heroDescription:
     "Durable HDPE geomembrane solutions for large earth dams, farm reservoirs and mining ponds — supplied and installed by Damtech across South Africa.",
@@ -64,7 +64,7 @@ export const HDPE_DAM_LINING_PAGE: SubServicePageConfig = {
     { label: "Best applications", value: "Earth dams, mining ponds, irrigation storage" },
     { label: "Typical lifespan", value: "20–30 years" },
     { label: "Seam method", value: "Hot-wedge or extrusion welding" },
-    { label: "Warranty", value: "Up to 10 years on materials" },
+    { label: "Warranty", value: "Supplier-backed on qualifying materials" },
   ],
   sections: [
     {
@@ -107,10 +107,10 @@ export const HDPE_DAM_LINING_PAGE: SubServicePageConfig = {
     },
   ],
   relatedLinks: [
-    { href: "/dam-liners", label: "All Dam Liner Types" },
+    { href: "/dam-liners", label: "All Dam Lining Types" },
     { href: "/pvc-dam-lining", label: "PVC Dam Lining" },
-    { href: "/farm-dam-liners", label: "Farm Dam Liners" },
-    { href: "/mining-dam-liners", label: "Mining Dam Liners" },
+    { href: "/farm-dam-liners", label: "Farm Dam Linings" },
+    { href: "/mining-dam-liners", label: "Mining Dam Linings" },
     { href: "/projects", label: "HDPE Project Gallery" },
   ],
   projectDetailMatch: /HDPE/i,
@@ -121,10 +121,10 @@ export const HDPE_DAM_LINING_PAGE: SubServicePageConfig = {
 
 export const PVC_DAM_LINING_PAGE: SubServicePageConfig = {
   slug: "pvc-dam-lining",
-  title: "PVC Dam Liners | Pond, Tank & Reservoir Lining",
+  title: "PVC Dam Linings | Pond, Tank & Reservoir Lining",
   description:
     "Flexible PVC liners for ponds, steel tanks and small reservoirs. Damtech supplies and installs PVC lining systems for agricultural and water storage applications across South Africa.",
-  h1: "PVC Dam Liners",
+  h1: "PVC Dam Linings",
   image: IMAGE_PATHS.hdpeDamLinerEarthDam,
   serviceName: "PVC Dam Lining",
   schemaOffers: [
@@ -134,7 +134,7 @@ export const PVC_DAM_LINING_PAGE: SubServicePageConfig = {
     "Steel tank PVC lining",
     "Pond and small reservoir lining",
   ],
-  parent: { href: "/dam-liners", label: "Dam Liners" },
+  parent: { href: "/dam-liners", label: "Dam Linings" },
   heroEyebrow: "Flexible · Cost-effective · Quick install",
   heroDescription:
     "PVC geomembrane for ponds, steel reservoirs and smaller dams where flexibility, handling ease and value per square metre are priorities.",
@@ -153,7 +153,7 @@ export const PVC_DAM_LINING_PAGE: SubServicePageConfig = {
     { label: "Best applications", value: "Ponds, steel tanks, small reservoirs" },
     { label: "Typical lifespan", value: "10–15 years" },
     { label: "Seam method", value: "Heat welding or adhesive bonding" },
-    { label: "Warranty", value: "Up to 10 years on materials" },
+    { label: "Warranty", value: "Supplier-backed on qualifying materials" },
   ],
   sections: [
     {
@@ -188,10 +188,10 @@ export const PVC_DAM_LINING_PAGE: SubServicePageConfig = {
     },
   ],
   relatedLinks: [
-    { href: "/dam-liners", label: "All Dam Liner Types" },
+    { href: "/dam-liners", label: "All Dam Lining Types" },
     { href: "/hdpe-dam-lining", label: "HDPE Dam Lining" },
     { href: "/steel-water-storage-tanks", label: "Steel Water Tanks" },
-    { href: "/farm-dam-liners", label: "Farm Dam Liners" },
+    { href: "/farm-dam-liners", label: "Farm Dam Linings" },
   ],
   projectDetailMatch: /PVC|HDPE/i,
   ctaTitle: "Request a PVC Lining Quote",
@@ -214,7 +214,7 @@ export const TORCH_ON_DAM_LINING_PAGE: SubServicePageConfig = {
     "Canal and rigid reservoir lining",
     "Bitumen membrane overlay on prepared concrete",
   ],
-  parent: { href: "/dam-liners", label: "Dam Liners" },
+  parent: { href: "/dam-liners", label: "Dam Linings" },
   heroEyebrow: "Heat-bonded · Cement dams · Leak repair",
   heroDescription:
     "Torch-on bitumen membranes for cement dams, canals and rigid reservoirs — bonded waterproofing where HDPE sheet lining is not the right fit.",
@@ -267,7 +267,7 @@ export const TORCH_ON_DAM_LINING_PAGE: SubServicePageConfig = {
     },
   ],
   relatedLinks: [
-    { href: "/dam-liners", label: "All Dam Liner Types" },
+    { href: "/dam-liners", label: "All Dam Lining Types" },
     { href: "/hdpe-dam-lining", label: "HDPE Dam Lining" },
     { href: "/bitumen-waterproofing", label: "Bitumen Waterproofing" },
     { href: "/services", label: "All Services" },
@@ -325,7 +325,7 @@ export const DAM_REPAIR_SERVICES_PAGE: SubServicePageConfig = {
     },
     {
       id: "causes",
-      heading: "Causes of Dam Liner Failure",
+      heading: "Causes of Dam Lining Failure",
       paragraphs: [
         "UV embrittlement on crest rolls left exposed, hoof traffic on unprotected batters, rocky subgrades without geotextile, and poor seam welding during original install are frequent causes on HDPE systems. PVC ponds fail at folds and penetrations. Torch-on membranes delaminate when moisture was trapped beneath the substrate or flashings were omitted at parapets.",
       ],
@@ -370,7 +370,7 @@ export const DAM_REPAIR_SERVICES_PAGE: SubServicePageConfig = {
     },
   ],
   relatedLinks: [
-    { href: "/dam-liners", label: "Dam Liners" },
+    { href: "/dam-liners", label: "Dam Linings" },
     { href: "/hdpe-dam-lining", label: "HDPE Dam Lining" },
     { href: "/reservoir-lining", label: "Reservoir Lining" },
     { href: "/services", label: "All Services" },
@@ -415,7 +415,7 @@ export const RESERVOIR_LINING_PAGE: SubServicePageConfig = {
     { label: "Concrete", value: "3–4 mm torch-on bitumen" },
     { label: "Earth reservoirs", value: "HDPE 1–2 mm geomembrane" },
     { label: "Service area", value: "South Africa nationwide" },
-    { label: "Related", value: "Dam liners and steel tank supply" },
+    { label: "Related", value: "Dam linings and steel tank supply" },
   ],
   sections: [
     {
@@ -473,8 +473,8 @@ export const RESERVOIR_LINING_PAGE: SubServicePageConfig = {
   ],
   relatedLinks: [
     { href: "/steel-water-storage-tanks", label: "Steel Water Tanks" },
-    { href: "/dam-liners", label: "Dam Liners" },
-    { href: "/pvc-dam-lining", label: "PVC Dam Liners" },
+    { href: "/dam-liners", label: "Dam Linings" },
+    { href: "/pvc-dam-lining", label: "PVC Dam Linings" },
     { href: "/dam-repair-services", label: "Leaking Dam Repair" },
   ],
   projectDetailMatch: /tank|reservoir|steel|HDPE/i,
@@ -498,7 +498,7 @@ export const DAM_LINING_COST_PAGE: SubServicePageConfig = {
     "Thickness and material recommendation",
     "Nationwide installation quote",
   ],
-  parent: { href: "/dam-liners", label: "Dam Liners" },
+  parent: { href: "/dam-liners", label: "Dam Linings" },
   heroEyebrow: "Transparent quoting · No hidden shortcuts",
   heroDescription:
     "Dam lining cost depends on liner type, dam size, site access and preparation — not a single price per square metre. Here is what drives your quote.",
@@ -582,8 +582,8 @@ export const DAM_LINING_COST_PAGE: SubServicePageConfig = {
   ],
   relatedLinks: [
     { href: "/hdpe-dam-lining", label: "HDPE Dam Lining" },
-    { href: "/pvc-dam-lining", label: "PVC Dam Liners" },
-    { href: "/farm-dam-liners", label: "Farm Dam Liners" },
+    { href: "/pvc-dam-lining", label: "PVC Dam Linings" },
+    { href: "/farm-dam-liners", label: "Farm Dam Linings" },
     { href: "/quote", label: "Request a Quote" },
   ],
   projectDetailMatch: /HDPE|m²/i,

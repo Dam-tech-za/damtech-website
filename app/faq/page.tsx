@@ -3,7 +3,7 @@ import { Hero } from "@/components/Hero";
 import { PageSeo } from "@/components/PageSeo";
 import { ServiceProseSections } from "@/components/ServicePageSections";
 import { createFaqPageSchema } from "@/lib/seo";
-import { createPageMetadata, FAQ_ITEMS, PAGE_SEO } from "@/lib/pages";
+import { createPageMetadata, FAQ_ITEMS, PAGE_SEO, SEO_FAQ_ITEMS } from "@/lib/pages";
 import { FAQ_PAGE_CONTENT } from "@/lib/service-pages-content";
 import { siteConfig } from "@/lib/site";
 import {
@@ -14,7 +14,7 @@ import {
 
 const seo = PAGE_SEO.faq;
 
-const ALL_FAQS = [...FAQ_ITEMS, ...FAQ_PAGE_CONTENT.extraFaqs];
+const ALL_FAQS = [...FAQ_ITEMS, ...SEO_FAQ_ITEMS, ...FAQ_PAGE_CONTENT.extraFaqs];
 
 const FAQ_BREADCRUMBS = [
   { name: "Home", path: "/" },
@@ -33,9 +33,9 @@ export default function FaqPage() {
 
       <Hero
         compact
-        eyebrow="Dam liners · Tanks · Waterproofing"
+        eyebrow="Dam linings · Tanks · Waterproofing"
         title={seo.h1}
-        description={`Answers about our waterproofing services, earth dam liners and steel water tanks. Call us on ${siteConfig.phone} if you need more help.`}
+        description={`Answers about our waterproofing services, dam linings and steel water tanks. Call us on ${siteConfig.phone} if you need more help.`}
         breadcrumbs={[...FAQ_BREADCRUMBS]}
       />
 
@@ -50,7 +50,7 @@ export default function FaqPage() {
 
         <div className="mt-12 flex flex-wrap gap-3">
           <Link href="/dam-liners" className="btn-secondary">
-            Dam Liners
+            Dam Linings
           </Link>
           <Link href="/steel-water-storage-tanks" className="btn-secondary">
             Steel Tanks
@@ -71,7 +71,7 @@ export default function FaqPage() {
       <InternalServiceLinks currentPath={seo.path} />
       <CTA
         title="Still Have Questions?"
-        description="Our team can walk you through liner thickness, tank sizing or waterproofing options for your site."
+        description="Our team can walk you through dam lining thickness, tank sizing or waterproofing options for your site."
       />
     </>
   );

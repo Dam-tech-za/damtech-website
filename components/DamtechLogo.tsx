@@ -29,7 +29,7 @@ export function DamtechLogo({ size = 40, className }: DamtechLogoProps) {
       <path fill="#C4CBD4" d={DROPLET_BACK_LEFT} />
       <path fill="#C4CBD4" d={DROPLET_BACK_RIGHT} />
       <path
-        fill="#2563EB"
+        fill="#026BC6"
         stroke="#FFFFFF"
         strokeWidth="7"
         strokeLinejoin="round"

@@ -37,7 +37,7 @@ function ContactQuickActions() {
           Prefer to talk first?
         </SectionHeading>
         <p className="mt-2 text-sm text-slate-600">
-          Speak to our team about dam liners, steel tanks or waterproofing — we
+          Speak to our team about dam linings, steel tanks or waterproofing — we
           can often give initial guidance over the phone.
         </p>
         <div className="mt-5 flex flex-col gap-3">
@@ -161,7 +161,7 @@ export default function ContactPage() {
         compact
         eyebrow="Contact Damtech"
         title={seo.h1}
-        description="Request a free quote for dam liners, steel reservoirs or waterproofing — or call us to discuss your project."
+        description="Request a free quote for dam linings, steel reservoirs or waterproofing — or call us to discuss your project."
         showActions={false}
         breadcrumbs={breadcrumbs}
       >

@@ -20,6 +20,8 @@ const CANONICAL_HOST_REDIRECTS: Redirect[] = [
 export const redirects: Redirect[] = [
   ...CANONICAL_HOST_REDIRECTS,
   { source: "/linings", destination: "/dam-liners/", permanent: true },
+  { source: "/dam-linings", destination: "/dam-liners/", permanent: true },
+  { source: "/dam-linings/", destination: "/dam-liners/", permanent: true },
   { source: "/hdpe-linings", destination: "/hdpe-dam-lining/", permanent: true },
   { source: "/torch-on-linings", destination: "/torch-on-dam-lining/", permanent: true },
   { source: "/reservoirs", destination: "/steel-water-storage-tanks/", permanent: true },
@@ -83,6 +85,37 @@ export const redirects: Redirect[] = [
   {
     source: "/category/uncategorized/page/:page/",
     destination: "/category/dam-liner-guides/page/:page/",
+    permanent: true,
+  },
+  // SEO-friendly project slug aliases
+  {
+    source: "/projects/hartswater-hdpe-dam-lining",
+    destination: "/projects/hartswater-hdpe-dam-liner/",
+    permanent: true,
+  },
+  {
+    source: "/projects/hartswater-hdpe-dam-lining/",
+    destination: "/projects/hartswater-hdpe-dam-liner/",
+    permanent: true,
+  },
+  {
+    source: "/projects/grabouw-hdpe-dam-lining",
+    destination: "/projects/grabouw-hdpe-farm-dam/",
+    permanent: true,
+  },
+  {
+    source: "/projects/grabouw-hdpe-dam-lining/",
+    destination: "/projects/grabouw-hdpe-farm-dam/",
+    permanent: true,
+  },
+  {
+    source: "/projects/hoedspruit-bitumen-torch-on-waterproofing",
+    destination: "/projects/hoedspruit-bitumen-dam-lining/",
+    permanent: true,
+  },
+  {
+    source: "/projects/hoedspruit-bitumen-torch-on-waterproofing/",
+    destination: "/projects/hoedspruit-bitumen-dam-lining/",
     permanent: true,
   },
 ];

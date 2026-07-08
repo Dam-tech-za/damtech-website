@@ -32,7 +32,7 @@ export default function ServicesPage() {
         schemas={[
           createServiceSchema({
             name: seo.serviceName ?? seo.title,
-            serviceType: seo.serviceName ?? "Dam Liners, Water Tanks & Waterproofing",
+            serviceType: seo.serviceName ?? "Dam Linings, Water Tanks & Waterproofing",
             description: seo.description,
             path: seo.path,
             offers: [...SERVICES_HUB_SCHEMA_OFFERS],
@@ -45,7 +45,7 @@ export default function ServicesPage() {
         compact
         eyebrow="Full-service contractor"
         title={seo.h1}
-        description="Full water storage and protection services: HDPE dam liners, corrugated steel tanks, bitumen waterproofing, leak repair and preventative maintenance."
+        description="Full water storage and protection services: HDPE dam linings, corrugated steel tanks, bitumen waterproofing, leak repair and preventative maintenance."
       />
 
       <section className="content-wrap">
@@ -89,7 +89,7 @@ export default function ServicesPage() {
           </div>
 
           <div>
-            <SectionHeading id="dam-liners">Dam Liners</SectionHeading>
+            <SectionHeading id="dam-liners">Dam Linings</SectionHeading>
             {SERVICES_HUB_CONTENT.sections[1]!.paragraphs.map((paragraph) => (
               <p
                 key={paragraph.slice(0, 48)}
@@ -104,7 +104,7 @@ export default function ServicesPage() {
               <li>Bitumen Torch-On (4 mm or 3 mm)</li>
             </ul>
             <Link href="/dam-liners" className="btn-secondary mt-6 inline-flex">
-              Dam Liners
+              Dam Linings
             </Link>
           </div>
 

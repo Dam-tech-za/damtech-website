@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { Hero } from "@/components/Hero";
 import { PageSeo } from "@/components/PageSeo";
-import { createMetadata } from "@/lib/seo";
+import { createMetadata, createProjectCaseStudySchema } from "@/lib/seo";
 import { getProjectBySlug, getProjectSlugs } from "@/lib/projects";
 import {
   LazyCTA as CTA,
@@ -48,7 +48,17 @@ export default async function ProjectDetailPage({ params }: Props) {
 
   return (
     <>
-      <PageSeo breadcrumbs={breadcrumbs} />
+      <PageSeo
+        breadcrumbs={breadcrumbs}
+        schemas={createProjectCaseStudySchema({
+          title: project.title,
+          description: project.seo.description,
+          path: `/projects/${project.slug}`,
+          location: project.location,
+          serviceType: project.serviceType,
+          images: project.images,
+        })}
+      />
 
       <Hero
         compact
@@ -160,7 +170,7 @@ export default async function ProjectDetailPage({ params }: Props) {
 
       <InternalServiceLinks heading="Explore Damtech Services" />
       <CTA
-        title="Planning a similar project?"
+        title="Request a similar dam lining quote"
         description="Share your location, liner or tank requirements and we will provide a tailored quote."
       />
     </>

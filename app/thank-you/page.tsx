@@ -8,7 +8,7 @@ import { phoneTel, siteConfig } from "@/lib/site";
 const seo = {
   title: "Thank You | Damtech",
   description:
-    "Thank you for contacting Damtech. We have received your enquiry and will be in touch shortly regarding your dam liner, tank or waterproofing project.",
+    "Thank you for contacting Damtech. We have received your enquiry and will be in touch shortly regarding your dam lining, tank or waterproofing project.",
   path: "/thank-you",
   h1: "Thank You",
   image: IMAGE_PATHS.damtechWaterStorageHero,
@@ -51,7 +51,7 @@ export default function ThankYouPage() {
               Back to Home
             </Link>
             <Link href="/dam-liners" className="btn-secondary">
-              Explore Dam Liners
+              Explore Dam Linings
             </Link>
           </div>
         </div>

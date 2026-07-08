@@ -10,14 +10,18 @@ function resolveSiteOrigin(): string {
 export const siteConfig = {
   name: "Damtech",
   domain: resolveSiteOrigin(),
-  defaultTitle: "Dam Liners & Steel Water Tanks | Damtech South Africa",
+  defaultTitle:
+    "Damtech | Dam Linings, Waterproofing & Steel Water Tanks South Africa",
   defaultDescription:
-    "Damtech installs HDPE and PVC dam liners, corrugated steel reservoirs and bitumen waterproofing for farms, mines and properties across South Africa. Request a free quote.",
+    "Damtech provides HDPE and PVC dam linings, waterproofing, steel water tanks, reservoir lining and leaking dam repair for farms, mines, game lodges and commercial properties across South Africa.",
   defaultOgDescription:
-    "Expert dam lining, reservoir and waterproofing contractors serving farms, mines and properties nationwide.",
-  defaultTwitterTitle: "Damtech – Dam Liners & Water Storage Solutions",
+    "HDPE and PVC dam linings, waterproofing, steel water tanks and reservoir lining solutions for farms, mines, game lodges and commercial properties across South Africa.",
+  defaultOgTitle:
+    "Damtech | Dam Linings, Waterproofing & Water Storage Solutions",
+  defaultTwitterTitle:
+    "Damtech | Dam Linings, Waterproofing & Water Storage Solutions",
   defaultTwitterDescription:
-    "HDPE and PVC dam liners, steel tanks and waterproofing. Free quotes across South Africa.",
+    "HDPE and PVC dam linings, steel water tanks, waterproofing and reservoir lining across South Africa. Request a free quote.",
   phone: "+27 82 853 1026",
   email: "info@dam-tech.co.za",
   location: "South Africa",
@@ -155,11 +159,11 @@ export type NavLink = {
 /** Desktop header navigation (quote button is separate). */
 export const HEADER_NAV_LINKS: NavLink[] = [
   { href: "/", label: "Home" },
-  { href: "/dam-liners", label: "Dam Liners" },
-  { href: "/steel-water-storage-tanks", label: "Steel Tanks" },
+  { href: "/dam-liners", label: "Dam Linings" },
+  { href: "/steel-water-storage-tanks", label: "Steel Water Tanks" },
   { href: "/bitumen-waterproofing", label: "Waterproofing" },
   { href: "/services", label: "Services" },
-  { href: "/blog", label: "Blog" },
+  { href: "/projects", label: "Projects" },
   { href: "/contact", label: "Contact" },
 ];
 
@@ -167,15 +171,18 @@ export const HEADER_NAV_LINKS: NavLink[] = [
 export const NAV_LINKS = HEADER_NAV_LINKS;
 
 export const FOOTER_SERVICE_LINKS: NavLink[] = [
-  { href: "/dam-liners", label: "Dam Liners" },
+  { href: "/dam-liners", label: "Dam Linings" },
+  { href: "/hdpe-dam-lining", label: "HDPE Dam Lining" },
   { href: "/steel-water-storage-tanks", label: "Steel Water Tanks" },
   { href: "/bitumen-waterproofing", label: "Bitumen Waterproofing" },
-  { href: "/services", label: "All Services" },
+  { href: "/reservoir-lining", label: "Reservoir Lining" },
+  { href: "/dam-repair-services", label: "Leaking Dam Repair" },
 ];
 
 export const FOOTER_COMPANY_LINKS: NavLink[] = [
   { href: "/about-us-waterproofing-company", label: "About Damtech" },
   { href: "/projects", label: "Projects" },
+  { href: "/services", label: "All Services" },
   { href: "/blog", label: "Blog" },
   { href: "/contact", label: "Contact" },
   { href: "/faq", label: "FAQ" },
@@ -190,7 +197,7 @@ export const FOOTER_LINKS: NavLink[] = [
 ];
 
 export const SERVICE_LINKS = [
-  { href: "/dam-liners", label: "Dam Liners (HDPE, PVC, Torch-On)" },
+  { href: "/dam-liners", label: "Dam Linings (HDPE, PVC, Torch-On)" },
   { href: "/hdpe-dam-lining", label: "HDPE Dam Lining" },
   { href: "/steel-water-storage-tanks", label: "Steel Water Storage Tanks" },
   { href: "/bitumen-waterproofing", label: "Bitumen Waterproofing" },
@@ -204,12 +211,12 @@ export const PROJECTS = [
   {
     href: "/projects/hartswater-hdpe-dam-liner",
     location: "Hartswater",
-    detail: "HDPE Dam Liner — 3,472 m²",
+    detail: "HDPE Dam Lining — 3,472 m²",
   },
   {
     href: "/projects/grabouw-hdpe-farm-dam",
     location: "Grabouw",
-    detail: "HDPE Dam Liner — 10,520 m²",
+    detail: "HDPE Dam Lining — 10,520 m²",
   },
   {
     href: "/projects/hoedspruit-bitumen-dam-lining",
@@ -219,12 +226,17 @@ export const PROJECTS = [
   {
     href: "/projects/hdpe-dam-liner-installation",
     location: "Stellenbosch",
-    detail: "HDPE Dam Liner — 13,360 m²",
+    detail: "HDPE Dam Lining — 13,360 m²",
   },
   {
     href: "/projects/corrugated-steel-water-tank-installation",
     location: "Witbank",
     detail: "Steel Water Tanks — 6 × 60 kL",
+  },
+  {
+    href: "/projects/marico-hill-game-lodge-dam-lining",
+    location: "Rustenburg",
+    detail: "HDPE Dam Lining — 2,098 m²",
   },
 ] as const;
 

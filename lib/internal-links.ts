@@ -38,10 +38,10 @@ const LEGACY_PATH_REWRITES: Record<string, string> = {
   "/reservoirs/": "/steel-water-storage-tanks/",
   "/services/dam-linings": "/dam-liners/",
   "/services/dam-linings/": "/dam-liners/",
-  "/services/leak-repair": "/bitumen-waterproofing/",
-  "/services/leak-repair/": "/bitumen-waterproofing/",
-  "/leak-repair-services": "/bitumen-waterproofing/",
-  "/leak-repair-services/": "/bitumen-waterproofing/",
+  "/services/leak-repair": "/dam-repair-services/",
+  "/services/leak-repair/": "/dam-repair-services/",
+  "/leak-repair-services": "/dam-repair-services/",
+  "/leak-repair-services/": "/dam-repair-services/",
   "/contact-us": "/contact/",
   "/contact-us/": "/contact/",
   "/quote": "/quote/",
@@ -75,15 +75,15 @@ const SERVICE_PAGES: readonly InternalServiceLink[] = [
   },
   {
     href: "/dam-liners/",
-    label: "Dam Liners (HDPE, PVC & Torch-On)",
+    label: "Dam Linings (HDPE, PVC & Torch-On)",
     description:
-      "Professional dam liner supply and installation for earth dams, farm dams and reservoirs.",
+      "Professional dam lining supply and installation for earth dams, farm dams and reservoirs.",
   },
   {
     href: "/farm-dam-liners/",
-    label: "Farm Dam Liners",
+    label: "Farm Dam Linings",
     description:
-      "HDPE and PVC liners for agricultural dams, livestock water and irrigation storage.",
+      "HDPE and PVC dam linings for agricultural dams, livestock water and irrigation storage.",
   },
   {
     href: "/steel-water-storage-tanks/",
@@ -107,7 +107,7 @@ const SERVICE_PAGES: readonly InternalServiceLink[] = [
     href: "/projects/",
     label: "Our Projects",
     description:
-      "See completed dam liner, steel tank and waterproofing installations nationwide.",
+      "See completed dam lining, steel tank and waterproofing installations nationwide.",
   },
   {
     href: "/quote/",
@@ -120,7 +120,7 @@ const SERVICE_PAGES: readonly InternalServiceLink[] = [
 const DEFAULT_POST_CTA: PostCtaConfig = {
   heading: "Need help with your water storage project?",
   description:
-    "Our team installs dam liners, steel tanks and waterproofing nationwide. Request a free quote or site inspection.",
+    "Our team installs dam linings, steel tanks and waterproofing nationwide. Request a free quote or site inspection.",
   buttonText: "Request a Quote",
   buttonHref: "/quote/",
 };
@@ -183,9 +183,9 @@ export function getPostServiceLinks(post: BlogPost, limit = 3): InternalServiceL
 
   const miningLink: InternalServiceLink = {
     href: "/mining-dam-liners/",
-    label: "Mining Dam Liners",
+    label: "Mining Dam Linings",
     description:
-      "Heavy-duty HDPE lining for mine water, tailings and process dams.",
+      "Heavy-duty HDPE dam lining for mine water, tailings and process dams.",
   };
 
   const pages: InternalServiceLink[] = [
@@ -227,11 +227,11 @@ export function getPostCta(post: BlogPost): PostCtaConfig {
     };
   }
 
-  if (/\b(hdpe|dam liner|farm dam|seepage|lining)\b/i.test(text)) {
+  if (/\b(hdpe|dam liner|dam lining|farm dam|seepage|lining)\b/i.test(text)) {
     return {
-      heading: "Need help choosing a liner?",
+      heading: "Need help choosing a dam lining?",
       description:
-        "We install HDPE, PVC and torch-on dam liners across South Africa — with free quotes and site inspections.",
+        "We install HDPE, PVC and torch-on dam linings across South Africa — with free quotes and site inspections.",
       buttonText: "Request a Quote",
       buttonHref: "/quote/",
     };

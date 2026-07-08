@@ -26,7 +26,7 @@ export default function ProjectsIndexPage() {
         compact
         eyebrow="Case studies"
         title={PROJECTS_INDEX_SEO.h1}
-        description="Case studies from Damtech dam liner, steel tank and waterproofing work across South Africa — farms, game lodges, fruit districts and industrial yards."
+        description="Case studies from Damtech dam lining, waterproofing and water storage projects completed for South African clients."
         breadcrumbs={breadcrumbs}
       />
 

@@ -15,31 +15,39 @@ import { phoneTel, siteConfig } from "@/lib/site";
 const HERO_EYEBROW = "SOUTH AFRICA'S DAM LINING & WATER STORAGE SPECIALISTS";
 
 const HERO_DESCRIPTION =
-  "HDPE and PVC dam liners, corrugated steel reservoirs and waterproofing solutions for farms, mines, estates and commercial properties.";
+  "HDPE and PVC dam linings, corrugated steel reservoirs and waterproofing solutions for farms, mines, estates and commercial properties.";
+
+/** Shorter, scannable copy shown only on mobile (≤767px). */
+const HERO_DESCRIPTION_MOBILE =
+  "HDPE and PVC dam linings, steel reservoirs and waterproofing solutions for farms, mines and estates.";
 
 const TRUST_ITEMS = [
   {
     id: "materials",
     title: "Quality Materials",
-    detail: "HDPE & PVC Liners",
+    detail: "HDPE & PVC Linings",
+    chip: "Quality linings",
     Icon: ShieldCheckIcon,
   },
   {
     id: "leak",
     title: "Leak Prevention",
     detail: "Proven Waterproofing",
+    chip: "Leak prevention",
     Icon: DropletIcon,
   },
   {
     id: "installation",
     title: "Expert Installation",
     detail: "Professional Team",
+    chip: "Expert install",
     Icon: CogIcon,
   },
   {
     id: "endure",
     title: "Built to Endure",
     detail: "Long-Term Performance",
+    chip: "Long-term durability",
     Icon: CheckCircleIcon,
   },
 ] as const;
@@ -49,11 +57,15 @@ export function HomeHero() {
   const heroImage = SITE_IMAGES.homeHero;
 
   return (
-    <section className="home-hero" aria-label="Hero">
+    <section
+      className="home-hero"
+      aria-label="Dam lining and water storage solutions in the Western Cape"
+    >
       <div className="home-hero__media" aria-hidden>
         <Image
           src={heroImage.image}
           alt={heroImage.alt}
+          title="Dam lining and water storage solutions in the Western Cape"
           fill
           priority
           fetchPriority="high"
@@ -72,14 +84,22 @@ export function HomeHero() {
 
           <h1 className="home-hero__title hero-h1">
             <span className="home-hero__title-line">
-              Reliable <span className="home-hero__accent">Dam Lining</span>
-              <span className="home-hero__title-amp"> &amp;</span>
+              Damtech <span className="home-hero__accent">Dam Lining</span>
+              <span className="home-hero__title-amp hero-amp-desktop"> &amp;</span>
             </span>
-            <span className="home-hero__title-line">Water Storage Solutions</span>
+            <span className="home-hero__title-line">
+              <span className="hero-amp-mobile">&amp;&nbsp;</span>Water Storage
+              <span className="home-hero__title-solutions"> Solutions</span>
+            </span>
             <span className="home-hero__title-line">Built to Last</span>
           </h1>
 
-          <p className="home-hero__description hero-subtext">{HERO_DESCRIPTION}</p>
+          <p className="home-hero__description hero-subtext">
+            <span className="home-hero__description--full">{HERO_DESCRIPTION}</span>
+            <span className="home-hero__description--mobile">
+              {HERO_DESCRIPTION_MOBILE}
+            </span>
+          </p>
 
           <div className="home-hero__actions">
             <Link href="/quote" className="home-hero__btn home-hero__btn--primary">
@@ -115,6 +135,7 @@ export function HomeHero() {
                 <span className="home-hero__trust-title">{item.title}</span>
                 <span className="home-hero__trust-detail">{item.detail}</span>
               </span>
+              <span className="home-hero__trust-chip-label">{item.chip}</span>
             </li>
           ))}
         </ul>

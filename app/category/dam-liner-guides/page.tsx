@@ -31,7 +31,7 @@ export default function CategoryPage() {
       <Hero
         compact
         title={seo.h1}
-        description="Practical guides on dam liners, steel reservoirs, leak repair, borehole integration and waterproofing for South African farms and properties."
+        description="Practical guides on dam linings, steel reservoirs, leak repair, borehole integration and waterproofing for South African farms and properties."
         breadcrumbs={[...CATEGORY_BREADCRUMBS]}
       />
 

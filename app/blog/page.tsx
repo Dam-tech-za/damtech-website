@@ -28,7 +28,7 @@ export default function BlogPage() {
       <Hero
         compact
         title={seo.h1}
-        description="Practical guides on farm dam liners, leak repair, borehole integration, steel reservoir maintenance and water storage for South African agriculture."
+        description="Practical guides on farm dam linings, leak repair, borehole integration, steel reservoir maintenance and water storage for South African agriculture."
         breadcrumbs={breadcrumbs}
       />
 

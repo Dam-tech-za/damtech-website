@@ -6,7 +6,7 @@ import damtechContractors from "@/public/images/damtech-dam-liner-contractors-so
 import damtechWaterStorageHero from "@/public/images/damtech-dam-liners-water-storage-solutions.webp";
 import hdpeDamLinerEarthDam from "@/public/images/hdpe-dam-liner-earth-dam-south-africa.webp";
 import hdpeDamLinerInstallationLimpopo from "@/public/images/hdpe-dam-liner-installation-limpopo.webp";
-import hdpeGeomembraneLinedReservoir from "@/public/images/hdpe-geomembrane-lined-reservoir-south-africa.png";
+import westernCapeDamLiningHero from "@/public/images/western-cape-dam-lining-reservoir-damtech.webp";
 
 /** Stable public URLs for Open Graph, blog rewrites and JSON data. */
 export const IMAGE_PATHS = {
@@ -23,10 +23,10 @@ export const IMAGE_PATHS = {
   hdpeDamLinerEarthDam: "/images/hdpe-dam-liner-earth-dam-south-africa.webp",
   hdpeDamLinerInstallationLimpopo:
     "/images/hdpe-dam-liner-installation-limpopo.webp",
-  hdpeGeomembraneLinedReservoir:
-    "/images/hdpe-geomembrane-lined-reservoir-south-africa.png",
   hdpeLinedFarmReservoirCattle:
     "/images/hdpe-lined-farm-reservoir-cattle-south-africa.webp",
+  westernCapeDamLiningHero:
+    "/images/western-cape-dam-lining-reservoir-damtech.webp",
 } as const;
 
 export type ImagePath = (typeof IMAGE_PATHS)[keyof typeof IMAGE_PATHS];
@@ -39,18 +39,18 @@ export const IMAGE_ALTS: Record<ImagePath, string> = {
   [IMAGE_PATHS.corrugatedSteelWaterTank]:
     "Corrugated galvanised steel water tank installation for farm water storage",
   [IMAGE_PATHS.damtechContractors]:
-    "Damtech dam liner and waterproofing contractors serving South Africa",
+    "Damtech dam lining and waterproofing contractors serving South Africa",
   [IMAGE_PATHS.damtechWaterStorageHero]:
-    "Damtech dam liners, steel water tanks and waterproofing solutions in South Africa",
+    "Damtech dam linings, steel water tanks and waterproofing solutions in South Africa",
   [IMAGE_PATHS.damtechLogo]: "Damtech logo — water droplet mark",
   [IMAGE_PATHS.hdpeDamLinerEarthDam]:
     "HDPE dam linings installed on an earth farm dam in South Africa",
   [IMAGE_PATHS.hdpeDamLinerInstallationLimpopo]:
     "HDPE dam linings installation on a farm reservoir in Limpopo, South Africa",
-  [IMAGE_PATHS.hdpeGeomembraneLinedReservoir]:
-    "Large HDPE geomembrane-lined dam reservoir with mountain backdrop in South Africa",
   [IMAGE_PATHS.hdpeLinedFarmReservoirCattle]:
     "Bonsmara cattle beside an HDPE-lined farm reservoir in South Africa",
+  [IMAGE_PATHS.westernCapeDamLiningHero]:
+    "Dam lining reservoir installation in the Western Cape by DamTech",
 };
 
 export const DEFAULT_OG_IMAGE = IMAGE_PATHS.hdpeDamLinerInstallationLimpopo;
@@ -76,15 +76,15 @@ function siteImage(
 /** Central registry for static page images (SEO filenames + alt text). */
 export const SITE_IMAGES = {
   homeHero: siteImage(
-    hdpeGeomembraneLinedReservoir,
-    IMAGE_PATHS.hdpeGeomembraneLinedReservoir,
-    IMAGE_ALTS[IMAGE_PATHS.hdpeGeomembraneLinedReservoir],
+    westernCapeDamLiningHero,
+    IMAGE_PATHS.westernCapeDamLiningHero,
+    IMAGE_ALTS[IMAGE_PATHS.westernCapeDamLiningHero],
   ),
   homeDamLiner: siteImage(
     hdpeDamLinerInstallationLimpopo,
     IMAGE_PATHS.hdpeDamLinerInstallationLimpopo,
     IMAGE_ALTS[IMAGE_PATHS.hdpeDamLinerInstallationLimpopo],
-    "Earth dam liners, steel tanks and waterproofing — installed nationwide.",
+    "Earth dam linings, steel tanks and waterproofing — installed nationwide.",
   ),
   damLiners: siteImage(
     hdpeDamLinerInstallationLimpopo,
@@ -95,8 +95,8 @@ export const SITE_IMAGES = {
   contact: siteImage(
     hdpeDamLinerEarthDam,
     IMAGE_PATHS.hdpeDamLinerEarthDam,
-    "Farm dam with HDPE liner installed by Damtech in South Africa",
-    "Dam liners, steel tanks and waterproofing — quoted nationwide.",
+    "Farm dam with HDPE dam lining installed by Damtech in South Africa",
+    "Dam linings, steel tanks and waterproofing — quoted nationwide.",
   ),
   about: siteImage(
     damtechContractors,

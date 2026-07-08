@@ -52,7 +52,7 @@ export function MobileNav({ links }: MobileNavProps) {
     <div className="relative lg:hidden">
       <button
         type="button"
-        className="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-slate-200 text-navy transition hover:border-water hover:text-water"
+        className="inline-flex h-12 w-12 items-center justify-center rounded-lg border border-slate-200 text-navy transition hover:border-water hover:text-water"
         aria-expanded={open}
         aria-controls="mobile-nav-panel"
         aria-label={open ? "Close menu" : "Open menu"}

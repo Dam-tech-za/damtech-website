@@ -80,6 +80,7 @@ function TankTable({
 export default function SteelTanksPage() {
   const breadcrumbs = [
     { name: "Home", path: "/" },
+    { name: "Services", path: "/services" },
     { name: "Steel Water Tanks", path: seo.path },
   ];
 
@@ -103,7 +104,7 @@ export default function SteelTanksPage() {
         compact
         eyebrow="11 kL – 500 kL+"
         title={seo.h1}
-        description="Corrugated galvanised steel water tanks from 11 kL to 500 kL+, supplied with PVC lining. Built for farms, game reserves, mines and rural water storage."
+        description="Damtech provides corrugated steel water tanks and reservoirs for farms, mines, estates, game lodges and commercial water storage applications."
         breadcrumbs={breadcrumbs}
       />
 

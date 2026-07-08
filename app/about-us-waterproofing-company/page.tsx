@@ -35,7 +35,7 @@ export default function AboutPage() {
         compact
         eyebrow="30+ years experience"
         title={PAGE_SEO.about.h1}
-        description="At Damtech, we deliver earth dam liners, steel water tanks and waterproofing systems for farms, mines and commercial properties across South Africa."
+        description="Damtech provides dam linings, waterproofing, reservoir lining and water storage solutions for farms, mines, game lodges and commercial properties across South Africa."
         breadcrumbs={breadcrumbs}
       />
 
@@ -50,7 +50,7 @@ export default function AboutPage() {
               Who Are We?
             </SectionHeading>
             <p className="mt-4 leading-relaxed text-slate-600">
-              We are your trusted experts in earth dam liners, waterproofing and
+              We are your trusted experts in earth dam linings, waterproofing and
               steel water storage tank suppliers with over 30 years of experience
               in the industry. With a legacy rooted in excellence, we deliver
               innovative solutions that safeguard your investment and enhance its
@@ -64,7 +64,7 @@ export default function AboutPage() {
               To provide top-tier waterproofing and lining solutions that stand the
               test of time. We strive to exceed our clients&apos; expectations by
               offering reliable, effective and tailored services — whether you need
-              advanced earth dam liners for large-scale dams or expert waterproofing
+              advanced earth dam linings for large-scale dams or expert waterproofing
               for roofs and foundations.
             </p>
           </div>
@@ -81,7 +81,7 @@ export default function AboutPage() {
           </SectionHeading>
           <div className="mt-8 content-grid-3">
             <div className="rounded-2xl border border-slate-200 bg-white p-6">
-              <h3 className="subsection-heading !mt-0">Earth Dam Liners</h3>
+              <h3 className="subsection-heading !mt-0">Earth Dam Linings</h3>
               <p className="mt-2 text-sm leading-relaxed text-slate-600">
                 HDPE, PVC and bitumen torch-on lining for agricultural farm dams,
                 mining ponds and irrigation storage nationwide.
@@ -90,7 +90,7 @@ export default function AboutPage() {
                 href="/dam-liners"
                 className="mt-4 inline-block text-sm font-medium text-water hover:underline"
               >
-                Dam liners →
+                Dam linings →
               </Link>
             </div>
             <div className="rounded-2xl border border-slate-200 bg-white p-6">
@@ -103,7 +103,7 @@ export default function AboutPage() {
                 href="/steel-water-storage-tanks"
                 className="mt-4 inline-block text-sm font-medium text-water hover:underline"
               >
-                Steel tanks →
+                Steel water tanks →
               </Link>
             </div>
             <div className="rounded-2xl border border-slate-200 bg-white p-6">

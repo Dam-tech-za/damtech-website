@@ -135,7 +135,7 @@ export function SubServicePage({ page }: SubServicePageProps) {
         <p className="mt-8 text-sm text-slate-600">
           Compare all liner types on our{" "}
           <Link href="/dam-liners" className="font-medium text-water hover:text-navy">
-            dam liners overview
+            dam linings overview
           </Link>
           .
         </p>

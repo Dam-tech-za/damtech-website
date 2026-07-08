@@ -19,7 +19,7 @@ export default function QuotePage() {
       <PageSeo
         breadcrumbs={[
           { name: "Home", path: "/" },
-          { name: "Request a Quote", path: seo.path },
+          { name: "Request a Free Quote", path: seo.path },
         ]}
       />
 
@@ -27,7 +27,11 @@ export default function QuotePage() {
         compact
         eyebrow="Free quote"
         title={seo.h1}
-        description="Share your project details and our team will recommend a practical lining, tank or waterproofing solution with a tailored quote."
+        description="Share your project details and our team will recommend a practical dam lining, tank or waterproofing solution with a tailored quote."
+        breadcrumbs={[
+          { name: "Home", path: "/" },
+          { name: "Request a Free Quote", path: seo.path },
+        ]}
       />
 
       <section className="content-wrap">
@@ -76,7 +80,7 @@ export default function QuotePage() {
       <InternalServiceLinks currentPath={seo.path} />
       <CTA
         title="Need help choosing a service?"
-        description="Browse our dam liner, steel tank and waterproofing pages, then submit your quote request when you are ready."
+        description="Browse our dam lining, steel tank and waterproofing pages, then submit your quote request when you are ready."
       />
     </>
   );

@@ -8,7 +8,7 @@ export const DAM_LINERS_SCHEMA_OFFERS = [
   "1 mm HDPE liner installation",
   "1.5 mm HDPE liner installation",
   "2 mm HDPE liner installation",
-  "PVC dam liner installation",
+  "PVC dam lining installation",
   "Bitumen torch-on dam lining",
 ] as const;
 
@@ -27,7 +27,7 @@ export const BITUMEN_SCHEMA_OFFERS = [
 ] as const;
 
 export const SERVICES_HUB_SCHEMA_OFFERS = [
-  "HDPE dam liner installation",
+  "HDPE dam lining installation",
   "Corrugated steel water tank installation",
   "Bitumen waterproofing",
   "Leak repair and maintenance",
@@ -55,7 +55,7 @@ export type ServiceSection = {
 
 export const DAM_LINERS_CONTENT = {
   intro:
-    "South African farms, mines and game reserves lose thousands of litres each year through seepage in unlined earth dams. Clay soils that look watertight often crack in dry seasons; sandy pockets drain faster than evaporation alone can explain. Whether you refer to dam liners or dam linings, a correctly specified and installed geomembrane stops that loss, protects groundwater and keeps stored water available for irrigation, livestock and firefighting when boreholes or municipal supply are under pressure.",
+    "Damtech supplies and installs HDPE, PVC and torch-on dam linings for earth dams, reservoirs, ponds and water storage applications across South Africa. Correctly specified geomembranes stop seepage through clay and sandy soils, protect groundwater and keep stored water available for irrigation, livestock and firefighting when boreholes or municipal supply are under pressure.",
   sections: [
     {
       id: "dam-liners-vs-linings",
@@ -67,7 +67,7 @@ export const DAM_LINERS_CONTENT = {
     },
     {
       id: "why-liners",
-      heading: "Why Dam Liners Matter in South Africa",
+      heading: "Why Dam Linings Matter in South Africa",
       paragraphs: [
         "Rainfall in much of the country is seasonal and unpredictable. Farmers buffer dry months by storing runoff and borehole water in farm dams, but an unlined dam can lose 30% or more of its volume to seepage depending on soil type. In Limpopo, Mpumalanga and the Western Cape, clients routinely combine HDPE-lined earth dams with corrugated steel tanks so irrigation and stock water continue through droughts and load-shedding.",
         "Dam linings also contain water that might otherwise pick up salts, iron or sediment from the dam floor — important where water is pumped to pivots, drip lines or drinking troughs. For mining and industrial sites, geomembrane lining helps meet containment expectations and reduces the risk of uncontrolled seepage into surrounding land.",
@@ -104,7 +104,7 @@ export const DAM_LINERS_CONTENT = {
   ] satisfies ServiceSection[],
   faqs: [
     {
-      question: "How long does an HDPE dam liner last in South Africa?",
+      question: "How long does an HDPE dam lining last in South Africa?",
       answer:
         "With correct installation, UV-stable HDPE typically performs 20–30 years on farm dams. Lifespan depends on exposure, water chemistry, maintenance and whether livestock or machinery contact the liner. We supply material backed by a 10-year warranty and advise on protective measures where needed.",
     },
@@ -114,17 +114,17 @@ export const DAM_LINERS_CONTENT = {
         "Yes, in most cases. We lower the water level, prepare exposed surfaces and install liner panels to fit the current profile. Very steep or unstable walls may need minor reshaping first. Contact us with photos and approximate dimensions for an initial assessment.",
     },
     {
-      question: "What is the difference between HDPE and PVC dam liners?",
+      question: "What is the difference between HDPE and PVC dam linings?",
       answer:
         "HDPE is stiffer, more puncture-resistant and better suited to large earth dams and mining applications. PVC is more flexible and often used in steel tanks, small ponds and cement reservoirs. We recommend based on dam size, soil and how the water will be used.",
     },
     {
-      question: "Do you install dam liners outside Gauteng?",
+      question: "Do you install dam linings outside Gauteng?",
       answer:
         "Yes. Damtech works nationally on agricultural, mining and commercial projects. Travel and mobilisation are factored into quotes for sites in Limpopo, Mpumalanga, the Western Cape and other provinces.",
     },
     {
-      question: "Can a dam liner be combined with a steel reservoir?",
+      question: "Can a dam lining be combined with a steel reservoir?",
       answer:
         "Many clients store high-quality borehole water in a lined steel tank for household or irrigation use while keeping a larger earth dam for stock or runoff. We supply and line both — see our steel water tanks page for reservoir sizes.",
     },
@@ -133,17 +133,17 @@ export const DAM_LINERS_CONTENT = {
     { href: "/hdpe-dam-lining", label: "HDPE Dam Lining" },
     { href: "/pvc-dam-lining", label: "PVC Dam Lining" },
     { href: "/torch-on-dam-lining", label: "Torch-On Dam Lining" },
-    { href: "/farm-dam-liners", label: "Farm Dam Liners" },
-    { href: "/mining-dam-liners", label: "Mining Dam Liners" },
+    { href: "/farm-dam-liners", label: "Farm Dam Linings" },
+    { href: "/mining-dam-liners", label: "Mining Dam Linings" },
     { href: "/steel-water-storage-tanks", label: "Steel Water Tanks" },
     { href: "/projects", label: "Project Case Studies" },
-    { href: "/faq", label: "Dam Liner FAQ" },
+    { href: "/faq", label: "Dam Linings FAQ" },
   ],
 };
 
 export const BITUMEN_CONTENT = {
   intro:
-    "Heavy summer storms, temperature swings and years of UV exposure take a toll on roofs, slabs and retaining structures across South Africa. Bitumen waterproofing remains one of the most dependable ways to stop water ingress on concrete, metal and masonry — when the membrane is specified correctly and installed by trained applicators.",
+    "Damtech offers bitumen torch-on waterproofing, leak prevention and maintenance waterproofing services for water-retaining structures and commercial properties across South Africa. Heavy summer storms, temperature swings and years of UV exposure take a toll on roofs, slabs and retaining structures — bitumen remains one of the most dependable ways to stop water ingress on concrete, metal and masonry when installed by trained applicators.",
   sections: [
     {
       heading: "Where Bitumen Waterproofing Is Used",
@@ -191,12 +191,12 @@ export const BITUMEN_CONTENT = {
     {
       question: "Do you waterproof reservoir walls and floors?",
       answer:
-        "Yes. Bitumen torch-on is often used on cement reservoirs and canal linings where a bonded membrane is required. For large earth dams we may recommend HDPE instead — see our dam liners service.",
+        "Yes. Bitumen torch-on is often used on cement reservoirs and canal linings where a bonded membrane is required. For large earth dams we may recommend HDPE instead — see our dam linings service.",
     },
   ] satisfies ServiceFaqItem[],
   relatedLinks: [
     { href: "/services", label: "All Waterproofing Services" },
-    { href: "/dam-liners", label: "Dam Liners" },
+    { href: "/dam-liners", label: "Dam Linings" },
     { href: "/faq", label: "Waterproofing FAQ" },
     { href: "/projects", label: "Recent Projects" },
   ],
@@ -204,7 +204,7 @@ export const BITUMEN_CONTENT = {
 
 export const STEEL_TANKS_CONTENT = {
   intro:
-    "When an earth dam is not practical — limited space, rocky ground, or the need for elevated storage — corrugated galvanised steel reservoirs give South African farmers and site managers a fast, scalable way to store borehole, municipal or harvested rainwater. Damtech supplies tanks from roughly 11 kL to 500 kL and above, with PVC lining, structural columns and optional roofs as standard on our builds.",
+    "Damtech provides corrugated steel water tanks and reservoirs for farms, mines, estates, game lodges and commercial water storage applications. When an earth dam is not practical — limited space, rocky ground, or the need for elevated storage — galvanised steel reservoirs give South African site managers a fast, scalable way to store borehole, municipal or harvested rainwater from roughly 11 kL to 500 kL and above.",
   sections: [
     {
       heading: "Why Choose Corrugated Steel Water Tanks",
@@ -258,7 +258,7 @@ export const STEEL_TANKS_CONTENT = {
     },
   ] satisfies ServiceFaqItem[],
   relatedLinks: [
-    { href: "/dam-liners", label: "Dam Liners" },
+    { href: "/dam-liners", label: "Dam Linings" },
     { href: "/agricultural-water-storage", label: "Agricultural Water Storage" },
     { href: "/projects", label: "Tank Installation Projects" },
     { href: "/faq", label: "Reservoir FAQ" },
@@ -322,7 +322,7 @@ export const SERVICES_HUB_CONTENT = {
     {
       question: "What warranty do you offer?",
       answer:
-        "Material warranties of up to 10 years apply on qualifying liner and waterproofing products. Workmanship is covered per project agreement — ask for details on your quote.",
+        "Supplier-backed material warranties apply on qualifying dam lining and waterproofing products, subject to supplier terms. Workmanship is covered per project agreement — ask for details on your quote.",
     },
     {
       question: "Can you repair a leaking dam without a full reline?",
@@ -339,11 +339,11 @@ export const SERVICES_HUB_CONTENT = {
 
 export const SERVICES_OVERVIEW_CARDS = [
   {
-    title: "HDPE & PVC Dam Liners",
+    title: "HDPE & PVC Dam Linings",
     description:
       "Geomembrane lining for farm dams, mining ponds and earth reservoirs — HDPE, PVC and torch-on options.",
     href: "/dam-liners",
-    cta: "Dam liner services",
+    cta: "Dam lining services",
   },
   {
     title: "Corrugated Steel Water Tanks",
@@ -407,12 +407,12 @@ export const SERVICES_PROCESS_STEPS = [
 
 export const FAQ_PAGE_CONTENT = {
   intro:
-    "Straight answers about dam liners, corrugated steel reservoirs and bitumen waterproofing — drawn from three decades of field work on South African farms, mines and commercial buildings. If your question is not covered below, call us or use the quote form and we will respond with practical advice, not sales fluff.",
+    "Straight answers about dam linings, corrugated steel reservoirs and bitumen waterproofing — drawn from three decades of field work on South African farms, mines and commercial buildings. If your question is not covered below, call us or use the quote form and we will respond with practical advice, not sales fluff.",
   sections: [
     {
-      heading: "Dam Liners and Earth Dams",
+      heading: "Dam Linings and Earth Dams",
       paragraphs: [
-        "HDPE is the workhorse for large farm and mining dams: low permeability, UV resistance and long life when welded and anchored correctly. PVC fits smaller ponds and steel tanks. Bitumen torch-on suits cement dams where the membrane must bond to a rigid substrate. Liner choice depends on dam size, soil, sun exposure and whether animals access the water — not on catalogue thickness alone.",
+        "HDPE is the workhorse for large farm and mining dams: low permeability, UV resistance and long life when welded and anchored correctly. PVC fits smaller ponds and steel tanks. Bitumen torch-on suits cement dams where the membrane must bond to a rigid substrate. Lining choice depends on dam size, soil, sun exposure and whether animals access the water — not on catalogue thickness alone.",
         "Seepage, wet patches below the wall or falling water levels after rain are signs to inspect. Early puncture repairs are cheaper than emergency relines during irrigation season.",
       ],
     },
@@ -432,7 +432,7 @@ export const FAQ_PAGE_CONTENT = {
   ] satisfies ServiceSection[],
   extraFaqs: [
     {
-      question: "Which dam liner is best for a cattle drinking dam?",
+      question: "Which dam lining is best for a cattle drinking dam?",
       answer:
         "HDPE with adequate thickness and protected batters where hooves traffic is heavy. Fence drinking areas or rock-fill protection strips reduce puncture risk. We assess slope and stock pressure on site.",
     },
@@ -449,14 +449,14 @@ export const FAQ_PAGE_CONTENT = {
     {
       question: "Do you offer quotes without a site visit?",
       answer:
-        "For standard tanks we can estimate from diameter and height. Dam liners and waterproofing usually need photos or a visit to quote accurately. Start via our quote form with location and approximate dimensions.",
+        "For standard tanks we can estimate from diameter and height. Dam linings and waterproofing usually need photos or a visit to quote accurately. Start via our quote form with location and approximate dimensions.",
     },
   ] satisfies ServiceFaqItem[],
 };
 
 export const ABOUT_CONTENT = {
   intro:
-    "Damtech started with a simple focus: help South African landowners store water reliably and keep buildings dry. Today we install HDPE dam liners on farms and mines, build corrugated steel reservoirs, and apply bitumen waterproofing on roofs and foundations — always with an emphasis on workmanship you can inspect, not promises you cannot.",
+    "Damtech provides dam linings, waterproofing, reservoir lining and water storage solutions for farms, mines, game lodges and commercial properties across South Africa. We install HDPE and PVC dam linings on farms and mines, build corrugated steel reservoirs, and apply bitumen waterproofing on roofs and foundations — always with an emphasis on workmanship you can inspect, not promises you cannot.",
   sections: [
     {
       heading: "Three Decades of Lining and Waterproofing Experience",
@@ -479,7 +479,7 @@ export const ABOUT_CONTENT = {
     {
       heading: "Quality Materials and Accountable Installation",
       paragraphs: [
-        "We source HDPE, PVC, bitumen membranes and galvanised steel from established suppliers. Warranties on materials — up to 10 years on qualifying liner products — are backed by documented installation practices. Our reputation in the industry rests on dams that hold water and roofs that stay dry years after sign-off.",
+        "We source HDPE, PVC, bitumen membranes and galvanised steel from established suppliers. Supplier-backed material warranties apply on qualifying products, subject to supplier terms and documented installation practices. Our reputation in the industry rests on dams that hold water and roofs that stay dry years after sign-off.",
       ],
     },
   ] satisfies ServiceSection[],

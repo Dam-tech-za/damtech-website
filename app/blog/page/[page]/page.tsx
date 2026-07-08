@@ -30,7 +30,7 @@ export async function generateMetadata({ params }: Props) {
 
   return createPageMetadata(blogSeo, {
     title: `${blogSeo.title} — Page ${pageNumber}`,
-    description: `Page ${pageNumber} of Damtech blog articles on farm dam liners, steel reservoirs, waterproofing and water storage in South Africa.`,
+    description: `Page ${pageNumber} of Damtech blog articles on farm dam linings, steel reservoirs, waterproofing and water storage in South Africa.`,
     path: `/blog/page/${page}`,
   });
 }

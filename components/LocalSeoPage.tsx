@@ -32,6 +32,7 @@ const CONTENT_SECTIONS: Array<{
 export function LocalSeoPage({ page }: LocalSeoPageProps) {
   const breadcrumbs = [
     { name: "Home", path: "/" },
+    { name: "Services", path: "/services" },
     { name: page.h1, path: `/${page.slug}` },
   ];
 

@@ -112,7 +112,7 @@ export function Header() {
           <span className="site-header__brand-text">
             <span className="site-header__brand-title">Damtech</span>
             <span className="site-header__brand-subtitle">
-              Dam liners &amp; waterproofing
+              Dam linings &amp; waterproofing
             </span>
           </span>
         </Link>
@@ -134,7 +134,7 @@ export function Header() {
         </nav>
 
         <div className="site-header__actions">
-          <Link href="/quote" className="site-header__cta hidden sm:inline-flex">
+          <Link href="/quote" className="site-header__cta hidden md:inline-flex">
             Request a Free Quote
           </Link>
           <MobileNav links={HEADER_NAV_LINKS} />
