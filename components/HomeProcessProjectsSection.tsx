@@ -1,4 +1,3 @@
-import type { StaticImageData } from "next/image";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -8,9 +7,7 @@ import {
   LayersIcon,
   SearchIcon,
 } from "@/components/icons/StrokeIcons";
-import bitumenWaterproofingRoof from "@/public/images/bitumen-waterproofing-roof-reservoir-repair.webp";
-import hdpeDamLinerInstallationLimpopo from "@/public/images/hdpe-dam-liner-installation-limpopo.webp";
-import hdpeLinedFarmReservoirCattle from "@/public/images/hdpe-lined-farm-reservoir-cattle-south-africa.webp";
+import { FEATURED_PROJECT_IMAGES, IMAGE_ALTS, IMAGE_PATHS } from "@/lib/images";
 
 const PROCESS_STEPS = [
   {
@@ -58,7 +55,7 @@ type FeaturedProject = {
   area: string;
   href: string;
   linkLabel: string;
-  image: StaticImageData;
+  image: (typeof FEATURED_PROJECT_IMAGES)[keyof typeof FEATURED_PROJECT_IMAGES];
   alt: string;
 };
 
@@ -70,8 +67,8 @@ const FEATURED_PROJECTS: FeaturedProject[] = [
     area: "3,472 m²",
     href: "/projects/hartswater-hdpe-dam-liner",
     linkLabel: "View Hartswater HDPE dam lining project",
-    image: hdpeDamLinerInstallationLimpopo,
-    alt: "HDPE dam lining project completed by Damtech in Hartswater, South Africa",
+    image: FEATURED_PROJECT_IMAGES.hartswater,
+    alt: IMAGE_ALTS[IMAGE_PATHS.hartswaterHdpeDamLiningProject],
   },
   {
     id: "grabouw",
@@ -80,8 +77,8 @@ const FEATURED_PROJECTS: FeaturedProject[] = [
     area: "10,520 m²",
     href: "/projects/grabouw-hdpe-farm-dam",
     linkLabel: "View Grabouw HDPE dam lining project",
-    image: hdpeLinedFarmReservoirCattle,
-    alt: "Large HDPE dam lining installation for water storage in Grabouw",
+    image: FEATURED_PROJECT_IMAGES.grabouw,
+    alt: IMAGE_ALTS[IMAGE_PATHS.grabouwHdpeDamLiningAfter],
   },
   {
     id: "hoedspruit",
@@ -90,7 +87,7 @@ const FEATURED_PROJECTS: FeaturedProject[] = [
     area: "9,240 m²",
     href: "/projects/hoedspruit-bitumen-dam-lining",
     linkLabel: "View Hoedspruit bitumen torch-on waterproofing project",
-    image: bitumenWaterproofingRoof,
+    image: FEATURED_PROJECT_IMAGES.hoedspruit,
     alt: "Bitumen torch-on waterproofing project completed by Damtech in Hoedspruit",
   },
 ];
@@ -119,7 +116,7 @@ export function HomeProcessProjectsSection() {
           </header>
 
           <ol className="home-process-projects__steps">
-            {PROCESS_STEPS.map((step, index) => (
+            {PROCESS_STEPS.map((step) => (
               <li key={step.id} className="home-process-projects__step-item">
                 <article className="home-process-projects__step">
                   <div className="home-process-projects__step-top">
@@ -136,14 +133,6 @@ export function HomeProcessProjectsSection() {
                   </p>
                   <p className="home-process-projects__step-note">{step.note}</p>
                 </article>
-                {index < PROCESS_STEPS.length - 1 ? (
-                  <span
-                    className="home-process-projects__connector"
-                    aria-hidden
-                  >
-                    <ArrowRightIcon className="home-process-projects__connector-icon" />
-                  </span>
-                ) : null}
               </li>
             ))}
           </ol>

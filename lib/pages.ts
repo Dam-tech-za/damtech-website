@@ -51,7 +51,7 @@ export const PAGE_SEO: Record<StaticPageKey, PageSeoEntry> = {
     path: "/services",
     h1: "Dam Lining, Water Storage & Waterproofing Services",
     serviceName: "Dam Lining and Water Storage Services",
-    image: IMAGE_PATHS.hdpeDamLinerEarthDam,
+    image: IMAGE_PATHS.hdpeDamLiningEarthDam,
   },
   "dam-liners": {
     title:
@@ -61,7 +61,7 @@ export const PAGE_SEO: Record<StaticPageKey, PageSeoEntry> = {
     path: "/dam-liners",
     h1: "Dam Linings for Earth Dams, Reservoirs and Water Storage",
     serviceName: "HDPE Dam Lining",
-    image: IMAGE_PATHS.hdpeDamLinerInstallationLimpopo,
+    image: IMAGE_PATHS.hdpeDamLiningFieldInstallation,
   },
   "steel-tanks": {
     title: "Steel Water Tanks South Africa | Corrugated Steel Reservoirs | Damtech",
@@ -80,7 +80,7 @@ export const PAGE_SEO: Record<StaticPageKey, PageSeoEntry> = {
     path: "/bitumen-waterproofing",
     h1: "Waterproofing Services for Long-Term Protection",
     serviceName: "Bitumen Waterproofing",
-    image: IMAGE_PATHS.bitumenWaterproofingRoof,
+    image: IMAGE_PATHS.bitumenTorchOnWaterproofingDamtech,
   },
   faq: {
     title: "Dam Linings & Waterproofing FAQ | Damtech South Africa",
@@ -88,7 +88,7 @@ export const PAGE_SEO: Record<StaticPageKey, PageSeoEntry> = {
       "Answers to common questions about HDPE dam linings, PVC dam linings, waterproofing, steel water tanks, supplier-backed material warranty and leaking dam repairs.",
     path: "/faq",
     h1: "Dam Linings and Waterproofing FAQ",
-    image: IMAGE_PATHS.hdpeDamLinerEarthDam,
+    image: IMAGE_PATHS.hdpeDamLiningEarthDam,
   },
   contact: {
     title: "Contact Damtech | Dam Linings & Water Storage Quotes",
@@ -96,7 +96,7 @@ export const PAGE_SEO: Record<StaticPageKey, PageSeoEntry> = {
       "Contact Damtech for HDPE dam linings, steel water tanks, reservoir lining, leak repairs and waterproofing services across South Africa.",
     path: "/contact",
     h1: "Contact Damtech",
-    image: IMAGE_PATHS.hdpeDamLinerEarthDam,
+    image: IMAGE_PATHS.hdpeDamLiningEarthDam,
   },
   blog: {
     title: "Dam Lining & Water Storage Guides | Damtech Blog",
@@ -112,7 +112,7 @@ export const PAGE_SEO: Record<StaticPageKey, PageSeoEntry> = {
       "Request a free Damtech quote for dam linings, waterproofing, steel water tanks, reservoir lining or leaking dam repair in South Africa.",
     path: "/quote",
     h1: "Request a Free Damtech Quote",
-    image: IMAGE_PATHS.hdpeDamLinerEarthDam,
+    image: IMAGE_PATHS.hdpeDamLiningEarthDam,
   },
   category: {
     title: "Dam Lining Guides",

@@ -26,6 +26,11 @@ export function ProjectGallery({ images }: ProjectGalleryProps) {
               sizes="(max-width: 768px) 100vw, 480px"
             />
           </div>
+          {image.caption ? (
+            <figcaption className="border-t border-slate-200 bg-white px-4 py-3 text-sm text-slate-600">
+              {image.caption}
+            </figcaption>
+          ) : null}
         </figure>
       ))}
     </div>

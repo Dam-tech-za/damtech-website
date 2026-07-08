@@ -3,10 +3,15 @@ import { IMAGE_ALTS, IMAGE_PATHS, type ImagePath } from "./images";
 export type ProjectImage = {
   src: string;
   alt: string;
+  caption?: string;
 };
 
-function projectImage(path: ImagePath, alt?: string): ProjectImage {
-  return { src: path, alt: alt ?? IMAGE_ALTS[path] };
+function projectImage(
+  path: ImagePath,
+  alt?: string,
+  caption?: string,
+): ProjectImage {
+  return { src: path, alt: alt ?? IMAGE_ALTS[path], caption };
 }
 
 export type ProjectCaseStudy = {
@@ -68,7 +73,7 @@ export const PROJECT_CASE_STUDIES: ProjectCaseStudy[] = [
       "Marico Hill Game Lodge — three Rustenburg dams lined with 2,098 m² of 1 mm HDPE for improved water retention.",
     images: [
       projectImage(
-        IMAGE_PATHS.hdpeDamLinerEarthDam,
+        IMAGE_PATHS.hdpeDamLiningEarthDam,
         "HDPE dam linings installed on a North West game lodge earth dam",
       ),
     ],
@@ -112,12 +117,12 @@ export const PROJECT_CASE_STUDIES: ProjectCaseStudy[] = [
       "Large-scale HDPE earth dam lining in the Stellenbosch wine and agricultural district — 13,360 m² installed for reliable farm water storage.",
     images: [
       projectImage(
-        IMAGE_PATHS.hdpeDamLinerEarthDam,
+        IMAGE_PATHS.hdpeDamLiningFieldInstallation,
         "HDPE dam linings installed on a Stellenbosch farm earth dam",
       ),
       projectImage(
-        IMAGE_PATHS.hdpeDamLinerInstallationLimpopo,
-        "HDPE dam linings being welded on a Stellenbosch farm reservoir",
+        IMAGE_PATHS.hdpeDamLiningAfterGeotextile,
+        "HDPE dam linings being installed on a Stellenbosch farm reservoir",
       ),
     ],
     relatedServices: [
@@ -158,8 +163,14 @@ export const PROJECT_CASE_STUDIES: ProjectCaseStudy[] = [
     summary:
       "Six 60 kL corrugated steel reservoirs installed in Witbank for industrial on-site water storage in Mpumalanga.",
     images: [
-      projectImage(IMAGE_PATHS.corrugatedSteelWaterTank),
-      projectImage(IMAGE_PATHS.corrugatedSteelReservoirRepair),
+      projectImage(
+        IMAGE_PATHS.corrugatedSteelWaterTank,
+        "Corrugated steel water tank for farm, mine and commercial water storage",
+      ),
+      projectImage(
+        IMAGE_PATHS.corrugatedSteelWaterTankSite2,
+        "Corrugated steel water tank installation on a prepared site in Mpumalanga",
+      ),
     ],
     relatedServices: [
       { href: "/steel-water-storage-tanks", label: "Steel Water Tanks" },
@@ -200,8 +211,14 @@ export const PROJECT_CASE_STUDIES: ProjectCaseStudy[] = [
       "Grabouw farm dam lined with 10,520 m² HDPE to protect irrigation reserves in the Western Cape fruit belt.",
     images: [
       projectImage(
-        IMAGE_PATHS.hdpeLinedFarmReservoirCattle,
-        "HDPE dam linings on a Grabouw farm reservoir with cattle drinking in the Western Cape",
+        IMAGE_PATHS.grabouwHdpeDamLiningAfter,
+        "Large HDPE dam lining installation for water storage in Grabouw",
+        "After HDPE dam lining installation",
+      ),
+      projectImage(
+        IMAGE_PATHS.grabouwHdpeDamLiningBefore,
+        "Farm dam in Grabouw before HDPE dam lining installation",
+        "Before HDPE dam lining installation",
       ),
     ],
     relatedServices: [
@@ -241,7 +258,17 @@ export const PROJECT_CASE_STUDIES: ProjectCaseStudy[] = [
     ],
     summary:
       "Hoedspruit structured dam waterproofed with 9,240 m² bitumen torch-on lining for Lowveld water storage.",
-    images: [projectImage(IMAGE_PATHS.bitumenWaterproofingRoof)],
+    images: [
+      projectImage(
+        IMAGE_PATHS.bitumenEarthDamWaterproofing,
+        "Bitumen torch-on waterproofing project completed by Damtech in Hoedspruit",
+      ),
+      projectImage(
+        IMAGE_PATHS.bitumenEarthDamWaterproofing2,
+        "Completed bitumen torch-on waterproofing repair after Damtech installation",
+        "After bitumen torch-on waterproofing",
+      ),
+    ],
     relatedServices: [
       { href: "/bitumen-waterproofing", label: "Bitumen Waterproofing" },
       { href: "/limpopo-dam-liners", label: "Limpopo Dam Linings" },
@@ -281,8 +308,13 @@ export const PROJECT_CASE_STUDIES: ProjectCaseStudy[] = [
       "Hartswater farm dam lined with 3,472 m² HDPE to protect scarce irrigation water in the Northern Cape.",
     images: [
       projectImage(
-        IMAGE_PATHS.hdpeDamLinerInstallationLimpopo,
-        "HDPE dam linings installed on a Hartswater farm dam in the Northern Cape",
+        IMAGE_PATHS.hartswaterHdpeDamLiningProject,
+        "HDPE dam lining project completed by Damtech in Hartswater, South Africa",
+      ),
+      projectImage(
+        IMAGE_PATHS.hdpeDamLiningBeforeInstallation,
+        "Earth dam basin prepared before HDPE dam lining installation",
+        "Before HDPE dam lining installation",
       ),
     ],
     relatedServices: [
@@ -312,5 +344,5 @@ export const PROJECTS_INDEX_SEO = {
     "View Damtech project examples including HDPE dam linings, bitumen waterproofing and water storage projects completed for South African clients.",
   path: "/projects",
   h1: "Damtech Project Case Studies",
-  image: IMAGE_PATHS.damtechWaterStorageHero,
+  image: IMAGE_PATHS.hdpeDamLiningFieldInstallation,
 };

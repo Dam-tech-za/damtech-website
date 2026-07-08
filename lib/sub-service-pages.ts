@@ -35,7 +35,7 @@ export const HDPE_DAM_LINING_PAGE: SubServicePageConfig = {
   description:
     "HDPE geomembrane dam lining for farm dams, mining ponds and irrigation reservoirs. 1 mm–2 mm supply and professional installation across South Africa. Free quote.",
   h1: "HDPE Dam Lining",
-  image: IMAGE_PATHS.hdpeDamLinerInstallationLimpopo,
+  image: IMAGE_PATHS.hdpeDamLiningFieldInstallation,
   serviceName: "HDPE Dam Lining",
   schemaOffers: [
     "1 mm HDPE liner installation",
@@ -125,7 +125,7 @@ export const PVC_DAM_LINING_PAGE: SubServicePageConfig = {
   description:
     "Flexible PVC liners for ponds, steel tanks and small reservoirs. Damtech supplies and installs PVC lining systems for agricultural and water storage applications across South Africa.",
   h1: "PVC Dam Linings",
-  image: IMAGE_PATHS.hdpeDamLinerEarthDam,
+  image: IMAGE_PATHS.hdpeDamLiningEarthDam,
   serviceName: "PVC Dam Lining",
   schemaOffers: [
     "550 gsm PVC liner installation",
@@ -205,7 +205,7 @@ export const TORCH_ON_DAM_LINING_PAGE: SubServicePageConfig = {
   description:
     "Bitumen torch-on dam lining for cement dams, canals and rigid reservoirs. Heat-bonded waterproof membranes installed across South Africa. Free site assessment.",
   h1: "Torch-On Dam Lining",
-  image: IMAGE_PATHS.bitumenWaterproofingRoof,
+  image: IMAGE_PATHS.bitumenTorchOnWaterproofingDamtech,
   serviceName: "Torch-On Dam Lining",
   schemaOffers: [
     "3 mm torch-on dam lining",
@@ -284,7 +284,7 @@ export const DAM_REPAIR_SERVICES_PAGE: SubServicePageConfig = {
   description:
     "Damtech repairs leaking dams, failed liners and water storage systems using HDPE patching, relining and practical site-specific repair methods. Request an assessment.",
   h1: "Leaking Dam Repair Services",
-  image: IMAGE_PATHS.hdpeDamLinerEarthDam,
+  image: IMAGE_PATHS.hdpeDamLiningEarthDam,
   serviceName: "Leaking Dam Repair",
   schemaOffers: [
     "HDPE liner patch welding",

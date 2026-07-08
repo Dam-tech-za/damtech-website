@@ -73,11 +73,11 @@ const MAINTENANCE_CARDS = [
 ] as const;
 
 const MAINTENANCE_ALT =
-  "HDPE dam lining and water storage reservoir maintained by Damtech in South Africa";
+  "Waterproofing maintenance and inspection for leak prevention by Damtech";
 
 /** Homepage services + maintenance section — sits below the trust/warranty section. */
 export function HomeServicesSection() {
-  const maintenanceImage = SITE_IMAGES.contact;
+  const maintenanceImage = SITE_IMAGES.maintenance;
 
   return (
     <section

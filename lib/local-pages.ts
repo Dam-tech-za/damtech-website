@@ -41,7 +41,7 @@ export const LOCAL_LANDING_PAGES: LocalLandingPage[] = [
     h1: "Dam Linings in Pretoria",
     heroDescription:
       "Serving Pretoria, Centurion, Hammanskraal and the greater Tshwane metro with HDPE dam linings, reservoir repairs and steel water tanks for farms, estates and commercial sites.",
-    image: IMAGE_PATHS.hdpeDamLinerEarthDam,
+    image: IMAGE_PATHS.hdpeDamLiningEarthDam,
     serviceName: "Dam Lining Installation — Pretoria",
     intro:
       "Pretoria sits on the Highveld at roughly 1,300 m elevation — a city where thunderstorms can dump summer rain in hours, yet winter days stay dry for weeks. That pattern favours farm dams and estate ponds as storage, but iron-rich soils around Bronkhorstspruit and clay-loam belts near the Apies catchment often seep unless lined. Peri-urban smallholdings along the N1 and R21 corridor increasingly rely on boreholes with municipal supply as backup, which makes on-site retention a practical priority rather than an optional upgrade.",
@@ -175,7 +175,7 @@ export const LOCAL_LANDING_PAGES: LocalLandingPage[] = [
     h1: "Dam Linings for Limpopo Farms & Game Reserves",
     heroDescription:
       "Hoedspruit, Tzaneen, Phalaborwa and the Limpopo Lowveld and Bushveld — Damtech installs dam linings built for heat, wildlife pressure and long dry seasons.",
-    image: IMAGE_PATHS.bitumenWaterproofingRoof,
+    image: IMAGE_PATHS.bitumenTorchOnWaterproofingDamtech,
     serviceName: "Dam Lining Installation — Limpopo",
     intro:
       "Limpopo stretches from misty Letaba citrus valleys to hot Bushveld game reserves along the Kruger western fence. Rainfall varies sharply: Tzaneen can record generous summer totals while Hoedspruit and the Olifants valley see prolonged dry spells. Farm dams and lodge reservoirs are the backbone of irrigation and wildlife water — unlined basins in sandy granite soils can lose water faster than managers realise until borehole bills spike.",
@@ -302,7 +302,7 @@ export const LOCAL_LANDING_PAGES: LocalLandingPage[] = [
     h1: "Dam Linings in the Western Cape",
     heroDescription:
       "Wine, fruit and livestock farms from the Boland to the Overberg rely on Damtech HDPE lining to keep scarce summer water in farm dams for irrigation and stock.",
-    image: IMAGE_PATHS.hdpeDamLinerInstallationLimpopo,
+    image: IMAGE_PATHS.hdpeDamLiningFieldInstallation,
     serviceName: "HDPE Dam Lining Installation — Western Cape",
     intro:
       "Western Cape agriculture operates under some of the country’s tightest water scrutiny. Winter cold fronts fill dams between June and August; summers are dry, windy and unforgiving on open water. Farmers in Stellenbosch, Franschhoek, Grabouw and the Swartland cannot treat seepage as acceptable losses — many dams sit on sandstone-derived soils and weathered granite that drink water year-round without a visible leak on the surface.",
@@ -368,7 +368,7 @@ export const LOCAL_LANDING_PAGES: LocalLandingPage[] = [
     h1: "Farm Dam Linings",
     heroDescription:
       "Stop losing irrigation and livestock water to seepage. Damtech installs farm dam linings matched to soil type, herd pressure, pivot schedules and how you actually use stored water.",
-    image: IMAGE_PATHS.hdpeLinedFarmReservoirCattle,
+    image: IMAGE_PATHS.grabouwHdpeDamLiningAfter,
     serviceName: "Farm Dam Lining Installation",
     intro:
       "A farm dam is often the largest capital asset on a property after land itself — yet many remain unlined on soils that were never watertight. South African producers face municipal cost pressure, load-shedding that stops borehole pumps mid-irrigation, and drought cycles that make every megalitre in January worth more than the same megalitre in June. Lining is how you keep winter rain and borehole top-up available for cattle, pivots and packhouses without rebuilding the entire embankment.",
@@ -430,7 +430,7 @@ export const LOCAL_LANDING_PAGES: LocalLandingPage[] = [
     h1: "Mining Dam Linings & Process Water Containment",
     heroDescription:
       "Contain process, storm and runoff water on mining and industrial sites with HDPE lining designed for puncture protection, chemical compatibility review and long service life.",
-    image: IMAGE_PATHS.hdpeDamLinerEarthDam,
+    image: IMAGE_PATHS.hdpeDamLiningEarthDam,
     serviceName: "Mining Dam Lining Installation",
     schemaOffers: MINING_LINERS_SCHEMA_OFFERS,
     intro:
