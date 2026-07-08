@@ -1,13 +1,21 @@
-import { SectionHeading } from "@/components/SectionHeading";
 import Link from "next/link";
 import { Hero } from "@/components/Hero";
+import { InfoCardGrid } from "@/components/InfoCardGrid";
 import { PageSeo } from "@/components/PageSeo";
+import { ProcessStepsSection } from "@/components/ProcessStepsSection";
 import { ProjectProofStrip } from "@/components/ProjectProofStrip";
 import { SectionCta } from "@/components/SectionCta";
+import { SiteSection } from "@/components/SiteSection";
 import {
   ServiceFaqSection,
   ServiceProseSections,
 } from "@/components/ServicePageSections";
+import {
+  DropletIcon,
+  LayersIcon,
+  ReservoirIcon,
+  WrenchIcon,
+} from "@/components/icons/StrokeIcons";
 import {
   LazyCTA as CTA,
   LazyInternalServiceLinks as InternalServiceLinks,
@@ -21,7 +29,46 @@ const seo = PAGE_SEO.services;
 
 export const metadata = createPageMetadata(seo);
 
-export default function ServicesPage() {
+const LEGACY_SERVICE_CARDS = [
+  {
+    id: "waterproofing",
+    title: "Waterproofing",
+    description:
+      "Bitumen torch-on waterproofing for metal roofs, foundations, chimneys and concrete slabs.",
+    href: "/bitumen-waterproofing",
+    cta: "Waterproofing services",
+    Icon: DropletIcon,
+  },
+  {
+    id: "dam-linings",
+    title: "Dam Linings",
+    description:
+      "HDPE, PVC and bitumen torch-on dam linings for farm dams, mining ponds and reservoirs.",
+    href: "/dam-liners",
+    cta: "Dam linings",
+    Icon: LayersIcon,
+  },
+  {
+    id: "steel-tanks",
+    title: "Corrugated Steel Reservoirs",
+    description:
+      "Galvanised steel water tanks from 11 kL to 500 kL+ with PVC lining and optional roofs.",
+    href: "/steel-water-storage-tanks",
+    cta: "Steel water tanks",
+    Icon: ReservoirIcon,
+  },
+  {
+    id: "maintenance",
+    title: "Maintenance & Leak Repair",
+    description:
+      "Leaking roofs, damp seepage, preventative maintenance and free inspections where applicable.",
+    href: "/dam-repair-services",
+    cta: "Repair services",
+    Icon: WrenchIcon,
+  },
+] as const;
+
+export default function LegacyServicesPage() {
   return (
     <>
       <PageSeo
@@ -48,123 +95,31 @@ export default function ServicesPage() {
         description="Full water storage and protection services: HDPE dam linings, corrugated steel tanks, bitumen waterproofing, leak repair and preventative maintenance."
       />
 
-      <section className="content-wrap">
-        <p className="max-w-3xl text-lg leading-relaxed text-slate-700">
-          {SERVICES_HUB_CONTENT.intro}
-        </p>
-      </section>
+      <SiteSection>
+        <p className="site-overview__intro">{SERVICES_HUB_CONTENT.intro}</p>
+      </SiteSection>
 
-      <section className="bg-slate-50">
-        <div className="content-wrap space-y-16">
-          <div>
-            <SectionHeading id="waterproofing" className="!mt-0">
-              Waterproofing
-            </SectionHeading>
-            {SERVICES_HUB_CONTENT.sections[0]!.paragraphs.map((paragraph) => (
-              <p
-                key={paragraph.slice(0, 48)}
-                className="mt-4 max-w-3xl leading-relaxed text-slate-600"
-              >
-                {paragraph}
-              </p>
-            ))}
-            <ul className="mt-4 flex flex-wrap gap-2">
-              {["Metal Roofs", "Foundations", "Chimneys", "Concrete Slabs"].map(
-                (item) => (
-                  <li
-                    key={item}
-                    className="rounded-full bg-sky-50 px-3 py-1 text-sm text-navy"
-                  >
-                    {item}
-                  </li>
-                ),
-              )}
-            </ul>
-            <Link
-              href="/bitumen-waterproofing"
-              className="btn-secondary mt-6 inline-flex"
-            >
-              Bitumen Waterproofing
-            </Link>
-          </div>
+      <InfoCardGrid
+        items={LEGACY_SERVICE_CARDS}
+        heading="Damtech Services"
+        eyebrow="WHAT WE OFFER"
+        intro="Dam linings, waterproofing, steel water tanks and maintenance for farms, mines and commercial properties."
+      />
 
-          <div>
-            <SectionHeading id="dam-liners">Dam Linings</SectionHeading>
-            {SERVICES_HUB_CONTENT.sections[1]!.paragraphs.map((paragraph) => (
-              <p
-                key={paragraph.slice(0, 48)}
-                className="mt-4 max-w-3xl leading-relaxed text-slate-600"
-              >
-                {paragraph}
-              </p>
-            ))}
-            <ul className="mt-4 space-y-2 text-sm text-slate-700">
-              <li>HDPE Geomembrane (2 mm, 1.5 mm and 1 mm)</li>
-              <li>PVC Lining (850 gsm, 700 gsm and 550 gsm)</li>
-              <li>Bitumen Torch-On (4 mm or 3 mm)</li>
-            </ul>
-            <Link href="/dam-liners" className="btn-secondary mt-6 inline-flex">
-              Dam Linings
-            </Link>
-          </div>
+      <ServiceProseSections sections={SERVICES_HUB_CONTENT.sections} />
 
-          <div>
-            <SectionHeading id="steel-reservoirs">Corrugated Zinc Reservoirs</SectionHeading>
-            {SERVICES_HUB_CONTENT.sections[2]!.paragraphs.map((paragraph) => (
-              <p
-                key={paragraph.slice(0, 48)}
-                className="mt-4 max-w-3xl leading-relaxed text-slate-600"
-              >
-                {paragraph}
-              </p>
-            ))}
-            <Link
-              href="/steel-water-storage-tanks"
-              className="btn-secondary mt-6 inline-flex"
-            >
-              Steel Water Tanks
-            </Link>
-          </div>
+      <ProcessStepsSection />
 
-          <div>
-            <SectionHeading id="maintenance">Maintenance</SectionHeading>
-            {SERVICES_HUB_CONTENT.sections[3]!.paragraphs.map((paragraph) => (
-              <p
-                key={paragraph.slice(0, 48)}
-                className="mt-4 max-w-3xl leading-relaxed text-slate-600"
-              >
-                {paragraph}
-              </p>
-            ))}
-            <ul className="mt-4 flex flex-wrap gap-2">
-              {[
-                "Leaking Roofs",
-                "Damp / water seepage",
-                "Preventative Maintenance",
-                "FREE Inspection",
-              ].map((item) => (
-                <li
-                  key={item}
-                  className="rounded-full bg-green-50 px-3 py-1 text-sm text-navy"
-                >
-                  {item}
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
-      </section>
+      <SiteSection>
+        <SectionCta />
+      </SiteSection>
 
-      <section className="content-wrap">
-        <ServiceProseSections sections={[SERVICES_HUB_CONTENT.sections[4]!]} />
-        <div className="mt-10">
-          <SectionCta />
-        </div>
-        <ProjectProofStrip title="Selected installations" projects={PROJECTS.slice(0, 3)} />
-        <div className="mt-12">
-          <ServiceFaqSection faqs={SERVICES_HUB_CONTENT.faqs} />
-        </div>
-        <div className="mt-10 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+      <ProjectProofStrip title="Selected installations" projects={PROJECTS.slice(0, 3)} />
+
+      <ServiceFaqSection faqs={SERVICES_HUB_CONTENT.faqs} />
+
+      <SiteSection tone="muted">
+        <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
           <Link href="/quote" className="btn-primary w-full sm:w-auto">
             Request a Quote
           </Link>
@@ -175,7 +130,7 @@ export default function ServicesPage() {
             View Projects
           </Link>
         </div>
-      </section>
+      </SiteSection>
 
       <InternalServiceLinks currentPath={seo.path} />
       <CTA />

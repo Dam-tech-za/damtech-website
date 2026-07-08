@@ -5,7 +5,7 @@ import { HomeWhyChooseSection } from "@/components/HomeWhyChooseSection";
 import { HomeHero } from "@/components/HomeHero";
 import { PageSeo } from "@/components/PageSeo";
 import { createPageMetadata, PAGE_SEO } from "@/lib/pages";
-import { LazyCTA as CTA } from "@/components/lazy";
+import { LazyHomeFinalCtaSection as HomeFinalCtaSection } from "@/components/lazy";
 
 export const metadata = createPageMetadata(PAGE_SEO.home);
 
@@ -24,7 +24,7 @@ export default function HomePage() {
 
       <HomeWhyChooseSection />
 
-      <CTA />
+      <HomeFinalCtaSection />
     </>
   );
 }

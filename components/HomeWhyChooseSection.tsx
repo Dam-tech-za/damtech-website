@@ -1,15 +1,10 @@
 import Link from "next/link";
+import { RELATED_SERVICE_LINKS } from "@/lib/related-services";
 import {
   ArrowRightIcon,
-  CogIcon,
-  DropletIcon,
   HomeIcon,
-  LayersIcon,
-  MessageIcon,
-  ReservoirIcon,
   ShieldCheckIcon,
   TagIcon,
-  WrenchIcon,
 } from "@/components/icons/StrokeIcons";
 
 const TRUST_CARDS = [
@@ -36,49 +31,19 @@ const TRUST_CARDS = [
   },
 ] as const;
 
-/** Homepage service links — SEO-friendly labels; routes match existing site paths. */
-const RELATED_SERVICE_LINKS = [
-  {
-    href: "/dam-liners",
-    label: "Dam Linings (HDPE, PVC, Torch-On)",
-    Icon: LayersIcon,
-  },
-  {
-    href: "/hdpe-dam-lining",
-    label: "HDPE Dam Lining",
-    Icon: LayersIcon,
-  },
-  {
-    href: "/steel-water-storage-tanks",
-    label: "Steel Water Storage Tanks",
-    Icon: ReservoirIcon,
-  },
-  {
-    href: "/bitumen-waterproofing",
-    label: "Bitumen Waterproofing",
-    Icon: DropletIcon,
-  },
-  {
-    href: "/services",
-    label: "All Services",
-    Icon: CogIcon,
-  },
-  {
-    href: "/dam-repair-services",
-    label: "Leaking Dam Repair",
-    Icon: WrenchIcon,
-  },
-  {
-    href: "/reservoir-lining",
-    label: "Reservoir Lining",
-    Icon: ReservoirIcon,
-  },
-  {
-    href: "/faq",
-    label: "FAQ",
-    Icon: MessageIcon,
-  },
-] as const;
+/** Homepage service links — imported from shared sitewide registry. */
+const RELATED_SERVICE_LINKS_HOME = RELATED_SERVICE_LINKS.filter((link) =>
+  [
+    "/dam-liners",
+    "/hdpe-dam-lining",
+    "/steel-water-storage-tanks",
+    "/bitumen-waterproofing",
+    "/services",
+    "/dam-repair-services",
+    "/reservoir-lining",
+    "/faq",
+  ].includes(link.href),
+);
 
 /** Homepage why-choose + related services — below process/projects. */
 export function HomeWhyChooseSection() {
@@ -144,13 +109,15 @@ export function HomeWhyChooseSection() {
           </header>
 
           <ul className="home-why-choose__links">
-            {RELATED_SERVICE_LINKS.map((link) => (
-              <li key={link.href}>
-                <Link href={link.href} className="home-why-choose__link-card">
+            {RELATED_SERVICE_LINKS_HOME.map((item) => (
+              <li key={item.href}>
+                <Link href={item.href} className="home-why-choose__link-card">
                   <span className="home-why-choose__link-icon-wrap" aria-hidden>
-                    <link.Icon className="home-why-choose__link-icon" />
+                    {item.Icon ? (
+                      <item.Icon className="home-why-choose__link-icon" />
+                    ) : null}
                   </span>
-                  <span className="home-why-choose__link-label">{link.label}</span>
+                  <span className="home-why-choose__link-label">{item.label}</span>
                   <ArrowRightIcon
                     className="home-why-choose__link-arrow"
                     aria-hidden

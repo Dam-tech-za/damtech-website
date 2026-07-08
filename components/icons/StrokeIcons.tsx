@@ -15,7 +15,13 @@ const STROKE_PROPS = {
 
 function Icon({ className, children, ...props }: IconProps & { children: ReactNode }) {
   return (
-    <svg {...STROKE_PROPS} className={className} {...props}>
+    <svg
+      {...STROKE_PROPS}
+      width="1em"
+      height="1em"
+      className={className}
+      {...props}
+    >
       {children}
     </svg>
   );

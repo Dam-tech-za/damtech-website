@@ -10,7 +10,15 @@ export const LazyFAQ = dynamic(
 
 export const LazyCTA = dynamic(
   () => import("@/components/CTA").then((mod) => mod.CTA),
-  { loading: () => <BlockSkeleton className="h-48 w-full" /> },
+  { loading: () => <BlockSkeleton className="h-[28rem] w-full" /> },
+);
+
+export const LazyHomeFinalCtaSection = dynamic(
+  () =>
+    import("@/components/HomeFinalCtaSection").then(
+      (mod) => mod.HomeFinalCtaSection,
+    ),
+  { loading: () => <BlockSkeleton className="h-72 w-full" /> },
 );
 
 export const LazyInternalServiceLinks = dynamic(

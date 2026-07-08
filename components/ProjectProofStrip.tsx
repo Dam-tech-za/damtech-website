@@ -1,5 +1,8 @@
 import Link from "next/link";
-import { SectionHeading } from "@/components/SectionHeading";
+import { ArrowRightIcon } from "@/components/icons/StrokeIcons";
+import { ProjectCard } from "@/components/ProjectCard";
+import { SiteSection } from "@/components/SiteSection";
+import { PROJECT_CASE_STUDIES } from "@/lib/projects";
 
 export type ProjectProofItem = {
   href: string;
@@ -9,43 +12,52 @@ export type ProjectProofItem = {
 
 type ProjectProofStripProps = {
   title?: string;
+  eyebrow?: string;
+  intro?: string;
   projects: readonly ProjectProofItem[];
 };
 
 export function ProjectProofStrip({
   title = "Recent project work",
+  eyebrow = "OUR PROJECTS",
+  intro = "Quality materials, expert installation and practical solutions for dam linings, waterproofing and water storage.",
   projects,
 }: ProjectProofStripProps) {
+  const caseStudies = projects
+    .map((project) =>
+      PROJECT_CASE_STUDIES.find((study) => `/projects/${study.slug}` === project.href),
+    )
+    .filter((study): study is NonNullable<typeof study> => Boolean(study));
+
+  if (caseStudies.length === 0) return null;
+
   return (
-    <div className="mt-12">
-      <div className="flex flex-wrap items-end justify-between gap-3">
-        <SectionHeading className="!mt-0">{title}</SectionHeading>
-        <Link
-          href="/projects"
-          className="text-sm font-semibold text-water hover:text-navy"
-        >
-          View all projects →
+    <SiteSection tone="muted" aria-labelledby="project-proof-heading">
+      <div className="home-process-projects__projects-header">
+        <header className="home-process-projects__projects-heading">
+          <p className="home-process-projects__eyebrow">{eyebrow}</p>
+          <h2 id="project-proof-heading" className="home-process-projects__title">
+            {title}
+          </h2>
+          <span className="home-process-projects__divider" aria-hidden />
+          {intro ? <p className="home-process-projects__intro">{intro}</p> : null}
+        </header>
+        <Link href="/projects" className="home-process-projects__all-link">
+          View all Damtech projects
+          <ArrowRightIcon
+            className="home-process-projects__all-link-icon"
+            aria-hidden
+          />
         </Link>
       </div>
-      <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {projects.map((project) => (
-          <Link
-            key={project.href}
-            href={project.href}
-            className="group flex h-full flex-col rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:border-water/40 hover:shadow-md"
-          >
-            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
-              {project.location}
-            </p>
-            <p className="mt-2 flex-1 text-sm font-medium text-navy group-hover:text-water">
-              {project.detail}
-            </p>
-            <span className="mt-3 text-sm font-semibold text-water">
-              Read case study →
-            </span>
-          </Link>
+
+      <ul className="home-process-projects__project-grid">
+        {caseStudies.map((project) => (
+          <li key={project.slug}>
+            <ProjectCard project={project} />
+          </li>
         ))}
-      </div>
-    </div>
+      </ul>
+    </SiteSection>
   );
 }

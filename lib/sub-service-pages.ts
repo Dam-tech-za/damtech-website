@@ -56,7 +56,7 @@ export const HDPE_DAM_LINING_PAGE: SubServicePageConfig = {
     "1 mm, 1.5 mm and 2 mm options for depth and puncture risk",
     "Heat-welded seams stronger than the parent sheet",
     "20–30 year service life on typical farm dam applications",
-    "10-year material warranty on qualifying installations",
+    "Supplier-backed material warranty where applicable",
   ],
   specsHeading: "HDPE liner specifications",
   specs: [

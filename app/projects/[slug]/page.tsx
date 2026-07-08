@@ -1,14 +1,12 @@
-import { SectionHeading } from "@/components/SectionHeading";
 import { notFound } from "next/navigation";
-import Link from "next/link";
 import { Hero } from "@/components/Hero";
 import { PageSeo } from "@/components/PageSeo";
+import { ProjectDetailBody } from "@/components/ProjectDetailBody";
 import { createMetadata, createProjectCaseStudySchema } from "@/lib/seo";
 import { getProjectBySlug, getProjectSlugs } from "@/lib/projects";
 import {
   LazyCTA as CTA,
   LazyInternalServiceLinks as InternalServiceLinks,
-  LazyProjectGallery as ProjectGallery,
 } from "@/components/lazy";
 
 type Props = {
@@ -68,110 +66,12 @@ export default async function ProjectDetailPage({ params }: Props) {
         breadcrumbs={breadcrumbs}
       />
 
-      <section className="content-wrap">
-        <dl className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {[
-            { label: "Location", value: project.location },
-            { label: "Service", value: project.serviceType },
-            { label: "Material", value: project.material },
-            { label: "Scope", value: project.scope },
-          ].map((item) => (
-            <div
-              key={item.label}
-              className="rounded-xl border border-slate-200 bg-white p-4"
-            >
-              <dt className="text-xs font-semibold uppercase tracking-wide text-slate-500">
-                {item.label}
-              </dt>
-              <dd className="mt-1 text-sm font-medium text-navy">{item.value}</dd>
-            </div>
-          ))}
-        </dl>
-
-        {project.todo && project.todo.length > 0 ? (
-          <p className="mt-6 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
-            <strong>Editor note:</strong> {project.todo.join(" · ")}
-          </p>
-        ) : null}
-
-        <div className="mt-12 space-y-10">
-          <div>
-            <SectionHeading id="background">Background</SectionHeading>
-            <p className="mt-4 max-w-3xl leading-relaxed text-slate-600">
-              {project.background}
-            </p>
-          </div>
-
-          <div>
-            <SectionHeading id="site-conditions">Site Conditions</SectionHeading>
-            <p className="mt-4 max-w-3xl leading-relaxed text-slate-600">
-              {project.siteConditions}
-            </p>
-          </div>
-
-          <div className="grid gap-10 lg:grid-cols-2">
-            <div>
-              <SectionHeading id="challenge">Challenge</SectionHeading>
-              <p className="mt-4 leading-relaxed text-slate-600">
-                {project.challenge}
-              </p>
-            </div>
-            <div>
-              <SectionHeading id="our-approach">Our Approach</SectionHeading>
-              <p className="mt-4 leading-relaxed text-slate-600">
-                {project.approach}
-              </p>
-            </div>
-          </div>
-
-          <div>
-            <SectionHeading id="result">Result</SectionHeading>
-            <p className="mt-4 max-w-3xl leading-relaxed text-slate-600">
-              {project.result}
-            </p>
-            {project.outcomes.length > 0 ? (
-              <ul className="mt-6 grid gap-3 sm:grid-cols-2">
-                {project.outcomes.map((outcome) => (
-                  <li
-                    key={outcome}
-                    className="rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700"
-                  >
-                    {outcome}
-                  </li>
-                ))}
-              </ul>
-            ) : null}
-          </div>
-        </div>
-
-        <div className="mt-12">
-          <SectionHeading id="project-gallery">Project Gallery</SectionHeading>
-          <div className="mt-6">
-            <ProjectGallery images={project.images} />
-          </div>
-        </div>
-
-        <div className="mt-12">
-          <SectionHeading id="related-services">Related Services</SectionHeading>
-          <ul className="mt-4 flex flex-wrap gap-3">
-            {project.relatedServices.map((link) => (
-              <li key={link.href}>
-                <Link
-                  href={link.href}
-                  className="inline-flex rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-navy hover:border-water hover:text-water"
-                >
-                  {link.label} →
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </section>
+      <ProjectDetailBody project={project} />
 
       <InternalServiceLinks heading="Explore Damtech Services" />
       <CTA
-        title="Request a similar dam lining quote"
-        description="Share your location, liner or tank requirements and we will provide a tailored quote."
+        title="Request a Similar Quote"
+        description="Share your location, service requirements and project scope — our team will recommend a practical dam lining, waterproofing or water storage solution."
       />
     </>
   );

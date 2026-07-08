@@ -70,7 +70,7 @@ export function FormSection({
   }
 
   return (
-    <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6 lg:p-8">
+    <div className="site-form-card">
       <h2 className="section-heading !mt-0">
         {title}
       </h2>

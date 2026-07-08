@@ -1,0 +1,78 @@
+import type { RelatedServiceLink } from "@/components/RelatedServicesGrid";
+import {
+  CogIcon,
+  DropletIcon,
+  LayersIcon,
+  MessageIcon,
+  ReservoirIcon,
+  WrenchIcon,
+} from "@/components/icons/StrokeIcons";
+
+/** Sitewide related service links — labels use “Dam linings” wording. */
+export const RELATED_SERVICE_LINKS: readonly RelatedServiceLink[] = [
+  {
+    href: "/dam-liners",
+    label: "Dam Linings (HDPE, PVC, Torch-On)",
+    Icon: LayersIcon,
+  },
+  {
+    href: "/hdpe-dam-lining",
+    label: "HDPE Dam Lining",
+    Icon: LayersIcon,
+  },
+  {
+    href: "/pvc-dam-lining",
+    label: "PVC Dam Linings",
+    Icon: LayersIcon,
+  },
+  {
+    href: "/steel-water-storage-tanks",
+    label: "Steel Water Storage Tanks",
+    Icon: ReservoirIcon,
+  },
+  {
+    href: "/bitumen-waterproofing",
+    label: "Bitumen Waterproofing",
+    Icon: DropletIcon,
+  },
+  {
+    href: "/reservoir-lining",
+    label: "Reservoir Lining",
+    Icon: ReservoirIcon,
+  },
+  {
+    href: "/dam-repair-services",
+    label: "Leaking Dam Repair",
+    Icon: WrenchIcon,
+  },
+  {
+    href: "/services",
+    label: "All Services",
+    Icon: CogIcon,
+  },
+  {
+    href: "/faq",
+    label: "FAQ",
+    Icon: MessageIcon,
+  },
+  {
+    href: "/quote",
+    label: "Request a Quote",
+    Icon: MessageIcon,
+  },
+];
+
+type SimpleRelatedLink = {
+  href: string;
+  label: string;
+};
+
+/** Map page-specific related links onto the shared icon registry where possible. */
+export function resolveRelatedLinks(
+  links: readonly SimpleRelatedLink[],
+): RelatedServiceLink[] {
+  return links.map((link) => {
+    const known = RELATED_SERVICE_LINKS.find((item) => item.href === link.href);
+    return known ?? link;
+  });
+}

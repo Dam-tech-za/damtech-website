@@ -106,7 +106,7 @@ export const DAM_LINERS_CONTENT = {
     {
       question: "How long does an HDPE dam lining last in South Africa?",
       answer:
-        "With correct installation, UV-stable HDPE typically performs 20–30 years on farm dams. Lifespan depends on exposure, water chemistry, maintenance and whether livestock or machinery contact the liner. We supply material backed by a 10-year warranty and advise on protective measures where needed.",
+        "With correct installation, UV-stable HDPE typically performs 20–30 years on farm dams. Lifespan depends on exposure, water chemistry, maintenance and whether livestock or machinery contact the liner. Supplier-backed material warranty may apply on qualifying materials, subject to supplier terms.",
     },
     {
       question: "Can you line an existing farm dam without rebuilding it?",

@@ -3,6 +3,7 @@ import { BlogCategoryFilter } from "@/components/BlogCategoryFilter";
 import { BlogPagination } from "@/components/BlogPagination";
 import { Hero } from "@/components/Hero";
 import { PageSeo } from "@/components/PageSeo";
+import { SiteSection } from "@/components/SiteSection";
 import { createPageMetadata, PAGE_SEO } from "@/lib/pages";
 import { POSTS_PER_PAGE, paginatePosts, posts } from "@/lib/posts";
 import {
@@ -32,9 +33,9 @@ export default function BlogPage() {
         breadcrumbs={breadcrumbs}
       />
 
-      <section className="content-wrap">
+      <SiteSection tone="muted">
         <div className="max-w-3xl">
-          <p className="text-slate-600 leading-relaxed">
+          <p className="site-overview__intro">
             Welcome to the Damtech blog. Here we share field-tested advice on
             protecting and optimising your water storage — from HDPE dam lining
             and corrugated steel reservoirs to waterproofing and preventative
@@ -61,7 +62,7 @@ export default function BlogPage() {
           currentPage={pagination.currentPage}
           totalPages={pagination.totalPages}
         />
-      </section>
+      </SiteSection>
 
       <InternalServiceLinks heading="Explore Our Services" />
       <CTA />

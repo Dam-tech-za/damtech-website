@@ -2,11 +2,15 @@ import Link from "next/link";
 import { Hero } from "@/components/Hero";
 import { PageImage } from "@/components/PageImage";
 import { PageSeo } from "@/components/PageSeo";
-import { SectionHeading } from "@/components/SectionHeading";
+import { FAQ } from "@/components/FAQ";
+import { PageSectionHeader } from "@/components/PageSectionHeader";
+import { RelatedServicesGrid } from "@/components/RelatedServicesGrid";
+import { SiteSection } from "@/components/SiteSection";
 import { createFaqPageSchema, createServiceSchema } from "@/lib/seo";
 import { altForImagePath } from "@/lib/images";
 import { DAM_LINERS_SCHEMA_OFFERS } from "@/lib/service-pages-content";
 import type { LocalLandingPage } from "@/lib/local-pages";
+import { RELATED_SERVICE_LINKS } from "@/lib/related-services";
 import {
   LazyCTA as CTA,
 } from "@/components/lazy";
@@ -21,12 +25,13 @@ const CONTENT_SECTIONS: Array<{
     "climate" | "soil" | "irrigation" | "sectors" | "waterStorage"
   >;
   heading: string;
+  eyebrow: string;
 }> = [
-  { key: "climate", heading: "Climate & Seasonal Rainfall" },
-  { key: "soil", heading: "Soils & Ground Conditions" },
-  { key: "irrigation", heading: "Irrigation & On-Farm Water Use" },
-  { key: "sectors", heading: "Agriculture, Mining & Industry" },
-  { key: "waterStorage", heading: "Water Storage Needs" },
+  { key: "climate", heading: "Climate & Seasonal Rainfall", eyebrow: "LOCAL CONDITIONS" },
+  { key: "soil", heading: "Soils & Ground Conditions", eyebrow: "SITE FACTORS" },
+  { key: "irrigation", heading: "Irrigation & On-Farm Water Use", eyebrow: "WATER USE" },
+  { key: "sectors", heading: "Agriculture, Mining & Industry", eyebrow: "SECTORS" },
+  { key: "waterStorage", heading: "Water Storage Needs", eyebrow: "STORAGE" },
 ];
 
 export function LocalSeoPage({ page }: LocalSeoPageProps) {
@@ -60,95 +65,105 @@ export function LocalSeoPage({ page }: LocalSeoPageProps) {
         breadcrumbs={breadcrumbs}
       />
 
-      <section className="content-wrap">
-        <div className="grid items-start gap-10 lg:grid-cols-2">
-          <div className="space-y-10">
-            <p className="text-lg leading-relaxed text-slate-700">{page.intro}</p>
+      <SiteSection>
+        <div className="site-overview">
+          <div className="site-overview__content">
+            <p className="site-overview__intro">{page.intro}</p>
 
-            {CONTENT_SECTIONS.map((section) => (
-              <div key={section.key}>
-                <SectionHeading>{section.heading}</SectionHeading>
-                <p className="mt-4 leading-relaxed text-slate-600">
-                  {page[section.key]}
-                </p>
-              </div>
-            ))}
+            <div className="site-prose-sections mt-10">
+              {CONTENT_SECTIONS.map((section) => (
+                <article key={section.key} className="site-prose-card">
+                  <PageSectionHeader
+                    eyebrow={section.eyebrow}
+                    title={section.heading}
+                  />
+                  <p className="site-prose-card__text">{page[section.key]}</p>
+                </article>
+              ))}
+            </div>
 
-            <div>
-              <SectionHeading>Damtech Services in This Area</SectionHeading>
-              <ul className="mt-4 space-y-2">
+            <div className="mt-10">
+              <PageSectionHeader
+                title="Damtech Services in This Area"
+                eyebrow="LOCAL SERVICES"
+              />
+              <ul className="home-why-choose__cards site-card-grid site-card-grid--compact">
                 {page.services.map((service) => (
-                  <li
-                    key={service}
-                    className="rounded-lg border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700"
-                  >
-                    {service}
+                  <li key={service} className="home-why-choose__card">
+                    <p className="home-why-choose__card-text">{service}</p>
                   </li>
                 ))}
               </ul>
             </div>
           </div>
 
-          <PageImage
-            src={page.image}
-            alt={altForImagePath(page.image) || page.h1}
-            caption="Damtech dam lining and water storage installations."
+          <div className="site-overview__media">
+            <PageImage
+              src={page.image}
+              alt={altForImagePath(page.image) || page.h1}
+              caption="Damtech dam lining and water storage installations."
+            />
+          </div>
+        </div>
+      </SiteSection>
+
+      {page.relatedProjects.length > 0 ? (
+        <SiteSection tone="muted">
+          <PageSectionHeader
+            eyebrow="CASE STUDIES"
+            title="Related Projects"
+            intro="Dam lining and water storage projects completed by Damtech in similar conditions."
           />
-        </div>
-
-        {page.relatedProjects.length > 0 ? (
-          <div className="mt-16">
-            <SectionHeading>Related Projects</SectionHeading>
-            <ul className="mt-4 flex flex-wrap gap-3">
-              {page.relatedProjects.map((link) => (
-                <li key={link.href}>
-                  <Link
-                    href={link.href}
-                    className="inline-flex rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-navy hover:border-water hover:text-water"
-                  >
-                    {link.label} →
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-        ) : null}
-
-        <div className="mt-16">
-          <SectionHeading>Frequently Asked Questions</SectionHeading>
-          <div className="mt-6 space-y-4">
-            {page.faqs.map((faq) => (
-              <details
-                key={faq.question}
-                className="group rounded-2xl border border-slate-200 bg-white p-5 open:shadow-sm"
-              >
-                <summary className="cursor-pointer list-none font-semibold text-navy marker:content-none [&::-webkit-details-marker]:hidden">
-                  {faq.question}
-                </summary>
-                <p className="mt-3 text-sm leading-relaxed text-slate-600">
-                  {faq.answer}
-                </p>
-              </details>
-            ))}
-          </div>
-        </div>
-
-        <div className="mt-12">
-          <SectionHeading>Explore Further</SectionHeading>
-          <ul className="mt-4 flex flex-wrap gap-3">
-            {page.relatedLocations.map((link) => (
+          <ul className="home-why-choose__links">
+            {page.relatedProjects.map((link) => (
               <li key={link.href}>
-                <Link
-                  href={link.href}
-                  className="inline-flex rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-navy hover:border-water hover:text-water"
-                >
-                  {link.label} →
+                <Link href={link.href} className="home-why-choose__link-card">
+                  <span className="home-why-choose__link-label">{link.label}</span>
+                  <span className="home-why-choose__link-arrow" aria-hidden>
+                    →
+                  </span>
                 </Link>
               </li>
             ))}
           </ul>
-        </div>
-      </section>
+        </SiteSection>
+      ) : null}
+
+      <FAQ
+        items={page.faqs}
+        heading="Frequently Asked Questions"
+        eyebrow="FAQ"
+        tone="default"
+      />
+
+      {page.relatedLocations.length > 0 ? (
+        <SiteSection tone="muted">
+          <PageSectionHeader
+            eyebrow="MORE REGIONS"
+            title="Explore Further"
+            intro="Regional dam lining and water storage information for other parts of South Africa."
+          />
+          <ul className="home-why-choose__links">
+            {page.relatedLocations.map((link) => (
+              <li key={link.href}>
+                <Link href={link.href} className="home-why-choose__link-card">
+                  <span className="home-why-choose__link-label">{link.label}</span>
+                  <span className="home-why-choose__link-arrow" aria-hidden>
+                    →
+                  </span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </SiteSection>
+      ) : null}
+
+      <RelatedServicesGrid
+        links={RELATED_SERVICE_LINKS}
+        heading="Related Damtech Services"
+        intro="Explore dam linings, waterproofing, steel water tanks and maintenance services available across South Africa."
+        excludeHref={`/${page.slug}`}
+      />
 
       <CTA
         title="Request a quote for your area"

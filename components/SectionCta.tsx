@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { SectionHeading } from "@/components/SectionHeading";
+import { ArrowRightIcon } from "@/components/icons/StrokeIcons";
 
 type SectionCtaProps = {
   title?: string;
@@ -10,6 +10,7 @@ type SectionCtaProps = {
   secondaryLabel?: string;
 };
 
+/** Inline CTA card matching homepage conversion styling. */
 export function SectionCta({
   title = "Ready for a tailored quote?",
   description = "Tell us about your dam, tank or waterproofing project and we will recommend a practical solution.",
@@ -19,18 +20,15 @@ export function SectionCta({
   secondaryLabel = "Contact Damtech",
 }: SectionCtaProps) {
   return (
-    <div className="rounded-2xl border border-sky-100 bg-gradient-to-br from-sky-50 to-white p-6 sm:p-8">
-      <SectionHeading as="h3" className="!mt-0 text-xl sm:text-2xl">
-        {title}
-      </SectionHeading>
-      <p className="mt-2 max-w-2xl text-sm leading-relaxed text-slate-600 sm:text-base">
-        {description}
-      </p>
-      <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-        <Link href={primaryHref} className="btn-primary w-full sm:w-auto">
+    <div className="home-final-cta__card home-final-cta__card--inline">
+      <h3 className="home-final-cta__title home-final-cta__title--inline">{title}</h3>
+      <p className="home-final-cta__intro">{description}</p>
+      <div className="home-final-cta__actions">
+        <Link href={primaryHref} className="btn-primary home-final-cta__btn">
           {primaryLabel}
+          <ArrowRightIcon className="home-final-cta__btn-icon" aria-hidden />
         </Link>
-        <Link href={secondaryHref} className="btn-secondary w-full sm:w-auto">
+        <Link href={secondaryHref} className="btn-secondary home-final-cta__btn">
           {secondaryLabel}
         </Link>
       </div>
