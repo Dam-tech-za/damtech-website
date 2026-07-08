@@ -93,7 +93,10 @@ export function ProjectDetailBody({ project }: ProjectDetailBodyProps) {
           id="project-gallery"
           eyebrow="PROJECT GALLERY"
           title="On-Site Installation"
-          intro="Photos from this Damtech dam lining, waterproofing or water storage project."
+          intro={
+            project.galleryIntro ??
+            `Photos from Damtech's ${project.serviceType} work at ${project.location}.`
+          }
         />
         <div className="site-gallery-wrap">
           <ProjectGallery images={project.images} />

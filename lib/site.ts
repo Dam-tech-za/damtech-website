@@ -11,17 +11,17 @@ export const siteConfig = {
   name: "Damtech",
   domain: resolveSiteOrigin(),
   defaultTitle:
-    "Damtech | Dam Linings, Waterproofing & Steel Water Tanks South Africa",
+    "Dam Liners & Steel Water Tanks | Damtech South Africa",
   defaultDescription:
-    "Damtech provides HDPE and PVC dam linings, waterproofing, steel water tanks, reservoir lining and leaking dam repair for farms, mines, game lodges and commercial properties across South Africa.",
+    "HDPE & PVC dam liners, corrugated steel reservoirs and bitumen waterproofing for farms, mines and estates across South Africa. Request a free quote.",
   defaultOgDescription:
-    "HDPE and PVC dam linings, waterproofing, steel water tanks and reservoir lining solutions for farms, mines, game lodges and commercial properties across South Africa.",
+    "HDPE & PVC dam liners, corrugated steel reservoirs and bitumen waterproofing for farms, mines and estates across South Africa. Request a free quote.",
   defaultOgTitle:
-    "Damtech | Dam Linings, Waterproofing & Water Storage Solutions",
+    "Dam Liners & Steel Water Tanks | Damtech South Africa",
   defaultTwitterTitle:
-    "Damtech | Dam Linings, Waterproofing & Water Storage Solutions",
+    "Dam Liners & Steel Water Tanks | Damtech South Africa",
   defaultTwitterDescription:
-    "HDPE and PVC dam linings, steel water tanks, waterproofing and reservoir lining across South Africa. Request a free quote.",
+    "HDPE & PVC dam liners, corrugated steel reservoirs and bitumen waterproofing for farms, mines and estates across South Africa. Request a free quote.",
   phone: "+27 82 853 1026",
   email: "info@dam-tech.co.za",
   location: "South Africa",
@@ -63,6 +63,8 @@ export const SERVICE_AREA_PROVINCES = [
   "Mpumalanga",
   "North West",
   "Northern Cape",
+  "Free State",
+  "KwaZulu-Natal",
 ] as const;
 
 /** Blog author for visible bylines and Article/BlogPosting schema. */
@@ -75,7 +77,7 @@ export const OFFICES = [
   {
     id: "western-cape",
     name: "Head Office — Betty's Bay",
-    phone: "+27 (0) 82 853 1026",
+    phone: siteConfig.phone,
     googleBusinessProfileUrl: "https://share.google/Xbvr3S0ksWMMyIEuL",
     address: {
       streetAddress: "2484 Anglers Rd",
@@ -89,7 +91,7 @@ export const OFFICES = [
   {
     id: "pretoria",
     name: "Regional Office — Pretoria",
-    phone: "+27 (0) 82 853 1026",
+    phone: siteConfig.phone,
     googleBusinessProfileUrl: "https://share.google/NxSGti3zXVB01SI3Z",
     address: {
       streetAddress: "926, 33rd Avenue",
@@ -159,11 +161,12 @@ export type NavLink = {
 /** Desktop header navigation (quote button is separate). */
 export const HEADER_NAV_LINKS: NavLink[] = [
   { href: "/", label: "Home" },
-  { href: "/dam-liners", label: "Dam Linings" },
-  { href: "/steel-water-storage-tanks", label: "Steel Water Tanks" },
+  { href: "/dam-liners", label: "Dam Liners" },
+  { href: "/steel-water-storage-tanks", label: "Steel Tanks" },
   { href: "/bitumen-waterproofing", label: "Waterproofing" },
   { href: "/services", label: "Services" },
   { href: "/projects", label: "Projects" },
+  { href: "/blog", label: "Blog" },
   { href: "/contact", label: "Contact" },
 ];
 
@@ -171,7 +174,7 @@ export const HEADER_NAV_LINKS: NavLink[] = [
 export const NAV_LINKS = HEADER_NAV_LINKS;
 
 export const FOOTER_SERVICE_LINKS: NavLink[] = [
-  { href: "/dam-liners", label: "Dam Linings" },
+  { href: "/dam-liners", label: "Dam Liners" },
   { href: "/hdpe-dam-lining", label: "HDPE Dam Lining" },
   { href: "/steel-water-storage-tanks", label: "Steel Water Tanks" },
   { href: "/bitumen-waterproofing", label: "Bitumen Waterproofing" },

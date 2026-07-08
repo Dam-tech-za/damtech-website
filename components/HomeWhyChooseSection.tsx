@@ -17,14 +17,14 @@ const TRUST_CARDS = [
   },
   {
     id: "experience",
-    title: "Over 30+ Years of Experience",
+    title: "30+ Years Combined Industry Experience",
     description:
-      "Decades of combined industry experience in dam linings, waterproofing, reservoir lining and water storage solutions.",
+      "30+ years combined industry experience in dam linings, waterproofing, reservoir lining and water storage solutions.",
     Icon: ShieldCheckIcon,
   },
   {
     id: "value",
-    title: "Low Cost, High Value",
+    title: "Practical, High-Value Solutions",
     description:
       "Practical, cost-effective solutions designed for long-term performance, leak prevention and peace of mind.",
     Icon: TagIcon,

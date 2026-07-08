@@ -25,13 +25,14 @@ export type SubServicePageConfig = {
   faqs: ServiceFaqItem[];
   relatedLinks: readonly { href: string; label: string }[];
   projectDetailMatch: RegExp;
+  sectionCtaTitle?: string;
   ctaTitle: string;
   ctaDescription: string;
 };
 
 export const HDPE_DAM_LINING_PAGE: SubServicePageConfig = {
   slug: "hdpe-dam-lining",
-  title: "HDPE Dam Lining | Geomembrane Installation South Africa",
+  title: "HDPE Dam Lining South Africa | Damtech",
   description:
     "HDPE geomembrane dam lining for farm dams, mining ponds and irrigation reservoirs. 1 mm–2 mm supply and professional installation across South Africa. Free quote.",
   h1: "HDPE Dam Lining",
@@ -114,6 +115,7 @@ export const HDPE_DAM_LINING_PAGE: SubServicePageConfig = {
     { href: "/projects", label: "HDPE Project Gallery" },
   ],
   projectDetailMatch: /HDPE/i,
+  sectionCtaTitle: "Need an HDPE Dam Lining Quote?",
   ctaTitle: "Get an HDPE Dam Lining Quote",
   ctaDescription:
     "Send dam dimensions, photos and intended use — we will specify thickness, seam layout and installation timeline for your site.",
@@ -194,6 +196,7 @@ export const PVC_DAM_LINING_PAGE: SubServicePageConfig = {
     { href: "/farm-dam-liners", label: "Farm Dam Linings" },
   ],
   projectDetailMatch: /PVC|HDPE/i,
+  sectionCtaTitle: "Need a PVC Dam Lining Quote?",
   ctaTitle: "Request a PVC Lining Quote",
   ctaDescription:
     "Share pond or tank dimensions and photos — we will confirm PVC grade and installation scope for your project.",
@@ -273,6 +276,7 @@ export const TORCH_ON_DAM_LINING_PAGE: SubServicePageConfig = {
     { href: "/services", label: "All Services" },
   ],
   projectDetailMatch: /Bitumen/i,
+  sectionCtaTitle: "Need Bitumen Torch-On Dam Lining?",
   ctaTitle: "Book a Torch-On Dam Lining Assessment",
   ctaDescription:
     "Describe your cement dam, canal or reservoir leak — we will advise on torch-on repair or reline options.",
@@ -376,6 +380,7 @@ export const DAM_REPAIR_SERVICES_PAGE: SubServicePageConfig = {
     { href: "/services", label: "All Services" },
   ],
   projectDetailMatch: /HDPE|repair|leak/i,
+  sectionCtaTitle: "Need Leaking Dam Repair?",
   ctaTitle: "Request a Leaking Dam Assessment",
   ctaDescription:
     "Describe the leak, dam size and location — we will advise on patch, repair or reline options.",
@@ -478,6 +483,7 @@ export const RESERVOIR_LINING_PAGE: SubServicePageConfig = {
     { href: "/dam-repair-services", label: "Leaking Dam Repair" },
   ],
   projectDetailMatch: /tank|reservoir|steel|HDPE/i,
+  sectionCtaTitle: "Need Reservoir Lining?",
   ctaTitle: "Request Reservoir Lining Quote",
   ctaDescription:
     "Tell us about your steel tank, concrete dam or earth reservoir — we will recommend the right lining system.",
@@ -587,6 +593,7 @@ export const DAM_LINING_COST_PAGE: SubServicePageConfig = {
     { href: "/quote", label: "Request a Quote" },
   ],
   projectDetailMatch: /HDPE|m²/i,
+  sectionCtaTitle: "Need a Dam Lining Cost Estimate?",
   ctaTitle: "Request a Tailored Dam Lining Quote",
   ctaDescription:
     "Share dam dimensions, photos and location — we will provide an accurate quote based on your site.",

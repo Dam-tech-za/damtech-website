@@ -235,7 +235,7 @@ export default function AboutPage() {
 
         compact
 
-        eyebrow="30+ years experience"
+        eyebrow="30+ years combined industry experience"
 
         title={PAGE_SEO.about.h1}
 

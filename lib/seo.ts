@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { DEFAULT_OG_IMAGE, DEFAULT_OG_IMAGE_ALT, IMAGE_PATHS } from "./images";
+import { DEFAULT_OG_IMAGE, DEFAULT_OG_IMAGE_ALT, IMAGE_PATHS, altForImagePath } from "./images";
 import {
   BUSINESS_HOURS,
   BLOG_AUTHOR,
@@ -27,6 +27,7 @@ export type CreateMetadataInput = {
   /** Override canonical path (e.g. category archives → /blog/). */
   canonicalPath?: string;
   image?: string;
+  imageAlt?: string;
   noIndex?: boolean;
   ogType?: "website" | "article";
   publishedTime?: string;
@@ -123,12 +124,12 @@ function resolveFullTitle(title: string, isHome: boolean): string {
   return `${trimTitle(pageTitle)} | ${siteConfig.name}`;
 }
 
-function buildOgImage(imagePath: string) {
+function buildOgImage(imagePath: string, alt?: string) {
   return {
     url: absoluteAssetUrl(imagePath),
     width: OG_IMAGE_WIDTH,
     height: OG_IMAGE_HEIGHT,
-    alt: DEFAULT_OG_IMAGE_ALT,
+    alt: alt ?? altForImagePath(imagePath) ?? DEFAULT_OG_IMAGE_ALT,
   };
 }
 
@@ -184,6 +185,7 @@ export function createMetadata({
   path,
   canonicalPath,
   image,
+  imageAlt,
   noIndex = false,
   ogType = "website",
   publishedTime,
@@ -194,7 +196,7 @@ export function createMetadata({
   const fullTitle = resolveFullTitle(title, isHome);
   const metaDescription = ensureDescription(description);
   const ogImagePath = image ?? DEFAULT_OG_IMAGE;
-  const ogImage = buildOgImage(ogImagePath);
+  const ogImage = buildOgImage(ogImagePath, imageAlt);
 
   const alternates: Metadata["alternates"] = { canonical };
 

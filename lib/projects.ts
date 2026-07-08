@@ -31,6 +31,8 @@ export type ProjectCaseStudy = {
   summary: string;
   /** Mark sections that need client-supplied detail before launch. */
   todo?: string[];
+  /** Project-specific gallery section intro (below hero). */
+  galleryIntro?: string;
   images: ProjectImage[];
   relatedServices: Array<{
     href: string;
@@ -61,16 +63,18 @@ export const PROJECT_CASE_STUDIES: ProjectCaseStudy[] = [
     approach:
       "Damtech cleared vegetation, roots and organic material from each basin, trimmed and shaped dam profiles, and compacted subgrades before liner placement. 1 mm HDPE panels were deployed to each dam profile and joined with extrusion and wedge welding into continuous watertight seams, with crest anchoring completed to manufacturer practice.",
     result:
-      "Installation was completed on 5 March 2026 and signed off on 18 March 2026. Dam 1 (980 m²), Dam 2 (712 m²) and Dam 3 (406 m²) were lined with 1 mm HDPE geomembrane — 2,098 m² in total — creating continuous barriers designed to reduce seepage and stabilise stored volume through the dry season. The system is rated for 20+ years with a 10-year supplier material warranty on qualifying installations.",
+      "Installation was completed on 5 March 2026 and signed off on 18 March 2026. Dam 1 (980 m²), Dam 2 (712 m²) and Dam 3 (406 m²) were lined with 1 mm HDPE geomembrane — 2,098 m² in total — creating continuous barriers designed to reduce seepage and stabilise stored volume through the dry season.",
     outcomes: [
       "2,098 m² of 1 mm HDPE installed across three lodge dams (980 m² + 712 m² + 406 m²).",
       "Thermally welded extrusion and wedge seams forming continuous watertight membranes.",
       "Vegetation clearance, profiling and subgrade preparation completed on all three basins.",
       "Crest anchoring and edge detailing suited to Bushveld wildlife pressure at the waterline.",
-      "Signed off 18 March 2026 with 10-year supplier material warranty on qualifying materials.",
+      "Signed off 18 March 2026 with supplier-backed material warranty on qualifying materials where applicable.",
     ],
     summary:
       "Marico Hill Game Lodge — three Rustenburg dams lined with 2,098 m² of 1 mm HDPE for improved water retention.",
+    galleryIntro:
+      "HDPE dam lining installation photos from the Marico Hill Game Lodge project near Rustenburg — three earth dams lined with 1 mm geomembrane in March 2026.",
     images: [
       projectImage(
         IMAGE_PATHS.hdpeDamLiningEarthDam,
@@ -115,6 +119,8 @@ export const PROJECT_CASE_STUDIES: ProjectCaseStudy[] = [
     ],
     summary:
       "Large-scale HDPE earth dam lining in the Stellenbosch wine and agricultural district — 13,360 m² installed for reliable farm water storage.",
+    galleryIntro:
+      "Field installation photos from Damtech's 13,360 m² HDPE dam lining project in Stellenbosch, Western Cape.",
     images: [
       projectImage(
         IMAGE_PATHS.hdpeDamLiningFieldInstallation,
@@ -162,6 +168,8 @@ export const PROJECT_CASE_STUDIES: ProjectCaseStudy[] = [
     ],
     summary:
       "Six 60 kL corrugated steel reservoirs installed in Witbank for industrial on-site water storage in Mpumalanga.",
+    galleryIntro:
+      "Steel water tank installation photos from Damtech's Witbank project — six 60 kL corrugated galvanised reservoirs with PVC lining.",
     images: [
       projectImage(
         IMAGE_PATHS.corrugatedSteelWaterTank,
@@ -209,6 +217,8 @@ export const PROJECT_CASE_STUDIES: ProjectCaseStudy[] = [
     ],
     summary:
       "Grabouw farm dam lined with 10,520 m² HDPE to protect irrigation reserves in the Western Cape fruit belt.",
+    galleryIntro:
+      "Before-and-after photos from Damtech's 10,520 m² HDPE farm dam lining project in Grabouw, Western Cape.",
     images: [
       projectImage(
         IMAGE_PATHS.grabouwHdpeDamLiningAfter,
@@ -258,6 +268,8 @@ export const PROJECT_CASE_STUDIES: ProjectCaseStudy[] = [
     ],
     summary:
       "Hoedspruit structured dam waterproofed with 9,240 m² bitumen torch-on lining for Lowveld water storage.",
+    galleryIntro:
+      "Bitumen torch-on waterproofing photos from Damtech's 9,240 m² Hoedspruit dam lining project in Limpopo.",
     images: [
       projectImage(
         IMAGE_PATHS.bitumenEarthDamWaterproofing,
@@ -306,6 +318,8 @@ export const PROJECT_CASE_STUDIES: ProjectCaseStudy[] = [
     ],
     summary:
       "Hartswater farm dam lined with 3,472 m² HDPE to protect scarce irrigation water in the Northern Cape.",
+    galleryIntro:
+      "HDPE dam lining photos from Damtech's 3,472 m² Hartswater farm dam project in the Northern Cape.",
     images: [
       projectImage(
         IMAGE_PATHS.hartswaterHdpeDamLiningProject,

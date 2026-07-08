@@ -162,10 +162,12 @@ export function HomeTrustWarrantySection() {
               aria-hidden
             />
             <p className="home-trust-warranty__warranty-text">
-              Selected HDPE, PVC and waterproofing materials supplied by Damtech
-              may carry a supplier-backed warranty of up to 10 years on qualifying
-              materials, subject to applicable supplier terms, correct use and
-              project conditions.
+              Selected HDPE, PVC, bitumen and waterproofing materials supplied
+              by Damtech may carry a supplier-backed material warranty where
+              applicable. Warranty terms depend on the qualifying material,
+              supplier conditions, correct use, site conditions and approved
+              installation requirements. We confirm the applicable material
+              warranty details in each quote.
             </p>
             <ul className="home-trust-warranty__warranty-list">
               {WARRANTY_BULLETS.map((item) => (

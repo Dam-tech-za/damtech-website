@@ -28,10 +28,9 @@ export type PageSeoEntry = {
 
 export const PAGE_SEO: Record<StaticPageKey, PageSeoEntry> = {
   home: {
-    title:
-      "Damtech | Dam Linings, Waterproofing & Steel Water Tanks South Africa",
+    title: "Dam Liners & Steel Water Tanks | Damtech South Africa",
     description:
-      "Damtech provides HDPE and PVC dam linings, waterproofing, steel water tanks, reservoir lining and leaking dam repair for farms, mines, game lodges and commercial properties across South Africa.",
+      "HDPE & PVC dam liners, corrugated steel reservoirs and bitumen waterproofing for farms, mines and estates across South Africa. Request a free quote.",
     path: "/",
     h1: "Damtech Dam Lining & Water Storage Solutions in South Africa",
     image: IMAGE_PATHS.damtechWaterStorageHero,
@@ -54,17 +53,16 @@ export const PAGE_SEO: Record<StaticPageKey, PageSeoEntry> = {
     image: IMAGE_PATHS.hdpeDamLiningEarthDam,
   },
   "dam-liners": {
-    title:
-      "Dam Linings South Africa | HDPE, PVC & Torch-On Solutions | Damtech",
+    title: "HDPE, PVC & Torch-On Dam Liners South Africa | Damtech",
     description:
-      "HDPE, PVC and torch-on dam linings for earth dams, reservoirs, ponds and water storage applications across South Africa.",
+      "HDPE, PVC and torch-on dam liners for earth dams, reservoirs, ponds and water storage applications across South Africa. Supplier-backed materials where applicable.",
     path: "/dam-liners",
     h1: "Dam Linings for Earth Dams, Reservoirs and Water Storage",
     serviceName: "HDPE Dam Lining",
     image: IMAGE_PATHS.hdpeDamLiningFieldInstallation,
   },
   "steel-tanks": {
-    title: "Steel Water Tanks South Africa | Corrugated Steel Reservoirs | Damtech",
+    title: "Steel Water Tanks South Africa | Corrugated Reservoirs | Damtech",
     description:
       "Durable corrugated steel water tanks and reservoirs for farms, mines, estates, game lodges and commercial water storage applications.",
     path: "/steel-water-storage-tanks",
@@ -73,8 +71,7 @@ export const PAGE_SEO: Record<StaticPageKey, PageSeoEntry> = {
     image: IMAGE_PATHS.corrugatedSteelWaterTank,
   },
   bitumen: {
-    title:
-      "Waterproofing Contractors South Africa | Bitumen & Torch-On | Damtech",
+    title: "Bitumen Waterproofing South Africa | Torch-On Systems | Damtech",
     description:
       "Professional waterproofing, bitumen torch-on systems, leak prevention and maintenance solutions for farms, mines, commercial properties and water-retaining structures.",
     path: "/bitumen-waterproofing",
@@ -99,7 +96,7 @@ export const PAGE_SEO: Record<StaticPageKey, PageSeoEntry> = {
     image: IMAGE_PATHS.hdpeDamLiningEarthDam,
   },
   blog: {
-    title: "Dam Lining & Water Storage Guides | Damtech Blog",
+    title: "Dam Liner & Water Storage Guides | Damtech Blog",
     description:
       "Practical guides on dam linings, leaking dam repairs, borehole integration, steel reservoirs and water storage for South African farms and properties.",
     path: "/blog",
@@ -162,7 +159,7 @@ export const FAQ_ITEMS = [
   {
     question: "Do you offer any warranties on your services?",
     answer:
-      "Yes. Qualifying HDPE, PVC and bitumen materials carry supplier-backed warranties — typically up to 10 years on eligible products when installed to manufacturer specification. Warranty coverage is subject to supplier terms and proper maintenance.",
+      "Selected HDPE, PVC, bitumen and waterproofing materials supplied by Damtech may carry a supplier-backed material warranty where applicable. Warranty terms depend on the qualifying material, supplier conditions, correct use, site conditions and approved installation requirements. Installation or workmanship cover is not automatically included unless separately agreed in writing. We confirm applicable material warranty details in each quote.",
   },
 ] as const;
 
@@ -196,7 +193,7 @@ export const SEO_FAQ_ITEMS = [
   {
     question: "Is the material warranty supplier-backed?",
     answer:
-      "On qualifying installations, HDPE, PVC and bitumen materials carry supplier-backed warranties — typically up to 10 years when installed to manufacturer specification. Coverage and exclusions are set by the material supplier; we explain applicable terms before you commit.",
+      "Supplier-backed material warranties apply only to qualifying supplied materials where applicable and are subject to the relevant supplier’s terms, site conditions, correct use and approved installation requirements. Up to 10 years may apply on eligible products when installed to manufacturer specification. Installation or workmanship cover is not automatically included unless separately agreed in writing.",
   },
   {
     question: "Which areas in South Africa do you service?",
