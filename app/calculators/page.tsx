@@ -59,7 +59,7 @@ export default function CalculatorsPage() {
           eyebrow="EXPLORE DAMTECH"
           intro="Connect your calculator estimate to Damtech's dam linings, waterproofing and water storage services."
           links={[
-            { href: "/dam-liners", label: "Dam Linings" },
+            { href: "/dam-liners", label: "Dam Liners & Dam Lining Services" },
             { href: "/hdpe-dam-lining", label: "HDPE Dam Lining" },
             { href: "/steel-water-storage-tanks", label: "Steel Water Tanks" },
             { href: "/bitumen-waterproofing", label: "Waterproofing" },

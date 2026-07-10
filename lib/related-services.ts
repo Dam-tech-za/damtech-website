@@ -10,11 +10,11 @@ import {
 } from "@/components/icons/StrokeIcons";
 import { CALCULATORS_RELATED_LINK } from "@/lib/calculator-links";
 
-/** Sitewide related service links — labels use “Dam linings” wording. */
+/** Sitewide related service links — aligned with header Services dropdown labels. */
 export const RELATED_SERVICE_LINKS: readonly RelatedServiceLink[] = [
   {
     href: "/dam-liners",
-    label: "Dam Linings (HDPE, PVC, Torch-On)",
+    label: "Dam Liners & Dam Lining Services",
     Icon: LayersIcon,
   },
   {
@@ -24,17 +24,17 @@ export const RELATED_SERVICE_LINKS: readonly RelatedServiceLink[] = [
   },
   {
     href: "/pvc-dam-lining",
-    label: "PVC Dam Linings",
+    label: "PVC Dam Lining",
     Icon: LayersIcon,
   },
   {
     href: "/steel-water-storage-tanks",
-    label: "Steel Water Storage Tanks",
+    label: "Steel Water Tanks",
     Icon: ReservoirIcon,
   },
   {
     href: "/bitumen-waterproofing",
-    label: "Bitumen Waterproofing",
+    label: "Waterproofing",
     Icon: DropletIcon,
   },
   {

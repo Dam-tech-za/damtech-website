@@ -159,25 +159,31 @@ export type NavLink = {
   label: string;
 };
 
-/** Dam Liners header dropdown children (crawlable real links). */
-export const DAM_LINERS_DROPDOWN_LINKS: NavLink[] = [
+/** Services header dropdown — crawlable real `<a>` links (desktop + mobile). */
+export const SERVICES_DROPDOWN_LINKS: NavLink[] = [
+  { href: "/dam-liners", label: "Dam Liners & Dam Lining Services" },
   { href: "/hdpe-dam-lining", label: "HDPE Dam Lining" },
   { href: "/pvc-dam-lining", label: "PVC Dam Lining" },
   { href: "/torch-on-dam-lining", label: "Torch-On Dam Lining" },
+  { href: "/steel-water-storage-tanks", label: "Steel Water Tanks" },
+  { href: "/bitumen-waterproofing", label: "Waterproofing" },
+  { href: "/reservoir-lining", label: "Reservoir Lining" },
+  { href: "/dam-repair-services", label: "Leaking Dam Repair" },
   { href: "/farm-dam-liners", label: "Farm Dam Liners" },
   { href: "/mining-dam-liners", label: "Mining Dam Liners" },
   { href: "/western-cape-dam-liners", label: "Western Cape Dam Liners" },
 ];
 
-/** @deprecated Prefer DAM_LINERS_DROPDOWN_LINKS + top-level Steel/Waterproofing links. */
-export const SERVICES_DROPDOWN_LINKS: NavLink[] = [
-  { href: "/dam-liners", label: "Dam Liners" },
-  ...DAM_LINERS_DROPDOWN_LINKS,
-  { href: "/steel-water-storage-tanks", label: "Steel Water Tanks" },
-  { href: "/bitumen-waterproofing", label: "Waterproofing" },
-  { href: "/reservoir-lining", label: "Reservoir Lining" },
-  { href: "/dam-repair-services", label: "Leaking Dam Repair" },
-];
+/** @deprecated Prefer SERVICES_DROPDOWN_LINKS (Dam Liners hub is included there). */
+export const DAM_LINERS_DROPDOWN_LINKS: NavLink[] = SERVICES_DROPDOWN_LINKS.filter(
+  (link) =>
+    link.href === "/hdpe-dam-lining" ||
+    link.href === "/pvc-dam-lining" ||
+    link.href === "/torch-on-dam-lining" ||
+    link.href === "/farm-dam-liners" ||
+    link.href === "/mining-dam-liners" ||
+    link.href === "/western-cape-dam-liners",
+);
 
 export type HeaderNavItem =
   | { type: "link"; href: string; label: string }
@@ -186,8 +192,11 @@ export type HeaderNavItem =
       label: string;
       href: string;
       children: readonly NavLink[];
-      /** Optional hub link label inside the dropdown panel. */
-      hubLabel?: string;
+      /**
+       * Optional hub row above children. Pass `null` to omit (Services list
+       * already starts with Dam Liners; the parent link still points to /services).
+       */
+      hubLabel?: string | null;
     };
 
 /** Desktop + mobile header navigation (quote button is separate). */
@@ -195,13 +204,11 @@ export const HEADER_NAV_ITEMS: HeaderNavItem[] = [
   { type: "link", href: "/", label: "Home" },
   {
     type: "dropdown",
-    label: "Dam Liners",
-    href: "/dam-liners",
-    hubLabel: "All Dam Liners",
-    children: DAM_LINERS_DROPDOWN_LINKS,
+    label: "Services",
+    href: "/services",
+    hubLabel: null,
+    children: SERVICES_DROPDOWN_LINKS,
   },
-  { type: "link", href: "/steel-water-storage-tanks", label: "Steel Water Tanks" },
-  { type: "link", href: "/bitumen-waterproofing", label: "Waterproofing" },
   { type: "link", href: "/projects", label: "Projects" },
   { type: "link", href: "/calculators", label: "Calculators" },
   { type: "link", href: "/blog", label: "Blog" },
@@ -219,7 +226,7 @@ export const HEADER_NAV_LINKS: NavLink[] = HEADER_NAV_ITEMS.flatMap((item) =>
 export const NAV_LINKS = HEADER_NAV_LINKS;
 
 export const FOOTER_SERVICE_LINKS: NavLink[] = [
-  { href: "/dam-liners", label: "Dam Liners" },
+  { href: "/dam-liners", label: "Dam Liners & Dam Lining Services" },
   { href: "/hdpe-dam-lining", label: "HDPE Dam Lining" },
   { href: "/pvc-dam-lining", label: "PVC Dam Lining" },
   { href: "/torch-on-dam-lining", label: "Torch-On Dam Lining" },
@@ -227,6 +234,8 @@ export const FOOTER_SERVICE_LINKS: NavLink[] = [
   { href: "/bitumen-waterproofing", label: "Waterproofing" },
   { href: "/reservoir-lining", label: "Reservoir Lining" },
   { href: "/dam-repair-services", label: "Leaking Dam Repair" },
+  { href: "/farm-dam-liners", label: "Farm Dam Liners" },
+  { href: "/mining-dam-liners", label: "Mining Dam Liners" },
   { href: "/western-cape-dam-liners", label: "Western Cape Dam Liners" },
 ];
 

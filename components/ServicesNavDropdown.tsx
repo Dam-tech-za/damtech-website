@@ -45,6 +45,7 @@ export function ServicesNavDropdown({ item, pathname }: ServicesNavDropdownProps
   const containerRef = useRef<HTMLDivElement>(null);
   const closeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const active = isNavItemActive(item, pathname);
+  const showHub = item.hubLabel !== null;
   const hubLabel = item.hubLabel ?? `All ${item.label}`;
 
   const openDropdown = () => {
@@ -124,16 +125,18 @@ export function ServicesNavDropdown({ item, pathname }: ServicesNavDropdownProps
           aria-label={item.label}
         >
           <ul className="site-header__dropdown-list">
-            <li role="none">
-              <Link
-                href={item.href}
-                role="menuitem"
-                className="site-header__dropdown-link site-header__dropdown-link--hub"
-                onClick={() => setOpen(false)}
-              >
-                {hubLabel}
-              </Link>
-            </li>
+            {showHub ? (
+              <li role="none">
+                <Link
+                  href={item.href}
+                  role="menuitem"
+                  className="site-header__dropdown-link site-header__dropdown-link--hub"
+                  onClick={() => setOpen(false)}
+                >
+                  {hubLabel}
+                </Link>
+              </li>
+            ) : null}
             {item.children.map((child) => {
               const childActive =
                 pathname === child.href ||
@@ -173,6 +176,7 @@ export function MobileDropdownNav({
   const [expanded, setExpanded] = useState(false);
   const panelId = useId();
   const active = isNavItemActive(item, pathname);
+  const showHub = item.hubLabel !== null;
   const hubLabel = item.hubLabel ?? `All ${item.label}`;
 
   return (
@@ -189,15 +193,20 @@ export function MobileDropdownNav({
         {item.label}
         <ChevronIcon open={expanded} />
       </button>
-      {expanded ? (
-        <ul id={panelId} className="ml-3 mt-1 space-y-1 border-l border-slate-200 pl-3">
+      <ul
+        id={panelId}
+        className={`ml-3 mt-1 space-y-1 border-l border-slate-200 pl-3 ${
+          expanded ? "" : "hidden"
+        }`}
+        hidden={!expanded}
+      >
           <li>
             <Link
               href={item.href}
               className="block rounded-lg px-3 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-water"
               onClick={onNavigate}
             >
-              {hubLabel}
+              {showHub ? hubLabel : "All Services"}
             </Link>
           </li>
           {item.children.map((link) => (
@@ -212,7 +221,6 @@ export function MobileDropdownNav({
             </li>
           ))}
         </ul>
-      ) : null}
     </li>
   );
 }
