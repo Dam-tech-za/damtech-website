@@ -61,20 +61,20 @@ type FeaturedProject = {
 
 const FEATURED_PROJECTS: FeaturedProject[] = [
   {
-    id: "hartswater",
-    location: "Hartswater",
+    id: "centurion",
+    location: "Centurion",
     service: "HDPE Dam Lining",
-    area: "3,472 m²",
-    href: "/projects/hartswater-hdpe-dam-liner",
-    linkLabel: "View Hartswater HDPE dam lining project",
-    image: FEATURED_PROJECT_IMAGES.hartswater,
+    area: "1,200 m²",
+    href: "/projects/centurion-hdpe-dam-liner",
+    linkLabel: "View Centurion HDPE dam lining project",
+    image: FEATURED_PROJECT_IMAGES.centurion,
     alt: IMAGE_ALTS[IMAGE_PATHS.hartswaterHdpeDamLiningProject],
   },
   {
     id: "grabouw",
     location: "Grabouw",
     service: "HDPE Dam Lining",
-    area: "10,520 m²",
+    area: "3,400 m²",
     href: "/projects/grabouw-hdpe-farm-dam",
     linkLabel: "View Grabouw HDPE dam lining project",
     image: FEATURED_PROJECT_IMAGES.grabouw,
@@ -84,11 +84,21 @@ const FEATURED_PROJECTS: FeaturedProject[] = [
     id: "hoedspruit",
     location: "Hoedspruit",
     service: "Bitumen Torch-On",
-    area: "9,240 m²",
+    area: "550 m²",
     href: "/projects/hoedspruit-bitumen-dam-lining",
     linkLabel: "View Hoedspruit bitumen torch-on waterproofing project",
     image: FEATURED_PROJECT_IMAGES.hoedspruit,
     alt: "Bitumen torch-on waterproofing project completed by Damtech in Hoedspruit",
+  },
+  {
+    id: "stellenbosch",
+    location: "Stellenbosch",
+    service: "HDPE Dam Lining",
+    area: "13,360 m²",
+    href: "/projects/hdpe-dam-liner-installation",
+    linkLabel: "View Stellenbosch HDPE dam lining project",
+    image: FEATURED_PROJECT_IMAGES.stellenbosch,
+    alt: IMAGE_ALTS[IMAGE_PATHS.hdpeDamLiningFieldInstallation],
   },
 ];
 
@@ -163,7 +173,7 @@ export function HomeProcessProjectsSection() {
             </Link>
           </header>
 
-          <ul className="home-process-projects__project-grid">
+          <ul className="home-process-projects__project-grid home-process-projects__project-grid--four">
             {FEATURED_PROJECTS.map((project) => (
               <li key={project.id}>
                 <article className="home-process-projects__project-card">

@@ -88,7 +88,7 @@ export const IMAGE_ALTS: Record<ImagePath, string> = {
   [IMAGE_PATHS.grabouwHdpeDamLiningBefore]:
     "Farm dam in Grabouw before HDPE dam lining installation",
   [IMAGE_PATHS.hartswaterHdpeDamLiningProject]:
-    "HDPE dam lining project completed by Damtech in Hartswater, South Africa",
+    "HDPE dam lining project completed by Damtech in Centurion, Gauteng",
   [IMAGE_PATHS.hdpeDamLiningAfterGeotextile]:
     "HDPE dam lining after installation with geotextile protection on site",
   [IMAGE_PATHS.hdpeDamLiningBeforeInstallation]:
@@ -127,9 +127,10 @@ function siteImage(
 
 /** Static image data for homepage project cards and featured work. */
 export const FEATURED_PROJECT_IMAGES = {
-  hartswater: hartswaterHdpeDamLiningProject,
+  centurion: hartswaterHdpeDamLiningProject,
   grabouw: grabouwHdpeDamLiningAfter,
   hoedspruit: bitumenEarthDamWaterproofing,
+  stellenbosch: hdpeDamLiningFieldInstallation,
 } as const;
 
 /** Central registry for static page images (SEO filenames + alt text). */

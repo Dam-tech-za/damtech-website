@@ -198,27 +198,27 @@ export const PROJECT_CASE_STUDIES: ProjectCaseStudy[] = [
     location: "Grabouw, Western Cape",
     serviceType: "HDPE dam lining",
     material: "HDPE geomembrane",
-    scope: "10,520 m² HDPE liner installation for agricultural water storage.",
+    scope: "3,400 m² HDPE liner installation for agricultural water storage.",
     background:
       "A Grabouw fruit-farming operation relied on a farm dam for irrigation through the dry summer months in the Elgin / Grabouw valley. Seepage and embankment soils that were not naturally watertight reduced the effective storage the farm could carry from winter rainfall into the critical irrigation window for orchards.",
     siteConditions:
       "Valley terrain produced variable batter angles and a basin profile shaped by historical earthworks. Seasonal runoff from mountain catchments refills the dam in winter; summer drawdown is steady as irrigation runs. Stony batters and softer floor material required careful benching and protection before liner deployment.",
     challenge:
-      "The 10,520 m² footprint required seam planning across a large embankment area without creating stressed folds at slope changes. Seasonal level variation meant anchor zones and freeboard detail had to tolerate repeated wet/dry cycles at the crest.",
+      "The 3,400 m² footprint required seam planning across the embankment area without creating stressed folds at slope changes. Seasonal level variation meant anchor zones and freeboard detail had to tolerate repeated wet/dry cycles at the crest.",
     approach:
       "Damtech completed subgrade preparation on the basin and batters, removing puncture risks and grading transitions smooth enough for HDPE contact. Panels were laid and welded in a sequence that kept active seams accessible for testing. Anchoring at the crest and around penetrations was completed before refill was authorised. High-wear sections at typical waterline heights received additional protection suited to farm access patterns.",
     result:
-      "10,520 m² of HDPE liner was installed, giving the farm a continuous barrier against seepage losses and more predictable irrigation storage through the production season.",
+      "3,400 m² of HDPE liner was installed, giving the farm a continuous barrier against seepage losses and more predictable irrigation storage through the production season.",
     outcomes: [
-      "10,520 m² HDPE installed on a valley farm dam in the Grabouw district.",
+      "3,400 m² HDPE installed on a valley farm dam in the Grabouw district.",
       "Seepage losses reduced on a dam critical to orchard irrigation scheduling.",
       "Embankment detailing completed for seasonal water-level movement.",
       "Project aligned with Western Cape winter-fill / summer-drawdown cycle.",
     ],
     summary:
-      "Grabouw farm dam lined with 10,520 m² HDPE to protect irrigation reserves in the Western Cape fruit belt.",
+      "Grabouw farm dam lined with 3,400 m² HDPE to protect irrigation reserves in the Western Cape fruit belt.",
     galleryIntro:
-      "Before-and-after photos from Damtech's 10,520 m² HDPE farm dam lining project in Grabouw, Western Cape.",
+      "Before-and-after photos from Damtech's 3,400 m² HDPE farm dam lining project in Grabouw, Western Cape.",
     images: [
       projectImage(
         IMAGE_PATHS.grabouwHdpeDamLiningAfter,
@@ -239,7 +239,7 @@ export const PROJECT_CASE_STUDIES: ProjectCaseStudy[] = [
     seo: {
       title: "Grabouw HDPE Dam Lining Project | Damtech South Africa",
       description:
-        "View Damtech's Grabouw HDPE dam lining project, a 10,520 m² dam lining and water storage installation.",
+        "View Damtech's Grabouw HDPE dam lining project, a 3,400 m² dam lining and water storage installation.",
     },
   },
   {
@@ -249,27 +249,27 @@ export const PROJECT_CASE_STUDIES: ProjectCaseStudy[] = [
     location: "Hoedspruit, Limpopo",
     serviceType: "Bitumen torch-on dam lining",
     material: "Bitumen torch-on membrane",
-    scope: "9,240 m² bitumen torch-on lining for cement / structured dam waterproofing.",
+    scope: "550 m² bitumen torch-on lining for cement / structured dam waterproofing.",
     background:
       "A Hoedspruit-area client needed to waterproof a rigid dam structure in the Lowveld heat — a common requirement on older cement or gunite farm and commercial dams where flexible HDPE profile lining is not the right fit for the prepared surface. Reliable retention supports agricultural and operational water use through long dry spells typical of the Olifants valley climate.",
     siteConditions:
       "Hoedspruit experiences high summer temperatures and strong UV, which stress exposed waterproofing if surfaces are not prepared and detailed correctly. The dam's rigid cement or gunite walls and floor required adhesion-focused membrane work rather than loose-laid geomembrane.",
     challenge:
-      "Torch-on application over a large 9,240 m² area demands controlled overlap, corner detailing and penetration seals that stay watertight under thermal movement. Surface preparation — clean, dry and primed — determines whether the membrane bonds or fails within seasons.",
+      "Torch-on application over the 550 m² dam surface demanded controlled overlap, corner detailing and penetration seals that stay watertight under thermal movement. Surface preparation — clean, dry and primed — determines whether the membrane bonds or fails within seasons.",
     approach:
       "Damtech applied modified bitumen torch-on sheets in runs planned to maintain continuous laps across walls and floor transitions. Details at corners, outlets and any penetrations received extra layers where the specification required. Work was staged to manage heat and wind conditions suitable for torch application in the Lowveld.",
     result:
-      "9,240 m² of torch-on bitumen lining was completed, improving water retention on the structured dam for agricultural and operational use in a low-rainfall district.",
+      "550 m² of torch-on bitumen lining was completed, improving water retention on the structured dam for agricultural and operational use in a low-rainfall district.",
     outcomes: [
-      "9,240 m² bitumen torch-on membrane installed on rigid dam surfaces.",
+      "550 m² bitumen torch-on membrane installed on rigid dam surfaces.",
       "Continuous waterproofing layer suited to Hoedspruit heat and dry seasons.",
       "Detail work at corners and penetrations completed to torch-on practice.",
       "Improved retention for stored water used in farm and operational schedules.",
     ],
     summary:
-      "Hoedspruit structured dam waterproofed with 9,240 m² bitumen torch-on lining for Lowveld water storage.",
+      "Hoedspruit structured dam waterproofed with 550 m² bitumen torch-on lining for Lowveld water storage.",
     galleryIntro:
-      "Bitumen torch-on waterproofing photos from Damtech's 9,240 m² Hoedspruit dam lining project in Limpopo.",
+      "Bitumen torch-on waterproofing photos from Damtech's 550 m² Hoedspruit dam lining project in Limpopo.",
     images: [
       projectImage(
         IMAGE_PATHS.bitumenEarthDamWaterproofing,
@@ -289,41 +289,41 @@ export const PROJECT_CASE_STUDIES: ProjectCaseStudy[] = [
     seo: {
       title: "Hoedspruit Bitumen Torch-On Waterproofing Project | Damtech",
       description:
-        "View Damtech's Hoedspruit bitumen torch-on waterproofing project, a 9,240 m² waterproofing solution for water-retaining infrastructure.",
+        "View Damtech's Hoedspruit bitumen torch-on waterproofing project, a 550 m² waterproofing solution for water-retaining infrastructure.",
     },
   },
   {
-    slug: "hartswater-hdpe-dam-liner",
-    title: "Hartswater HDPE Dam Lining",
-    h1: "Hartswater HDPE Dam Lining Project",
-    location: "Hartswater, Northern Cape",
+    slug: "centurion-hdpe-dam-liner",
+    title: "Centurion HDPE Dam Lining",
+    h1: "Centurion HDPE Dam Lining Project",
+    location: "Centurion, Gauteng",
     serviceType: "HDPE dam lining",
     material: "HDPE geomembrane",
-    scope: "3,472 m² HDPE dam liner for farm water storage in an arid agricultural district.",
+    scope: "1,200 m² HDPE dam liner for farm water storage in the Centurion / Pretoria corridor.",
     background:
-      "Hartswater sits in an arid agricultural district where irrigation water is scarce and borehole energy is expensive. The client’s farm dam was losing stored water to sandy, permeable soils — unacceptable in a region where dry periods are long and every refill depends on pumping or limited rainfall events.",
+      "A Centurion-area client relied on a farm dam for irrigation and stock water on the Gauteng Highveld fringe. The basin was losing stored water to permeable soils — unacceptable where summer demand peaks and borehole top-up is costly between storm events.",
     siteConditions:
-      "Northern Cape semi-arid conditions bring high evaporation and sandy soils with low natural sealing. Windborne dust and temperature swings stress exposed components at the dam crest. Farm dams in this district often serve irrigation blocks and livestock — storage efficiency directly affects operating cost.",
+      "Centurion sits on the Highveld between Johannesburg and Pretoria with warm summers, afternoon thunderstorms and dry winter spells. Farm dams on the urban fringe often serve smallholdings and peri-urban agriculture where storage efficiency directly affects operating cost.",
     challenge:
-      "At 3,472 m² the dam was smaller than Western Cape valley projects but no less critical: sandy subgrades increase puncture risk without preparation and underlay where specified. Anchoring had to suit a profile used for seasonal drawdown and irrigation withdrawal rather than a permanent full pool.",
+      "At 1,200 m² the dam was a focused footprint but no less critical: variable subgrades increase puncture risk without preparation and underlay where specified. Anchoring had to suit a profile used for seasonal drawdown and irrigation withdrawal rather than a permanent full pool.",
     approach:
-      "Damtech prepared the basin, installed HDPE with welded seams across the 3,472 m² footprint, and completed crest anchoring suited to the dam’s operating levels. Seams were checked before refill. The scope focused on eliminating seepage through the floor and lower batters where sandy soils caused the highest losses.",
+      "Damtech prepared the basin, installed HDPE with welded seams across the 1,200 m² footprint, and completed crest anchoring suited to the dam's operating levels. Seams were checked before refill. The scope focused on eliminating seepage through the floor and lower batters where permeable soils caused the highest losses.",
     result:
-      "3,472 m² of HDPE liner was installed, helping the client retain irrigation water that would otherwise have been lost to seepage through the dam basin.",
+      "1,200 m² of HDPE liner was installed, helping the client retain irrigation water that would otherwise have been lost to seepage through the dam basin.",
     outcomes: [
-      "3,472 m² HDPE liner installed in an arid Northern Cape farm setting.",
-      "Seepage through sandy dam soils addressed with continuous geomembrane.",
-      "Improved storage efficiency for irrigation in a water-scarce district.",
+      "1,200 m² HDPE liner installed on a Centurion-area farm dam.",
+      "Seepage through permeable dam soils addressed with continuous geomembrane.",
+      "Improved storage efficiency for irrigation on the Gauteng Highveld fringe.",
       "Installation completed without requiring full dam reconstruction.",
     ],
     summary:
-      "Hartswater farm dam lined with 3,472 m² HDPE to protect scarce irrigation water in the Northern Cape.",
+      "Centurion farm dam lined with 1,200 m² HDPE to protect irrigation water in Gauteng.",
     galleryIntro:
-      "HDPE dam lining photos from Damtech's 3,472 m² Hartswater farm dam project in the Northern Cape.",
+      "HDPE dam lining photos from Damtech's 1,200 m² Centurion farm dam project in Gauteng.",
     images: [
       projectImage(
         IMAGE_PATHS.hartswaterHdpeDamLiningProject,
-        "HDPE dam lining project completed by Damtech in Hartswater, South Africa",
+        "HDPE dam lining project completed by Damtech in Centurion, Gauteng",
       ),
       projectImage(
         IMAGE_PATHS.hdpeDamLiningBeforeInstallation,
@@ -333,13 +333,13 @@ export const PROJECT_CASE_STUDIES: ProjectCaseStudy[] = [
     ],
     relatedServices: [
       { href: "/dam-liners", label: "Dam Linings" },
-      { href: "/farm-dam-liners", label: "Farm Dam Linings" },
+      { href: "/pretoria-dam-liners", label: "Pretoria Dam Linings" },
       { href: "/agricultural-water-storage", label: "Agricultural Water Storage" },
     ],
     seo: {
-      title: "Hartswater HDPE Dam Lining Project | Damtech South Africa",
+      title: "Centurion HDPE Dam Lining Project | Damtech South Africa",
       description:
-        "View Damtech's Hartswater HDPE dam lining project, a 3,472 m² water storage and leak-prevention solution in South Africa.",
+        "View Damtech's Centurion HDPE dam lining project, a 1,200 m² water storage and leak-prevention solution in Gauteng.",
     },
   },
 ];

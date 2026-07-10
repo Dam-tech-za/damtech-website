@@ -89,8 +89,8 @@ export const LOCAL_LANDING_PAGES: LocalLandingPage[] = [
         label: "Marico Hill Game Lodge dam lining",
       },
       {
-        href: "/projects/hartswater-hdpe-dam-liner",
-        label: "Hartswater HDPE farm dam",
+        href: "/projects/centurion-hdpe-dam-liner",
+        label: "Centurion HDPE farm dam",
       },
     ],
     relatedLocations: [
@@ -357,7 +357,7 @@ export const LOCAL_LANDING_PAGES: LocalLandingPage[] = [
     relatedLocations: [
       { href: "/farm-dam-liners", label: "Farm dam linings" },
       { href: "/agricultural-water-storage", label: "Agricultural water storage" },
-      { href: "/projects/hartswater-hdpe-dam-liner", label: "Hartswater project" },
+      { href: "/projects/centurion-hdpe-dam-liner", label: "Centurion project" },
     ],
   },
   {
@@ -413,7 +413,7 @@ export const LOCAL_LANDING_PAGES: LocalLandingPage[] = [
     relatedProjects: [
       { href: "/projects/grabouw-hdpe-farm-dam", label: "Grabouw farm dam" },
       { href: "/projects/hdpe-dam-liner-installation", label: "Stellenbosch dam lining" },
-      { href: "/projects/hartswater-hdpe-dam-liner", label: "Hartswater farm dam" },
+      { href: "/projects/centurion-hdpe-dam-liner", label: "Centurion farm dam" },
     ],
     relatedLocations: [
       { href: "/western-cape-dam-liners", label: "Dam Linings Western Cape" },

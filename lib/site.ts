@@ -212,19 +212,19 @@ export const SERVICE_LINKS = [
 
 export const PROJECTS = [
   {
-    href: "/projects/hartswater-hdpe-dam-liner",
-    location: "Hartswater",
-    detail: "HDPE Dam Lining — 3,472 m²",
+    href: "/projects/centurion-hdpe-dam-liner",
+    location: "Centurion",
+    detail: "HDPE Dam Lining — 1,200 m²",
   },
   {
     href: "/projects/grabouw-hdpe-farm-dam",
     location: "Grabouw",
-    detail: "HDPE Dam Lining — 10,520 m²",
+    detail: "HDPE Dam Lining — 3,400 m²",
   },
   {
     href: "/projects/hoedspruit-bitumen-dam-lining",
     location: "Hoedspruit",
-    detail: "Bitumen Torch-On — 9,240 m²",
+    detail: "Bitumen Torch-On — 550 m²",
   },
   {
     href: "/projects/hdpe-dam-liner-installation",

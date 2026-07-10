@@ -90,12 +90,22 @@ export const redirects: Redirect[] = [
   // SEO-friendly project slug aliases
   {
     source: "/projects/hartswater-hdpe-dam-lining",
-    destination: "/projects/hartswater-hdpe-dam-liner/",
+    destination: "/projects/centurion-hdpe-dam-liner/",
     permanent: true,
   },
   {
     source: "/projects/hartswater-hdpe-dam-lining/",
-    destination: "/projects/hartswater-hdpe-dam-liner/",
+    destination: "/projects/centurion-hdpe-dam-liner/",
+    permanent: true,
+  },
+  {
+    source: "/projects/hartswater-hdpe-dam-liner",
+    destination: "/projects/centurion-hdpe-dam-liner/",
+    permanent: true,
+  },
+  {
+    source: "/projects/hartswater-hdpe-dam-liner/",
+    destination: "/projects/centurion-hdpe-dam-liner/",
     permanent: true,
   },
   {
