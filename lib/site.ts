@@ -13,15 +13,15 @@ export const siteConfig = {
   defaultTitle:
     "Dam Liners & Steel Water Tanks | Damtech South Africa",
   defaultDescription:
-    "HDPE & PVC dam liners, corrugated steel reservoirs and bitumen waterproofing for farms, mines and estates across South Africa. Request a free quote.",
+    "Damtech installs HDPE and PVC dam liners, corrugated steel water tanks and bitumen waterproofing for farms, mines and estates across South Africa. Free quotes and site inspections.",
   defaultOgDescription:
-    "HDPE & PVC dam liners, corrugated steel reservoirs and bitumen waterproofing for farms, mines and estates across South Africa. Request a free quote.",
+    "Damtech installs HDPE and PVC dam liners, corrugated steel water tanks and bitumen waterproofing for farms, mines and estates across South Africa. Free quotes and site inspections.",
   defaultOgTitle:
     "Dam Liners & Steel Water Tanks | Damtech South Africa",
   defaultTwitterTitle:
     "Dam Liners & Steel Water Tanks | Damtech South Africa",
   defaultTwitterDescription:
-    "HDPE & PVC dam liners, corrugated steel reservoirs and bitumen waterproofing for farms, mines and estates across South Africa. Request a free quote.",
+    "Damtech installs HDPE and PVC dam liners, corrugated steel water tanks and bitumen waterproofing for farms, mines and estates across South Africa. Free quotes and site inspections.",
   phone: "+27 82 853 1026",
   email: "info@dam-tech.co.za",
   location: "South Africa",
@@ -73,10 +73,11 @@ export const BLOG_AUTHOR = {
   path: "/about-us-waterproofing-company",
 } as const;
 
+// TODO(business-confirm): confirm Betty's Bay is the designated head office before deploy.
 export const OFFICES = [
   {
     id: "western-cape",
-    name: "Head Office — Betty's Bay",
+    name: "Head Office — Betty's Bay, Western Cape",
     phone: siteConfig.phone,
     googleBusinessProfileUrl: "https://share.google/Xbvr3S0ksWMMyIEuL",
     address: {
@@ -90,7 +91,7 @@ export const OFFICES = [
   },
   {
     id: "pretoria",
-    name: "Regional Office — Pretoria",
+    name: "Regional Office — Pretoria (Villieria), Gauteng",
     phone: siteConfig.phone,
     googleBusinessProfileUrl: "https://share.google/NxSGti3zXVB01SI3Z",
     address: {
@@ -158,9 +159,20 @@ export type NavLink = {
   label: string;
 };
 
-/** Service pages linked from the header Services dropdown. */
+/** Dam Liners header dropdown children (crawlable real links). */
+export const DAM_LINERS_DROPDOWN_LINKS: NavLink[] = [
+  { href: "/hdpe-dam-lining", label: "HDPE Dam Lining" },
+  { href: "/pvc-dam-lining", label: "PVC Dam Lining" },
+  { href: "/torch-on-dam-lining", label: "Torch-On Dam Lining" },
+  { href: "/farm-dam-liners", label: "Farm Dam Liners" },
+  { href: "/mining-dam-liners", label: "Mining Dam Liners" },
+  { href: "/western-cape-dam-liners", label: "Western Cape Dam Liners" },
+];
+
+/** @deprecated Prefer DAM_LINERS_DROPDOWN_LINKS + top-level Steel/Waterproofing links. */
 export const SERVICES_DROPDOWN_LINKS: NavLink[] = [
-  { href: "/dam-liners", label: "Dam Linings" },
+  { href: "/dam-liners", label: "Dam Liners" },
+  ...DAM_LINERS_DROPDOWN_LINKS,
   { href: "/steel-water-storage-tanks", label: "Steel Water Tanks" },
   { href: "/bitumen-waterproofing", label: "Waterproofing" },
   { href: "/reservoir-lining", label: "Reservoir Lining" },
@@ -174,6 +186,8 @@ export type HeaderNavItem =
       label: string;
       href: string;
       children: readonly NavLink[];
+      /** Optional hub link label inside the dropdown panel. */
+      hubLabel?: string;
     };
 
 /** Desktop + mobile header navigation (quote button is separate). */
@@ -181,10 +195,13 @@ export const HEADER_NAV_ITEMS: HeaderNavItem[] = [
   { type: "link", href: "/", label: "Home" },
   {
     type: "dropdown",
-    label: "Services",
-    href: "/services",
-    children: SERVICES_DROPDOWN_LINKS,
+    label: "Dam Liners",
+    href: "/dam-liners",
+    hubLabel: "All Dam Liners",
+    children: DAM_LINERS_DROPDOWN_LINKS,
   },
+  { type: "link", href: "/steel-water-storage-tanks", label: "Steel Water Tanks" },
+  { type: "link", href: "/bitumen-waterproofing", label: "Waterproofing" },
   { type: "link", href: "/projects", label: "Projects" },
   { type: "link", href: "/calculators", label: "Calculators" },
   { type: "link", href: "/blog", label: "Blog" },
@@ -202,22 +219,25 @@ export const HEADER_NAV_LINKS: NavLink[] = HEADER_NAV_ITEMS.flatMap((item) =>
 export const NAV_LINKS = HEADER_NAV_LINKS;
 
 export const FOOTER_SERVICE_LINKS: NavLink[] = [
-  { href: "/dam-liners", label: "Dam Linings" },
+  { href: "/dam-liners", label: "Dam Liners" },
   { href: "/hdpe-dam-lining", label: "HDPE Dam Lining" },
+  { href: "/pvc-dam-lining", label: "PVC Dam Lining" },
+  { href: "/torch-on-dam-lining", label: "Torch-On Dam Lining" },
   { href: "/steel-water-storage-tanks", label: "Steel Water Tanks" },
-  { href: "/bitumen-waterproofing", label: "Bitumen Waterproofing" },
+  { href: "/bitumen-waterproofing", label: "Waterproofing" },
   { href: "/reservoir-lining", label: "Reservoir Lining" },
   { href: "/dam-repair-services", label: "Leaking Dam Repair" },
+  { href: "/western-cape-dam-liners", label: "Western Cape Dam Liners" },
 ];
 
 export const FOOTER_COMPANY_LINKS: NavLink[] = [
-  { href: "/about-us-waterproofing-company", label: "About Damtech" },
+  { href: "/about-us-waterproofing-company", label: "About" },
   { href: "/projects", label: "Projects" },
-  { href: "/services", label: "All Services" },
   { href: "/calculators", label: "Calculators" },
+  { href: "/faq", label: "FAQ" },
   { href: "/blog", label: "Blog" },
   { href: "/contact", label: "Contact" },
-  { href: "/faq", label: "FAQ" },
+  { href: "/quote", label: "Request a Quote" },
 ];
 
 /** @deprecated Use FOOTER_SERVICE_LINKS and FOOTER_COMPANY_LINKS */
@@ -256,7 +276,7 @@ export const PROJECTS = [
     detail: "Bitumen Torch-On — 550 m²",
   },
   {
-    href: "/projects/hdpe-dam-liner-installation",
+    href: "/projects/stellenbosch-hdpe-dam-liner",
     location: "Stellenbosch",
     detail: "HDPE Dam Lining — 13,360 m²",
   },
@@ -265,17 +285,11 @@ export const PROJECTS = [
     location: "Tulbagh, Western Cape",
     detail: "Steel Water Tanks",
   },
-  {
-    href: "/projects/marico-hill-game-lodge-dam-lining",
-    location: "Rustenburg",
-    detail: "HDPE Dam Lining — 2,098 m²",
-  },
 ] as const;
 
 /** Paths disallowed in robots.txt — must not be listed in sitemap.xml. */
 export const ROBOTS_DISALLOW_PATHS = [
   "/thank-you/",
-  "/_next/",
   "/api/",
   "/category/",
   "/author/",

@@ -29,7 +29,7 @@ After deploy, complete these manual steps in [Google Search Console](https://sea
 - `https://dam-tech.co.za/` → 301 → `https://www.dam-tech.co.za/`
 - `https://dam-tech.co.za/dam-liners/` → 301 → `https://www.dam-tech.co.za/dam-liners/`
 - `https://www.dam-tech.co.za/waterproofing-and-dam-liners/` → 301 → `https://www.dam-tech.co.za/faq/`
-- `https://www.dam-tech.co.za/category/uncategorized/` → 301 → `https://www.dam-tech.co.za/category/dam-liner-guides/`
+- `https://www.dam-tech.co.za/category/uncategorized/` → 301 → `https://www.dam-tech.co.za/blog/`
 
 ## Monitor
 

@@ -66,25 +66,25 @@ export const redirects: Redirect[] = [
     destination: "/faq/",
     permanent: true,
   },
-  // Blog category slug rename
+  // Legacy WP uncategorized archive → blog index
   {
     source: "/category/uncategorized",
-    destination: "/category/dam-liner-guides/",
+    destination: "/blog/",
     permanent: true,
   },
   {
     source: "/category/uncategorized/",
-    destination: "/category/dam-liner-guides/",
+    destination: "/blog/",
     permanent: true,
   },
   {
     source: "/category/uncategorized/page/:page",
-    destination: "/category/dam-liner-guides/page/:page/",
+    destination: "/blog/",
     permanent: true,
   },
   {
     source: "/category/uncategorized/page/:page/",
-    destination: "/category/dam-liner-guides/page/:page/",
+    destination: "/blog/",
     permanent: true,
   },
   // SEO-friendly project slug aliases
@@ -188,4 +188,32 @@ export const redirects: Redirect[] = [
     destination: "/projects/villiersdorp-hdpe-dam-lining-8230m2/",
     permanent: true,
   },
+  {
+    source: "/projects/hdpe-dam-liner-installation",
+    destination: "/projects/stellenbosch-hdpe-dam-liner/",
+    permanent: true,
+  },
+  {
+    source: "/projects/hdpe-dam-liner-installation/",
+    destination: "/projects/stellenbosch-hdpe-dam-liner/",
+    permanent: true,
+  },
+  // Unpublished until client measurements confirmed
+  {
+    source: "/projects/marico-hill-game-lodge-dam-lining",
+    destination: "/projects/",
+    permanent: true,
+  },
+  {
+    source: "/projects/marico-hill-game-lodge-dam-lining/",
+    destination: "/projects/",
+    permanent: true,
+  },
 ];
+
+/**
+ * Host-level redirects (http → https, apex → www) are also enforced above for
+ * `dam-tech.co.za` → `https://www.dam-tech.co.za`. On Vercel, confirm the
+ * Production domain primary is `www.dam-tech.co.za` with apex as redirect alias
+ * so HTTP and HTTPS apex both land on www without a redirect chain.
+ */
