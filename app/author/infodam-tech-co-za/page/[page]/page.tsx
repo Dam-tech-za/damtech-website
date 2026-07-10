@@ -56,7 +56,7 @@ export default async function AuthorPaginatedPage({ params }: Props) {
       <PageSeo
         breadcrumbs={[
           { name: "Home", path: "/" },
-          { name: "Tiaan", path: authorSeo.path },
+          { name: "Andre de Lange", path: authorSeo.path },
           {
             name: `Page ${currentPage}`,
             path: `/author/infodam-tech-co-za/page/${currentPage}`,

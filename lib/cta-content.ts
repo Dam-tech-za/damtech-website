@@ -26,7 +26,7 @@ export const CTA_REASSURANCE_ITEMS = [
 export const CTA_TRUST_STRIP_ITEMS = [
   {
     id: "warranty",
-    text: "Supplier-backed material warranty where applicable",
+    text: "Supplier-backed material warranty (up to 10 years where stated) and 12 months workmanship warranty",
   },
   {
     id: "clients",

@@ -11,11 +11,12 @@ import {
   ShieldCheckIcon,
 } from "@/components/icons/StrokeIcons";
 import { SITE_IMAGES } from "@/lib/images";
+import { WARRANTY_PUBLIC } from "@/lib/warranty";
 
 const TRUST_CARDS = [
   {
     id: "experience",
-    title: "30+ Years Combined Industry Experience",
+    title: "30+ Years Combined Team Experience",
     text: "Decades of hands-on expertise in dam lining, waterproofing and water storage projects.",
     Icon: ClockIcon,
   },
@@ -72,12 +73,7 @@ const IMAGE_OVERLAY_ITEMS = [
   },
 ] as const;
 
-const WARRANTY_BULLETS = [
-  "Supplier-backed material warranty where applicable",
-  "Warranty terms subject to the relevant supplier's conditions",
-  "Applies to qualifying HDPE, PVC, bitumen or waterproofing materials",
-  "Workmanship, site conditions and third-party damage excluded unless separately agreed in writing",
-] as const;
+const WARRANTY_BULLETS = WARRANTY_PUBLIC.bullets;
 
 const INSTALLATION_ALT =
   "Damtech team installing HDPE dam lining for earth dam waterproofing in South Africa";
@@ -155,17 +151,14 @@ export function HomeTrustWarrantySection() {
               OUR COMMITMENT
             </p>
             <h3 className="home-trust-warranty__warranty-title">
-              Supplier-Backed Material Warranty
+              {WARRANTY_PUBLIC.title}
             </h3>
             <span
               className="home-trust-warranty__warranty-divider"
               aria-hidden
             />
-            {/* TODO(business-confirm): exact warranty terms. */}
             <p className="home-trust-warranty__warranty-text">
-              Qualifying dam liner and waterproofing materials carry a
-              supplier-backed material warranty of up to 10 years, where
-              applicable. Ask us what applies to your project.
+              {WARRANTY_PUBLIC.body}
             </p>
             <ul className="home-trust-warranty__warranty-list">
               {WARRANTY_BULLETS.map((item) => (
@@ -182,7 +175,7 @@ export function HomeTrustWarrantySection() {
               href="/quote"
               className="home-trust-warranty__cta"
             >
-              Request Material Warranty Details
+              Request Warranty Details
               <ArrowRightIcon className="home-trust-warranty__cta-icon" aria-hidden />
             </Link>
           </article>

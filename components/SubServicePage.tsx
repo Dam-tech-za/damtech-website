@@ -136,7 +136,7 @@ export function SubServicePage({ page }: SubServicePageProps) {
 
       {projects.length > 0 ? (
         <ProjectProofStrip
-          title={`${page.serviceName} projects`}
+          title={page.projectsSectionTitle ?? `${page.serviceName} projects`}
           projects={projects}
         />
       ) : null}

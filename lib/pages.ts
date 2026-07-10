@@ -129,11 +129,11 @@ export const PAGE_SEO: Record<StaticPageKey, PageSeoEntry> = {
     noIndex: true,
   },
   author: {
-    title: "Tiaan, Author at Damtech",
+    title: "Andre de Lange, Owner at Damtech",
     description:
-      "Articles written by Tiaan for Damtech on dam linings and water storage.",
+      "Articles by Andre de Lange, Owner of Damtech — dam linings, waterproofing and water storage across South Africa.",
     path: "/author/infodam-tech-co-za",
-    h1: "Tiaan",
+    h1: "Andre de Lange",
     noIndex: true,
   },
 };
@@ -168,7 +168,7 @@ export const FAQ_ITEMS = [
   {
     question: "Do you offer any warranties on your services?",
     answer:
-      "Selected HDPE, PVC, bitumen and waterproofing materials supplied by Damtech may carry a supplier-backed material warranty where applicable. Warranty terms depend on the qualifying material, supplier conditions, correct use, site conditions and approved installation requirements. Installation or workmanship cover is not automatically included unless separately agreed in writing. We confirm applicable material warranty details in each quote.",
+      "Qualifying materials supplied by Damtech may carry a supplier-backed material warranty of up to 10 years where stated in the project quotation and subject to the relevant supplier’s terms and conditions. Damtech’s workmanship warranty is 12 months from practical completion unless a different period is stated in writing for the specific project. Warranty coverage, exclusions and maintenance requirements are confirmed in the applicable quotation or contract.",
   },
 ] as const;
 
@@ -202,7 +202,7 @@ export const SEO_FAQ_ITEMS = [
   {
     question: "Is the material warranty supplier-backed?",
     answer:
-      "Supplier-backed material warranties apply only to qualifying supplied materials where applicable and are subject to the relevant supplier’s terms, site conditions, correct use and approved installation requirements. Installation or workmanship cover is not automatically included unless separately agreed in writing.",
+      "Qualifying materials supplied by Damtech may carry a supplier-backed material warranty of up to 10 years where stated in the project quotation and subject to the relevant supplier’s terms and conditions. Damtech’s workmanship warranty is 12 months from practical completion unless a different period is stated in writing for the specific project. Warranty coverage, exclusions and maintenance requirements are confirmed in the applicable quotation or contract.",
   },
   {
     question: "Which areas in South Africa do you service?",

@@ -290,7 +290,7 @@ export const STEEL_TANKS_CONTENT = {
 
 export const SERVICES_HUB_CONTENT = {
   intro:
-    "Damtech is a South African contractor focused on water storage and protection: lining farm and mining dams, building corrugated steel reservoirs, and waterproofing roofs, foundations and retaining structures. With 30+ years combined industry experience we combine practical site work with quality materials — HDPE geomembrane, PVC, bitumen torch-on and galvanised steel — so clients get systems that work in real Highveld heat, coastal rain and bushveld dust.",
+    "Damtech is a South African contractor focused on water storage and protection: lining farm and mining dams, building corrugated steel reservoirs, and waterproofing roofs, foundations and retaining structures. The Damtech team brings more than 30 years of combined experience — we combine practical site work with quality materials — HDPE geomembrane, PVC, bitumen torch-on and galvanised steel — so clients get systems that work in real Highveld heat, coastal rain and bushveld dust.",
   sections: [
     {
       heading: "Waterproofing Services",
@@ -345,7 +345,7 @@ export const SERVICES_HUB_CONTENT = {
     {
       question: "What warranty do you offer?",
       answer:
-        "Supplier-backed material warranties apply only to qualifying supplied materials where applicable and are subject to the relevant supplier’s terms, site conditions, correct use and approved installation requirements. Installation or workmanship cover is not automatically included unless separately agreed in writing. We confirm applicable material warranty details in each quote.",
+        "Qualifying materials supplied by Damtech may carry a supplier-backed material warranty of up to 10 years where stated in the project quotation and subject to the relevant supplier’s terms and conditions. Damtech’s workmanship warranty is 12 months from practical completion unless a different period is stated in writing for the specific project. Warranty coverage, exclusions and maintenance requirements are confirmed in the applicable quotation or contract.",
     },
     {
       question: "Can you repair a leaking dam without a full reline?",
@@ -430,7 +430,7 @@ export const SERVICES_PROCESS_STEPS = [
 
 export const FAQ_PAGE_CONTENT = {
   intro:
-    "Straight answers about dam liners, dam linings, corrugated steel reservoirs and bitumen waterproofing — drawn from 30+ years combined industry experience on South African farms, mines and commercial buildings.",
+    "Straight answers about dam liners, dam linings, corrugated steel reservoirs and bitumen waterproofing — drawn from more than 30 years of combined team experience on South African farms, mines and commercial buildings.",
   sections: [
     {
       heading: "Dam Linings and Earth Dams",
@@ -510,7 +510,7 @@ export const ABOUT_CONTENT = {
     {
       question: "How long has Damtech been operating?",
       answer:
-        "Our team brings 30+ years combined industry experience in dam lining, steel reservoirs and waterproofing across South Africa.",
+        "The Damtech team brings more than 30 years of combined experience in dam lining, steel reservoirs and waterproofing across South Africa.",
     },
     {
       question: "Is Damtech only based in Gauteng?",

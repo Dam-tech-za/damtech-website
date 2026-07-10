@@ -47,11 +47,6 @@ export function ProjectDetailBody({ project }: ProjectDetailBodyProps) {
           ))}
         </dl>
 
-        {project.todo && project.todo.length > 0 ? (
-          <p className="site-editor-note">
-            <strong>Editor note:</strong> {project.todo.join(" · ")}
-          </p>
-        ) : null}
       </SiteSection>
 
       <SiteSection tone="muted">

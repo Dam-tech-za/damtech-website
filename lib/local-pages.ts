@@ -152,8 +152,8 @@ export const LOCAL_LANDING_PAGES: LocalLandingPage[] = [
     ],
     relatedProjects: [
       {
-        href: "/projects/tulbagh-steel-water-tank",
-        label: "Tulbagh steel water tank project",
+        href: "/steel-water-storage-tanks",
+        label: "Steel water tanks",
       },
       {
         href: "/projects/centurion-hdpe-dam-liner",
@@ -263,7 +263,7 @@ export const LOCAL_LANDING_PAGES: LocalLandingPage[] = [
       {
         question: "Does Damtech supply steel water tanks in Mpumalanga?",
         answer:
-          "Yes. Damtech supplies and installs steel water tanks across South Africa, including Mpumalanga. See our Tulbagh steel water tank project in the Western Cape for an example configuration, or request a quote for your site.",
+          "Yes. Damtech supplies and installs steel water tanks across South Africa, including Mpumalanga. See our Steel water tanks in the Western Cape for an example configuration, or request a quote for your site.",
       },
       {
         question: "Can dam linings be installed on mining-related dams?",
@@ -283,8 +283,8 @@ export const LOCAL_LANDING_PAGES: LocalLandingPage[] = [
     ],
     relatedProjects: [
       {
-        href: "/projects/tulbagh-steel-water-tank",
-        label: "Tulbagh steel water tank project",
+        href: "/steel-water-storage-tanks",
+        label: "Steel water tanks",
       },
     ],
     relatedLocations: [
@@ -354,16 +354,8 @@ export const LOCAL_LANDING_PAGES: LocalLandingPage[] = [
         label: "Grabouw farm dam lining",
       },
       {
-        href: "/projects/tulbagh-steel-water-tank",
-        label: "Tulbagh steel water tank",
-      },
-      {
-        href: "/projects/worcester-bitumen-earth-dam-lining-15000m2",
-        label: "Worcester bitumen earth dam",
-      },
-      {
-        href: "/projects/villiersdorp-hdpe-dam-lining-8230m2",
-        label: "Villiersdorp HDPE dam lining",
+        href: "/steel-water-storage-tanks",
+        label: "Steel water tanks",
       },
     ],
     relatedLocations: [
@@ -489,8 +481,8 @@ export const LOCAL_LANDING_PAGES: LocalLandingPage[] = [
     ],
     relatedProjects: [
       {
-        href: "/projects/tulbagh-steel-water-tank",
-        label: "Tulbagh steel water tank project",
+        href: "/steel-water-storage-tanks",
+        label: "Steel water tanks",
       },
       {
         href: "/projects/hoedspruit-bitumen-dam-lining",
@@ -558,7 +550,7 @@ export const LOCAL_LANDING_PAGES: LocalLandingPage[] = [
     relatedProjects: [
       { href: "/projects/stellenbosch-hdpe-dam-liner", label: "Stellenbosch HDPE dam" },
       { href: "/projects/grabouw-hdpe-farm-dam", label: "Grabouw farm dam" },
-      { href: "/projects/tulbagh-steel-water-tank", label: "Tulbagh steel water tank" },
+      { href: "/steel-water-storage-tanks", label: "Steel water tanks" },
     ],
     relatedLocations: [
       { href: "/farm-dam-liners", label: "Farm dam linings" },

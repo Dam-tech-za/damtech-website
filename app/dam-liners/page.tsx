@@ -87,7 +87,7 @@ const LINER_TYPES = [
 
     uses: "Earth dams, mining ponds, irrigation storage",
 
-    lifespan: "20–30 years",
+    lifespan: "Typically 20–30 years*",
 
     Icon: LayersIcon,
 
@@ -109,7 +109,7 @@ const LINER_TYPES = [
 
     uses: "Cement dams, canals, rigid reservoirs",
 
-    lifespan: "15–20 years",
+    lifespan: "Typically 15–20 years*",
 
     Icon: DropletIcon,
 
@@ -131,7 +131,7 @@ const LINER_TYPES = [
 
     uses: "Steel tanks, ponds, small reservoirs",
 
-    lifespan: "10–15 years",
+    lifespan: "Typically 10–15 years*",
 
     Icon: LayersIcon,
 
@@ -147,7 +147,7 @@ const DAM_PROJECTS = getProjectsMatching(/HDPE|Bitumen|PVC|dam lining/i, 6);
 
 const DAM_BENEFITS = [
 
-  "Expert installation by certified professionals",
+  "Installation by experienced personnel using project-appropriate welding, anchoring and inspection procedures",
 
   "Top-quality materials from leading local suppliers",
 
@@ -243,7 +243,7 @@ export default function DamLinersPage() {
 
             { key: "uses", label: "Best for" },
 
-            { key: "lifespan", label: "Typical lifespan" },
+            { key: "lifespan", label: "Typical service life" },
 
           ]}
 
@@ -260,6 +260,10 @@ export default function DamLinersPage() {
           }))}
 
         />
+
+        <p className="mt-4 text-sm text-slate-600">
+          *Typical service life varies by material specification, UV exposure, subgrade preparation, installation quality, water chemistry and mechanical damage. Damtech confirms the relevant supplier specifications for each quoted system.
+        </p>
 
       </SiteSection>
 

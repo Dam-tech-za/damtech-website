@@ -17,9 +17,9 @@ const TRUST_CARDS = [
   },
   {
     id: "experience",
-    title: "30+ Years Combined Industry Experience",
+    title: "30+ Years Combined Team Experience",
     description:
-      "30+ years combined industry experience in dam linings, waterproofing, reservoir lining and water storage solutions.",
+      "The Damtech team brings more than 30 years of combined experience across dam linings, waterproofing, reservoir lining and water storage solutions.",
     Icon: ShieldCheckIcon,
   },
   {

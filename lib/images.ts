@@ -129,7 +129,7 @@ export const IMAGE_ALTS: Record<ImagePath, string> = {
   [IMAGE_PATHS.villiersdorpWesternCapeHdpeDamLining8230m22]:
     "HDPE dam lining field installation for a large water storage application in Villiersdorp in the Western Cape",
   [IMAGE_PATHS.tulbaghWesternCapeSteelWaterTankProject]:
-    "Round corrugated steel water tank for water storage in Tulbagh in the Western Cape",
+    "Round corrugated steel water tank for agricultural and commercial water storage",
   [IMAGE_PATHS.hdpeDamLiningAfterGeotextile]:
     "HDPE dam lining after installation with geotextile protection on site",
   [IMAGE_PATHS.hdpeDamLiningBeforeInstallation]:

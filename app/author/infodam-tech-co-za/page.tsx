@@ -4,6 +4,7 @@ import { Hero } from "@/components/Hero";
 import { PageSeo } from "@/components/PageSeo";
 import { createPageMetadata, PAGE_SEO } from "@/lib/pages";
 import { POSTS_PER_PAGE, paginatePosts, posts } from "@/lib/posts";
+import { BLOG_AUTHOR } from "@/lib/site";
 import {
   LazyCTA as CTA,
 } from "@/components/lazy";
@@ -19,11 +20,15 @@ export default function AuthorPage() {
       <PageSeo
         breadcrumbs={[
           { name: "Home", path: "/" },
-          { name: "Tiaan", path: seo.path },
+          { name: "Andre de Lange", path: seo.path },
         ]}
       />
 
-      <Hero compact title={seo.h1} description="Author at Damtech." />
+      <Hero
+        compact
+        title={seo.h1}
+        description={BLOG_AUTHOR.bio}
+      />
 
       <section className="content-wrap">
         <div className="content-grid">

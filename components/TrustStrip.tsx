@@ -9,7 +9,7 @@ import {
 const TRUST_ITEMS = [
   {
     id: "experience",
-    title: "30+ Years Combined Industry Experience",
+    title: "30+ Years Combined Team Experience",
     description:
       "Practical contractor experience in dam linings, waterproofing and water storage across South Africa.",
     Icon: ShieldCheckIcon,

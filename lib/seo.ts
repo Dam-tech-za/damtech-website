@@ -5,8 +5,6 @@ import {
   BLOG_AUTHOR,
   GOOGLE_SITE_VERIFICATION,
   HEAD_OFFICE,
-  HEAD_OFFICE_MAP_EMBED_URL,
-  formatOfficeLocality,
   OFFICES,
   phoneTel,
   SERVICE_AREA_PROVINCES,
@@ -330,6 +328,12 @@ export function createOrganizationSchema() {
     logo: absoluteAssetUrl(IMAGE_PATHS.damtechLogo),
     areaServed: siteConfig.location,
     sameAs: [...SOCIAL_LINKS, ...googleProfiles],
+    founder: {
+      "@type": "Person",
+      name: BLOG_AUTHOR.name,
+      jobTitle: BLOG_AUTHOR.role,
+      url: absoluteUrl(BLOG_AUTHOR.path),
+    },
   };
 }
 
@@ -361,33 +365,25 @@ export function createLocalBusinessSchema() {
     parentOrganization: {
       "@id": `${siteConfig.domain}/#organization`,
     },
+    // Service-area business: province-level only — no street address (clients do not visit).
     address: {
       "@type": "PostalAddress",
-      streetAddress: HEAD_OFFICE.address.streetAddress,
-      addressLocality: formatOfficeLocality(HEAD_OFFICE.address),
+      addressLocality: HEAD_OFFICE.address.city,
       addressRegion: HEAD_OFFICE.address.province,
-      postalCode: HEAD_OFFICE.address.postalCode,
       addressCountry: "ZA",
     },
-    hasMap: HEAD_OFFICE_MAP_EMBED_URL.replace("&output=embed", ""),
     location: OFFICES.map((office) => {
       const place: Record<string, unknown> = {
         "@type": "Place",
-        name: office.name,
+        name: office.publicLabel,
         telephone: phoneTel,
       };
-
-      if ("googleBusinessProfileUrl" in office && office.googleBusinessProfileUrl) {
-        place.hasMap = office.googleBusinessProfileUrl;
-      }
 
       if ("address" in office && office.address) {
         place.address = {
           "@type": "PostalAddress",
-          streetAddress: office.address.streetAddress,
-          addressLocality: formatOfficeLocality(office.address),
+          addressLocality: office.address.city,
           addressRegion: office.address.province,
-          postalCode: office.address.postalCode,
           addressCountry: "ZA",
         };
       } else {
@@ -458,17 +454,13 @@ export function createOfficeLocalBusinessSchemas(
         "@id": `${siteConfig.domain}/#organization`,
       },
       areaServed,
+      // Service-area business: no street address in public schema.
       address: {
         "@type": "PostalAddress",
-        streetAddress: office.address.streetAddress,
-        addressLocality: formatOfficeLocality(office.address),
+        addressLocality: office.address.city,
         addressRegion: office.address.province,
-        postalCode: office.address.postalCode,
         addressCountry: "ZA",
       },
-      ...("googleBusinessProfileUrl" in office && office.googleBusinessProfileUrl
-        ? { hasMap: office.googleBusinessProfileUrl }
-        : {}),
     };
   });
 }
@@ -549,8 +541,9 @@ export function createArticleSchema({
     datePublished,
     dateModified,
     author: {
-      "@type": "Organization",
+      "@type": "Person",
       name: BLOG_AUTHOR.name,
+      jobTitle: BLOG_AUTHOR.role,
       url: absoluteUrl(BLOG_AUTHOR.path),
     },
     publisher: {

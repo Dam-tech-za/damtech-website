@@ -25,6 +25,8 @@ export type SubServicePageConfig = {
   faqs: ServiceFaqItem[];
   relatedLinks: readonly { href: string; label: string }[];
   projectDetailMatch: RegExp;
+  /** Override the default "{serviceName} projects" strip heading. */
+  projectsSectionTitle?: string;
   sectionCtaTitle?: string;
   ctaTitle: string;
   ctaDescription: string;
@@ -58,14 +60,14 @@ export const HDPE_DAM_LINING_PAGE: SubServicePageConfig = {
     "UV-stabilised grades rated for exposed South African conditions",
     "1 mm, 1.5 mm and 2 mm options for depth and puncture risk",
     "Heat-welded seams stronger than the parent sheet",
-    "20–30 year service life on typical farm dam applications",
+    "20–30 year typical service life on agricultural dams (conditions apply)",
     "Supplier-backed material warranty where applicable",
   ],
   specsHeading: "HDPE liner specifications",
   specs: [
     { label: "Thickness options", value: "1 mm, 1.5 mm and 2 mm" },
     { label: "Best applications", value: "Earth dams, mining ponds, irrigation storage" },
-    { label: "Typical lifespan", value: "20–30 years" },
+    { label: "Typical service life", value: "Typically 20–30 years*" },
     { label: "Seam method", value: "Hot-wedge or extrusion welding" },
     { label: "Warranty", value: "Supplier-backed on qualifying materials" },
   ],
@@ -96,7 +98,7 @@ export const HDPE_DAM_LINING_PAGE: SubServicePageConfig = {
     {
       question: "How long does HDPE dam lining last?",
       answer:
-        "Correctly installed UV-stable HDPE typically performs 20–30 years on agricultural dams. Lifespan depends on exposure, water chemistry, anchoring quality and whether animals or machinery contact the liner.",
+        "Correctly installed UV-stable HDPE typically performs 20–30 years on agricultural dams, depending on thickness, exposure, water chemistry, anchoring quality and whether animals or machinery contact the liner. Damtech confirms the relevant supplier specifications for each quoted system.",
     },
     {
       question: "Can HDPE line an existing earth dam?",
@@ -154,13 +156,13 @@ export const PVC_DAM_LINING_PAGE: SubServicePageConfig = {
     "Lower cost per m² on smaller surface areas",
     "Common choice for steel tank and pond lining",
     "Heat-welded or adhesive seams on prepared substrates",
-    "10–15 year lifespan with correct installation",
+    "10–15 year typical service life with correct installation (conditions apply)",
     "Compatible with many agricultural water uses",
   ],
   specs: [
     { label: "Weight grades", value: "550 gsm, 750 gsm and 850 gsm" },
     { label: "Best applications", value: "Ponds, steel tanks, small reservoirs" },
-    { label: "Typical lifespan", value: "10–15 years" },
+    { label: "Typical service life", value: "Typically 10–15 years*" },
     { label: "Seam method", value: "Heat welding or adhesive bonding" },
     { label: "Warranty", value: "Supplier-backed on qualifying materials" },
   ],
@@ -207,7 +209,8 @@ export const PVC_DAM_LINING_PAGE: SubServicePageConfig = {
     { href: "/farm-dam-liners", label: "Farm Dam Linings" },
     { href: "/quote", label: "Request a PVC Dam Lining Quote" },
   ],
-  projectDetailMatch: /PVC|HDPE/i,
+  projectDetailMatch: /HDPE|PVC|dam lining/i,
+  projectsSectionTitle: "Related Dam Lining Projects",
   sectionCtaTitle: "Need a PVC Dam Lining Quote?",
   ctaTitle: "Request a PVC Lining Quote",
   ctaDescription:
@@ -240,13 +243,13 @@ export const TORCH_ON_DAM_LINING_PAGE: SubServicePageConfig = {
     "Effective for localized leak repair and full relines",
     "3 mm and 4 mm membranes for depth and traffic loads",
     "Heat-welded laps reduce seam failure risk",
-    "15–20 year service life on well-prepared substrates",
+    "15–20 year typical service life on well-prepared substrates (conditions apply)",
     "Suitable for canals, rigid tanks and cement dams",
   ],
   specs: [
     { label: "Membrane thickness", value: "3 mm and 4 mm torch-on" },
     { label: "Best applications", value: "Cement dams, canals, rigid reservoirs" },
-    { label: "Typical lifespan", value: "15–20 years" },
+    { label: "Typical service life", value: "Typically 15–20 years*" },
     { label: "Application", value: "Torch-bonded to primed substrate" },
     { label: "Related service", value: "Roof and foundation waterproofing" },
   ],

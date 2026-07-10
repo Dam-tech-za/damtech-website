@@ -61,6 +61,17 @@ export type ProjectCaseStudy = {
   /** Hide from index, sitemap and public routes until confirmed. */
   draft?: boolean;
   /**
+   * Public publishing gate. Routes, sitemap, cards and carousels require
+   * `verified === true` and `draft !== true`.
+   */
+  verified?: boolean;
+  /** Internal only — never render in public UI. */
+  sourceOfLocation?: string;
+  /** Internal only — never render in public UI. */
+  sourceOfArea?: string;
+  /** Internal only — never render in public UI. */
+  approvedBy?: string;
+  /**
    * Month + year string for project pages, e.g. "March 2025".
    * Do not render until a confirmed value exists (no placeholders in UI).
    */
@@ -88,37 +99,39 @@ export type ProjectCaseStudy = {
 export const PROJECT_CASE_STUDIES: ProjectCaseStudy[] = [
   {
     slug: "marico-hill-game-lodge-dam-lining",
-    // Unpublished: client details / final measurements pending confirmation.
+    // Unpublished until exact locality, year, client-name permission and image permission are confirmed.
     draft: true,
+    verified: false,
     title: "Marico Hill Game Lodge Dam Lining",
     h1: "Marico Hill Game Lodge Dam Lining Project",
-    location: "Rustenburg, North West",
+    location: "North West",
     province: "North West",
+    locationStatus: "to-be-confirmed",
     serviceType: "HDPE dam lining",
     material: "1 mm HDPE geomembrane",
     scope:
-      "Supply and installation of 1 mm HDPE geomembrane across three earth dams (Dam 1, Dam 2 and Dam 3) for Marico Hill Game Lodge (Pty) Ltd — 2,098 m² total.",
+      "Supply and installation of 1 mm HDPE geomembrane across three earth dams (Dam 1, Dam 2 and Dam 3) for Marico Hill Game Lodge (Pty) Ltd — 2,098 m² total (980 m² + 712 m² + 406 m²).",
     background:
-      "Marico Hill Game Lodge (Pty) Ltd near Rustenburg depends on dependable dam water for wildlife, fire protection and lodge operations. Three earth dams on the property needed improved retention through the Bushveld dry season, when borehole top-up and rainfall capture are both costly if seepage losses remain unchecked.",
+      "Marico Hill Game Lodge (Pty) Ltd in the North West depends on dependable dam water for wildlife, fire protection and lodge operations. Three earth dams on the property needed improved retention through the Bushveld dry season, when borehole top-up and rainfall capture are both costly if seepage losses remain unchecked.",
     siteConditions:
       "The site sits in warm North West Bushveld conditions with seasonal rainfall and extended dry periods. Wildlife uses the dam margins, so edge protection and crest anchoring had to suit animal traffic once the liners were installed. Each dam required vegetation, root and organic material cleared, with profiles trimmed into smooth, uniform side slopes before lining.",
     challenge:
       "All three dams needed subgrade compaction and inspection to remove sharp objects and voids before liner deployment. The combined 2,098 m² footprint had to be lined while coordinating safe access around active lodge operations and wildlife movement on the property.",
     approach:
-      "Damtech cleared vegetation, roots and organic material from each basin, trimmed and shaped dam profiles, and compacted subgrades before liner placement. 1 mm HDPE panels were deployed to each dam profile and joined with extrusion and wedge welding into continuous watertight seams, with crest anchoring completed to manufacturer practice.",
+      "Damtech cleared vegetation, roots and organic material from each basin, trimmed and shaped dam profiles, and compacted subgrades before liner placement. 1 mm HDPE panels were deployed to each dam profile and joined with extrusion and wedge welding into continuous watertight seams, with anchor trenches completed to manufacturer practice.",
     result:
-      "Installation was completed on 5 March 2026 and signed off on 18 March 2026. Dam 1 (980 m²), Dam 2 (712 m²) and Dam 3 (406 m²) were lined with 1 mm HDPE geomembrane — 2,098 m² in total — creating continuous barriers designed to reduce seepage and stabilise stored volume through the dry season.",
+      "Dam 1 (980 m²), Dam 2 (712 m²) and Dam 3 (406 m²) were lined with 1 mm HDPE geomembrane — 2,098 m² in total — creating continuous barriers designed to reduce seepage and stabilise stored volume through the dry season.",
     outcomes: [
       "2,098 m² of 1 mm HDPE installed across three lodge dams (980 m² + 712 m² + 406 m²).",
       "Thermally welded extrusion and wedge seams forming continuous watertight membranes.",
-      "Vegetation clearance, profiling and subgrade preparation completed on all three basins.",
+      "Vegetation clearance, profiling, subgrade preparation and anchor trenches completed on all three basins.",
       "Crest anchoring and edge detailing suited to Bushveld wildlife pressure at the waterline.",
-      "Signed off 18 March 2026 with supplier-backed material warranty on qualifying materials where applicable.",
+      "Supplier-backed material warranty of 10 years on qualifying materials where stated; Damtech workmanship warranty of 12 months from practical completion.",
     ],
     summary:
-      "Marico Hill Game Lodge — three Rustenburg dams lined with 2,098 m² of 1 mm HDPE for improved water retention.",
+      "Marico Hill Game Lodge — three North West dams lined with 2,098 m² of 1 mm HDPE for improved water retention.",
     galleryIntro:
-      "HDPE dam lining installation photos from the Marico Hill Game Lodge project near Rustenburg — three earth dams lined with 1 mm geomembrane in March 2026.",
+      "HDPE dam lining installation photos from the Marico Hill Game Lodge project in the North West — three earth dams lined with 1 mm geomembrane.",
     images: [
       projectImage(
         IMAGE_PATHS.hdpeDamLiningEarthDam,
@@ -134,11 +147,16 @@ export const PROJECT_CASE_STUDIES: ProjectCaseStudy[] = [
     seo: {
       title: "Marico Hill Game Lodge Dam Lining Project | Damtech",
       description:
-        "View Damtech's Marico Hill Game Lodge dam lining project — 2,098 m² of HDPE dam lining across three Rustenburg lodge dams.",
+        "View Damtech's Marico Hill Game Lodge dam lining project — 2,098 m² of HDPE dam lining across three North West lodge dams.",
     },
+    todo: [
+      "Confirm exact locality (town/farm) from the job file — use North West only until confirmed.",
+      "Confirm completion year, client-name permission and image permission before publishing.",
+    ],
   },
   {
     slug: "stellenbosch-hdpe-dam-liner",
+    verified: true,
     title: "HDPE Dam Liner Installation — Stellenbosch",
     h1: "HDPE Dam Liner Installation in Stellenbosch",
     location: "Stellenbosch, Western Cape",
@@ -189,6 +207,9 @@ export const PROJECT_CASE_STUDIES: ProjectCaseStudy[] = [
   },
   {
     slug: "tulbagh-steel-water-tank",
+    // Unpublished: exact town, tank size, foundation and fittings unconfirmed.
+    draft: true,
+    verified: false,
     title: "Tulbagh Steel Water Tank Project — Western Cape",
     h1: "Steel Water Tank Project in Tulbagh, Western Cape",
     location: "Tulbagh, Western Cape",
@@ -237,7 +258,7 @@ export const PROJECT_CASE_STUDIES: ProjectCaseStudy[] = [
       description:
         "View Damtech's steel water tank project in Tulbagh in the Western Cape for practical water storage. Request a similar corrugated steel water tank quote.",
     },
-    featuredOnHome: true,
+    featuredOnHome: false,
     featuredOrder: 6,
     homepageLocationLabel: "Tulbagh, Western Cape",
     homepageServiceLabel: "Steel Water Tanks",
@@ -250,6 +271,7 @@ export const PROJECT_CASE_STUDIES: ProjectCaseStudy[] = [
   },
   {
     slug: "grabouw-hdpe-farm-dam",
+    verified: true,
     title: "Grabouw HDPE Dam Lining",
     h1: "Grabouw HDPE Dam Lining Project",
     location: "Grabouw, Western Cape",
@@ -306,9 +328,13 @@ export const PROJECT_CASE_STUDIES: ProjectCaseStudy[] = [
     homepageLocationLabel: "Grabouw",
     homepageServiceLabel: "HDPE Dam Lining",
     homepageLinkLabel: "View Grabouw HDPE dam lining project",
+    todo: [
+      "Confirm 3,400 m² against original quote, BOQ, measurement sheet or supplier roll quantities.",
+    ],
   },
   {
     slug: "hoedspruit-bitumen-dam-lining",
+    verified: true,
     title: "Hoedspruit Bitumen Torch-On Waterproofing",
     h1: "Hoedspruit Bitumen Torch-On Waterproofing Project",
     location: "Hoedspruit, Limpopo",
@@ -364,9 +390,13 @@ export const PROJECT_CASE_STUDIES: ProjectCaseStudy[] = [
     homepageLocationLabel: "Hoedspruit",
     homepageServiceLabel: "Bitumen Torch-On",
     homepageLinkLabel: "View Hoedspruit bitumen torch-on waterproofing project",
+    todo: [
+      "Confirm 550 m² against the original project record / measurement.",
+    ],
   },
   {
     slug: "centurion-hdpe-dam-liner",
+    verified: true,
     title: "Centurion HDPE Dam Lining",
     h1: "Centurion HDPE Dam Lining Project",
     location: "Centurion, Gauteng",
@@ -421,42 +451,48 @@ export const PROJECT_CASE_STUDIES: ProjectCaseStudy[] = [
     homepageLocationLabel: "Centurion",
     homepageServiceLabel: "HDPE Dam Lining",
     homepageLinkLabel: "View Centurion HDPE dam lining project",
+    todo: [
+      "Confirm Centurion location and 1,200 m² against the original project record.",
+    ],
   },
   {
     slug: "mpumalanga-torch-on-bitumen-concrete-dam-15m",
+    // Unpublished until municipality or nearest town is confirmed.
+    draft: true,
+    verified: false,
     title: "Torch-On Bitumen Concrete Dam — 15 m Diameter",
     h1: "Torch-On Bitumen Concrete Dam Project — 15 m Diameter",
     location: "Mpumalanga",
     province: "Mpumalanga",
-    locationStatus: "confirmed",
+    locationStatus: "to-be-confirmed",
     serviceType: "Concrete dam waterproofing",
     material: "Torch-on bitumen membrane",
     scope:
-      "Torch-on bitumen waterproofing for a round concrete dam with an estimated 15 m diameter and approximately 177 m² surface area.",
+      "Torch-on bitumen waterproofing for a round concrete dam with a 15 m diameter. Approximately 177 m² circular base footprint (geometric estimate). Installed membrane area is higher once walls are included — roughly +50 m² for a 2.3 m high wall all around, plus overlaps, detailing and waste.",
     background:
       "A Mpumalanga client needed reliable waterproofing on a round concrete water-retaining structure where seepage or surface deterioration was reducing usable storage. Concrete dams and reservoirs in the region often require a bonded membrane system rather than loose-laid geomembrane when the substrate is rigid and correctly prepared.",
     siteConditions:
       "Mpumalanga summer heat, UV exposure and seasonal rainfall patterns affect how torch-on membranes are applied and detailed. The round concrete profile required consistent laps, corner transitions and penetration seals suited to a rigid reservoir shell.",
     challenge:
-      "Waterproofing a circular concrete dam surface of approximately 177 m² required controlled torch-on application, overlap planning and detailing at the wall-to-floor transitions. Surface preparation — clean, dry and primed — was critical before membrane installation.",
+      "Waterproofing a circular concrete dam with an approximately 177 m² base footprint required controlled torch-on application, overlap planning and detailing at the wall-to-floor transitions. Surface preparation — clean, dry and primed — was critical before membrane installation.",
     approach:
       "Damtech applied a torch-on bitumen waterproofing system to the prepared concrete surfaces, working in planned runs to maintain continuous laps across the round dam profile. Detailing at corners, outlets and penetrations followed torch-on best practice for water-retaining structures.",
     result:
-      "Torch-on bitumen waterproofing was completed on the round concrete dam with an estimated 15 m diameter (approximately 177 m² calculated surface area), improving water retention on the structure.",
+      "Torch-on bitumen waterproofing was completed on the round concrete dam (15 m diameter; approximately 177 m² circular base footprint). Base footprint is a geometric estimate — not the measured installed membrane quantity.",
     outcomes: [
-      "Torch-on bitumen waterproofing on a round concrete dam — 15 m diameter, ~177 m².",
+      "15 m diameter round concrete dam — approximately 177 m² circular base footprint.",
+      "Installed membrane area higher once walls, overlaps and detailing are included (about +50 m² for a 2.3 m wall).",
       "Continuous membrane laps across wall and floor transitions.",
       "Detailing completed at corners, outlets and penetrations.",
-      "Improved water retention on a rigid concrete reservoir structure.",
     ],
     summary:
-      "Mpumalanga round concrete dam waterproofed with torch-on bitumen — 15 m diameter, approximately 177 m².",
+      "Mpumalanga round concrete dam waterproofed with torch-on bitumen — 15 m diameter, approximately 177 m² base footprint.",
     galleryIntro:
       "Torch-on bitumen waterproofing photos from Damtech's round concrete dam project in Mpumalanga.",
     images: [
       projectImage(
         IMAGE_PATHS.torchOnConcreteDam15mMpumalanga,
-        "Torch-on bitumen waterproofing on a 15 m diameter concrete dam in Mpumalanga",
+        "Torch-on bitumen waterproofing on a 15 m diameter concrete dam",
         "Torch-on bitumen waterproofing applied to a round concrete dam structure.",
       ),
     ],
@@ -471,10 +507,16 @@ export const PROJECT_CASE_STUDIES: ProjectCaseStudy[] = [
       description:
         "View Damtech's torch-on bitumen waterproofing project for a round concrete dam in Mpumalanga. Request a similar waterproofing or concrete reservoir lining quote.",
     },
+    needsManualConfirmation: true,
     createdFromAssetName: "Concrete Dam Mpumalanga 15m.webp",
+    todo: [
+      "Confirm municipality or nearest town before publishing — do not invent a town name.",
+      "Confirm province if not verified from the job file.",
+    ],
   },
   {
     slug: "tzaneen-torch-on-bitumen-concrete-dam-18m",
+    verified: true,
     title: "Torch-On Bitumen Concrete Dam — 18 m Diameter",
     h1: "Torch-On Bitumen Concrete Dam Project — 18 m Diameter",
     location: "Tzaneen, Limpopo",
@@ -483,31 +525,31 @@ export const PROJECT_CASE_STUDIES: ProjectCaseStudy[] = [
     serviceType: "Concrete dam waterproofing",
     material: "Torch-on bitumen membrane",
     scope:
-      "Torch-on bitumen waterproofing for a round concrete dam with an 18 m diameter and approximately 255 m² surface area.",
+      "Torch-on bitumen waterproofing for a round concrete dam with an 18 m diameter. Approximately 255 m² circular base footprint, calculated from the 18 m diameter. This is a geometric base-area estimate — not the measured installed membrane quantity. Installed membrane area is higher once walls are included — roughly +50 m² for a 2.3 m high wall all around, plus overlaps, detailing and waste.",
     background:
       "A Tzaneen-area client required waterproofing on a round concrete dam used for water storage. Torch-on bitumen can be a practical option for selected concrete reservoirs, channels and water-retaining surfaces when surface preparation, overlaps and detailing are correctly handled.",
     siteConditions:
       "The Lowveld climate around Tzaneen brings high summer temperatures and strong UV, which makes surface preparation and membrane detailing important for long-term performance on exposed concrete.",
     challenge:
-      "The 18 m diameter round profile produced an estimated 255 m² waterproofing footprint. Continuous torch-on laps, corner detailing and penetration seals had to remain watertight under thermal movement on rigid concrete.",
+      "The 18 m diameter round profile produced an approximately 255 m² circular base footprint. Continuous torch-on laps, corner detailing and penetration seals had to remain watertight under thermal movement on rigid concrete.",
     approach:
       "Damtech prepared the concrete surfaces and applied modified bitumen torch-on sheets in runs planned to maintain continuous laps across the round dam. Work was staged to suit site conditions suitable for torch application in the Lowveld.",
     result:
-      "Approximately 255 m² of torch-on bitumen waterproofing was completed on the 18 m diameter concrete dam, supporting improved water retention on the structure.",
+      "Torch-on bitumen waterproofing was completed on the 18 m diameter concrete dam (approximately 255 m² circular base footprint). Base footprint is calculated from diameter — not a measured installed membrane quantity.",
     outcomes: [
-      "18 m diameter round concrete dam — approximately 255 m² torch-on bitumen waterproofing.",
+      "18 m diameter round concrete dam — approximately 255 m² circular base footprint (calculated from diameter).",
+      "Installed membrane area higher once walls, overlaps and detailing are included (about +50 m² for a 2.3 m wall).",
       "Surface preparation and continuous membrane laps across rigid concrete.",
       "Detailing at corners, outlets and penetrations completed to torch-on practice.",
-      "Improved retention for stored water in a Lowveld water storage application.",
     ],
     summary:
-      "Tzaneen round concrete dam waterproofed with torch-on bitumen — 18 m diameter, approximately 255 m².",
+      "Tzaneen round concrete dam waterproofed with torch-on bitumen — 18 m diameter, approximately 255 m² base footprint.",
     galleryIntro:
       "Torch-on bitumen waterproofing on Damtech's 18 m diameter concrete dam project near Tzaneen, Limpopo.",
     images: [
       projectImage(
         IMAGE_PATHS.torchOnConcreteDam18mTzaneen,
-        "Torch-on bitumen waterproofing on an 18 m diameter concrete dam",
+        "Torch-on bitumen waterproofing on an 18 m diameter concrete dam near Tzaneen",
         "Torch-on bitumen waterproofing applied to a round concrete dam structure.",
       ),
     ],
@@ -520,18 +562,24 @@ export const PROJECT_CASE_STUDIES: ProjectCaseStudy[] = [
     seo: {
       title: "Torch-On Bitumen Concrete Dam Project | Damtech",
       description:
-        "View Damtech's torch-on bitumen waterproofing project for a round concrete dam near Tzaneen. Request a similar waterproofing or concrete reservoir lining quote.",
+        "View Damtech's torch-on bitumen waterproofing project for a round concrete dam near Tzaneen — approximately 255 m² base footprint. Request a similar quote.",
     },
     featuredOnHome: true,
     featuredOrder: 4,
-    featuredArea: "255 m²",
+    featuredArea: "~255 m² base",
     homepageLocationLabel: "Tzaneen",
     homepageServiceLabel: "Torch-On Bitumen",
     homepageLinkLabel: "View Tzaneen torch-on bitumen concrete dam project",
     createdFromAssetName: "Concrete Dam Tzaneen 18m.webp",
+    todo: [
+      "Confirm Tzaneen as the verified project location against the job file.",
+    ],
   },
   {
     slug: "worcester-bitumen-earth-dam-lining-15000m2",
+    // Unpublished until town and measured area are confirmed from job records.
+    draft: true,
+    verified: false,
     title: "Worcester Bitumen Earth Dam Lining — 15,000 m² | Western Cape",
     h1: "Bitumen Earth Dam Lining Project in Worcester, Western Cape — 15,000 m²",
     location: "Worcester, Western Cape",
@@ -593,7 +641,7 @@ export const PROJECT_CASE_STUDIES: ProjectCaseStudy[] = [
       description:
         "View Damtech's bitumen earth dam lining project in Worcester in the Western Cape for water retention and leak prevention. Request a similar dam lining quote.",
     },
-    featuredOnHome: true,
+    featuredOnHome: false,
     featuredOrder: 5,
     featuredArea: "15,000 m²",
     homepageLocationLabel: "Worcester, Western Cape",
@@ -608,6 +656,9 @@ export const PROJECT_CASE_STUDIES: ProjectCaseStudy[] = [
   },
   {
     slug: "villiersdorp-hdpe-dam-lining-8230m2",
+    // Unpublished until town and measured area are confirmed from job records.
+    draft: true,
+    verified: false,
     title: "Villiersdorp HDPE Dam Lining — 8,230 m² | Western Cape",
     h1: "HDPE Dam Lining Project in Villiersdorp, Western Cape — 8,230 m²",
     location: "Villiersdorp, Western Cape",
@@ -671,7 +722,9 @@ export const PROJECT_CASE_STUDIES: ProjectCaseStudy[] = [
 ];
 
 export function getPublishedProjects(): ProjectCaseStudy[] {
-  return PROJECT_CASE_STUDIES.filter((project) => !project.draft);
+  return PROJECT_CASE_STUDIES.filter(
+    (project) => !project.draft && project.verified === true,
+  );
 }
 
 export function getFeaturedHomeProjects(): ProjectCaseStudy[] {
@@ -682,7 +735,7 @@ export function getFeaturedHomeProjects(): ProjectCaseStudy[] {
 
 export function getProjectBySlug(slug: string): ProjectCaseStudy | undefined {
   const project = PROJECT_CASE_STUDIES.find((entry) => entry.slug === slug);
-  if (!project || project.draft) return undefined;
+  if (!project || project.draft || project.verified !== true) return undefined;
   return project;
 }
 
@@ -713,7 +766,7 @@ export function getProjectsMatching(
 export const PROJECTS_INDEX_SEO = {
   title: "Dam Lining & Water Storage Projects | Damtech",
   description:
-    "Real Damtech case studies: HDPE dam liners in Stellenbosch, Grabouw and Centurion, steel tanks in Tulbagh, bitumen lining in Worcester and Hoedspruit — with sizes and photos.",
+    "Real Damtech case studies: HDPE dam liners in Stellenbosch, Grabouw and Centurion, torch-on work in Hoedspruit and Tzaneen — with sizes and photos.",
   path: "/projects",
   h1: "Damtech Project Case Studies",
   image: IMAGE_PATHS.hdpeDamLiningFieldInstallation,

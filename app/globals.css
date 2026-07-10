@@ -482,8 +482,6 @@
 
   /* Mobile-only variants — hidden by default so desktop/tablet copy is unchanged.
      Shown inside the ≤767px hero block below. */
-  .hero-amp-mobile,
-  .home-hero__description--mobile,
   .home-hero__trust-chip-label {
     display: none;
   }
@@ -828,27 +826,17 @@
       color: #35a5f6;
     }
 
-    .hero-amp-desktop,
-    .home-hero__title-solutions,
-    .home-hero__description--full {
+    .home-hero__title-solutions {
       display: none;
     }
 
-    .hero-amp-mobile {
-      display: inline;
-    }
-
-    /* Paragraph — shorter mobile copy */
+    /* Paragraph — tighter measure on small screens; one DOM string only */
     .home-hero__description {
       margin: 1rem 0 0;
       max-width: 34ch;
       font-size: 1.0625rem; /* 17px */
       line-height: 1.5;
       color: rgba(255, 255, 255, 0.88);
-    }
-
-    .home-hero__description--mobile {
-      display: inline;
     }
 
     /* CTAs — full-width stacked */

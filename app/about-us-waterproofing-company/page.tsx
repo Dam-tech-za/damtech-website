@@ -235,7 +235,7 @@ export default function AboutPage() {
 
         compact
 
-        eyebrow="30+ years combined industry experience"
+        eyebrow="More than 30 years of combined team experience"
 
         title={PAGE_SEO.about.h1}
 
@@ -259,15 +259,29 @@ export default function AboutPage() {
 
             <p className="site-prose-card__text">
 
-              We are your trusted experts in earth dam linings, waterproofing and
+              We are Damtech — specialists in earth dam linings, waterproofing and
+              steel water storage tanks. The Damtech team brings more than 30 years
+              of combined experience across dam linings, waterproofing and water-storage
+              projects. We deliver practical solutions that safeguard your investment
+              and support long-term performance.
 
-              steel water storage tank suppliers with over 30 years of experience
+            </p>
 
-              in the industry. With a legacy rooted in excellence, we deliver
+          </article>
 
-              innovative solutions that safeguard your investment and enhance its
+          <article className="site-prose-card">
 
-              longevity.
+            <h2 className="page-section-header__title">Andre de Lange — Owner</h2>
+
+            <span className="page-section-header__divider" aria-hidden />
+
+            <p className="site-prose-card__text">
+
+              Andre has worked in dam lining, waterproofing and water-storage
+              installations since the late 1990s. His experience includes HDPE, PVC,
+              bitumen, steel tanks and concrete roofs across South Africa. At Damtech,
+              he is responsible for site assessment, project supervision, installation,
+              quality checks and client coordination.
 
             </p>
 

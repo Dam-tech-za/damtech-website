@@ -1,4 +1,5 @@
 import type { FAQItem } from "@/components/FAQ";
+import { WARRANTY_PUBLIC } from "@/lib/warranty";
 
 export type FaqCategory = {
   id: string;
@@ -49,7 +50,7 @@ export const FAQ_CATEGORIES: readonly FaqCategory[] = [
       {
         question: "How long do HDPE dam liners last?",
         answer:
-          "Correctly installed UV-stable HDPE dam liners typically perform 20–30 years on agricultural dams, depending on thickness, exposure, water chemistry, anchoring quality and whether livestock or machinery contact the liner. Maintenance inspections help catch edge wear or outlet issues early.",
+          "Correctly installed UV-stable HDPE dam liners typically perform 20–30 years on agricultural dams, depending on thickness, exposure, water chemistry, anchoring quality and whether livestock or machinery contact the liner. Damtech confirms the relevant supplier specifications for each quoted system. Maintenance inspections help catch edge wear or outlet issues early.",
       },
       {
         question: "Hoe lank hou ’n HDPE damvoering?",
@@ -136,19 +137,18 @@ export const FAQ_CATEGORIES: readonly FaqCategory[] = [
     title: "Warranty and Supplier-Backed Materials",
     items: [
       {
-        question: "What warranty applies to supplied materials?",
-        answer:
-          "Selected HDPE, PVC, bitumen and waterproofing materials supplied by Damtech may carry a supplier-backed material warranty where applicable. Warranty terms depend on the qualifying material, supplier conditions, correct use, site conditions and approved installation requirements. We confirm applicable material warranty details in each quote.",
+        question: "What warranty applies to Damtech projects?",
+        answer: WARRANTY_PUBLIC.body,
       },
       {
         question: "Does the supplier-backed material warranty cover installation?",
         answer:
-          "Supplier-backed material warranties apply only to qualifying supplied materials where applicable and are subject to the relevant supplier’s terms, site conditions, correct use and approved installation requirements. Installation or workmanship cover is not automatically included unless separately agreed in writing.",
+          "Supplier-backed material warranties cover qualifying supplied materials under the relevant supplier’s terms. Damtech’s separate workmanship warranty is 12 months from practical completion unless a different period is stated in writing. Coverage, exclusions and maintenance requirements are confirmed in the applicable quotation or contract.",
       },
       {
         question: "Is the material warranty supplier-backed?",
         answer:
-          "On qualifying installations, HDPE, PVC and bitumen materials may carry supplier-backed warranties where applicable. Coverage and exclusions are set by the material supplier; Damtech confirms the applicable material warranty details in each quote.",
+          "Yes — where stated in the project quotation, qualifying materials may carry a supplier-backed material warranty of up to 10 years, subject to the supplier’s terms and conditions. Damtech confirms the applicable material and workmanship warranty details in each quote.",
       },
     ],
   },

@@ -42,7 +42,7 @@ export default function FaqPage() {
       <SiteSection>
         <p className="site-overview__intro">
           Straight answers about dam liners, dam linings, corrugated steel
-          reservoirs and bitumen waterproofing — from 30+ years combined industry
+          reservoirs and bitumen waterproofing — from more than 30 years of combined team
           experience on South African farms, mines and commercial properties. If
           your question is not covered below, call us, use our{" "}
           <Link href="/calculators" className="text-water hover:underline">

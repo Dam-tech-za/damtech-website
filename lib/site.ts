@@ -69,17 +69,26 @@ export const SERVICE_AREA_PROVINCES = [
 
 /** Blog author for visible bylines and Article/BlogPosting schema. */
 export const BLOG_AUTHOR = {
-  name: "Damtech Team",
+  name: "Andre de Lange",
+  role: "Owner",
   path: "/about-us-waterproofing-company",
+  bio:
+    "Andre has worked in dam lining, waterproofing and water-storage installations since the late 1990s. His experience includes HDPE, PVC, bitumen, steel tanks and concrete roofs across South Africa. At Damtech, he is responsible for site assessment, project supervision, installation, quality checks and client coordination.",
 } as const;
 
-// TODO(business-confirm): confirm Betty's Bay is the designated head office before deploy.
+/**
+ * Operating bases — Damtech works from these locations but clients do not visit.
+ * Do not publish street addresses on the website or in LocalBusiness schema.
+ * Hide street addresses on Google Business Profile (service-area business).
+ */
 export const OFFICES = [
   {
     id: "western-cape",
-    name: "Head Office — Betty's Bay, Western Cape",
+    name: "Western Cape — Betty's Bay",
+    publicLabel: "Western Cape service area",
     phone: siteConfig.phone,
     googleBusinessProfileUrl: "https://share.google/Xbvr3S0ksWMMyIEuL",
+    showStreetAddress: false,
     address: {
       streetAddress: "2484 Anglers Rd",
       suburb: "Betty's Bay",
@@ -91,9 +100,11 @@ export const OFFICES = [
   },
   {
     id: "pretoria",
-    name: "Regional Office — Pretoria (Villieria), Gauteng",
+    name: "Gauteng — Pretoria",
+    publicLabel: "Gauteng service area",
     phone: siteConfig.phone,
     googleBusinessProfileUrl: "https://share.google/NxSGti3zXVB01SI3Z",
+    showStreetAddress: false,
     address: {
       streetAddress: "926, 33rd Avenue",
       suburb: "Villieria",
@@ -105,10 +116,6 @@ export const OFFICES = [
   },
 ] as const;
 
-/** Google Maps embed for the head office (no API key required). */
-export const HEAD_OFFICE_MAP_EMBED_URL =
-  "https://maps.google.com/maps?q=2484+Anglers+Rd,+Betty's+Bay,+7141,+South+Africa&hl=en&z=15&output=embed";
-
 export type Office = (typeof OFFICES)[number];
 
 export function formatOfficeLocality(
@@ -118,8 +125,10 @@ export function formatOfficeLocality(
   return suburb && suburb !== city ? `${suburb}, ${city}` : city;
 }
 
+/** Public NAP lines — locality/province only (no street) for service-area positioning. */
 export function formatOfficeAddressLines(office: Office): string[] {
-  if ("address" in office && office.address) {
+  if (!("address" in office) || !office.address) return [];
+  if (office.showStreetAddress) {
     const { streetAddress, postalCode, province } = office.address;
     return [
       `${streetAddress}`,
@@ -127,10 +136,14 @@ export function formatOfficeAddressLines(office: Office): string[] {
       province,
     ];
   }
-  return [];
+  return [office.address.province, "Nationwide project coverage"];
 }
 
 export const HEAD_OFFICE = OFFICES[0];
+
+/** @deprecated Street-level map embed — do not use on public pages (service-area business). */
+export const HEAD_OFFICE_MAP_EMBED_URL =
+  "https://maps.google.com/maps?q=Betty's+Bay,+Western+Cape,+South+Africa&hl=en&z=10&output=embed";
 
 /** Towns and districts named on regional service pages — contact page “Areas we work in”. */
 export const CONTACT_SERVICE_AREAS = {

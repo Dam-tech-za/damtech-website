@@ -37,21 +37,12 @@ import {
 import { SITE_IMAGES } from "@/lib/images";
 
 import {
-
   CONTACT_SERVICE_AREAS,
-
   OFFICES,
-
   formatOfficeAddressLines,
-
-  HEAD_OFFICE_MAP_EMBED_URL,
-
   phoneTel,
-
   siteConfig,
-
 } from "@/lib/site";
-
 import { PageSectionHeader } from "@/components/PageSectionHeader";
 import { createOfficeLocalBusinessSchemas } from "@/lib/seo";
 
@@ -139,11 +130,11 @@ function ContactLocationsSection() {
 
         id="our-locations-heading"
 
-        eyebrow="OUR OFFICES"
+        eyebrow="SERVICE AREAS"
 
-        title="Our Offices"
+        title="Where We Operate"
 
-        intro="Damtech offices in Gauteng and the Western Cape with nationwide project coverage for dam linings, waterproofing and water storage."
+        intro="Damtech operates from Western Cape and Gauteng bases and mobilises nationwide for dam linings, waterproofing and water storage. These are operating bases — not walk-in offices."
 
       />
 
@@ -180,28 +171,6 @@ function ContactLocationsSection() {
               {office.phone}
 
             </a>
-
-            {"googleBusinessProfileUrl" in office &&
-
-            office.googleBusinessProfileUrl ? (
-
-              <a
-
-                href={office.googleBusinessProfileUrl}
-
-                target="_blank"
-
-                rel="noopener noreferrer"
-
-                className="home-services__card-link mt-2"
-
-              >
-
-                View on Google Maps →
-
-              </a>
-
-            ) : null}
 
           </li>
 
@@ -264,26 +233,6 @@ function ContactLocationsSection() {
       </div>
 
 
-
-      <div className="mt-10 overflow-hidden rounded-2xl border border-slate-200 shadow-sm">
-
-        <iframe
-
-          title="Damtech head office on Google Maps"
-
-          src={HEAD_OFFICE_MAP_EMBED_URL}
-
-          className="h-[28rem] w-full border-0 sm:h-[32rem]"
-
-          loading="lazy"
-
-          referrerPolicy="no-referrer-when-downgrade"
-
-          allowFullScreen
-
-        />
-
-      </div>
 
     </SiteSection>
 

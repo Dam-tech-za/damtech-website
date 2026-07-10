@@ -100,7 +100,7 @@ export function Footer() {
       <div className="border-t border-slate-700/60">
         <div className="site-container flex flex-col gap-4 px-4 py-6 sm:flex-row sm:items-start sm:justify-between sm:px-6 lg:px-8">
           <div>
-            <p className="text-sm font-semibold text-white">Offices</p>
+            <p className="text-sm font-semibold text-white">Service areas</p>
             <ul className="mt-2 space-y-3 text-sm text-slate-300">
               {OFFICES.map((office) => (
                 <li key={office.id}>
@@ -116,21 +116,12 @@ export function Footer() {
                   >
                     {office.phone}
                   </a>
-                  {"googleBusinessProfileUrl" in office && office.googleBusinessProfileUrl ? (
-                    <a
-                      href={office.googleBusinessProfileUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="mt-1 block text-sky-200 hover:text-white"
-                    >
-                      Google Maps →
-                    </a>
-                  ) : null}
                 </li>
               ))}
             </ul>
             <p className="mt-4 text-sm text-slate-300">
-              We work nationwide — don&apos;t let our location fool you.
+              We operate from Western Cape and Gauteng bases and mobilise nationwide.
+              Clients are served on site — these are not walk-in offices.
             </p>
           </div>
           <p className="text-xs text-slate-300 sm:text-right">

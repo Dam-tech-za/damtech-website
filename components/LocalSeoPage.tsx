@@ -12,7 +12,6 @@ import { DAM_LINERS_SCHEMA_OFFERS } from "@/lib/service-pages-content";
 import type { LocalLandingPage } from "@/lib/local-pages";
 import { RELATED_SERVICE_LINKS } from "@/lib/related-services";
 import {
-  formatOfficeAddressLines,
   HEAD_OFFICE,
   phoneTel,
 } from "@/lib/site";
@@ -84,31 +83,20 @@ export function LocalSeoPage({ page }: LocalSeoPageProps) {
 
             {isWesternCape ? (
               <aside className="mt-8 rounded-lg border border-slate-200 bg-slate-50 p-5">
-                {/* TODO(business-confirm): confirm Betty's Bay is the designated head office before deploy. */}
                 <h2 className="text-lg font-semibold text-navy">
-                  Western Cape Head Office — Betty&apos;s Bay
+                  Western Cape service area
                 </h2>
                 <p className="mt-2 text-sm leading-relaxed text-slate-600">
-                  {formatOfficeAddressLines(HEAD_OFFICE).join(", ")}
+                  Damtech operates from Betty&apos;s Bay in the Western Cape and
+                  mobilises across the province for dam lining, waterproofing and
+                  water-storage projects. This is an operating base — not a walk-in
+                  office.
                 </p>
                 <p className="mt-2 text-sm text-slate-600">
                   <a href={`tel:${phoneTel}`} className="text-water hover:underline">
                     {HEAD_OFFICE.phone}
                   </a>
                 </p>
-                {"googleBusinessProfileUrl" in HEAD_OFFICE &&
-                HEAD_OFFICE.googleBusinessProfileUrl ? (
-                  <p className="mt-2 text-sm">
-                    <a
-                      href={HEAD_OFFICE.googleBusinessProfileUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="font-medium text-water hover:underline"
-                    >
-                      Google Maps →
-                    </a>
-                  </p>
-                ) : null}
               </aside>
             ) : null}
 
