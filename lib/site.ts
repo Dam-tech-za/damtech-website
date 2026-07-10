@@ -158,19 +158,47 @@ export type NavLink = {
   label: string;
 };
 
-/** Desktop header navigation (quote button is separate). */
-export const HEADER_NAV_LINKS: NavLink[] = [
-  { href: "/", label: "Home" },
+/** Service pages linked from the header Services dropdown. */
+export const SERVICES_DROPDOWN_LINKS: NavLink[] = [
   { href: "/dam-liners", label: "Dam Liners" },
-  { href: "/steel-water-storage-tanks", label: "Steel Tanks" },
+  { href: "/steel-water-storage-tanks", label: "Steel Water Tanks" },
   { href: "/bitumen-waterproofing", label: "Waterproofing" },
-  { href: "/services", label: "Services" },
-  { href: "/projects", label: "Projects" },
-  { href: "/blog", label: "Blog" },
-  { href: "/contact", label: "Contact" },
+  { href: "/reservoir-lining", label: "Reservoir Lining" },
+  { href: "/dam-repair-services", label: "Leaking Dam Repair" },
 ];
 
-/** @deprecated Use HEADER_NAV_LINKS */
+export type HeaderNavItem =
+  | { type: "link"; href: string; label: string }
+  | {
+      type: "dropdown";
+      label: string;
+      href: string;
+      children: readonly NavLink[];
+    };
+
+/** Desktop + mobile header navigation (quote button is separate). */
+export const HEADER_NAV_ITEMS: HeaderNavItem[] = [
+  { type: "link", href: "/", label: "Home" },
+  {
+    type: "dropdown",
+    label: "Services",
+    href: "/services",
+    children: SERVICES_DROPDOWN_LINKS,
+  },
+  { type: "link", href: "/projects", label: "Projects" },
+  { type: "link", href: "/calculators", label: "Calculators" },
+  { type: "link", href: "/blog", label: "Blog" },
+  { type: "link", href: "/contact", label: "Contact" },
+];
+
+/** Flat nav links for legacy consumers. */
+export const HEADER_NAV_LINKS: NavLink[] = HEADER_NAV_ITEMS.flatMap((item) =>
+  item.type === "link"
+    ? [{ href: item.href, label: item.label }]
+    : [{ href: item.href, label: item.label }, ...item.children],
+);
+
+/** @deprecated Use HEADER_NAV_ITEMS */
 export const NAV_LINKS = HEADER_NAV_LINKS;
 
 export const FOOTER_SERVICE_LINKS: NavLink[] = [
@@ -186,6 +214,7 @@ export const FOOTER_COMPANY_LINKS: NavLink[] = [
   { href: "/about-us-waterproofing-company", label: "About Damtech" },
   { href: "/projects", label: "Projects" },
   { href: "/services", label: "All Services" },
+  { href: "/calculators", label: "Calculators" },
   { href: "/blog", label: "Blog" },
   { href: "/contact", label: "Contact" },
   { href: "/faq", label: "FAQ" },
@@ -232,9 +261,9 @@ export const PROJECTS = [
     detail: "HDPE Dam Lining — 13,360 m²",
   },
   {
-    href: "/projects/corrugated-steel-water-tank-installation",
-    location: "Witbank",
-    detail: "Steel Water Tanks — 6 × 60 kL",
+    href: "/projects/western-cape-steel-water-tank",
+    location: "Western Cape",
+    detail: "Steel Water Tanks",
   },
   {
     href: "/projects/marico-hill-game-lodge-dam-lining",
@@ -279,4 +308,5 @@ export const INDEXABLE_STATIC_PATHS = [
   "/dam-repair-services",
   "/reservoir-lining",
   "/dam-lining-cost-south-africa",
+  "/calculators",
 ] as const;

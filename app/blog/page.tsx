@@ -47,7 +47,7 @@ export default function BlogPage() {
           <BlogCategoryFilter activeCategory="all" />
         </div>
 
-        <p className="mt-6 text-sm text-slate-500">
+        <p className="mt-6 text-sm text-subtle">
           Showing {pagination.items.length} of {pagination.totalItems} articles
         </p>
 

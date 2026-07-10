@@ -184,11 +184,11 @@ export default function ServicesPage() {
 
           eyebrow="RELATED PAGES"
 
-          intro="Browse dam linings, waterproofing, steel water tanks, projects and quote options."
+          intro="Browse dam linings, waterproofing, steel water tanks, calculators, projects and quote options."
 
           links={[
 
-            { href: "/dam-liners", label: "Dam Linings" },
+            { href: "/dam-liners", label: "Dam Liners" },
 
             { href: "/hdpe-dam-lining", label: "HDPE Dam Lining" },
 
@@ -199,6 +199,8 @@ export default function ServicesPage() {
             { href: "/dam-repair-services", label: "Leaking Dam Repair" },
 
             { href: "/reservoir-lining", label: "Reservoir Lining" },
+
+            { href: "/calculators", label: "Damtech Calculators" },
 
             { href: "/projects", label: "Project Case Studies" },
 

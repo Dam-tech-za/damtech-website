@@ -28,6 +28,8 @@ export type SubServicePageConfig = {
   sectionCtaTitle?: string;
   ctaTitle: string;
   ctaDescription: string;
+  /** Additional crawlable images shown below the overview image. */
+  supportImages?: readonly { path: string; alt: string; caption?: string }[];
 };
 
 export const HDPE_DAM_LINING_PAGE: SubServicePageConfig = {
@@ -108,6 +110,7 @@ export const HDPE_DAM_LINING_PAGE: SubServicePageConfig = {
     },
   ],
   relatedLinks: [
+    { href: "/calculators", label: "Dam Lining Area Calculator" },
     { href: "/dam-liners", label: "All Dam Lining Types" },
     { href: "/pvc-dam-lining", label: "PVC Dam Lining" },
     { href: "/farm-dam-liners", label: "Farm Dam Linings" },
@@ -190,6 +193,7 @@ export const PVC_DAM_LINING_PAGE: SubServicePageConfig = {
     },
   ],
   relatedLinks: [
+    { href: "/calculators", label: "Dam Lining Area Calculator" },
     { href: "/dam-liners", label: "All Dam Lining Types" },
     { href: "/hdpe-dam-lining", label: "HDPE Dam Lining" },
     { href: "/steel-water-storage-tanks", label: "Steel Water Tanks" },
@@ -270,6 +274,7 @@ export const TORCH_ON_DAM_LINING_PAGE: SubServicePageConfig = {
     },
   ],
   relatedLinks: [
+    { href: "/calculators", label: "Waterproofing Area Calculator" },
     { href: "/dam-liners", label: "All Dam Lining Types" },
     { href: "/hdpe-dam-lining", label: "HDPE Dam Lining" },
     { href: "/bitumen-waterproofing", label: "Bitumen Waterproofing" },
@@ -286,9 +291,9 @@ export const DAM_REPAIR_SERVICES_PAGE: SubServicePageConfig = {
   slug: "dam-repair-services",
   title: "Leaking Dam Repair Services | Damtech South Africa",
   description:
-    "Damtech repairs leaking dams, failed liners and water storage systems using HDPE patching, relining and practical site-specific repair methods. Request an assessment.",
+    "Damtech helps assess leaking dams, dam lining damage and maintenance needs with practical repair planning, inspections and waterproofing solutions across South Africa.",
   h1: "Leaking Dam Repair Services",
-  image: IMAGE_PATHS.hdpeDamLiningEarthDam,
+  image: IMAGE_PATHS.damLiningMaintenanceInspection1,
   serviceName: "Leaking Dam Repair",
   schemaOffers: [
     "HDPE liner patch welding",
@@ -374,6 +379,7 @@ export const DAM_REPAIR_SERVICES_PAGE: SubServicePageConfig = {
     },
   ],
   relatedLinks: [
+    { href: "/calculators#leaking-dam-repair", label: "Leaking Dam Repair Assessment" },
     { href: "/dam-liners", label: "Dam Linings" },
     { href: "/hdpe-dam-lining", label: "HDPE Dam Lining" },
     { href: "/reservoir-lining", label: "Reservoir Lining" },
@@ -384,6 +390,18 @@ export const DAM_REPAIR_SERVICES_PAGE: SubServicePageConfig = {
   ctaTitle: "Request a Leaking Dam Assessment",
   ctaDescription:
     "Describe the leak, dam size and location — we will advise on patch, repair or reline options.",
+  supportImages: [
+    {
+      path: IMAGE_PATHS.damLiningRepairMaintenance2,
+      alt: "Dam lining repair and maintenance work for water retention",
+      caption: "Maintenance work on a dam lining system before repair.",
+    },
+    {
+      path: IMAGE_PATHS.leakingDamRepairAssessment3,
+      alt: "Leaking dam repair assessment and maintenance planning by Damtech",
+      caption: "Leak assessment and maintenance planning for water storage structures.",
+    },
+  ],
 };
 
 export const RESERVOIR_LINING_PAGE: SubServicePageConfig = {
@@ -392,7 +410,7 @@ export const RESERVOIR_LINING_PAGE: SubServicePageConfig = {
   description:
     "Reservoir lining and relining for steel, concrete and farm water storage systems. Damtech installs PVC, HDPE and bitumen lining solutions nationwide.",
   h1: "Reservoir Lining Contractors",
-  image: IMAGE_PATHS.corrugatedSteelWaterTank,
+  image: IMAGE_PATHS.westernCapeSteelWaterTankProject,
   serviceName: "Reservoir Lining",
   schemaOffers: [
     "Steel reservoir PVC lining",
@@ -477,6 +495,7 @@ export const RESERVOIR_LINING_PAGE: SubServicePageConfig = {
     },
   ],
   relatedLinks: [
+    { href: "/calculators", label: "Steel Water Tank Size Calculator" },
     { href: "/steel-water-storage-tanks", label: "Steel Water Tanks" },
     { href: "/dam-liners", label: "Dam Linings" },
     { href: "/pvc-dam-lining", label: "PVC Dam Linings" },
@@ -587,6 +606,7 @@ export const DAM_LINING_COST_PAGE: SubServicePageConfig = {
     },
   ],
   relatedLinks: [
+    { href: "/calculators", label: "Dam Lining Area Calculator" },
     { href: "/hdpe-dam-lining", label: "HDPE Dam Lining" },
     { href: "/pvc-dam-lining", label: "PVC Dam Linings" },
     { href: "/farm-dam-liners", label: "Farm Dam Linings" },

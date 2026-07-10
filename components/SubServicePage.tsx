@@ -55,13 +55,12 @@ type SubServicePageProps = {
 
 
 function imageForPage(page: SubServicePageConfig) {
-
   if (page.slug === "hdpe-dam-lining") return SITE_IMAGES.damLiners;
-
   if (page.slug === "torch-on-dam-lining") return SITE_IMAGES.bitumen;
-
+  if (page.slug === "dam-repair-services") return SITE_IMAGES.damRepair;
+  if (page.slug === "reservoir-lining") return SITE_IMAGES.reservoir;
+  if (page.slug === "pvc-dam-lining") return SITE_IMAGES.damLiners;
   return SITE_IMAGES.contact;
-
 }
 
 
@@ -159,9 +158,20 @@ export function SubServicePage({ page }: SubServicePageProps) {
           </div>
 
           <div className="site-overview__media">
-
             <PageImage {...imageForPage(page)} />
-
+            {page.supportImages && page.supportImages.length > 0 ? (
+              <ul className="mt-4 grid gap-4 sm:grid-cols-2">
+                {page.supportImages.map((item) => (
+                  <li key={item.path}>
+                    <PageImage
+                      src={item.path}
+                      alt={item.alt}
+                      caption={item.caption}
+                    />
+                  </li>
+                ))}
+              </ul>
+            ) : null}
           </div>
 
         </div>

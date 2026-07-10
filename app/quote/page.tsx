@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Hero } from "@/components/Hero";
 
 import { PageSeo } from "@/components/PageSeo";
@@ -89,6 +90,28 @@ export default function QuotePage() {
           <QuoteTrustPanel />
 
         </div>
+
+      </SiteSection>
+
+
+
+      <SiteSection tone="muted">
+
+        <p className="site-overview__intro max-w-3xl">
+
+          Not sure about dimensions or storage needs?{" "}
+
+          <Link href="/calculators" className="text-water hover:underline">
+
+            Use Damtech&apos;s calculators
+
+          </Link>{" "}
+
+          to estimate dam lining area, steel water tank size or waterproofing material
+
+          before you submit your quote request.
+
+        </p>
 
       </SiteSection>
 

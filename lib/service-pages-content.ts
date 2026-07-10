@@ -130,6 +130,7 @@ export const DAM_LINERS_CONTENT = {
     },
   ] satisfies ServiceFaqItem[],
   relatedLinks: [
+    { href: "/calculators", label: "Dam Lining Area Calculator" },
     { href: "/hdpe-dam-lining", label: "HDPE Dam Lining" },
     { href: "/pvc-dam-lining", label: "PVC Dam Lining" },
     { href: "/torch-on-dam-lining", label: "Torch-On Dam Lining" },
@@ -195,6 +196,7 @@ export const BITUMEN_CONTENT = {
     },
   ] satisfies ServiceFaqItem[],
   relatedLinks: [
+    { href: "/calculators", label: "Waterproofing Area Calculator" },
     { href: "/services", label: "All Waterproofing Services" },
     { href: "/dam-liners", label: "Dam Linings" },
     { href: "/faq", label: "Waterproofing FAQ" },
@@ -258,6 +260,7 @@ export const STEEL_TANKS_CONTENT = {
     },
   ] satisfies ServiceFaqItem[],
   relatedLinks: [
+    { href: "/calculators", label: "Steel Water Tank Size Calculator" },
     { href: "/dam-liners", label: "Dam Linings" },
     { href: "/agricultural-water-storage", label: "Agricultural Water Storage" },
     { href: "/projects", label: "Tank Installation Projects" },

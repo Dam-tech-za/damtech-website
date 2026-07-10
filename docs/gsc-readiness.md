@@ -10,15 +10,18 @@ After deploy, complete these manual steps in [Google Search Console](https://sea
 ## Sitemap
 
 - Submit: `https://www.dam-tech.co.za/sitemap.xml`
-- Confirm sitemap lists **www** URLs only (no apex, no `/waterproofing-and-dam-liners/`, no `/category/`).
+- Confirm sitemap lists **www** URLs only (no apex, no `/waterproofing-and-dam-liners/`, no `/category/uncategorized/`).
+- Confirm `/calculators/` appears once at priority 0.9.
 
 ## URL inspection (Request indexing after deploy)
 
 - `https://www.dam-tech.co.za/`
+- `https://www.dam-tech.co.za/calculators/`
 - `https://www.dam-tech.co.za/dam-liners/`
 - `https://www.dam-tech.co.za/steel-water-storage-tanks/`
 - `https://www.dam-tech.co.za/bitumen-waterproofing/`
 - `https://www.dam-tech.co.za/projects/`
+- `https://www.dam-tech.co.za/quote/`
 - `https://www.dam-tech.co.za/faq/`
 
 ## Redirect checks
@@ -31,6 +34,8 @@ After deploy, complete these manual steps in [Google Search Console](https://sea
 ## Monitor
 
 - Non-www impressions declining as www canonical consolidates.
+- `/calculators/` indexed and appearing in internal link graph.
+- Sitelink candidates: Dam Liners, Steel Tanks, Calculators, Projects, Quote, FAQ (Google decides automatically).
 - 404s from legacy WordPress URLs (add 301s in `lib/redirects.ts` as needed).
 - FAQ rich results after `/faq/` re-crawl.
 

@@ -25,7 +25,7 @@ export function RelatedPosts({
             >
               <time
                 dateTime={post.date}
-                className="text-xs font-medium uppercase tracking-wide text-slate-500"
+                className="text-xs font-medium uppercase tracking-wide text-subtle"
               >
                 {new Date(post.date).toLocaleDateString("en-ZA", {
                   year: "numeric",

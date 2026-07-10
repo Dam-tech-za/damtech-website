@@ -27,6 +27,7 @@ const RESERVED = new Set([
   "bitumen-waterproofing-services-and-more",
   "bitumen-waterproofing",
   "blog",
+  "calculators",
   "category",
   "contact",
   "dam-liners",

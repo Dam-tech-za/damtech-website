@@ -128,4 +128,34 @@ export const redirects: Redirect[] = [
     destination: "/projects/hoedspruit-bitumen-dam-lining/",
     permanent: true,
   },
+  {
+    source: "/projects/corrugated-steel-water-tank-installation",
+    destination: "/projects/western-cape-steel-water-tank/",
+    permanent: true,
+  },
+  {
+    source: "/projects/corrugated-steel-water-tank-installation/",
+    destination: "/projects/western-cape-steel-water-tank/",
+    permanent: true,
+  },
+  {
+    source: "/projects/free-state-bitumen-earth-dam-lining-15000m2",
+    destination: "/projects/western-cape-bitumen-earth-dam-lining-15000m2/",
+    permanent: true,
+  },
+  {
+    source: "/projects/free-state-bitumen-earth-dam-lining-15000m2/",
+    destination: "/projects/western-cape-bitumen-earth-dam-lining-15000m2/",
+    permanent: true,
+  },
+  {
+    source: "/projects/limpopo-hdpe-dam-lining-8230m2",
+    destination: "/projects/western-cape-hdpe-dam-lining-8230m2/",
+    permanent: true,
+  },
+  {
+    source: "/projects/limpopo-hdpe-dam-lining-8230m2/",
+    destination: "/projects/western-cape-hdpe-dam-lining-8230m2/",
+    permanent: true,
+  },
 ];

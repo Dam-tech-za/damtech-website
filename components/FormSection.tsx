@@ -34,7 +34,7 @@ function Field({
         {required ? <span className="text-red-600"> *</span> : null}
       </label>
       {children}
-      {hint ? <p className="text-xs text-slate-500">{hint}</p> : null}
+      {hint ? <p className="text-xs text-subtle">{hint}</p> : null}
     </div>
   );
 }
@@ -124,7 +124,7 @@ export function FormSection({
           </Field>
         </div>
 
-        <p className="text-xs text-slate-500">
+        <p className="text-xs text-subtle">
           Provide at least one of email or phone so we can respond.
         </p>
 
@@ -169,10 +169,10 @@ export function FormSection({
           <summary className="cursor-pointer list-none px-5 py-4 font-semibold text-navy marker:content-none [&::-webkit-details-marker]:hidden">
             <span className="flex items-center justify-between gap-3">
               <span>Optional project details</span>
-              <span className="text-sm font-normal text-slate-500 group-open:hidden">
+              <span className="text-sm font-normal text-subtle group-open:hidden">
                 Company, province, size, location
               </span>
-              <span className="hidden text-sm font-normal text-slate-500 group-open:inline">
+              <span className="hidden text-sm font-normal text-subtle group-open:inline">
                 Hide details
               </span>
             </span>
@@ -239,7 +239,7 @@ export function FormSection({
           </p>
         ) : null}
 
-        <p className="text-xs text-slate-500">
+        <p className="text-xs text-subtle">
           Your details are only used to respond to your enquiry.
         </p>
 

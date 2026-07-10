@@ -26,7 +26,9 @@ function staticPriority(path: string): number {
     path === "/steel-water-storage-tanks" ||
     path === "/bitumen-waterproofing" ||
     path === "/contact" ||
-    path === "/quote"
+    path === "/quote" ||
+    path === "/faq" ||
+    path === "/calculators"
   ) {
     return 0.9;
   }

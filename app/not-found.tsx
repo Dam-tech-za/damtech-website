@@ -56,7 +56,7 @@ export default function NotFound() {
         ))}
       </ul>
 
-      <p className="mt-8 text-sm text-slate-500">
+      <p className="mt-8 text-sm text-subtle">
         Or call{" "}
         <a href={`tel:${phoneTel}`} className="font-medium text-water">
           {siteConfig.phone}

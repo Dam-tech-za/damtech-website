@@ -24,7 +24,7 @@ export function Breadcrumbs({
   const currentClass =
     variant === "dark" ? "text-white/90" : "text-slate-600";
   const separatorClass =
-    variant === "dark" ? "text-slate-400" : "text-slate-400";
+    variant === "dark" ? "text-slate-400" : "text-subtle";
 
   return (
     <nav aria-label="Breadcrumb" className={className}>

@@ -1,5 +1,6 @@
 import type { BlogPost } from "@/lib/posts";
 import { scoreTopics } from "@/lib/post-topics";
+import { CALCULATORS_RELATED_LINK } from "@/lib/calculator-links";
 
 export type InternalServiceLink = {
   href: string;
@@ -108,6 +109,12 @@ const SERVICE_PAGES: readonly InternalServiceLink[] = [
     label: "Our Projects",
     description:
       "See completed dam lining, steel tank and waterproofing installations nationwide.",
+  },
+  {
+    href: CALCULATORS_RELATED_LINK.href,
+    label: CALCULATORS_RELATED_LINK.label,
+    description:
+      "Estimate dam lining area, steel water tank size, waterproofing area and water storage requirements before requesting a quote.",
   },
   {
     href: "/quote/",

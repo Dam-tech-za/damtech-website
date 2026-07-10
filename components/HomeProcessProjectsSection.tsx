@@ -7,7 +7,8 @@ import {
   LayersIcon,
   SearchIcon,
 } from "@/components/icons/StrokeIcons";
-import { FEATURED_PROJECT_IMAGES, IMAGE_ALTS, IMAGE_PATHS } from "@/lib/images";
+import { FEATURED_PROJECT_IMAGES } from "@/lib/images";
+import { getFeaturedHomeProjects } from "@/lib/projects";
 
 const PROCESS_STEPS = [
   {
@@ -48,62 +49,10 @@ const PROCESS_STEPS = [
   },
 ] as const;
 
-type FeaturedProject = {
-  id: string;
-  location: string;
-  service: string;
-  area: string;
-  href: string;
-  linkLabel: string;
-  image: (typeof FEATURED_PROJECT_IMAGES)[keyof typeof FEATURED_PROJECT_IMAGES];
-  alt: string;
-};
-
-const FEATURED_PROJECTS: FeaturedProject[] = [
-  {
-    id: "centurion",
-    location: "Centurion",
-    service: "HDPE Dam Lining",
-    area: "1,200 m²",
-    href: "/projects/centurion-hdpe-dam-liner",
-    linkLabel: "View Centurion HDPE dam lining project",
-    image: FEATURED_PROJECT_IMAGES.centurion,
-    alt: IMAGE_ALTS[IMAGE_PATHS.hartswaterHdpeDamLiningProject],
-  },
-  {
-    id: "grabouw",
-    location: "Grabouw",
-    service: "HDPE Dam Lining",
-    area: "3,400 m²",
-    href: "/projects/grabouw-hdpe-farm-dam",
-    linkLabel: "View Grabouw HDPE dam lining project",
-    image: FEATURED_PROJECT_IMAGES.grabouw,
-    alt: IMAGE_ALTS[IMAGE_PATHS.grabouwHdpeDamLiningAfter],
-  },
-  {
-    id: "hoedspruit",
-    location: "Hoedspruit",
-    service: "Bitumen Torch-On",
-    area: "550 m²",
-    href: "/projects/hoedspruit-bitumen-dam-lining",
-    linkLabel: "View Hoedspruit bitumen torch-on waterproofing project",
-    image: FEATURED_PROJECT_IMAGES.hoedspruit,
-    alt: "Bitumen torch-on waterproofing project completed by Damtech in Hoedspruit",
-  },
-  {
-    id: "stellenbosch",
-    location: "Stellenbosch",
-    service: "HDPE Dam Lining",
-    area: "13,360 m²",
-    href: "/projects/hdpe-dam-liner-installation",
-    linkLabel: "View Stellenbosch HDPE dam lining project",
-    image: FEATURED_PROJECT_IMAGES.stellenbosch,
-    alt: IMAGE_ALTS[IMAGE_PATHS.hdpeDamLiningFieldInstallation],
-  },
-];
-
 /** Homepage process + featured projects — below services/maintenance. */
 export function HomeProcessProjectsSection() {
+  const featuredProjects = getFeaturedHomeProjects();
+
   return (
     <section
       className="home-process-projects"
@@ -173,50 +122,82 @@ export function HomeProcessProjectsSection() {
             </Link>
           </header>
 
-          <ul className="home-process-projects__project-grid home-process-projects__project-grid--four">
-            {FEATURED_PROJECTS.map((project) => (
-              <li key={project.id}>
-                <article className="home-process-projects__project-card">
-                  <Link
-                    href={project.href}
-                    className="home-process-projects__project-media"
-                  >
-                    <Image
-                      src={project.image}
-                      alt={project.alt}
-                      fill
-                      loading="lazy"
-                      sizes="(max-width: 767px) 100vw, (max-width: 1023px) 50vw, 33vw"
-                      placeholder="blur"
-                      className="home-process-projects__project-image"
-                    />
-                  </Link>
-                  <div className="home-process-projects__project-body">
-                    <div className="home-process-projects__project-meta">
-                      <h3 className="home-process-projects__project-location">
-                        {project.location}
-                      </h3>
-                      <span className="home-process-projects__project-area">
-                        {project.area}
-                      </span>
-                    </div>
-                    <p className="home-process-projects__project-service">
-                      {project.service}
-                    </p>
+          <ul className="home-process-projects__project-grid">
+            {featuredProjects.map((project) => {
+              const href = `/projects/${project.slug}`;
+              const image =
+                FEATURED_PROJECT_IMAGES[
+                  project.slug as keyof typeof FEATURED_PROJECT_IMAGES
+                ] ?? project.images[0]?.src;
+              const alt = project.images[0]?.alt ?? project.title;
+              const location =
+                project.homepageLocationLabel ??
+                project.location.split(",")[0]?.trim() ??
+                project.location;
+              const area = project.featuredArea ?? "";
+              const service =
+                project.homepageServiceLabel ?? project.serviceType;
+              const linkLabel =
+                project.homepageLinkLabel ??
+                `View ${project.title} project`;
+
+              return (
+                <li key={project.slug}>
+                  <article className="home-process-projects__project-card">
                     <Link
-                      href={project.href}
-                      className="home-process-projects__project-link"
+                      href={href}
+                      className="home-process-projects__project-media"
                     >
-                      {project.linkLabel}
-                      <ArrowRightIcon
-                        className="home-process-projects__project-link-icon"
-                        aria-hidden
-                      />
+                      {typeof image === "string" ? (
+                        <Image
+                          src={image}
+                          alt={alt}
+                          fill
+                          loading="lazy"
+                          sizes="(max-width: 767px) 100vw, (max-width: 1023px) 50vw, 33vw"
+                          className="home-process-projects__project-image"
+                        />
+                      ) : (
+                        <Image
+                          src={image}
+                          alt={alt}
+                          fill
+                          loading="lazy"
+                          sizes="(max-width: 767px) 100vw, (max-width: 1023px) 50vw, 33vw"
+                          placeholder="blur"
+                          className="home-process-projects__project-image"
+                        />
+                      )}
                     </Link>
-                  </div>
-                </article>
-              </li>
-            ))}
+                    <div className="home-process-projects__project-body">
+                      <div className="home-process-projects__project-meta">
+                        <h3 className="home-process-projects__project-location">
+                          {location}
+                        </h3>
+                        {area ? (
+                          <span className="home-process-projects__project-area">
+                            {area}
+                          </span>
+                        ) : null}
+                      </div>
+                      <p className="home-process-projects__project-service">
+                        {service}
+                      </p>
+                      <Link
+                        href={href}
+                        className="home-process-projects__project-link"
+                      >
+                        {linkLabel}
+                        <ArrowRightIcon
+                          className="home-process-projects__project-link-icon"
+                          aria-hidden
+                        />
+                      </Link>
+                    </div>
+                  </article>
+                </li>
+              );
+            })}
           </ul>
         </div>
       </div>

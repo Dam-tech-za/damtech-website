@@ -2,11 +2,13 @@ import type { RelatedServiceLink } from "@/components/RelatedServicesGrid";
 import {
   CogIcon,
   DropletIcon,
+  FileTextIcon,
   LayersIcon,
   MessageIcon,
   ReservoirIcon,
   WrenchIcon,
 } from "@/components/icons/StrokeIcons";
+import { CALCULATORS_RELATED_LINK } from "@/lib/calculator-links";
 
 /** Sitewide related service links — labels use “Dam linings” wording. */
 export const RELATED_SERVICE_LINKS: readonly RelatedServiceLink[] = [
@@ -44,6 +46,16 @@ export const RELATED_SERVICE_LINKS: readonly RelatedServiceLink[] = [
     href: "/dam-repair-services",
     label: "Leaking Dam Repair",
     Icon: WrenchIcon,
+  },
+  {
+    href: "/projects",
+    label: "Projects",
+    Icon: CogIcon,
+  },
+  {
+    href: CALCULATORS_RELATED_LINK.href,
+    label: CALCULATORS_RELATED_LINK.label,
+    Icon: FileTextIcon,
   },
   {
     href: "/services",

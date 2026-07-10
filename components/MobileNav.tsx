@@ -1,12 +1,10 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import type { NavLink } from "@/lib/site";
-
-type MobileNavProps = {
-  links: readonly NavLink[];
-};
+import { isNavItemActive, MobileServicesNav } from "@/components/ServicesNavDropdown";
+import { HEADER_NAV_ITEMS } from "@/lib/site";
 
 function MenuIcon({ open }: { open: boolean }) {
   return (
@@ -27,7 +25,8 @@ function MenuIcon({ open }: { open: boolean }) {
   );
 }
 
-export function MobileNav({ links }: MobileNavProps) {
+export function MobileNav() {
+  const pathname = usePathname();
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
@@ -48,6 +47,8 @@ export function MobileNav({ links }: MobileNavProps) {
     };
   }, [open]);
 
+  const close = () => setOpen(false);
+
   return (
     <div className="relative lg:hidden">
       <button
@@ -67,7 +68,7 @@ export function MobileNav({ links }: MobileNavProps) {
             type="button"
             className="fixed inset-0 top-[var(--header-height)] z-40 bg-navy/30 backdrop-blur-[1px] lg:hidden"
             aria-label="Close menu"
-            onClick={() => setOpen(false)}
+            onClick={close}
           />
           <nav
             id="mobile-nav-panel"
@@ -75,23 +76,39 @@ export function MobileNav({ links }: MobileNavProps) {
             aria-label="Mobile"
           >
             <ul className="site-container flex flex-col gap-1 !px-0">
-              {links.map((link) => (
-                <li key={link.href}>
-                  <Link
-                    href={link.href}
-                    className="block rounded-lg px-3 py-3 text-base font-medium text-slate-700 hover:bg-slate-50 hover:text-water"
-                    onClick={() => setOpen(false)}
-                  >
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
+              {HEADER_NAV_ITEMS.map((item) => {
+                if (item.type === "dropdown") {
+                  return (
+                    <MobileServicesNav
+                      key={item.label}
+                      pathname={pathname}
+                      onNavigate={close}
+                    />
+                  );
+                }
+
+                const active = isNavItemActive(item, pathname);
+                return (
+                  <li key={item.href}>
+                    <Link
+                      href={item.href}
+                      className={`block rounded-lg px-3 py-3 text-base font-medium hover:bg-slate-50 hover:text-water ${
+                        active ? "text-water" : "text-slate-700"
+                      }`}
+                      aria-current={active ? "page" : undefined}
+                      onClick={close}
+                    >
+                      {item.label}
+                    </Link>
+                  </li>
+                );
+              })}
             </ul>
             <div className="site-container mt-3 border-t border-slate-100 pt-4 !px-0">
               <Link
                 href="/quote"
                 className="btn-primary w-full text-center"
-                onClick={() => setOpen(false)}
+                onClick={close}
               >
                 Request a Free Quote
               </Link>

@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Hero } from "@/components/Hero";
 import { FaqCategoryList } from "@/components/FaqCategoryList";
 import { RelatedServicesGrid } from "@/components/RelatedServicesGrid";
@@ -44,7 +45,11 @@ export default function FaqPage() {
           Straight answers about dam liners, dam linings, corrugated steel
           reservoirs and bitumen waterproofing — from 30+ years combined industry
           experience on South African farms, mines and commercial properties. If
-          your question is not covered below, call us or use the quote form.
+          your question is not covered below, call us, use our{" "}
+          <Link href="/calculators" className="text-water hover:underline">
+            planning calculators
+          </Link>
+          , or use the quote form.
         </p>
       </SiteSection>
 

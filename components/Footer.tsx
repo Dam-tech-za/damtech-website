@@ -120,7 +120,7 @@ export function Footer() {
               We work nationwide — don&apos;t let our location fool you.
             </p>
           </div>
-          <p className="text-xs text-slate-400 sm:text-right">
+          <p className="text-xs text-slate-300 sm:text-right">
             &copy; {new Date().getFullYear()} {siteConfig.name}. All rights reserved.
           </p>
         </div>

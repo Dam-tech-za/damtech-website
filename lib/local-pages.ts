@@ -108,7 +108,7 @@ export const LOCAL_LANDING_PAGES: LocalLandingPage[] = [
     h1: "Dam Linings in Johannesburg",
     heroDescription:
       "Johannesburg, the West Rand and East Rand rely on Damtech for dam linings, steel reservoir farms and waterproofing where municipal pressure, mining landscapes and industrial compliance intersect.",
-    image: IMAGE_PATHS.corrugatedSteelWaterTank,
+    image: IMAGE_PATHS.westernCapeSteelWaterTankProject,
     serviceName: "Dam Lining Installation — Johannesburg",
     intro:
       "Johannesburg’s water story is defined by demand exceeding local supply, legacy mining landscapes and development pushing agriculture and industry onto the same dolomitic fringe. Properties on the West Rand near Krugersdorp and Randfontein often store process and irrigation water on disturbed ground. On the East Rand, logistics hubs and agribusiness packhouses need tanks and lined ponds where space is measured in metres, not hectares.",
@@ -152,8 +152,8 @@ export const LOCAL_LANDING_PAGES: LocalLandingPage[] = [
     ],
     relatedProjects: [
       {
-        href: "/projects/corrugated-steel-water-tank-installation",
-        label: "Witbank steel tank installation",
+        href: "/projects/western-cape-steel-water-tank",
+        label: "Western Cape steel water tank project",
       },
       {
         href: "/projects/marico-hill-game-lodge-dam-lining",
@@ -238,7 +238,7 @@ export const LOCAL_LANDING_PAGES: LocalLandingPage[] = [
     h1: "Dam Linings & Steel Water Tanks in Mpumalanga",
     heroDescription:
       "From eMalahleni coal-belt yards to Lowveld sugar and Komatiland forestry — Damtech delivers lining and steel tank solutions for Mpumalanga’s mixed industrial and agricultural economy.",
-    image: IMAGE_PATHS.corrugatedSteelWaterTank,
+    image: IMAGE_PATHS.westernCapeSteelWaterTankProject,
     serviceName: "Water Storage Solutions — Mpumalanga",
     schemaOffers: SERVICES_HUB_SCHEMA_OFFERS,
     intro:
@@ -252,7 +252,7 @@ export const LOCAL_LANDING_PAGES: LocalLandingPage[] = [
     sectors:
       "Coal mining and associated logistics drive process-water dams and multi-tank steel yards. Sugar mills and cane growers line farm dams and repair ageing concrete storage. Timber growers and sawmills store fire and process water. Cattle and game farms on the Highveld fringe share Bushveld-style drinking dam needs with smaller herd densities.",
     waterStorage:
-      "Operators need compliant containment, irrigation reserves through El Niño drought years, and modular tank capacity that can relocate when mine layouts change. Damtech has installed grouped steel reservoirs in the Witbank area for on-site storage — see our project case study for an example configuration.",
+      "Operators need compliant containment, irrigation reserves through El Niño drought years, and modular tank capacity that can relocate when mine layouts change. Damtech supplies corrugated steel water tanks for compact mine and mill yards where dams are impractical on leased land — see our steel water tank project examples for configuration ideas.",
     services: [
       "HDPE lining for irrigation and process dams",
       "Corrugated steel tank supply and grouped installation",
@@ -261,9 +261,9 @@ export const LOCAL_LANDING_PAGES: LocalLandingPage[] = [
     ],
     faqs: [
       {
-        question: "Has Damtech installed tanks in Witbank / eMalahleni?",
+        question: "Does Damtech supply steel water tanks in Mpumalanga?",
         answer:
-          "Yes. We have supplied and installed multiple 60 kL steel tanks in the Witbank area. See our corrugated steel water tank installation project for details.",
+          "Yes. Damtech supplies and installs steel water tanks across South Africa, including Mpumalanga. See our Western Cape steel water tank project for an example configuration, or request a quote for your site.",
       },
       {
         question: "Can dam linings be installed on mining-related dams?",
@@ -283,8 +283,8 @@ export const LOCAL_LANDING_PAGES: LocalLandingPage[] = [
     ],
     relatedProjects: [
       {
-        href: "/projects/corrugated-steel-water-tank-installation",
-        label: "Witbank steel tank installation",
+        href: "/projects/western-cape-steel-water-tank",
+        label: "Western Cape steel water tank project",
       },
     ],
     relatedLocations: [
@@ -352,6 +352,14 @@ export const LOCAL_LANDING_PAGES: LocalLandingPage[] = [
       {
         href: "/projects/grabouw-hdpe-farm-dam",
         label: "Grabouw farm dam lining",
+      },
+      {
+        href: "/projects/western-cape-steel-water-tank",
+        label: "Western Cape steel water tank",
+      },
+      {
+        href: "/projects/western-cape-bitumen-earth-dam-lining-15000m2",
+        label: "Western Cape bitumen earth dam",
       },
     ],
     relatedLocations: [
@@ -475,8 +483,8 @@ export const LOCAL_LANDING_PAGES: LocalLandingPage[] = [
     ],
     relatedProjects: [
       {
-        href: "/projects/corrugated-steel-water-tank-installation",
-        label: "Witbank steel tank yard",
+        href: "/projects/western-cape-steel-water-tank",
+        label: "Western Cape steel water tank project",
       },
       {
         href: "/projects/hoedspruit-bitumen-dam-lining",
@@ -544,7 +552,7 @@ export const LOCAL_LANDING_PAGES: LocalLandingPage[] = [
     relatedProjects: [
       { href: "/projects/hdpe-dam-liner-installation", label: "Stellenbosch HDPE dam" },
       { href: "/projects/grabouw-hdpe-farm-dam", label: "Grabouw farm dam" },
-      { href: "/projects/corrugated-steel-water-tank-installation", label: "Steel tank installation" },
+      { href: "/projects/western-cape-steel-water-tank", label: "Western Cape steel water tank" },
     ],
     relatedLocations: [
       { href: "/farm-dam-liners", label: "Farm dam linings" },

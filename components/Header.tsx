@@ -5,7 +5,8 @@ import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { DamtechLogo } from "@/components/DamtechLogo";
 import { MobileNav } from "@/components/MobileNav";
-import { HEADER_NAV_LINKS } from "@/lib/site";
+import { isNavItemActive, ServicesNavDropdown } from "@/components/ServicesNavDropdown";
+import { HEADER_NAV_ITEMS } from "@/lib/site";
 
 const SCROLL_DELTA = 12;
 const REVEAL_AT_TOP_PX = 120;
@@ -13,11 +14,6 @@ const SCROLLED_AT_PX = 8;
 const HIDE_AFTER_PX = 56;
 const REVEAL_AFTER_PX = 28;
 const HIDE_MIN_Y = 180;
-
-function isActiveNav(href: string, pathname: string): boolean {
-  if (href === "/") return pathname === "/";
-  return pathname === href || pathname.startsWith(`${href}/`);
-}
 
 export function Header() {
   const pathname = usePathname();
@@ -118,16 +114,26 @@ export function Header() {
         </Link>
 
         <nav className="site-header__nav hidden lg:flex" aria-label="Main">
-          {HEADER_NAV_LINKS.map((link) => {
-            const active = isActiveNav(link.href, pathname);
+          {HEADER_NAV_ITEMS.map((item) => {
+            if (item.type === "dropdown") {
+              return (
+                <ServicesNavDropdown
+                  key={item.label}
+                  item={item}
+                  pathname={pathname}
+                />
+              );
+            }
+
+            const active = isNavItemActive(item, pathname);
             return (
               <Link
-                key={link.href}
-                href={link.href}
+                key={item.href}
+                href={item.href}
                 className={`site-header__nav-link${active ? " site-header__nav-link--active" : ""}`}
                 aria-current={active ? "page" : undefined}
               >
-                {link.label}
+                {item.label}
               </Link>
             );
           })}
@@ -137,7 +143,7 @@ export function Header() {
           <Link href="/quote" className="site-header__cta hidden md:inline-flex">
             Request a Free Quote
           </Link>
-          <MobileNav links={HEADER_NAV_LINKS} />
+          <MobileNav />
         </div>
       </div>
     </header>

@@ -178,7 +178,7 @@ export default function DamLinersPage() {
 
     { name: "Services", path: "/services" },
 
-    { name: "Dam Linings", path: seo.path },
+    { name: "Dam Liners", path: seo.path },
 
   ];
 
@@ -224,7 +224,7 @@ export default function DamLinersPage() {
 
         title={seo.h1}
 
-        description="Damtech supplies and installs HDPE, PVC and torch-on dam linings for earth dams, reservoirs, ponds and water storage applications across South Africa."
+        description="Damtech supplies and installs HDPE and PVC dam liners for dam lining, reservoir lining and water storage applications across South Africa."
 
         breadcrumbs={breadcrumbs}
 

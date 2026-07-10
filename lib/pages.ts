@@ -14,7 +14,8 @@ export type StaticPageKey =
   | "blog"
   | "category"
   | "author"
-  | "quote";
+  | "quote"
+  | "calculators";
 
 export type PageSeoEntry = {
   title: string;
@@ -41,7 +42,7 @@ export const PAGE_SEO: Record<StaticPageKey, PageSeoEntry> = {
       "Learn about Damtech, a South African contractor providing dam linings, waterproofing, reservoir lining and water storage solutions for farms, mines, game lodges and commercial properties.",
     path: "/about-us-waterproofing-company",
     h1: "About Damtech",
-    image: IMAGE_PATHS.damtechContractors,
+    image: IMAGE_PATHS.hdpeDamLiningFieldInstallation,
   },
   services: {
     title: "Damtech Services | Dam Linings, Waterproofing & Water Storage",
@@ -57,7 +58,7 @@ export const PAGE_SEO: Record<StaticPageKey, PageSeoEntry> = {
     description:
       "HDPE, PVC and torch-on dam liners for earth dams, reservoirs, ponds and water storage applications across South Africa. Supplier-backed materials where applicable.",
     path: "/dam-liners",
-    h1: "Dam Linings for Earth Dams, Reservoirs and Water Storage",
+    h1: "Dam Liners & Dam Lining Services",
     serviceName: "HDPE Dam Lining",
     image: IMAGE_PATHS.hdpeDamLiningFieldInstallation,
   },
@@ -68,7 +69,7 @@ export const PAGE_SEO: Record<StaticPageKey, PageSeoEntry> = {
     path: "/steel-water-storage-tanks",
     h1: "Steel Water Tanks and Corrugated Reservoirs",
     serviceName: "Corrugated Steel Water Tank Installation",
-    image: IMAGE_PATHS.corrugatedSteelWaterTank,
+    image: IMAGE_PATHS.westernCapeSteelWaterTankProject,
   },
   bitumen: {
     title: "Bitumen Waterproofing South Africa | Torch-On Systems | Damtech",
@@ -109,6 +110,14 @@ export const PAGE_SEO: Record<StaticPageKey, PageSeoEntry> = {
       "Request a free Damtech quote for dam linings, waterproofing, steel water tanks, reservoir lining or leaking dam repair in South Africa.",
     path: "/quote",
     h1: "Request a Free Damtech Quote",
+    image: IMAGE_PATHS.hdpeDamLiningEarthDam,
+  },
+  calculators: {
+    title: "Dam Linings & Water Storage Calculators South Africa | Damtech",
+    description:
+      "Estimate dam lining area, dam liner material, steel water tank size, waterproofing area, rainwater harvesting and water storage needs with Damtech's calculators.",
+    path: "/calculators",
+    h1: "Dam Linings, Waterproofing & Water Storage Calculators",
     image: IMAGE_PATHS.hdpeDamLiningEarthDam,
   },
   category: {

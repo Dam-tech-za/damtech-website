@@ -7,6 +7,6 @@ export const LazyVideoPlayer = dynamic(
   () => import("@/components/VideoPlayer").then((mod) => mod.VideoPlayer),
   {
     ssr: false,
-    loading: () => <p className="text-sm text-slate-500">Loading…</p>,
+    loading: () => <p className="text-sm text-subtle">Loading…</p>,
   },
 );

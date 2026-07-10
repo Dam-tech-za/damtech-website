@@ -64,7 +64,7 @@ export function VideoPlayer({
           loading="lazy"
         />
       ) : (
-        <div className="flex h-full items-center justify-center text-sm text-slate-500">
+        <div className="flex h-full items-center justify-center text-sm text-subtle">
           Loading…
         </div>
       )}

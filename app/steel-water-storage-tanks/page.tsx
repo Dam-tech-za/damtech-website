@@ -302,7 +302,7 @@ export default function SteelTanksPage() {
 
           />
 
-          <p className="text-sm text-slate-500">
+          <p className="text-sm text-subtle">
 
             Full capacity tables available on request. Sizes up to 500 kL+.
 

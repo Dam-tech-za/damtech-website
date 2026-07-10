@@ -32,6 +32,10 @@ export type CreateMetadataInput = {
   ogType?: "website" | "article";
   publishedTime?: string;
   modifiedTime?: string;
+  /** Override Open Graph title when it should differ from the page title. */
+  ogTitle?: string;
+  /** Override Open Graph description when it should differ from meta description. */
+  ogDescription?: string;
 };
 
 export type BreadcrumbItem = {
@@ -190,6 +194,8 @@ export function createMetadata({
   ogType = "website",
   publishedTime,
   modifiedTime,
+  ogTitle,
+  ogDescription,
 }: CreateMetadataInput): Metadata {
   const canonical = absoluteUrl(canonicalPath ?? path);
   const isHome = normalizePath(path) === "/";
@@ -216,8 +222,10 @@ export function createMetadata({
     openGraph: {
       title: isHome
         ? (siteConfig.defaultOgTitle ?? fullTitle)
-        : fullTitle,
-      description: isHome ? siteConfig.defaultOgDescription : metaDescription,
+        : (ogTitle ?? fullTitle),
+      description: isHome
+        ? siteConfig.defaultOgDescription
+        : (ogDescription ?? metaDescription),
       url: canonical,
       siteName: siteConfig.name,
       locale: LOCALE,
@@ -249,6 +257,26 @@ export function createBreadcrumbSchema(items: BreadcrumbItem[]) {
       name: item.name,
       item: absoluteUrl(item.path),
     })),
+  };
+}
+
+export function createWebPageSchema(input: {
+  name: string;
+  description: string;
+  path: string;
+}) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "@id": `${absoluteUrl(input.path)}#webpage`,
+    url: absoluteUrl(input.path),
+    name: input.name,
+    description: input.description,
+    isPartOf: {
+      "@type": "WebSite",
+      "@id": `${siteConfig.domain}/#website`,
+    },
+    inLanguage: "en-ZA",
   };
 }
 
