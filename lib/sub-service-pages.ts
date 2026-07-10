@@ -34,9 +34,9 @@ export type SubServicePageConfig = {
 
 export const HDPE_DAM_LINING_PAGE: SubServicePageConfig = {
   slug: "hdpe-dam-lining",
-  title: "HDPE Dam Lining South Africa | Damtech",
+  title: "HDPE Dam Lining | Geomembrane Installation South Africa | Damtech",
   description:
-    "HDPE geomembrane dam lining for farm dams, mining ponds and irrigation reservoirs. 1 mm–2 mm supply and professional installation across South Africa. Free quote.",
+    "HDPE geomembrane dam lining in 1 mm–2 mm for farm dams, irrigation reservoirs and mining ponds. Welded seams, tested joints and installation across South Africa.",
   h1: "HDPE Dam Lining",
   image: IMAGE_PATHS.hdpeDamLiningFieldInstallation,
   serviceName: "HDPE Dam Lining",
@@ -110,12 +110,16 @@ export const HDPE_DAM_LINING_PAGE: SubServicePageConfig = {
     },
   ],
   relatedLinks: [
-    { href: "/calculators", label: "Dam Lining Area Calculator" },
+    {
+      href: "/calculators/#hdpe-pvc-material",
+      label: "Estimate HDPE/PVC material → Material Calculator",
+    },
     { href: "/dam-liners", label: "All Dam Lining Types" },
     { href: "/pvc-dam-lining", label: "PVC Dam Lining" },
     { href: "/farm-dam-liners", label: "Farm Dam Linings" },
     { href: "/mining-dam-liners", label: "Mining Dam Linings" },
     { href: "/projects", label: "HDPE Project Gallery" },
+    { href: "/quote", label: "Request an HDPE Dam Lining Quote" },
   ],
   projectDetailMatch: /HDPE/i,
   sectionCtaTitle: "Need an HDPE Dam Lining Quote?",
@@ -126,10 +130,10 @@ export const HDPE_DAM_LINING_PAGE: SubServicePageConfig = {
 
 export const PVC_DAM_LINING_PAGE: SubServicePageConfig = {
   slug: "pvc-dam-lining",
-  title: "PVC Dam Linings | Pond, Tank & Reservoir Lining",
+  title: "PVC Dam Lining & Liners South Africa | Damtech",
   description:
-    "Flexible PVC liners for ponds, steel tanks and small reservoirs. Damtech supplies and installs PVC lining systems for agricultural and water storage applications across South Africa.",
-  h1: "PVC Dam Linings",
+    "Flexible PVC dam liners for ponds, steel tanks and small reservoirs. Supply and installation across South Africa with practical advice on liner choice.",
+  h1: "PVC Dam Lining",
   image: IMAGE_PATHS.hdpeDamLiningEarthDam,
   serviceName: "PVC Dam Lining",
   schemaOffers: [
@@ -193,11 +197,15 @@ export const PVC_DAM_LINING_PAGE: SubServicePageConfig = {
     },
   ],
   relatedLinks: [
-    { href: "/calculators", label: "Dam Lining Area Calculator" },
+    {
+      href: "/calculators/#hdpe-pvc-material",
+      label: "Estimate HDPE/PVC material → Material Calculator",
+    },
     { href: "/dam-liners", label: "All Dam Lining Types" },
     { href: "/hdpe-dam-lining", label: "HDPE Dam Lining" },
     { href: "/steel-water-storage-tanks", label: "Steel Water Tanks" },
     { href: "/farm-dam-liners", label: "Farm Dam Linings" },
+    { href: "/quote", label: "Request a PVC Dam Lining Quote" },
   ],
   projectDetailMatch: /PVC|HDPE/i,
   sectionCtaTitle: "Need a PVC Dam Lining Quote?",
@@ -208,9 +216,9 @@ export const PVC_DAM_LINING_PAGE: SubServicePageConfig = {
 
 export const TORCH_ON_DAM_LINING_PAGE: SubServicePageConfig = {
   slug: "torch-on-dam-lining",
-  title: "Torch-On Dam Lining – Cement Dams & Canals | Damtech",
+  title: "Torch-On Dam Lining for Cement Dams | Damtech South Africa",
   description:
-    "Bitumen torch-on dam lining for cement dams, canals and rigid reservoirs. Heat-bonded waterproof membranes installed across South Africa. Free site assessment.",
+    "Bitumen torch-on dam lining heat-bonded to cement and rigid dam surfaces. Repair leaking concrete dams and canals with Damtech's torch-on systems.",
   h1: "Torch-On Dam Lining",
   image: IMAGE_PATHS.bitumenTorchOnWaterproofingDamtech,
   serviceName: "Torch-On Dam Lining",
@@ -274,14 +282,17 @@ export const TORCH_ON_DAM_LINING_PAGE: SubServicePageConfig = {
     },
   ],
   relatedLinks: [
-    { href: "/calculators", label: "Waterproofing Area Calculator" },
+    {
+      href: "/calculators/#waterproofing-area",
+      label: "Estimate waterproofing area → Waterproofing Area Calculator",
+    },
     { href: "/dam-liners", label: "All Dam Lining Types" },
     { href: "/hdpe-dam-lining", label: "HDPE Dam Lining" },
     { href: "/bitumen-waterproofing", label: "Bitumen Waterproofing" },
     { href: "/services", label: "All Services" },
   ],
   projectDetailMatch: /Bitumen/i,
-  sectionCtaTitle: "Need Bitumen Torch-On Dam Lining?",
+  sectionCtaTitle: "Need a Torch-On Dam Lining Quote?",
   ctaTitle: "Book a Torch-On Dam Lining Assessment",
   ctaDescription:
     "Describe your cement dam, canal or reservoir leak — we will advise on torch-on repair or reline options.",
@@ -289,9 +300,9 @@ export const TORCH_ON_DAM_LINING_PAGE: SubServicePageConfig = {
 
 export const DAM_REPAIR_SERVICES_PAGE: SubServicePageConfig = {
   slug: "dam-repair-services",
-  title: "Leaking Dam Repair Services | Damtech South Africa",
+  title: "Leaking Dam Repair & Liner Repairs | Damtech South Africa",
   description:
-    "Damtech helps assess leaking dams, dam lining damage and maintenance needs with practical repair planning, inspections and waterproofing solutions across South Africa.",
+    "Leaking farm dam? Damtech finds and repairs liner punctures, failed seams and seepage on earth dams, cement dams and reservoirs across South Africa. Free assessment.",
   h1: "Leaking Dam Repair Services",
   image: IMAGE_PATHS.damLiningMaintenanceInspection1,
   serviceName: "Leaking Dam Repair",
@@ -379,14 +390,17 @@ export const DAM_REPAIR_SERVICES_PAGE: SubServicePageConfig = {
     },
   ],
   relatedLinks: [
-    { href: "/calculators#leaking-dam-repair", label: "Leaking Dam Repair Assessment" },
+    {
+      href: "/calculators/#leaking-dam-repair",
+      label: "Try the leaking dam repair assessment → Calculator",
+    },
     { href: "/dam-liners", label: "Dam Linings" },
     { href: "/hdpe-dam-lining", label: "HDPE Dam Lining" },
     { href: "/reservoir-lining", label: "Reservoir Lining" },
-    { href: "/services", label: "All Services" },
+    { href: "/quote", label: "Request a Dam Repair Quote" },
   ],
   projectDetailMatch: /HDPE|repair|leak/i,
-  sectionCtaTitle: "Need Leaking Dam Repair?",
+  sectionCtaTitle: "Need a Leaking Dam Repair Quote?",
   ctaTitle: "Request a Leaking Dam Assessment",
   ctaDescription:
     "Describe the leak, dam size and location — we will advise on patch, repair or reline options.",
@@ -406,9 +420,9 @@ export const DAM_REPAIR_SERVICES_PAGE: SubServicePageConfig = {
 
 export const RESERVOIR_LINING_PAGE: SubServicePageConfig = {
   slug: "reservoir-lining",
-  title: "Reservoir Lining Contractors | Damtech South Africa",
+  title: "Reservoir Lining & Relining South Africa | Damtech",
   description:
-    "Reservoir lining and relining for steel, concrete and farm water storage systems. Damtech installs PVC, HDPE and bitumen lining solutions nationwide.",
+    "Reline leaking concrete, brick and corrugated steel reservoirs with PVC, HDPE or bitumen systems. Damtech restores water-tight storage across South Africa.",
   h1: "Reservoir Lining Contractors",
   image: IMAGE_PATHS.tulbaghWesternCapeSteelWaterTankProject,
   serviceName: "Reservoir Lining",
@@ -495,14 +509,17 @@ export const RESERVOIR_LINING_PAGE: SubServicePageConfig = {
     },
   ],
   relatedLinks: [
-    { href: "/calculators", label: "Steel Water Tank Size Calculator" },
+    {
+      href: "/calculators/#steel-tank-size",
+      label: "Steel Water Tank Size Calculator",
+    },
     { href: "/steel-water-storage-tanks", label: "Steel Water Tanks" },
     { href: "/dam-liners", label: "Dam Linings" },
     { href: "/pvc-dam-lining", label: "PVC Dam Linings" },
     { href: "/dam-repair-services", label: "Leaking Dam Repair" },
   ],
   projectDetailMatch: /tank|reservoir|steel|HDPE/i,
-  sectionCtaTitle: "Need Reservoir Lining?",
+  sectionCtaTitle: "Need a Reservoir Lining Quote?",
   ctaTitle: "Request Reservoir Lining Quote",
   ctaDescription:
     "Tell us about your steel tank, concrete dam or earth reservoir — we will recommend the right lining system.",
@@ -606,7 +623,10 @@ export const DAM_LINING_COST_PAGE: SubServicePageConfig = {
     },
   ],
   relatedLinks: [
-    { href: "/calculators", label: "Dam Lining Area Calculator" },
+    {
+      href: "/calculators/#dam-lining-area",
+      label: "Dam Lining Area Calculator",
+    },
     { href: "/hdpe-dam-lining", label: "HDPE Dam Lining" },
     { href: "/pvc-dam-lining", label: "PVC Dam Linings" },
     { href: "/farm-dam-liners", label: "Farm Dam Linings" },

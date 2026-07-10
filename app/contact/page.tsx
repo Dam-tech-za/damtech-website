@@ -53,12 +53,9 @@ import {
 } from "@/lib/site";
 
 import { PageSectionHeader } from "@/components/PageSectionHeader";
-
-
+import { createOfficeLocalBusinessSchemas } from "@/lib/seo";
 
 const seo = PAGE_SEO.contact;
-
-
 
 export const metadata = createPageMetadata(seo);
 
@@ -312,7 +309,10 @@ export default function ContactPage() {
 
     <>
 
-      <PageSeo breadcrumbs={breadcrumbs} />
+      <PageSeo
+        breadcrumbs={breadcrumbs}
+        schemas={createOfficeLocalBusinessSchemas()}
+      />
 
 
 

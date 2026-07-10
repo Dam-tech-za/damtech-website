@@ -1,6 +1,7 @@
 import { Hero } from "@/components/Hero";
 
-import { PageOverviewSection } from "@/components/PageOverviewSection";
+import { ServiceIntroSection } from "@/components/ServiceIntroSection";
+import { STEEL_TANKS_INTRO } from "@/lib/service-intro-content";
 
 import { PageSeo } from "@/components/PageSeo";
 
@@ -35,8 +36,6 @@ import {
 import { createFaqPageSchema, createServiceSchema } from "@/lib/seo";
 
 import { createPageMetadata, PAGE_SEO } from "@/lib/pages";
-
-import { SITE_IMAGES } from "@/lib/images";
 
 import { STEEL_TANKS_CONTENT, STEEL_TANKS_SCHEMA_OFFERS } from "@/lib/service-pages-content";
 
@@ -214,25 +213,7 @@ export default function SteelTanksPage() {
 
 
 
-      <PageOverviewSection intro={STEEL_TANKS_CONTENT.intro} image={SITE_IMAGES.steelTank}>
-
-        <p className="site-prose-card__text">
-
-          We specialise in delivering high-quality, durable water storage
-
-          solutions tailored to your needs. Our tanks are crafted from 0.8 mm
-
-          thick corrugated hot dip galvanised steel sheets, available from 3 m
-
-          to 17 m in diameter. Each tank includes a standard 850 gsm PVC
-
-          lining, bidem floor sheet, sturdy upright columns, and an optional
-
-          roof for additional protection.
-
-        </p>
-
-      </PageOverviewSection>
+      <ServiceIntroSection {...STEEL_TANKS_INTRO} />
 
 
 
@@ -321,11 +302,12 @@ export default function SteelTanksPage() {
       <SiteSection>
 
         <SectionCta
-
           title="Need help sizing a tank?"
-
           description="Tell us daily water use, borehole output and site footprint — we will recommend diameter, ring height and optional roof."
-
+          primaryHref="/calculators/#steel-tank-size"
+          primaryLabel="Open Steel Tank Size Calculator"
+          secondaryHref="/quote"
+          secondaryLabel="Request a Quote"
         />
 
       </SiteSection>

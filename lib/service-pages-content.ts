@@ -58,14 +58,6 @@ export const DAM_LINERS_CONTENT = {
     "Damtech supplies and installs HDPE, PVC and torch-on dam linings for earth dams, reservoirs, ponds and water storage applications across South Africa. Correctly specified geomembranes stop seepage through clay and sandy soils, protect groundwater and keep stored water available for irrigation, livestock and firefighting when boreholes or municipal supply are under pressure.",
   sections: [
     {
-      id: "dam-liners-vs-linings",
-      heading: "Dam Linings and Dam Liners — What's the Difference?",
-      paragraphs: [
-        "Dam linings describe the waterproofing service and completed installation inside an earth dam or reservoir. Dam liners usually refer to the geomembrane or membrane product itself. In South Africa both terms are often used for the same HDPE, PVC or bitumen torch-on work.",
-        "Damtech specifies and installs HDPE, PVC and bitumen torch-on dam linings — using quality dam liner materials — with the same site preparation, welding and anchoring standards whether your quote says lining or liner.",
-      ],
-    },
-    {
       id: "why-liners",
       heading: "Why Dam Linings Matter in South Africa",
       paragraphs: [
@@ -78,6 +70,15 @@ export const DAM_LINERS_CONTENT = {
       paragraphs: [
         "HDPE geomembrane is our first choice for large farm and mining dams where UV exposure, puncture resistance and long service life matter. PVC suits smaller ponds, cement reservoirs and steel tanks where flexibility and cost per square metre are priorities. Bitumen torch-on works well on prepared cement or gunite surfaces where a heat-welded bond to the substrate is required.",
         "Thickness, seam design and anchor trench detail depend on dam depth, slope angle and whether livestock will access the water. We measure your dam, review soil conditions and recommend a lining spec before quoting — not a one-size-fits-all roll-off-the-truck approach.",
+      ],
+    },
+    {
+      // TODO(business-confirm): add published price ranges only if the business confirms them in writing.
+      id: "dam-lining-cost",
+      heading: "What does dam lining cost?",
+      paragraphs: [
+        "Dam lining cost depends on project-specific factors rather than a single square-metre rate. The main drivers are lined surface area, liner thickness and material type, site access for plant and crew, surface preparation (rock removal, grading and compaction), and anchor trenching at the crest and around penetrations.",
+        "Remote sites, steep batters, rocky subgrades or complex outlet detailing increase labour and preparation time. Share approximate dimensions and photos for a free quote so we can price the work for your dam — not a generic catalogue figure.",
       ],
     },
     {
@@ -130,12 +131,16 @@ export const DAM_LINERS_CONTENT = {
     },
   ] satisfies ServiceFaqItem[],
   relatedLinks: [
-    { href: "/calculators", label: "Dam Lining Area Calculator" },
+    {
+      href: "/calculators/#dam-lining-area",
+      label: "Estimate your liner size → Dam Lining Area Calculator",
+    },
     { href: "/hdpe-dam-lining", label: "HDPE Dam Lining" },
     { href: "/pvc-dam-lining", label: "PVC Dam Lining" },
     { href: "/torch-on-dam-lining", label: "Torch-On Dam Lining" },
     { href: "/farm-dam-liners", label: "Farm Dam Linings" },
     { href: "/mining-dam-liners", label: "Mining Dam Linings" },
+    { href: "/western-cape-dam-liners", label: "Western Cape Dam Liners" },
     { href: "/steel-water-storage-tanks", label: "Steel Water Tanks" },
     { href: "/projects", label: "Project Case Studies" },
     { href: "/faq", label: "Dam Linings FAQ" },
@@ -146,6 +151,13 @@ export const BITUMEN_CONTENT = {
   intro:
     "Damtech offers bitumen torch-on waterproofing, leak prevention and maintenance waterproofing services for water-retaining structures and commercial properties across South Africa. Heavy summer storms, temperature swings and years of UV exposure take a toll on roofs, slabs and retaining structures — bitumen remains one of the most dependable ways to stop water ingress on concrete, metal and masonry when installed by trained applicators.",
   sections: [
+    {
+      heading: "Waterproofing Contractors for Farms & Commercial Properties",
+      paragraphs: [
+        "Damtech installs bitumen waterproofing for agricultural buildings, packhouses, commercial stores and water-retaining structures across South Africa. Property managers and farm owners typically call us when roofs, foundations or reservoir walls start showing damp, blistering membranes or active leaks after summer storms.",
+        "We assess the substrate first, then recommend torch-on, self-adhesive or liquid systems that match access constraints, fire-safety rules on site and the remaining life of the structure — so waterproofing work fits around harvest, production or tenant schedules.",
+      ],
+    },
     {
       heading: "Where Bitumen Waterproofing Is Used",
       paragraphs: [
@@ -196,11 +208,15 @@ export const BITUMEN_CONTENT = {
     },
   ] satisfies ServiceFaqItem[],
   relatedLinks: [
-    { href: "/calculators", label: "Waterproofing Area Calculator" },
-    { href: "/services", label: "All Waterproofing Services" },
+    {
+      href: "/calculators/#waterproofing-area",
+      label: "Estimate waterproofing area → Waterproofing Area Calculator",
+    },
+    { href: "/torch-on-dam-lining", label: "Torch-On Dam Lining" },
     { href: "/dam-liners", label: "Dam Linings" },
     { href: "/faq", label: "Waterproofing FAQ" },
     { href: "/projects", label: "Recent Projects" },
+    { href: "/quote", label: "Request a Waterproofing Quote" },
   ],
 };
 
@@ -260,11 +276,15 @@ export const STEEL_TANKS_CONTENT = {
     },
   ] satisfies ServiceFaqItem[],
   relatedLinks: [
-    { href: "/calculators", label: "Steel Water Tank Size Calculator" },
+    {
+      href: "/calculators/#steel-tank-size",
+      label: "Need help sizing a tank? → Steel Tank Size Calculator",
+    },
     { href: "/dam-liners", label: "Dam Linings" },
     { href: "/agricultural-water-storage", label: "Agricultural Water Storage" },
     { href: "/projects", label: "Tank Installation Projects" },
     { href: "/faq", label: "Reservoir FAQ" },
+    { href: "/quote", label: "Request a Steel Tank Quote" },
   ],
 };
 

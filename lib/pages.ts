@@ -31,7 +31,7 @@ export const PAGE_SEO: Record<StaticPageKey, PageSeoEntry> = {
   home: {
     title: "Dam Liners & Steel Water Tanks | Damtech South Africa",
     description:
-      "HDPE & PVC dam liners, corrugated steel reservoirs and bitumen waterproofing for farms, mines and estates across South Africa. Request a free quote.",
+      "Damtech installs HDPE and PVC dam liners, corrugated steel water tanks and bitumen waterproofing for farms, mines and estates across South Africa. Free quotes and site inspections.",
     path: "/",
     h1: "Damtech Dam Lining & Water Storage Solutions in South Africa",
     image: IMAGE_PATHS.damtechWaterStorageHero,
@@ -54,12 +54,12 @@ export const PAGE_SEO: Record<StaticPageKey, PageSeoEntry> = {
     image: IMAGE_PATHS.hdpeDamLiningEarthDam,
   },
   "dam-liners": {
-    title: "HDPE, PVC & Torch-On Dam Linings South Africa | Damtech",
+    title: "Dam Liners & Dam Lining Services South Africa | Damtech",
     description:
-      "HDPE, PVC and torch-on dam linings for earth dams, reservoirs, ponds and water storage across South Africa. Damtech installs dam linings with supplier-backed materials where applicable.",
+      "HDPE, PVC and torch-on dam liners supplied and installed nationwide. Compare liner types, see real farm dam projects and request a free dam lining quote from Damtech.",
     path: "/dam-liners",
-    h1: "Dam Linings for Earth Dams, Reservoirs & Water Storage",
-    serviceName: "Dam Linings",
+    h1: "Dam Liners & Dam Lining Services in South Africa",
+    serviceName: "Dam Liners & Dam Lining Services",
     image: IMAGE_PATHS.hdpeDamLiningFieldInstallation,
   },
   "steel-tanks": {
@@ -74,18 +74,18 @@ export const PAGE_SEO: Record<StaticPageKey, PageSeoEntry> = {
   bitumen: {
     title: "Bitumen Waterproofing South Africa | Torch-On Systems | Damtech",
     description:
-      "Professional waterproofing, bitumen torch-on systems, leak prevention and maintenance solutions for farms, mines, commercial properties and water-retaining structures.",
+      "Torch-on, self-adhesive and liquid bitumen waterproofing for roofs, foundations, reservoirs and retaining walls. Waterproofing contractors serving all of South Africa.",
     path: "/bitumen-waterproofing",
     h1: "Waterproofing Services for Long-Term Protection",
     serviceName: "Bitumen Waterproofing",
     image: IMAGE_PATHS.bitumenTorchOnWaterproofingDamtech,
   },
   faq: {
-    title: "Dam Linings & Waterproofing FAQ | Damtech South Africa",
+    title: "Dam Liner & Waterproofing FAQ | Damtech",
     description:
-      "Answers to common questions about HDPE dam linings, PVC dam linings, waterproofing, steel water tanks, supplier-backed material warranty and leaking dam repairs.",
+      "Straight answers on dam liner lifespan, costs, repairs, steel tank sizing and waterproofing warranties — from Damtech's South African field experience.",
     path: "/faq",
-    h1: "Dam Linings and Waterproofing FAQ",
+    h1: "Dam Liner and Waterproofing FAQ",
     image: IMAGE_PATHS.hdpeDamLiningEarthDam,
   },
   contact: {
@@ -99,23 +99,23 @@ export const PAGE_SEO: Record<StaticPageKey, PageSeoEntry> = {
   blog: {
     title: "Dam Liner & Water Storage Guides | Damtech Blog",
     description:
-      "Practical guides on dam linings, leaking dam repairs, borehole integration, steel reservoirs and water storage for South African farms and properties.",
+      "Practical South African guides on farm dam liners, leaking dam repair, borehole integration, steel reservoirs and water storage planning from the Damtech team.",
     path: "/blog",
     h1: "Dam Lining & Water Storage Guides",
     image: IMAGE_PATHS.damtechWaterStorageHero,
   },
   quote: {
-    title: "Request a Free Quote | Dam Linings & Waterproofing South Africa",
+    title: "Request a Free Quote | Dam Linings & Waterproofing | Damtech",
     description:
-      "Request a free Damtech quote for dam linings, waterproofing, steel water tanks, reservoir lining or leaking dam repair in South Africa.",
+      "Request a free Damtech quote for dam lining, steel water tanks, waterproofing or leaking dam repair. Send dimensions and photos — we respond within one business day.",
     path: "/quote",
     h1: "Request a Free Damtech Quote",
     image: IMAGE_PATHS.hdpeDamLiningEarthDam,
   },
   calculators: {
-    title: "Dam Linings & Water Storage Calculators South Africa | Damtech",
+    title: "Dam Lining & Water Storage Calculators | Damtech South Africa",
     description:
-      "Estimate dam lining area, dam liner material, steel water tank size, waterproofing area, rainwater harvesting and water storage needs with Damtech's calculators.",
+      "Free calculators for dam lining area, HDPE/PVC material, steel tank sizing, irrigation demand and rainwater harvesting. Plan your project before requesting a quote.",
     path: "/calculators",
     h1: "Dam Linings, Waterproofing & Water Storage Calculators",
     image: IMAGE_PATHS.hdpeDamLiningEarthDam,
@@ -202,7 +202,7 @@ export const SEO_FAQ_ITEMS = [
   {
     question: "Is the material warranty supplier-backed?",
     answer:
-      "Supplier-backed material warranties apply only to qualifying supplied materials where applicable and are subject to the relevant supplier’s terms, site conditions, correct use and approved installation requirements. Up to 10 years may apply on eligible products when installed to manufacturer specification. Installation or workmanship cover is not automatically included unless separately agreed in writing.",
+      "Supplier-backed material warranties apply only to qualifying supplied materials where applicable and are subject to the relevant supplier’s terms, site conditions, correct use and approved installation requirements. Installation or workmanship cover is not automatically included unless separately agreed in writing.",
   },
   {
     question: "Which areas in South Africa do you service?",

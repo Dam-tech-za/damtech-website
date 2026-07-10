@@ -5,8 +5,6 @@ import { RelatedServicesGrid } from "@/components/RelatedServicesGrid";
 import { RELATED_SERVICE_LINKS } from "@/lib/related-services";
 import { PageSeo } from "@/components/PageSeo";
 import { SiteSection } from "@/components/SiteSection";
-import { ALL_SITE_FAQS } from "@/lib/faq-content";
-import { createFaqPageSchema } from "@/lib/seo";
 import { createPageMetadata, PAGE_SEO } from "@/lib/pages";
 import { siteConfig } from "@/lib/site";
 import {
@@ -27,10 +25,7 @@ export const metadata = createPageMetadata(seo);
 export default function FaqPage() {
   return (
     <>
-      <PageSeo
-        breadcrumbs={[...FAQ_BREADCRUMBS]}
-        schemas={createFaqPageSchema(ALL_SITE_FAQS)}
-      />
+      <PageSeo breadcrumbs={[...FAQ_BREADCRUMBS]} />
 
       <Hero
         compact

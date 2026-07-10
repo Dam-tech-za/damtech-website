@@ -13,11 +13,7 @@ import { CALCULATORS_RELATED_LINK } from "@/lib/calculator-links";
 
 const seo = PAGE_SEO.calculators;
 
-export const metadata = createPageMetadata(seo, {
-  ogTitle: "Dam Linings, Waterproofing & Water Storage Calculators | Damtech",
-  ogDescription:
-    "Use Damtech's planning calculators to estimate dam lining area, steel water tank sizing, waterproofing area, annual water demand and rainwater harvesting potential.",
-});
+export const metadata = createPageMetadata(seo);
 
 export default function CalculatorsPage() {
   const breadcrumbs = [

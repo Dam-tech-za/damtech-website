@@ -15,7 +15,11 @@ import {
 } from "./site";
 
 const MAX_TITLE_LENGTH = 70;
-const MAX_DESCRIPTION_LENGTH = 160;
+/** Hard cap only for runaway strings — approved P1 metas may exceed the 155 soft warn. */
+const MAX_DESCRIPTION_LENGTH = 180;
+/** Soft SEO limits — warn in development/build when exceeded (do not invent shorter copy). */
+const WARN_TITLE_LENGTH = 60;
+const WARN_DESCRIPTION_LENGTH = 155;
 const LOCALE = "en_ZA";
 const OG_IMAGE_WIDTH = 1200;
 const OG_IMAGE_HEIGHT = 630;
@@ -77,6 +81,10 @@ export function absoluteUrl(path: string): string {
 function trimTitle(title: string): string {
   const trimmed = title.trim();
   if (trimmed.length <= MAX_TITLE_LENGTH) return trimmed;
+  const lastSpace = trimmed.slice(0, MAX_TITLE_LENGTH - 1).lastIndexOf(" ");
+  if (lastSpace >= 40) {
+    return `${trimmed.slice(0, lastSpace).trimEnd()}…`;
+  }
   return `${trimmed.slice(0, MAX_TITLE_LENGTH - 1).trimEnd()}…`;
 }
 
@@ -98,11 +106,27 @@ function ensureDescription(description: string): string {
   }
 
   const lastSpace = slice.lastIndexOf(" ");
-  if (lastSpace >= 80) {
+  if (lastSpace >= 40) {
     return `${slice.slice(0, lastSpace).trimEnd()}…`;
   }
 
   return `${slice.trimEnd()}…`;
+}
+
+function warnMetaLength(title: string, description: string, path: string) {
+  if (process.env.NODE_ENV === "production" && process.env.NEXT_PHASE !== "phase-production-build") {
+    return;
+  }
+  if (title.length > WARN_TITLE_LENGTH) {
+    console.warn(
+      `[seo] Title exceeds ${WARN_TITLE_LENGTH} chars (${title.length}) for ${path}: ${title}`,
+    );
+  }
+  if (description.length > WARN_DESCRIPTION_LENGTH) {
+    console.warn(
+      `[seo] Description exceeds ${WARN_DESCRIPTION_LENGTH} chars (${description.length}) for ${path}: ${description}`,
+    );
+  }
 }
 
 function stripBrandSuffix(title: string): string {
@@ -201,6 +225,7 @@ export function createMetadata({
   const isHome = normalizePath(path) === "/";
   const fullTitle = resolveFullTitle(title, isHome);
   const metaDescription = ensureDescription(description);
+  warnMetaLength(fullTitle, metaDescription, path);
   const ogImagePath = image ?? DEFAULT_OG_IMAGE;
   const ogImage = buildOgImage(ogImagePath, imageAlt);
 
@@ -281,6 +306,12 @@ export function createWebPageSchema(input: {
 }
 
 export function createOrganizationSchema() {
+  const googleProfiles = OFFICES.flatMap((office) =>
+    "googleBusinessProfileUrl" in office && office.googleBusinessProfileUrl
+      ? [office.googleBusinessProfileUrl]
+      : [],
+  );
+
   return {
     "@context": "https://schema.org",
     "@type": "Organization",
@@ -289,11 +320,11 @@ export function createOrganizationSchema() {
     alternateName: "Damtech South Africa",
     url: siteConfig.domain,
     email: siteConfig.email,
-    telephone: siteConfig.phone || undefined,
+    telephone: phoneTel,
     description: siteConfig.defaultDescription,
     logo: absoluteAssetUrl(IMAGE_PATHS.damtechLogo),
     areaServed: siteConfig.location,
-    sameAs: SOCIAL_LINKS,
+    sameAs: [...SOCIAL_LINKS, ...googleProfiles],
   };
 }
 
@@ -392,12 +423,58 @@ export function createWebSiteSchema() {
   };
 }
 
+export function createOfficeLocalBusinessSchemas(
+  options: {
+    /** Limit to a single office id, or omit for both offices. */
+    officeIds?: readonly string[];
+    areaServedOverride?: string;
+  } = {},
+) {
+  const { officeIds, areaServedOverride } = options;
+  const offices = officeIds
+    ? OFFICES.filter((office) => officeIds.includes(office.id))
+    : [...OFFICES];
+
+  return offices.map((office) => {
+    const areaServed =
+      areaServedOverride ??
+      (office.id === "western-cape" ? "Western Cape" : "South Africa");
+
+    return {
+      "@context": "https://schema.org",
+      "@type": "HomeAndConstructionBusiness",
+      "@id": `${siteConfig.domain}/#office-${office.id}`,
+      name: `${siteConfig.name} — ${office.name}`,
+      url: siteConfig.domain,
+      telephone: phoneTel,
+      email: siteConfig.email,
+      image: absoluteAssetUrl(IMAGE_PATHS.damtechLogo),
+      parentOrganization: {
+        "@id": `${siteConfig.domain}/#organization`,
+      },
+      areaServed,
+      address: {
+        "@type": "PostalAddress",
+        streetAddress: office.address.streetAddress,
+        addressLocality: formatOfficeLocality(office.address),
+        addressRegion: office.address.province,
+        postalCode: office.address.postalCode,
+        addressCountry: "ZA",
+      },
+      ...("googleBusinessProfileUrl" in office && office.googleBusinessProfileUrl
+        ? { hasMap: office.googleBusinessProfileUrl }
+        : {}),
+    };
+  });
+}
+
 export function createServiceSchema({
   name,
   description,
   path,
   serviceType,
   offers,
+  areaServed = siteConfig.location,
 }: {
   name: string;
   description: string;
@@ -406,6 +483,7 @@ export function createServiceSchema({
   serviceType?: string;
   /** Offer names for `hasOfferCatalog.itemListElement`. */
   offers?: readonly string[];
+  areaServed?: string;
 }) {
   const type = serviceType ?? name;
 
@@ -417,14 +495,13 @@ export function createServiceSchema({
     description,
     url: absoluteUrl(path),
     provider: {
-      "@type": "LocalBusiness",
-      "@id": `${siteConfig.domain}/#localbusiness`,
+      "@type": "Organization",
+      "@id": `${siteConfig.domain}/#organization`,
       name: siteConfig.name,
       url: siteConfig.domain,
       telephone: siteConfig.phone || undefined,
-      areaServed: siteConfig.location,
     },
-    areaServed: siteConfig.location,
+    areaServed,
   };
 
   if (offers && offers.length > 0) {
