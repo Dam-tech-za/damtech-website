@@ -161,13 +161,11 @@ export function HomeTrustWarrantySection() {
               className="home-trust-warranty__warranty-divider"
               aria-hidden
             />
+            {/* TODO(business-confirm): exact warranty terms. */}
             <p className="home-trust-warranty__warranty-text">
-              Selected HDPE, PVC, bitumen and waterproofing materials supplied
-              by Damtech may carry a supplier-backed material warranty where
-              applicable. Warranty terms depend on the qualifying material,
-              supplier conditions, correct use, site conditions and approved
-              installation requirements. We confirm the applicable material
-              warranty details in each quote.
+              Qualifying dam liner and waterproofing materials carry a
+              supplier-backed material warranty of up to 10 years, where
+              applicable. Ask us what applies to your project.
             </p>
             <ul className="home-trust-warranty__warranty-list">
               {WARRANTY_BULLETS.map((item) => (

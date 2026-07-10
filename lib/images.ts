@@ -118,11 +118,12 @@ export const IMAGE_ALTS: Record<ImagePath, string> = {
     "Damtech dam linings, steel water tanks and waterproofing solutions in South Africa",
   [IMAGE_PATHS.damtechLogo]: "Damtech logo — water droplet mark",
   [IMAGE_PATHS.grabouwHdpeDamLiningAfter]:
-    "Large HDPE dam lining installation for water storage in Grabouw",
+    "HDPE dam liner installed on a farm dam in Grabouw, Western Cape",
   [IMAGE_PATHS.hartswaterHdpeDamLiningProject]:
     "HDPE dam lining project completed by Damtech in Centurion, Gauteng",
   [IMAGE_PATHS.hdpeDamLinerInstallationLimpopo]:
-    "HDPE dam lining installation on a farm water storage project in Limpopo",
+    // TODO(business-confirm): supply page-specific photos — keep generic alt while this asset remains shared.
+    "HDPE dam liner installation on a South African farm dam",
   [IMAGE_PATHS.villiersdorpWesternCapeHdpeDamLining8230m2]:
     "HDPE dam lining project in Villiersdorp in the Western Cape covering approximately 8,230 m² by Damtech",
   [IMAGE_PATHS.villiersdorpWesternCapeHdpeDamLining8230m22]:
@@ -194,8 +195,8 @@ export const SITE_IMAGES = {
   damLiners: siteImage(
     hdpeDamLiningEarthDam,
     IMAGE_PATHS.hdpeDamLiningEarthDam,
-    "HDPE dam lining installation for earth dams and water storage applications",
-    "HDPE, PVC and torch-on dam lining options.",
+    "HDPE dam lining installation for water storage by Damtech",
+    "Dam lining solutions for earth dams, reservoirs and water storage applications.",
   ),
   maintenance: siteImage(
     damLiningMaintenanceInspection1,
@@ -218,8 +219,8 @@ export const SITE_IMAGES = {
   damRepair: siteImage(
     damLiningMaintenanceInspection1,
     IMAGE_PATHS.damLiningMaintenanceInspection1,
-    IMAGE_ALTS[IMAGE_PATHS.damLiningMaintenanceInspection1],
-    "Dam lining maintenance inspection before leaking dam repair planning.",
+    "Dam lining maintenance inspection for leak assessment by Damtech",
+    "Maintenance inspection used to assess possible dam lining damage before repair planning.",
   ),
   contact: siteImage(
     hdpeDamLiningFieldInstallation,
@@ -236,8 +237,8 @@ export const SITE_IMAGES = {
   bitumen: siteImage(
     bitumenTorchOnWaterproofingDamtech,
     IMAGE_PATHS.bitumenTorchOnWaterproofingDamtech,
-    "Bitumen torch-on waterproofing system for leak prevention and long-term protection",
-    "Torch-on, self-adhesive and liquid bitumen coatings.",
+    "Torch-on bitumen waterproofing for a concrete water-retaining structure",
+    "Waterproofing systems for concrete dams, reservoirs and water-retaining structures.",
   ),
   bitumenBefore: siteImage(
     bitumenWaterproofingBefore,
@@ -254,13 +255,13 @@ export const SITE_IMAGES = {
   steelTank: siteImage(
     tulbaghWesternCapeSteelWaterTankProject,
     IMAGE_PATHS.tulbaghWesternCapeSteelWaterTankProject,
-    "Corrugated steel water tank for water storage in Tulbagh in the Western Cape",
-    "Steel reservoirs from 11 kL to 500 kL+.",
+    "Corrugated steel water tank for farm and commercial water storage",
+    "Corrugated steel water tanks for practical above-ground water storage.",
   ),
   reservoir: siteImage(
     hdpeDamLiningAfterGeotextile,
     IMAGE_PATHS.hdpeDamLiningAfterGeotextile,
-    "Reservoir lining project with HDPE dam lining and geotextile protection",
+    "Reservoir lining project for water storage protection by Damtech",
     "Lined reservoirs for farms, mines and commercial properties.",
   ),
 } as const satisfies Record<string, SiteImage>;

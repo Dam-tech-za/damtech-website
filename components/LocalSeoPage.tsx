@@ -6,11 +6,16 @@ import { FAQ } from "@/components/FAQ";
 import { PageSectionHeader } from "@/components/PageSectionHeader";
 import { RelatedServicesGrid } from "@/components/RelatedServicesGrid";
 import { SiteSection } from "@/components/SiteSection";
-import { createFaqPageSchema, createServiceSchema } from "@/lib/seo";
+import { createFaqPageSchema, createOfficeLocalBusinessSchemas, createServiceSchema } from "@/lib/seo";
 import { altForImagePath } from "@/lib/images";
 import { DAM_LINERS_SCHEMA_OFFERS } from "@/lib/service-pages-content";
 import type { LocalLandingPage } from "@/lib/local-pages";
 import { RELATED_SERVICE_LINKS } from "@/lib/related-services";
+import {
+  formatOfficeAddressLines,
+  HEAD_OFFICE,
+  phoneTel,
+} from "@/lib/site";
 import {
   LazyCTA as CTA,
 } from "@/components/lazy";
@@ -35,27 +40,34 @@ const CONTENT_SECTIONS: Array<{
 ];
 
 export function LocalSeoPage({ page }: LocalSeoPageProps) {
+  const isWesternCape = page.slug === "western-cape-dam-liners";
   const breadcrumbs = [
     { name: "Home", path: "/" },
     { name: "Services", path: "/services" },
     { name: page.h1, path: `/${page.slug}` },
   ];
 
+  const schemas = [
+    createServiceSchema({
+      name: page.serviceName,
+      serviceType: page.serviceName,
+      description: page.description,
+      path: `/${page.slug}`,
+      offers: [...(page.schemaOffers ?? DAM_LINERS_SCHEMA_OFFERS)],
+      ...(isWesternCape ? { areaServed: "Western Cape" } : {}),
+    }),
+    createFaqPageSchema(page.faqs),
+    ...(isWesternCape
+      ? createOfficeLocalBusinessSchemas({
+          officeIds: ["western-cape"],
+          areaServedOverride: "Western Cape",
+        })
+      : []),
+  ];
+
   return (
     <>
-      <PageSeo
-        breadcrumbs={breadcrumbs}
-        schemas={[
-          createServiceSchema({
-            name: page.serviceName,
-            serviceType: page.serviceName,
-            description: page.description,
-            path: `/${page.slug}`,
-            offers: [...(page.schemaOffers ?? DAM_LINERS_SCHEMA_OFFERS)],
-          }),
-          createFaqPageSchema(page.faqs),
-        ]}
-      />
+      <PageSeo breadcrumbs={breadcrumbs} schemas={schemas} />
 
       <Hero
         compact
@@ -69,6 +81,36 @@ export function LocalSeoPage({ page }: LocalSeoPageProps) {
         <div className="site-overview">
           <div className="site-overview__content">
             <p className="site-overview__intro">{page.intro}</p>
+
+            {isWesternCape ? (
+              <aside className="mt-8 rounded-lg border border-slate-200 bg-slate-50 p-5">
+                {/* TODO(business-confirm): confirm Betty's Bay is the designated head office before deploy. */}
+                <h2 className="text-lg font-semibold text-navy">
+                  Western Cape Head Office — Betty&apos;s Bay
+                </h2>
+                <p className="mt-2 text-sm leading-relaxed text-slate-600">
+                  {formatOfficeAddressLines(HEAD_OFFICE).join(", ")}
+                </p>
+                <p className="mt-2 text-sm text-slate-600">
+                  <a href={`tel:${phoneTel}`} className="text-water hover:underline">
+                    {HEAD_OFFICE.phone}
+                  </a>
+                </p>
+                {"googleBusinessProfileUrl" in HEAD_OFFICE &&
+                HEAD_OFFICE.googleBusinessProfileUrl ? (
+                  <p className="mt-2 text-sm">
+                    <a
+                      href={HEAD_OFFICE.googleBusinessProfileUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="font-medium text-water hover:underline"
+                    >
+                      Google Maps →
+                    </a>
+                  </p>
+                ) : null}
+              </aside>
+            ) : null}
 
             <div className="site-prose-sections mt-10">
               {CONTENT_SECTIONS.map((section) => (
