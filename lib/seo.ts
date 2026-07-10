@@ -147,7 +147,12 @@ function formatPageTitle(title: string): string {
 
 function resolveFullTitle(title: string, isHome: boolean): string {
   if (isHome) return siteConfig.defaultTitle;
-  const pageTitle = formatPageTitle(title);
+  const trimmed = title.trim();
+  // Keep intentionally branded titles (e.g. "… | Damtech South Africa") verbatim.
+  if (/damtech/i.test(trimmed)) {
+    return trimTitle(trimmed);
+  }
+  const pageTitle = formatPageTitle(trimmed);
   if (/damtech/i.test(pageTitle)) return trimTitle(pageTitle);
   return `${trimTitle(pageTitle)} | ${siteConfig.name}`;
 }
