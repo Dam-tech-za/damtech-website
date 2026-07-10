@@ -148,7 +148,7 @@ export const FAQ_CATEGORIES: readonly FaqCategory[] = [
       {
         question: "Is the material warranty supplier-backed?",
         answer:
-          "On qualifying installations, HDPE, PVC and bitumen materials may carry supplier-backed warranties where applicable — up to 10 years on eligible products when installed to manufacturer specification. Coverage and exclusions are set by the material supplier; Damtech explains applicable terms before you commit.",
+          "On qualifying installations, HDPE, PVC and bitumen materials may carry supplier-backed warranties where applicable. Coverage and exclusions are set by the material supplier; Damtech confirms the applicable material warranty details in each quote.",
       },
     ],
   },

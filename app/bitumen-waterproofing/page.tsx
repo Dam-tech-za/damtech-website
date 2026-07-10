@@ -6,9 +6,9 @@ import { BenefitCardGrid } from "@/components/BenefitCardGrid";
 
 import { InfoCardGrid } from "@/components/InfoCardGrid";
 
-import { PageOverviewSection } from "@/components/PageOverviewSection";
-
 import { PageSeo } from "@/components/PageSeo";
+
+import { ServiceIntroSection } from "@/components/ServiceIntroSection";
 
 import { ProcessStepsSection } from "@/components/ProcessStepsSection";
 
@@ -42,9 +42,8 @@ import { createFaqPageSchema, createServiceSchema } from "@/lib/seo";
 
 import { createPageMetadata, PAGE_SEO } from "@/lib/pages";
 
-import { SITE_IMAGES } from "@/lib/images";
-
 import { BITUMEN_CONTENT, BITUMEN_SCHEMA_OFFERS } from "@/lib/service-pages-content";
+import { WATERPROOFING_INTRO } from "@/lib/service-intro-content";
 
 
 
@@ -202,19 +201,7 @@ export default function BitumenWaterproofingPage() {
 
 
 
-      <PageOverviewSection intro={BITUMEN_CONTENT.intro} image={SITE_IMAGES.bitumen}>
-
-        <ServiceProseSections
-
-          sections={[BITUMEN_CONTENT.sections[0]!]}
-
-          nested
-
-          tone="default"
-
-        />
-
-      </PageOverviewSection>
+      <ServiceIntroSection {...WATERPROOFING_INTRO} />
 
 
 
@@ -304,7 +291,7 @@ export default function BitumenWaterproofingPage() {
 
 
 
-      <ServiceProseSections sections={BITUMEN_CONTENT.sections.slice(1)} />
+      <ServiceProseSections sections={BITUMEN_CONTENT.sections} />
 
 
 

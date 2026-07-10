@@ -48,9 +48,10 @@ import { createFaqPageSchema, createServiceSchema } from "@/lib/seo";
 
 import { createPageMetadata, PAGE_SEO } from "@/lib/pages";
 
-import { SITE_IMAGES } from "@/lib/images";
-
 import { PROJECTS } from "@/lib/site";
+
+import { ServiceIntroSection } from "@/components/ServiceIntroSection";
+import { DAM_LININGS_INTRO } from "@/lib/service-intro-content";
 
 import {
 
@@ -59,8 +60,6 @@ import {
   DAM_LINERS_SCHEMA_OFFERS,
 
 } from "@/lib/service-pages-content";
-
-import { PageOverviewSection } from "@/components/PageOverviewSection";
 
 
 
@@ -224,7 +223,7 @@ export default function DamLinersPage() {
 
         title={seo.h1}
 
-        description="Damtech supplies and installs HDPE, PVC and torch-on dam linings for earth dams, reservoirs, ponds and water storage applications across South Africa."
+        description="Damtech supplies and installs HDPE, PVC and torch-on dam liners for earth dams, reservoirs, ponds and water storage applications across South Africa."
 
         breadcrumbs={breadcrumbs}
 
@@ -232,19 +231,7 @@ export default function DamLinersPage() {
 
 
 
-      <PageOverviewSection intro={DAM_LINERS_CONTENT.intro} image={SITE_IMAGES.damLiners}>
-
-        <ServiceProseSections
-
-          sections={[DAM_LINERS_CONTENT.sections[0]!]}
-
-          nested
-
-          tone="default"
-
-        />
-
-      </PageOverviewSection>
+      <ServiceIntroSection {...DAM_LININGS_INTRO} />
 
 
 
@@ -342,7 +329,7 @@ export default function DamLinersPage() {
 
 
 
-      <ServiceProseSections sections={DAM_LINERS_CONTENT.sections.slice(1)} />
+      <ServiceProseSections sections={DAM_LINERS_CONTENT.sections} />
 
 
 
