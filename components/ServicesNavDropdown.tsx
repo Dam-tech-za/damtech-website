@@ -1,10 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
 import { useEffect, useId, useRef, useState } from "react";
 import type { HeaderNavItem } from "@/lib/site";
-import { SERVICES_DROPDOWN_LINKS } from "@/lib/site";
 
 function ChevronIcon({ open }: { open: boolean }) {
   return (
@@ -47,6 +45,7 @@ export function ServicesNavDropdown({ item, pathname }: ServicesNavDropdownProps
   const containerRef = useRef<HTMLDivElement>(null);
   const closeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const active = isNavItemActive(item, pathname);
+  const hubLabel = item.hubLabel ?? `All ${item.label}`;
 
   const openDropdown = () => {
     if (closeTimerRef.current) {
@@ -122,59 +121,59 @@ export function ServicesNavDropdown({ item, pathname }: ServicesNavDropdownProps
           id={menuId}
           className={`site-header__dropdown-menu${open ? " site-header__dropdown-menu--open" : ""}`}
           role="menu"
-          aria-label="Services"
+          aria-label={item.label}
         >
-        <ul className="site-header__dropdown-list">
-          <li role="none">
-            <Link
-              href={item.href}
-              role="menuitem"
-              className="site-header__dropdown-link site-header__dropdown-link--hub"
-              onClick={() => setOpen(false)}
-            >
-              All Services
-            </Link>
-          </li>
-          {item.children.map((child) => {
-            const childActive =
-              pathname === child.href ||
-              pathname.startsWith(`${child.href}/`);
-            return (
-              <li key={child.href} role="none">
-                <Link
-                  href={child.href}
-                  role="menuitem"
-                  className={`site-header__dropdown-link${childActive ? " site-header__dropdown-link--active" : ""}`}
-                  aria-current={childActive ? "page" : undefined}
-                  onClick={() => setOpen(false)}
-                >
-                  {child.label}
-                </Link>
-              </li>
-            );
-          })}
-        </ul>
+          <ul className="site-header__dropdown-list">
+            <li role="none">
+              <Link
+                href={item.href}
+                role="menuitem"
+                className="site-header__dropdown-link site-header__dropdown-link--hub"
+                onClick={() => setOpen(false)}
+              >
+                {hubLabel}
+              </Link>
+            </li>
+            {item.children.map((child) => {
+              const childActive =
+                pathname === child.href ||
+                pathname.startsWith(`${child.href}/`);
+              return (
+                <li key={child.href} role="none">
+                  <Link
+                    href={child.href}
+                    role="menuitem"
+                    className={`site-header__dropdown-link${childActive ? " site-header__dropdown-link--active" : ""}`}
+                    aria-current={childActive ? "page" : undefined}
+                    onClick={() => setOpen(false)}
+                  >
+                    {child.label}
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
         </div>
       </div>
     </div>
   );
 }
 
-type MobileServicesNavProps = {
+type MobileDropdownNavProps = {
+  item: Extract<HeaderNavItem, { type: "dropdown" }>;
   pathname: string;
   onNavigate: () => void;
 };
 
-export function MobileServicesNav({ pathname, onNavigate }: MobileServicesNavProps) {
+export function MobileDropdownNav({
+  item,
+  pathname,
+  onNavigate,
+}: MobileDropdownNavProps) {
   const [expanded, setExpanded] = useState(false);
   const panelId = useId();
-  const hubActive =
-    pathname === "/services" || pathname.startsWith("/services/");
-  const childActive = SERVICES_DROPDOWN_LINKS.some(
-    (link) =>
-      pathname === link.href || pathname.startsWith(`${link.href}/`),
-  );
-  const active = hubActive || childActive;
+  const active = isNavItemActive(item, pathname);
+  const hubLabel = item.hubLabel ?? `All ${item.label}`;
 
   return (
     <li>
@@ -187,21 +186,21 @@ export function MobileServicesNav({ pathname, onNavigate }: MobileServicesNavPro
         aria-controls={panelId}
         onClick={() => setExpanded((value) => !value)}
       >
-        Services
+        {item.label}
         <ChevronIcon open={expanded} />
       </button>
       {expanded ? (
         <ul id={panelId} className="ml-3 mt-1 space-y-1 border-l border-slate-200 pl-3">
           <li>
             <Link
-              href="/services"
+              href={item.href}
               className="block rounded-lg px-3 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-water"
               onClick={onNavigate}
             >
-              All Services
+              {hubLabel}
             </Link>
           </li>
-          {SERVICES_DROPDOWN_LINKS.map((link) => (
+          {item.children.map((link) => (
             <li key={link.href}>
               <Link
                 href={link.href}
@@ -217,5 +216,8 @@ export function MobileServicesNav({ pathname, onNavigate }: MobileServicesNavPro
     </li>
   );
 }
+
+/** @deprecated Use MobileDropdownNav */
+export const MobileServicesNav = MobileDropdownNav;
 
 export { isNavItemActive };

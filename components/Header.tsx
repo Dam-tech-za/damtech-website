@@ -140,8 +140,8 @@ export function Header() {
         </nav>
 
         <div className="site-header__actions">
-          <Link href="/quote" className="site-header__cta hidden md:inline-flex">
-            Request a Free Quote
+          <Link href="/quote" className="site-header__cta">
+            Request a Quote
           </Link>
           <MobileNav />
         </div>

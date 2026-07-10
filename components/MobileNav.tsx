@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import { isNavItemActive, MobileServicesNav } from "@/components/ServicesNavDropdown";
+import { isNavItemActive, MobileDropdownNav } from "@/components/ServicesNavDropdown";
 import { HEADER_NAV_ITEMS } from "@/lib/site";
 
 function MenuIcon({ open }: { open: boolean }) {
@@ -79,8 +79,9 @@ export function MobileNav() {
               {HEADER_NAV_ITEMS.map((item) => {
                 if (item.type === "dropdown") {
                   return (
-                    <MobileServicesNav
+                    <MobileDropdownNav
                       key={item.label}
+                      item={item}
                       pathname={pathname}
                       onNavigate={close}
                     />
