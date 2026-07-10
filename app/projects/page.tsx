@@ -5,7 +5,7 @@ import { ProjectCard } from "@/components/ProjectCard";
 import { SiteSection } from "@/components/SiteSection";
 import { createPageMetadata } from "@/lib/pages";
 import {
-  PROJECT_CASE_STUDIES,
+  getPublishedProjects,
   PROJECTS_INDEX_SEO,
 } from "@/lib/projects";
 import { LazyCTA as CTA } from "@/components/lazy";
@@ -17,6 +17,8 @@ export default function ProjectsIndexPage() {
     { name: "Home", path: "/" },
     { name: "Projects", path: "/projects" },
   ];
+
+  const projects = getPublishedProjects();
 
   return (
     <>
@@ -32,7 +34,7 @@ export default function ProjectsIndexPage() {
 
       <SiteSection tone="muted">
         <ul className="home-process-projects__project-grid">
-          {PROJECT_CASE_STUDIES.map((project) => (
+          {projects.map((project) => (
             <li key={project.slug}>
               <ProjectCard project={project} />
             </li>

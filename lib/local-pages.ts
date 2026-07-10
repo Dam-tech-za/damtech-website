@@ -85,12 +85,12 @@ export const LOCAL_LANDING_PAGES: LocalLandingPage[] = [
     ],
     relatedProjects: [
       {
-        href: "/projects/marico-hill-game-lodge-dam-lining",
-        label: "Marico Hill Game Lodge dam lining",
-      },
-      {
         href: "/projects/centurion-hdpe-dam-liner",
         label: "Centurion HDPE farm dam",
+      },
+      {
+        href: "/projects/stellenbosch-hdpe-dam-liner",
+        label: "Stellenbosch HDPE dam lining",
       },
     ],
     relatedLocations: [
@@ -156,8 +156,8 @@ export const LOCAL_LANDING_PAGES: LocalLandingPage[] = [
         label: "Tulbagh steel water tank project",
       },
       {
-        href: "/projects/marico-hill-game-lodge-dam-lining",
-        label: "Marico Hill game lodge dam",
+        href: "/projects/centurion-hdpe-dam-liner",
+        label: "Centurion HDPE farm dam",
       },
     ],
     relatedLocations: [
@@ -296,13 +296,13 @@ export const LOCAL_LANDING_PAGES: LocalLandingPage[] = [
   },
   {
     slug: "western-cape-dam-liners",
-    title: "Dam Linings Western Cape | HDPE, PVC & Waterproofing | Damtech",
+    title: "Western Cape Dam Liners & Dam Lining Services | Damtech",
     description:
-      "Damtech provides HDPE and PVC dam linings, waterproofing, reservoir lining and leaking dam repair services for farms, estates, game lodges and commercial properties in the Western Cape.",
-    h1: "Dam Linings in the Western Cape",
+      "Damtech supplies and installs HDPE, PVC and torch-on dam liners for farms, estates and water storage projects across the Western Cape. Request a site-specific quote.",
+    h1: "Dam Liners & Dam Linings in the Western Cape",
     heroDescription:
-      "Wine, fruit and livestock farms from the Boland to the Overberg rely on Damtech HDPE lining to keep scarce summer water in farm dams for irrigation and stock.",
-    image: IMAGE_PATHS.hdpeDamLiningFieldInstallation,
+      "Wine, fruit and livestock farms from the Boland to the Overberg rely on Damtech dam linings to keep scarce summer water in farm dams for irrigation and stock.",
+    image: IMAGE_PATHS.grabouwHdpeDamLiningAfter,
     serviceName: "HDPE Dam Lining Installation — Western Cape",
     intro:
       "Western Cape agriculture operates under some of the country’s tightest water scrutiny. Winter cold fronts fill dams between June and August; summers are dry, windy and unforgiving on open water. Farmers in Stellenbosch, Franschhoek, Grabouw and the Swartland cannot treat seepage as acceptable losses — many dams sit on sandstone-derived soils and weathered granite that drink water year-round without a visible leak on the surface.",
@@ -346,7 +346,7 @@ export const LOCAL_LANDING_PAGES: LocalLandingPage[] = [
     ],
     relatedProjects: [
       {
-        href: "/projects/hdpe-dam-liner-installation",
+        href: "/projects/stellenbosch-hdpe-dam-liner",
         label: "Stellenbosch HDPE dam lining",
       },
       {
@@ -369,7 +369,9 @@ export const LOCAL_LANDING_PAGES: LocalLandingPage[] = [
     relatedLocations: [
       { href: "/farm-dam-liners", label: "Farm dam linings" },
       { href: "/agricultural-water-storage", label: "Agricultural water storage" },
-      { href: "/projects/centurion-hdpe-dam-liner", label: "Centurion project" },
+      { href: "/calculators", label: "Use the dam lining area calculator" },
+      { href: "/quote", label: "Request a Western Cape quote" },
+      { href: "/dam-liners", label: "Dam Liners overview" },
     ],
   },
   {
@@ -424,7 +426,7 @@ export const LOCAL_LANDING_PAGES: LocalLandingPage[] = [
     ],
     relatedProjects: [
       { href: "/projects/grabouw-hdpe-farm-dam", label: "Grabouw farm dam" },
-      { href: "/projects/hdpe-dam-liner-installation", label: "Stellenbosch dam lining" },
+      { href: "/projects/stellenbosch-hdpe-dam-liner", label: "Stellenbosch dam lining" },
       { href: "/projects/centurion-hdpe-dam-liner", label: "Centurion farm dam" },
     ],
     relatedLocations: [
@@ -554,13 +556,14 @@ export const LOCAL_LANDING_PAGES: LocalLandingPage[] = [
       },
     ],
     relatedProjects: [
-      { href: "/projects/hdpe-dam-liner-installation", label: "Stellenbosch HDPE dam" },
+      { href: "/projects/stellenbosch-hdpe-dam-liner", label: "Stellenbosch HDPE dam" },
       { href: "/projects/grabouw-hdpe-farm-dam", label: "Grabouw farm dam" },
       { href: "/projects/tulbagh-steel-water-tank", label: "Tulbagh steel water tank" },
     ],
     relatedLocations: [
       { href: "/farm-dam-liners", label: "Farm dam linings" },
       { href: "/western-cape-dam-liners", label: "Dam Linings Western Cape" },
+      { href: "/calculators", label: "Plan water storage with Damtech’s calculators" },
       { href: "/pretoria-dam-liners", label: "Pretoria" },
       { href: "/limpopo-dam-liners", label: "Limpopo" },
     ],

@@ -31,6 +31,8 @@ export type ProjectCaseStudy = {
   title: string;
   h1: string;
   location: string;
+  /** Province label for projects index cards. */
+  province?: string;
   /** When location is inferred from assets, mark for editorial confirmation. */
   locationStatus?: "confirmed" | "to-be-confirmed";
   serviceType: string;
@@ -56,6 +58,20 @@ export type ProjectCaseStudy = {
     title: string;
     description: string;
   };
+  /** Hide from index, sitemap and public routes until confirmed. */
+  draft?: boolean;
+  /**
+   * Month + year string for project pages, e.g. "March 2025".
+   * Do not render until a confirmed value exists (no placeholders in UI).
+   */
+  // TODO(business-confirm): populate completedDate per project before rendering.
+  completedDate?: string;
+  /**
+   * Installation duration in days.
+   * Do not render until a confirmed value exists (no placeholders in UI).
+   */
+  // TODO(business-confirm): populate durationDays per project before rendering.
+  durationDays?: number;
   /** Show on homepage featured projects grid. */
   featuredOnHome?: boolean;
   /** Sort order on homepage (lower first). */
@@ -72,9 +88,12 @@ export type ProjectCaseStudy = {
 export const PROJECT_CASE_STUDIES: ProjectCaseStudy[] = [
   {
     slug: "marico-hill-game-lodge-dam-lining",
+    // Unpublished: client details / final measurements pending confirmation.
+    draft: true,
     title: "Marico Hill Game Lodge Dam Lining",
     h1: "Marico Hill Game Lodge Dam Lining Project",
     location: "Rustenburg, North West",
+    province: "North West",
     serviceType: "HDPE dam lining",
     material: "1 mm HDPE geomembrane",
     scope:
@@ -119,10 +138,11 @@ export const PROJECT_CASE_STUDIES: ProjectCaseStudy[] = [
     },
   },
   {
-    slug: "hdpe-dam-liner-installation",
+    slug: "stellenbosch-hdpe-dam-liner",
     title: "HDPE Dam Liner Installation — Stellenbosch",
     h1: "HDPE Dam Liner Installation in Stellenbosch",
     location: "Stellenbosch, Western Cape",
+    province: "Western Cape",
     serviceType: "HDPE dam lining",
     material: "HDPE geomembrane (1.5 mm)",
     scope: "13,360 m² HDPE dam liner supply and installation for farm water storage.",
@@ -172,6 +192,7 @@ export const PROJECT_CASE_STUDIES: ProjectCaseStudy[] = [
     title: "Tulbagh Steel Water Tank Project — Western Cape",
     h1: "Steel Water Tank Project in Tulbagh, Western Cape",
     location: "Tulbagh, Western Cape",
+    province: "Western Cape",
     locationStatus: "to-be-confirmed",
     serviceType: "Steel Water Tanks",
     material: "Corrugated steel water tank",
@@ -232,8 +253,10 @@ export const PROJECT_CASE_STUDIES: ProjectCaseStudy[] = [
     title: "Grabouw HDPE Dam Lining",
     h1: "Grabouw HDPE Dam Lining Project",
     location: "Grabouw, Western Cape",
+    province: "Western Cape",
     serviceType: "HDPE dam lining",
     material: "HDPE geomembrane",
+    // TODO(business-confirm): confirm Grabouw area — interim uses project-page figure 3,400 m² (cards previously showed 10,520 m²).
     scope: "3,400 m² HDPE liner installation for agricultural water storage.",
     background:
       "A Grabouw fruit-farming operation relied on a farm dam for irrigation through the dry summer months in the Elgin / Grabouw valley. Seepage and embankment soils that were not naturally watertight reduced the effective storage the farm could carry from winter rainfall into the critical irrigation window for orchards.",
@@ -289,8 +312,10 @@ export const PROJECT_CASE_STUDIES: ProjectCaseStudy[] = [
     title: "Hoedspruit Bitumen Torch-On Waterproofing",
     h1: "Hoedspruit Bitumen Torch-On Waterproofing Project",
     location: "Hoedspruit, Limpopo",
+    province: "Limpopo",
     serviceType: "Bitumen torch-on dam lining",
     material: "Bitumen torch-on membrane",
+    // TODO(business-confirm): confirm Hoedspruit area — interim uses project-page figure 550 m² (cards previously showed 9,240 m²).
     scope: "550 m² bitumen torch-on lining for cement / structured dam waterproofing.",
     background:
       "A Hoedspruit-area client needed to waterproof a rigid dam structure in the Lowveld heat — a common requirement on older cement or gunite farm and commercial dams where flexible HDPE profile lining is not the right fit for the prepared surface. Reliable retention supports agricultural and operational water use through long dry spells typical of the Olifants valley climate.",
@@ -345,6 +370,7 @@ export const PROJECT_CASE_STUDIES: ProjectCaseStudy[] = [
     title: "Centurion HDPE Dam Lining",
     h1: "Centurion HDPE Dam Lining Project",
     location: "Centurion, Gauteng",
+    province: "Gauteng",
     serviceType: "HDPE dam lining",
     material: "HDPE geomembrane",
     scope: "1,200 m² HDPE dam liner for farm water storage in the Centurion / Pretoria corridor.",
@@ -401,6 +427,7 @@ export const PROJECT_CASE_STUDIES: ProjectCaseStudy[] = [
     title: "Torch-On Bitumen Concrete Dam — 15 m Diameter",
     h1: "Torch-On Bitumen Concrete Dam Project — 15 m Diameter",
     location: "Mpumalanga",
+    province: "Mpumalanga",
     locationStatus: "confirmed",
     serviceType: "Concrete dam waterproofing",
     material: "Torch-on bitumen membrane",
@@ -451,6 +478,7 @@ export const PROJECT_CASE_STUDIES: ProjectCaseStudy[] = [
     title: "Torch-On Bitumen Concrete Dam — 18 m Diameter",
     h1: "Torch-On Bitumen Concrete Dam Project — 18 m Diameter",
     location: "Tzaneen, Limpopo",
+    province: "Limpopo",
     locationStatus: "confirmed",
     serviceType: "Concrete dam waterproofing",
     material: "Torch-on bitumen membrane",
@@ -507,6 +535,7 @@ export const PROJECT_CASE_STUDIES: ProjectCaseStudy[] = [
     title: "Worcester Bitumen Earth Dam Lining — 15,000 m² | Western Cape",
     h1: "Bitumen Earth Dam Lining Project in Worcester, Western Cape — 15,000 m²",
     location: "Worcester, Western Cape",
+    province: "Western Cape",
     locationStatus: "to-be-confirmed",
     serviceType: "Bitumen earth dam lining",
     material: "Bitumen lining / waterproofing system",
@@ -582,6 +611,7 @@ export const PROJECT_CASE_STUDIES: ProjectCaseStudy[] = [
     title: "Villiersdorp HDPE Dam Lining — 8,230 m² | Western Cape",
     h1: "HDPE Dam Lining Project in Villiersdorp, Western Cape — 8,230 m²",
     location: "Villiersdorp, Western Cape",
+    province: "Western Cape",
     locationStatus: "to-be-confirmed",
     serviceType: "HDPE dam lining",
     material: "HDPE geomembrane",
@@ -640,24 +670,30 @@ export const PROJECT_CASE_STUDIES: ProjectCaseStudy[] = [
   },
 ];
 
+export function getPublishedProjects(): ProjectCaseStudy[] {
+  return PROJECT_CASE_STUDIES.filter((project) => !project.draft);
+}
+
 export function getFeaturedHomeProjects(): ProjectCaseStudy[] {
-  return PROJECT_CASE_STUDIES.filter((project) => project.featuredOnHome).sort(
-    (a, b) => (a.featuredOrder ?? 99) - (b.featuredOrder ?? 99),
-  );
+  return getPublishedProjects()
+    .filter((project) => project.featuredOnHome)
+    .sort((a, b) => (a.featuredOrder ?? 99) - (b.featuredOrder ?? 99));
 }
 
 export function getProjectBySlug(slug: string): ProjectCaseStudy | undefined {
-  return PROJECT_CASE_STUDIES.find((project) => project.slug === slug);
+  const project = PROJECT_CASE_STUDIES.find((entry) => entry.slug === slug);
+  if (!project || project.draft) return undefined;
+  return project;
 }
 
 export function getProjectSlugs(): string[] {
-  return PROJECT_CASE_STUDIES.map((project) => project.slug);
+  return getPublishedProjects().map((project) => project.slug);
 }
 
 export const PROJECTS_INDEX_SEO = {
-  title: "Damtech Projects | Dam Linings, Waterproofing & Water Storage Work",
+  title: "Dam Lining & Water Storage Projects | Damtech",
   description:
-    "View Damtech project examples including HDPE dam linings, bitumen waterproofing and water storage projects completed for South African clients.",
+    "Real Damtech case studies: HDPE dam liners in Stellenbosch, Grabouw and Hartswater, steel tanks in Witbank and torch-on lining in Hoedspruit — with sizes and photos.",
   path: "/projects",
   h1: "Damtech Project Case Studies",
   image: IMAGE_PATHS.hdpeDamLiningFieldInstallation,

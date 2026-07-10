@@ -17,6 +17,13 @@ export function ProjectDetailBody({ project }: ProjectDetailBodyProps) {
     { label: "Service", value: project.serviceType },
     { label: "Material", value: project.material },
     { label: "Scope", value: project.scope },
+    // Only render when confirmed values exist — no placeholder dates/durations.
+    ...(project.completedDate
+      ? [{ label: "Completed", value: project.completedDate }]
+      : []),
+    ...(typeof project.durationDays === "number"
+      ? [{ label: "Duration", value: `${project.durationDays} days` }]
+      : []),
   ];
 
   const contentSections = [

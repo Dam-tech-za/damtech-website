@@ -31,6 +31,11 @@ export function ProjectCard({ project }: ProjectCardProps) {
           <p className="home-process-projects__project-location">
             {project.location}
           </p>
+          {project.province ? (
+            <p className="home-process-projects__project-service">
+              {project.province}
+            </p>
+          ) : null}
           <p className="home-process-projects__project-service">
             {project.serviceType}
           </p>
