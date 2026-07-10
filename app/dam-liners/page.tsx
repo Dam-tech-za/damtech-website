@@ -332,7 +332,7 @@ export default function DamLinersPage() {
 
         <SectionCta
 
-          title="Not sure which liner fits your dam?"
+          title="Not sure which dam lining fits your dam?"
 
           description="Share photos, approximate dimensions and how you use stored water — we will recommend HDPE, PVC or bitumen torch-on."
 
@@ -372,7 +372,7 @@ export default function DamLinersPage() {
 
         title="Have Questions About Your Dam?"
 
-        description="Call us on +27 82 853 1026 or submit our quote form with dam dimensions and photos for a tailored liner recommendation."
+        description="Call us on +27 82 853 1026 or submit our quote form with dam dimensions and photos for a tailored dam lining recommendation."
 
       />
 
