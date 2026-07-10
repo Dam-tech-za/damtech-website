@@ -44,7 +44,7 @@ import {
 
 } from "@/lib/service-pages-content";
 
-import { PROJECTS } from "@/lib/site";
+import { getPublishedProjects } from "@/lib/projects";
 
 
 
@@ -162,7 +162,7 @@ export default function ServicesPage() {
 
 
 
-      <ProjectProofStrip title="Recent projects" projects={PROJECTS.slice(0, 4)} />
+      <ProjectProofStrip title="Recent projects" projects={getPublishedProjects().slice(0, 4)} />
 
 
 

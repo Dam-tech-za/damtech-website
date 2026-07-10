@@ -2,19 +2,14 @@ import Link from "next/link";
 import { ArrowRightIcon } from "@/components/icons/StrokeIcons";
 import { ProjectCard } from "@/components/ProjectCard";
 import { SiteSection } from "@/components/SiteSection";
-import { PROJECT_CASE_STUDIES } from "@/lib/projects";
-
-export type ProjectProofItem = {
-  href: string;
-  location: string;
-  detail: string;
-};
+import type { ProjectCaseStudy } from "@/lib/projects";
 
 type ProjectProofStripProps = {
   title?: string;
   eyebrow?: string;
   intro?: string;
-  projects: readonly ProjectProofItem[];
+  /** Published projects only — always pass results from `getPublishedProjects` / `getProjectsMatching`. */
+  projects: readonly ProjectCaseStudy[];
 };
 
 export function ProjectProofStrip({
@@ -23,13 +18,7 @@ export function ProjectProofStrip({
   intro = "Quality materials, expert installation and practical solutions for dam linings, waterproofing and water storage.",
   projects,
 }: ProjectProofStripProps) {
-  const caseStudies = projects
-    .map((project) =>
-      PROJECT_CASE_STUDIES.find((study) => `/projects/${study.slug}` === project.href),
-    )
-    .filter((study): study is NonNullable<typeof study> => Boolean(study));
-
-  if (caseStudies.length === 0) return null;
+  if (projects.length === 0) return null;
 
   return (
     <SiteSection tone="muted" aria-labelledby="project-proof-heading">
@@ -52,7 +41,7 @@ export function ProjectProofStrip({
       </div>
 
       <ul className="home-process-projects__project-grid">
-        {caseStudies.map((project) => (
+        {projects.map((project) => (
           <li key={project.slug}>
             <ProjectCard project={project} />
           </li>

@@ -44,6 +44,7 @@ import { createPageMetadata, PAGE_SEO } from "@/lib/pages";
 
 import { BITUMEN_CONTENT, BITUMEN_SCHEMA_OFFERS } from "@/lib/service-pages-content";
 import { WATERPROOFING_INTRO } from "@/lib/service-intro-content";
+import { getProjectsMatching } from "@/lib/projects";
 
 
 
@@ -328,23 +329,8 @@ export default function BitumenWaterproofingPage() {
 
 
       <ProjectProofStrip
-
         title="Bitumen lining projects"
-
-        projects={[
-
-          {
-
-            href: "/projects/hoedspruit-bitumen-dam-lining",
-
-            location: "Hoedspruit",
-
-            detail: "Bitumen torch-on dam lining — 550 m²",
-
-          },
-
-        ]}
-
+        projects={getProjectsMatching(/Bitumen|torch-on|waterproofing/i, 4)}
       />
 
 

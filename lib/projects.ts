@@ -690,10 +690,30 @@ export function getProjectSlugs(): string[] {
   return getPublishedProjects().map((project) => project.slug);
 }
 
+/** Filter published projects for hub/service carousels — single source of truth. */
+export function getProjectsMatching(
+  match: RegExp,
+  limit = 6,
+): ProjectCaseStudy[] {
+  return getPublishedProjects()
+    .filter((project) =>
+      match.test(
+        [
+          project.serviceType,
+          project.material,
+          project.scope,
+          project.featuredArea ?? "",
+          project.title,
+        ].join(" "),
+      ),
+    )
+    .slice(0, limit);
+}
+
 export const PROJECTS_INDEX_SEO = {
   title: "Dam Lining & Water Storage Projects | Damtech",
   description:
-    "Real Damtech case studies: HDPE dam liners in Stellenbosch, Grabouw and Hartswater, steel tanks in Witbank and torch-on lining in Hoedspruit — with sizes and photos.",
+    "Real Damtech case studies: HDPE dam liners in Stellenbosch, Grabouw and Centurion, steel tanks in Tulbagh, bitumen lining in Worcester and Hoedspruit — with sizes and photos.",
   path: "/projects",
   h1: "Damtech Project Case Studies",
   image: IMAGE_PATHS.hdpeDamLiningFieldInstallation,

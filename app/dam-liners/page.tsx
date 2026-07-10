@@ -47,9 +47,7 @@ import {
 import { createFaqPageSchema, createServiceSchema } from "@/lib/seo";
 
 import { createPageMetadata, PAGE_SEO } from "@/lib/pages";
-
-import { PROJECTS } from "@/lib/site";
-
+import { getProjectsMatching } from "@/lib/projects";
 import { ServiceIntroSection } from "@/components/ServiceIntroSection";
 import { DAM_LININGS_INTRO } from "@/lib/service-intro-content";
 
@@ -143,11 +141,7 @@ const LINER_TYPES = [
 
 
 
-const DAM_PROJECTS = PROJECTS.filter((project) =>
-
-  project.detail.includes("HDPE") || project.detail.includes("Bitumen"),
-
-);
+const DAM_PROJECTS = getProjectsMatching(/HDPE|Bitumen|PVC|dam lining/i, 6);
 
 
 

@@ -268,33 +268,14 @@ export const SERVICE_LINKS = [
   { href: "/faq", label: "FAQ" },
 ] as const;
 
-export const PROJECTS = [
-  {
-    href: "/projects/centurion-hdpe-dam-liner",
-    location: "Centurion",
-    detail: "HDPE Dam Lining — 1,200 m²",
-  },
-  {
-    href: "/projects/grabouw-hdpe-farm-dam",
-    location: "Grabouw",
-    detail: "HDPE Dam Lining — 3,400 m²",
-  },
-  {
-    href: "/projects/hoedspruit-bitumen-dam-lining",
-    location: "Hoedspruit",
-    detail: "Bitumen Torch-On — 550 m²",
-  },
-  {
-    href: "/projects/stellenbosch-hdpe-dam-liner",
-    location: "Stellenbosch",
-    detail: "HDPE Dam Lining — 13,360 m²",
-  },
-  {
-    href: "/projects/tulbagh-steel-water-tank",
-    location: "Tulbagh, Western Cape",
-    detail: "Steel Water Tanks",
-  },
-] as const;
+/** Regional landing pages — footer discovery (crawlable). */
+export const FOOTER_REGION_LINKS: NavLink[] = [
+  { href: "/western-cape-dam-liners", label: "Western Cape" },
+  { href: "/limpopo-dam-liners", label: "Limpopo" },
+  { href: "/mpumalanga-dam-liners", label: "Mpumalanga" },
+  { href: "/pretoria-dam-liners", label: "Pretoria" },
+  { href: "/johannesburg-dam-liners", label: "Johannesburg" },
+];
 
 /** Paths disallowed in robots.txt — must not be listed in sitemap.xml. */
 export const ROBOTS_DISALLOW_PATHS = [

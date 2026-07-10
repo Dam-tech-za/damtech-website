@@ -19,7 +19,7 @@ import {
 } from "@/components/lazy";
 import { SITE_IMAGES } from "@/lib/images";
 import { getSubServiceIntro } from "@/lib/service-intro-content";
-import { PROJECTS } from "@/lib/site";
+import { getProjectsMatching } from "@/lib/projects";
 import { createFaqPageSchema, createServiceSchema } from "@/lib/seo";
 import type { SubServicePageConfig } from "@/lib/sub-service-pages";
 
@@ -41,9 +41,7 @@ export function SubServicePage({ page }: SubServicePageProps) {
   const intro = getSubServiceIntro(page.slug);
   const fallbackImage = imageForPage(page);
 
-  const projects = PROJECTS.filter((project) =>
-    page.projectDetailMatch.test(project.detail),
-  );
+  const projects = getProjectsMatching(page.projectDetailMatch, 6);
 
   const breadcrumbs = [
     { name: "Home", path: "/" },

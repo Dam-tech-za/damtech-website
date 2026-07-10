@@ -39,7 +39,7 @@ import { createPageMetadata, PAGE_SEO } from "@/lib/pages";
 
 import { STEEL_TANKS_CONTENT, STEEL_TANKS_SCHEMA_OFFERS } from "@/lib/service-pages-content";
 
-import { PROJECTS } from "@/lib/site";
+import { getProjectsMatching } from "@/lib/projects";
 
 
 
@@ -319,11 +319,8 @@ export default function SteelTanksPage() {
 
 
       <ProjectProofStrip
-
         title="Steel tank installations"
-
-        projects={PROJECTS.filter((project) => project.detail.includes("Steel"))}
-
+        projects={getProjectsMatching(/steel|tank|reservoir/i, 4)}
       />
 
 

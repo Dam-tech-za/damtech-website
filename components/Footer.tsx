@@ -1,6 +1,7 @@
 import Link from "next/link";
 import {
   FOOTER_COMPANY_LINKS,
+  FOOTER_REGION_LINKS,
   FOOTER_SERVICE_LINKS,
   formatOfficeAddressLines,
   OFFICES,
@@ -18,6 +19,18 @@ export function Footer() {
           <p className="mt-3 text-sm leading-relaxed text-slate-300">
             {siteConfig.defaultDescription}
           </p>
+          <p className="mt-6 text-sm font-semibold uppercase tracking-wide text-white">
+            Where we work
+          </p>
+          <ul className="mt-3 grid gap-2">
+            {FOOTER_REGION_LINKS.map((link) => (
+              <li key={link.href}>
+                <Link href={link.href} className="text-sm hover:text-white">
+                  {link.label}
+                </Link>
+              </li>
+            ))}
+          </ul>
         </div>
 
         <div>
