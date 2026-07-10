@@ -410,7 +410,7 @@ export const RESERVOIR_LINING_PAGE: SubServicePageConfig = {
   description:
     "Reservoir lining and relining for steel, concrete and farm water storage systems. Damtech installs PVC, HDPE and bitumen lining solutions nationwide.",
   h1: "Reservoir Lining Contractors",
-  image: IMAGE_PATHS.westernCapeSteelWaterTankProject,
+  image: IMAGE_PATHS.tulbaghWesternCapeSteelWaterTankProject,
   serviceName: "Reservoir Lining",
   schemaOffers: [
     "Steel reservoir PVC lining",

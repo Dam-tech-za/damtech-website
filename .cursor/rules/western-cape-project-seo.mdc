@@ -1,0 +1,24 @@
+---
+description: Western Cape project and image local SEO town convention
+globs: lib/projects.ts,lib/images.ts,lib/redirects.ts,lib/local-pages.ts,public/images/**
+alwaysApply: false
+---
+
+# Western Cape project location SEO
+
+When editing Damtech project data or project images:
+
+- Prefer a **Western Cape town/area**, not province-only labels ("Western Cape").
+- Public SEO copy must name **both** the town and the province, e.g. "Tulbagh in the Western Cape".
+- Image filenames and alt text should include **town + western-cape**.
+- Do not change confirmed towns (Stellenbosch, Grabouw, etc.).
+
+## Assigned WC market towns (previously unallocated)
+
+| Town | Project slug | Image prefix |
+|------|--------------|--------------|
+| Tulbagh | `tulbagh-steel-water-tank` | `tulbagh-western-cape-steel-water-tank-*` |
+| Worcester | `worcester-bitumen-earth-dam-lining-15000m2` | `worcester-western-cape-bitumen-earth-dam-*` |
+| Villiersdorp | `villiersdorp-hdpe-dam-lining-8230m2` | `villiersdorp-western-cape-hdpe-dam-*` |
+
+See also the convention comments at the top of `lib/projects.ts` and `lib/images.ts`.

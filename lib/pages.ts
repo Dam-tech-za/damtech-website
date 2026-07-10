@@ -69,7 +69,7 @@ export const PAGE_SEO: Record<StaticPageKey, PageSeoEntry> = {
     path: "/steel-water-storage-tanks",
     h1: "Steel Water Tanks and Corrugated Reservoirs",
     serviceName: "Corrugated Steel Water Tank Installation",
-    image: IMAGE_PATHS.westernCapeSteelWaterTankProject,
+    image: IMAGE_PATHS.tulbaghWesternCapeSteelWaterTankProject,
   },
   bitumen: {
     title: "Bitumen Waterproofing South Africa | Torch-On Systems | Damtech",

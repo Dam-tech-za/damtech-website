@@ -261,8 +261,8 @@ export const PROJECTS = [
     detail: "HDPE Dam Lining — 13,360 m²",
   },
   {
-    href: "/projects/western-cape-steel-water-tank",
-    location: "Western Cape",
+    href: "/projects/tulbagh-steel-water-tank",
+    location: "Tulbagh, Western Cape",
     detail: "Steel Water Tanks",
   },
   {

@@ -130,32 +130,62 @@ export const redirects: Redirect[] = [
   },
   {
     source: "/projects/corrugated-steel-water-tank-installation",
-    destination: "/projects/western-cape-steel-water-tank/",
+    destination: "/projects/tulbagh-steel-water-tank/",
     permanent: true,
   },
   {
     source: "/projects/corrugated-steel-water-tank-installation/",
-    destination: "/projects/western-cape-steel-water-tank/",
+    destination: "/projects/tulbagh-steel-water-tank/",
+    permanent: true,
+  },
+  {
+    source: "/projects/western-cape-steel-water-tank",
+    destination: "/projects/tulbagh-steel-water-tank/",
+    permanent: true,
+  },
+  {
+    source: "/projects/western-cape-steel-water-tank/",
+    destination: "/projects/tulbagh-steel-water-tank/",
     permanent: true,
   },
   {
     source: "/projects/free-state-bitumen-earth-dam-lining-15000m2",
-    destination: "/projects/western-cape-bitumen-earth-dam-lining-15000m2/",
+    destination: "/projects/worcester-bitumen-earth-dam-lining-15000m2/",
     permanent: true,
   },
   {
     source: "/projects/free-state-bitumen-earth-dam-lining-15000m2/",
-    destination: "/projects/western-cape-bitumen-earth-dam-lining-15000m2/",
+    destination: "/projects/worcester-bitumen-earth-dam-lining-15000m2/",
+    permanent: true,
+  },
+  {
+    source: "/projects/western-cape-bitumen-earth-dam-lining-15000m2",
+    destination: "/projects/worcester-bitumen-earth-dam-lining-15000m2/",
+    permanent: true,
+  },
+  {
+    source: "/projects/western-cape-bitumen-earth-dam-lining-15000m2/",
+    destination: "/projects/worcester-bitumen-earth-dam-lining-15000m2/",
     permanent: true,
   },
   {
     source: "/projects/limpopo-hdpe-dam-lining-8230m2",
-    destination: "/projects/western-cape-hdpe-dam-lining-8230m2/",
+    destination: "/projects/villiersdorp-hdpe-dam-lining-8230m2/",
     permanent: true,
   },
   {
     source: "/projects/limpopo-hdpe-dam-lining-8230m2/",
-    destination: "/projects/western-cape-hdpe-dam-lining-8230m2/",
+    destination: "/projects/villiersdorp-hdpe-dam-lining-8230m2/",
+    permanent: true,
+  },
+  {
+    source: "/projects/western-cape-hdpe-dam-lining-8230m2",
+    destination: "/projects/villiersdorp-hdpe-dam-lining-8230m2/",
+    permanent: true,
+  },
+  {
+    source: "/projects/western-cape-hdpe-dam-lining-8230m2/",
+    destination: "/projects/villiersdorp-hdpe-dam-lining-8230m2/",
     permanent: true,
   },
 ];
