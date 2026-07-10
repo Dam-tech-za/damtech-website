@@ -128,7 +128,7 @@ const LINER_TYPES = [
 
     summary:
 
-      "Flexible liner for ponds, steel tanks and smaller reservoirs where ease of handling matters.",
+      "Flexible dam lining for ponds, steel tanks and smaller reservoirs where ease of handling matters.",
 
     sizes: "550–850 gsm",
 
@@ -178,7 +178,7 @@ export default function DamLinersPage() {
 
     { name: "Services", path: "/services" },
 
-    { name: "Dam Liners", path: seo.path },
+    { name: "Dam Linings", path: seo.path },
 
   ];
 
@@ -198,7 +198,7 @@ export default function DamLinersPage() {
 
             name: seo.serviceName ?? seo.title,
 
-            serviceType: seo.serviceName ?? "HDPE Dam Lining",
+            serviceType: seo.serviceName ?? "Dam Linings",
 
             description: seo.description,
 
@@ -224,7 +224,7 @@ export default function DamLinersPage() {
 
         title={seo.h1}
 
-        description="Damtech supplies and installs HDPE and PVC dam liners for dam lining, reservoir lining and water storage applications across South Africa."
+        description="Damtech supplies and installs HDPE, PVC and torch-on dam linings for earth dams, reservoirs, ponds and water storage applications across South Africa."
 
         breadcrumbs={breadcrumbs}
 
@@ -256,7 +256,7 @@ export default function DamLinersPage() {
 
           columns={[
 
-            { key: "type", label: "Liner type" },
+            { key: "type", label: "Lining type" },
 
             { key: "sizes", label: "Sizes" },
 

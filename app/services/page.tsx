@@ -188,7 +188,7 @@ export default function ServicesPage() {
 
           links={[
 
-            { href: "/dam-liners", label: "Dam Liners" },
+            { href: "/dam-liners", label: "Dam Linings" },
 
             { href: "/hdpe-dam-lining", label: "HDPE Dam Lining" },
 

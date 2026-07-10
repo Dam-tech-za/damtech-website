@@ -552,7 +552,7 @@ export const PROJECT_CASE_STUDIES: ProjectCaseStudy[] = [
       ),
     ],
     relatedServices: [
-      { href: "/dam-liners", label: "Dam Liners & Dam Lining Services" },
+      { href: "/dam-liners", label: "Dam Linings" },
       { href: "/bitumen-waterproofing", label: "Bitumen Waterproofing" },
       { href: "/torch-on-dam-lining", label: "Torch-On Dam Lining" },
       { href: "/western-cape-dam-liners", label: "Dam Linings Western Cape" },
@@ -619,7 +619,7 @@ export const PROJECT_CASE_STUDIES: ProjectCaseStudy[] = [
       ),
     ],
     relatedServices: [
-      { href: "/dam-liners", label: "Dam Liners & Dam Lining Services" },
+      { href: "/dam-liners", label: "Dam Linings" },
       { href: "/hdpe-dam-lining", label: "HDPE Dam Lining" },
       { href: "/reservoir-lining", label: "Reservoir Lining" },
       { href: "/western-cape-dam-liners", label: "Dam Linings Western Cape" },

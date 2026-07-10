@@ -54,12 +54,12 @@ export const PAGE_SEO: Record<StaticPageKey, PageSeoEntry> = {
     image: IMAGE_PATHS.hdpeDamLiningEarthDam,
   },
   "dam-liners": {
-    title: "HDPE, PVC & Torch-On Dam Liners South Africa | Damtech",
+    title: "HDPE, PVC & Torch-On Dam Linings South Africa | Damtech",
     description:
-      "HDPE, PVC and torch-on dam liners for earth dams, reservoirs, ponds and water storage applications across South Africa. Supplier-backed materials where applicable.",
+      "HDPE, PVC and torch-on dam linings for earth dams, reservoirs, ponds and water storage across South Africa. Damtech installs dam linings with supplier-backed materials where applicable.",
     path: "/dam-liners",
-    h1: "Dam Liners & Dam Lining Services",
-    serviceName: "HDPE Dam Lining",
+    h1: "Dam Linings for Earth Dams, Reservoirs & Water Storage",
+    serviceName: "Dam Linings",
     image: IMAGE_PATHS.hdpeDamLiningFieldInstallation,
   },
   "steel-tanks": {

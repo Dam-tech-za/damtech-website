@@ -160,7 +160,7 @@ export type NavLink = {
 
 /** Service pages linked from the header Services dropdown. */
 export const SERVICES_DROPDOWN_LINKS: NavLink[] = [
-  { href: "/dam-liners", label: "Dam Liners" },
+  { href: "/dam-liners", label: "Dam Linings" },
   { href: "/steel-water-storage-tanks", label: "Steel Water Tanks" },
   { href: "/bitumen-waterproofing", label: "Waterproofing" },
   { href: "/reservoir-lining", label: "Reservoir Lining" },
@@ -202,7 +202,7 @@ export const HEADER_NAV_LINKS: NavLink[] = HEADER_NAV_ITEMS.flatMap((item) =>
 export const NAV_LINKS = HEADER_NAV_LINKS;
 
 export const FOOTER_SERVICE_LINKS: NavLink[] = [
-  { href: "/dam-liners", label: "Dam Liners" },
+  { href: "/dam-liners", label: "Dam Linings" },
   { href: "/hdpe-dam-lining", label: "HDPE Dam Lining" },
   { href: "/steel-water-storage-tanks", label: "Steel Water Tanks" },
   { href: "/bitumen-waterproofing", label: "Bitumen Waterproofing" },

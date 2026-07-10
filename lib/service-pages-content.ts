@@ -5,9 +5,9 @@ export type ServiceFaqItem = {
 
 /** Offer names for Service JSON-LD `hasOfferCatalog` on each service page. */
 export const DAM_LINERS_SCHEMA_OFFERS = [
-  "1 mm HDPE liner installation",
-  "1.5 mm HDPE liner installation",
-  "2 mm HDPE liner installation",
+  "1 mm HDPE dam lining installation",
+  "1.5 mm HDPE dam lining installation",
+  "2 mm HDPE dam lining installation",
   "PVC dam lining installation",
   "Bitumen torch-on dam lining",
 ] as const;
@@ -59,10 +59,10 @@ export const DAM_LINERS_CONTENT = {
   sections: [
     {
       id: "dam-liners-vs-linings",
-      heading: "Dam Liners and Dam Linings — What's the Difference?",
+      heading: "Dam Linings and Dam Liners — What's the Difference?",
       paragraphs: [
-        "In South Africa, contractors and farmers often use dam liners and dam linings interchangeably for the same geomembrane or membrane product installed inside an earth dam or reservoir. Both terms describe the sheet material and the completed waterproof lining work — not two different systems.",
-        "Damtech specifies and installs HDPE, PVC and bitumen torch-on dam linings (also called dam liners) using the same site preparation, welding and anchoring standards whether your quote says liner or lining.",
+        "Dam linings describe the waterproofing service and completed installation inside an earth dam or reservoir. Dam liners usually refer to the geomembrane or membrane product itself. In South Africa both terms are often used for the same HDPE, PVC or bitumen torch-on work.",
+        "Damtech specifies and installs HDPE, PVC and bitumen torch-on dam linings — using quality dam liner materials — with the same site preparation, welding and anchoring standards whether your quote says lining or liner.",
       ],
     },
     {
