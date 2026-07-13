@@ -1,8 +1,13 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState, useTransition, type ReactNode } from "react";
+import { useEffect, useMemo, useState, useTransition, type ReactNode } from "react";
 import { submitLead } from "@/app/actions/submit-lead";
+import {
+  clearQuotePrefill,
+  peekQuotePrefill,
+  type QuotePrefill,
+} from "@/lib/calculator-rfq-prefill";
 import { PROVINCE_OPTIONS, SERVICE_OPTIONS } from "@/lib/form";
 import { phoneTel, siteConfig, whatsAppUrl } from "@/lib/site";
 
@@ -12,6 +17,8 @@ type FormSectionProps = {
   sourcePage: string;
   submitLabel?: string;
   id?: string;
+  /** When true, apply calculator RFQ prefill from sessionStorage (quote page). */
+  applyCalculatorPrefill?: boolean;
 };
 
 function Field({
@@ -39,16 +46,43 @@ function Field({
   );
 }
 
+function loadPrefill(enabled: boolean): QuotePrefill | null {
+  if (!enabled || typeof window === "undefined") return null;
+  return peekQuotePrefill();
+}
+
 export function FormSection({
   title,
   subtitle,
   sourcePage,
   submitLabel = "Request a Free Quote",
   id = "request-quote-form",
+  applyCalculatorPrefill = false,
 }: FormSectionProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
+  const [prefill] = useState<QuotePrefill | null>(() =>
+    loadPrefill(applyCalculatorPrefill),
+  );
+
+  useEffect(() => {
+    if (applyCalculatorPrefill && prefill) {
+      clearQuotePrefill();
+    }
+  }, [applyCalculatorPrefill, prefill]);
+
+  const hasOptionalPrefill = Boolean(
+    prefill?.company ||
+      prefill?.province ||
+      prefill?.projectSize ||
+      prefill?.projectLocation,
+  );
+
+  const prefillBanner = useMemo(() => {
+    if (!prefill) return null;
+    return `Details from the ${prefill.sourceCalculatorName} have been added below. Review and complete your contact details before sending.`;
+  }, [prefill]);
 
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -71,9 +105,7 @@ export function FormSection({
 
   return (
     <div className="site-form-card">
-      <h2 className="section-heading !mt-0">
-        {title}
-      </h2>
+      <h2 className="section-heading !mt-0">{title}</h2>
       {subtitle ? (
         <p className="mt-2 text-sm leading-relaxed text-slate-600 sm:text-base">
           {subtitle}
@@ -82,6 +114,15 @@ export function FormSection({
       <p className="mt-2 text-sm text-slate-600">
         We typically respond within one business day.
       </p>
+
+      {prefillBanner ? (
+        <p
+          className="mt-4 rounded-lg border border-sky-200 bg-sky-50 px-3 py-2 text-sm text-navy"
+          role="status"
+        >
+          {prefillBanner}
+        </p>
+      ) : null}
 
       <form
         id={id}
@@ -135,7 +176,7 @@ export function FormSection({
             name="serviceRequired"
             className="form-input"
             disabled={isPending}
-            defaultValue=""
+            defaultValue={prefill?.serviceRequired ?? ""}
           >
             <option value="" disabled>
               Select a service
@@ -158,14 +199,18 @@ export function FormSection({
             id={`${id}-message`}
             name="message"
             required
-            rows={4}
+            rows={prefill?.message ? 8 : 4}
             placeholder="Describe your dam, tank or waterproofing requirements."
             className="form-input"
             disabled={isPending}
+            defaultValue={prefill?.message ?? ""}
           />
         </Field>
 
-        <details className="group rounded-2xl border border-slate-200 bg-slate-50 open:bg-white open:shadow-sm">
+        <details
+          className="group rounded-2xl border border-slate-200 bg-slate-50 open:bg-white open:shadow-sm"
+          open={hasOptionalPrefill || undefined}
+        >
           <summary className="cursor-pointer list-none px-5 py-4 font-semibold text-navy marker:content-none [&::-webkit-details-marker]:hidden">
             <span className="flex items-center justify-between gap-3">
               <span>Optional project details</span>
@@ -186,6 +231,7 @@ export function FormSection({
                 autoComplete="organization"
                 className="form-input"
                 disabled={isPending}
+                defaultValue={prefill?.company ?? ""}
               />
             </Field>
 
@@ -195,6 +241,7 @@ export function FormSection({
                 name="province"
                 className="form-input"
                 disabled={isPending}
+                defaultValue={prefill?.province ?? ""}
               >
                 <option value="">Select province</option>
                 {PROVINCE_OPTIONS.map((province) => (
@@ -217,6 +264,7 @@ export function FormSection({
                   placeholder="e.g. 5 000 m² liner or 250 kL tank"
                   className="form-input"
                   disabled={isPending}
+                  defaultValue={prefill?.projectSize ?? ""}
                 />
               </Field>
               <Field id={`${id}-location`} label="Project location">
@@ -227,6 +275,7 @@ export function FormSection({
                   placeholder="Town, district or farm name"
                   className="form-input"
                   disabled={isPending}
+                  defaultValue={prefill?.projectLocation ?? ""}
                 />
               </Field>
             </div>

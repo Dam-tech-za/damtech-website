@@ -1,10 +1,4 @@
-import Link from "next/link";
-import {
-  CALCULATORS_DAM_LINING_LINK,
-  CALCULATORS_HUB_PATH,
-  CALCULATORS_STEEL_TANK_LINK,
-  CALCULATORS_WATERPROOFING_LINK,
-} from "@/lib/calculator-links";
+import { CalculatorJumpLink } from "@/components/calculators/CalculatorJumpLink";
 
 /** Crawlable overview and H2 sections for calculator hub SEO signals. */
 export function CalculatorsSeoIntro() {
@@ -16,36 +10,55 @@ export function CalculatorsSeoIntro() {
         requirements, rainwater harvesting potential and water storage needs across South
         Africa. These tools help farms, mines, game lodges and commercial properties prepare
         dimensions and demand figures before{" "}
-        <Link href="/quote" className="text-water hover:underline">
+        <a href="/quote" className="text-water hover:underline">
           requesting a dam lining quote
-        </Link>
+        </a>
         .
       </p>
 
       <section aria-labelledby="dam-lining-calculator-heading">
         <h2 id="dam-lining-calculator-heading" className="text-xl font-bold text-navy sm:text-2xl">
-          Dam Lining Area Calculator
+          <CalculatorJumpLink
+            calculatorId="dam-lining-area"
+            asHeading
+            className="text-water hover:underline"
+          >
+            Dam Lining Area Calculator
+          </CalculatorJumpLink>
         </h2>
         <p className="mt-3 text-body">
           The{" "}
-          <Link href={CALCULATORS_DAM_LINING_LINK.href} className="text-water hover:underline">
+          <CalculatorJumpLink
+            calculatorId="dam-lining-area"
+            className="text-water hover:underline"
+          >
             dam lining area calculator
-          </Link>{" "}
+          </CalculatorJumpLink>{" "}
           helps you estimate geomembrane material for earth dams, ponds and reservoirs. Enter
-          top and bottom dimensions, depth, side slope, freeboard, overlap and anchor trench
-          allowances to plan HDPE or PVC dam liner material before a site inspection.
+          top and bottom dimensions, depth and side slope to plan HDPE or PVC dam liner
+          material before a site inspection. Overlap, anchor trench and wastage allowances are
+          applied automatically as Damtech planning defaults.
         </p>
       </section>
 
       <section aria-labelledby="steel-tank-calculator-heading">
         <h2 id="steel-tank-calculator-heading" className="text-xl font-bold text-navy sm:text-2xl">
-          Steel Water Tank Size Calculator
+          <CalculatorJumpLink
+            calculatorId="steel-tank-size"
+            asHeading
+            className="text-water hover:underline"
+          >
+            Steel Water Tank Size Calculator
+          </CalculatorJumpLink>
         </h2>
         <p className="mt-3 text-body">
           The{" "}
-          <Link href={CALCULATORS_STEEL_TANK_LINK.href} className="text-water hover:underline">
+          <CalculatorJumpLink
+            calculatorId="steel-tank-size"
+            className="text-water hover:underline"
+          >
             steel water tank size calculator
-          </Link>{" "}
+          </CalculatorJumpLink>{" "}
           estimates corrugated steel reservoir capacity from daily water use, backup storage
           days and a safety factor — useful when sizing farm, lodge or commercial water storage.
         </p>
@@ -58,33 +71,58 @@ export function CalculatorsSeoIntro() {
         <p className="mt-3 text-body">
           Plan annual farm water demand, land-size based requirements and crop irrigation
           needs with our{" "}
-          <Link href={`${CALCULATORS_HUB_PATH}#annual-water-requirement`} className="text-water hover:underline">
+          <CalculatorJumpLink
+            calculatorId="annual-water-requirement"
+            className="text-water hover:underline"
+          >
             annual water requirement
-          </Link>
+          </CalculatorJumpLink>
           ,{" "}
-          <Link href={`${CALCULATORS_HUB_PATH}#water-by-land-size`} className="text-water hover:underline">
+          <CalculatorJumpLink
+            calculatorId="water-by-land-size"
+            className="text-water hover:underline"
+          >
             water by land size
-          </Link>{" "}
+          </CalculatorJumpLink>{" "}
           and{" "}
-          <Link href={`${CALCULATORS_HUB_PATH}#irrigation-water`} className="text-water hover:underline">
+          <CalculatorJumpLink
+            calculatorId="irrigation-water"
+            className="text-water hover:underline"
+          >
             irrigation water requirement calculators
-          </Link>
-          . The rainwater harvesting calculator estimates catchment yield for tank or lined
-          dam storage planning.
+          </CalculatorJumpLink>
+          . The{" "}
+          <CalculatorJumpLink
+            calculatorId="rainwater-harvesting"
+            className="text-water hover:underline"
+          >
+            rainwater harvesting calculator
+          </CalculatorJumpLink>{" "}
+          estimates catchment yield for tank or lined dam storage planning.
         </p>
       </section>
 
       <section aria-labelledby="waterproofing-calculator-heading">
         <h2 id="waterproofing-calculator-heading" className="text-xl font-bold text-navy sm:text-2xl">
-          Waterproofing Area Calculator
+          <CalculatorJumpLink
+            calculatorId="waterproofing-area"
+            asHeading
+            className="text-water hover:underline"
+          >
+            Waterproofing Area Calculator
+          </CalculatorJumpLink>
         </h2>
         <p className="mt-3 text-body">
           Use the{" "}
-          <Link href={CALCULATORS_WATERPROOFING_LINK.href} className="text-water hover:underline">
+          <CalculatorJumpLink
+            calculatorId="waterproofing-area"
+            className="text-water hover:underline"
+          >
             waterproofing area calculator
-          </Link>{" "}
+          </CalculatorJumpLink>{" "}
           to estimate bitumen or torch-on material for roofs, reservoirs, channels and
-          water-retaining structures, including upstands, overlaps and wastage allowances.
+          water-retaining structures. Upstands are entered on the form; overlap and wastage
+          allowances are applied automatically.
         </p>
       </section>
     </div>

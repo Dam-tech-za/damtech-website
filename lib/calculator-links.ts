@@ -1,6 +1,6 @@
 /** Shared internal links to the calculator hub — consistent anchor text sitewide. */
 
-export const CALCULATORS_HUB_PATH = "/calculators" as const;
+export const CALCULATORS_HUB_PATH = "/calculators/" as const;
 
 export const CALCULATORS_RELATED_LINK = {
   href: CALCULATORS_HUB_PATH,

@@ -1,8 +1,13 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useId, useState } from "react";
-import { ArrowRightIcon, CheckCircleIcon } from "@/components/icons/StrokeIcons";
+import {
+  ArrowRightIcon,
+  CheckCircleIcon,
+  InfoCircleIcon,
+} from "@/components/icons/StrokeIcons";
 import { PageSectionHeader } from "@/components/PageSectionHeader";
 import {
   CALCULATOR_FAQS,
@@ -14,14 +19,37 @@ import {
   type CalculatorField,
 } from "@/lib/calculators-config";
 import {
+  buildQuotePrefill,
+  storeQuotePrefill,
+} from "@/lib/calculator-rfq-prefill";
+import {
   calculateCalculator,
   type CalculatorResult,
 } from "@/lib/calculators-logic";
 
-
 function buildDefaultValues(calculator: CalculatorConfig): Record<string, string> {
   return Object.fromEntries(
     calculator.fields.map((field) => [field.name, field.defaultValue ?? ""]),
+  );
+}
+
+function FieldInfoTip({ text }: { text: string }) {
+  const tipId = useId();
+
+  return (
+    <span className="calc-field-info">
+      <button
+        type="button"
+        className="calc-field-info__trigger"
+        aria-describedby={tipId}
+        aria-label="More information"
+      >
+        <InfoCircleIcon className="calc-field-info__icon" />
+      </button>
+      <span id={tipId} role="tooltip" className="calc-field-info__popup">
+        {text}
+      </span>
+    </span>
   );
 }
 
@@ -40,12 +68,22 @@ function CalculatorFieldInput({
   const errorId = error ? `${inputId}-error` : undefined;
   const inputClassName = `form-input min-h-12${error ? " border-red-400 focus:border-red-500 focus:ring-red-200" : ""}`;
 
+  const label = (
+    <div className="calc-field-label">
+      <label htmlFor={inputId} className="form-label">
+        {field.label}
+        {field.unit ? (
+          <span className="ml-1 font-normal text-subtle">({field.unit})</span>
+        ) : null}
+      </label>
+      {field.info ? <FieldInfoTip text={field.info} /> : null}
+    </div>
+  );
+
   if (field.type === "select") {
     return (
       <div className="form-field">
-        <label htmlFor={inputId} className="form-label">
-          {field.label}
-        </label>
+        {label}
         <select
           id={inputId}
           name={field.name}
@@ -75,9 +113,7 @@ function CalculatorFieldInput({
   if (field.type === "textarea") {
     return (
       <div className="form-field">
-        <label htmlFor={inputId} className="form-label">
-          {field.label}
-        </label>
+        {label}
         <textarea
           id={inputId}
           name={field.name}
@@ -101,12 +137,7 @@ function CalculatorFieldInput({
 
   return (
     <div className="form-field">
-      <label htmlFor={inputId} className="form-label">
-        {field.label}
-        {field.unit ? (
-          <span className="ml-1 font-normal text-subtle">({field.unit})</span>
-        ) : null}
-      </label>
+      {label}
       <input
         id={inputId}
         name={field.name}
@@ -131,7 +162,36 @@ function CalculatorFieldInput({
   );
 }
 
+function FixedAllowances({ fields }: { fields: CalculatorField[] }) {
+  if (fields.length === 0) return null;
+
+  return (
+    <div className="calc-fixed-allowances" aria-label="Fixed planning allowances">
+      <p className="calc-fixed-allowances__title">Included planning allowances</p>
+      <p className="calc-fixed-allowances__intro">
+        These Damtech defaults are applied automatically and cannot be edited here. Final
+        values are confirmed during quote and site inspection.
+      </p>
+      <ul className="calc-fixed-allowances__list">
+        {fields.map((field) => (
+          <li key={field.name} className="calc-fixed-allowances__item">
+            <span className="calc-fixed-allowances__label">
+              {field.label}
+              {field.info ? <FieldInfoTip text={field.info} /> : null}
+            </span>
+            <span className="calc-fixed-allowances__value">
+              {field.defaultValue ?? "—"}
+              {field.unit ? ` ${field.unit}` : ""}
+            </span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
 export function CalculatorHub() {
+  const router = useRouter();
   const [selectedId, setSelectedId] = useState(DEFAULT_CALCULATOR_ID);
   const [formValues, setFormValues] = useState<Record<string, string>>(() =>
     buildDefaultValues(CALCULATORS[0]!),
@@ -144,6 +204,9 @@ export function CalculatorHub() {
   const selectedCalculator =
     CALCULATORS.find((calc) => calc.id === selectedId) ?? CALCULATORS[0]!;
 
+  const editableFields = selectedCalculator.fields.filter((field) => !field.fixed);
+  const fixedFields = selectedCalculator.fields.filter((field) => field.fixed);
+
   const clearCalculationState = useCallback(() => {
     setResult(null);
     setCalcError(null);
@@ -151,29 +214,56 @@ export function CalculatorHub() {
     setHasCalculated(false);
   }, []);
 
-  const selectCalculator = useCallback((id: string, scroll = false) => {
-    const calculator = CALCULATORS.find((calc) => calc.id === id);
-    if (!calculator) return;
-    setSelectedId(id);
-    setFormValues(buildDefaultValues(calculator));
-    clearCalculationState();
-    if (scroll) {
-      requestAnimationFrame(() => {
-        document.getElementById(`calc-panel-${id}`)?.scrollIntoView({ behavior: "smooth", block: "start" });
-      });
-    }
-  }, [clearCalculationState]);
+  const selectCalculator = useCallback(
+    (id: string, scroll = false) => {
+      const calculator = CALCULATORS.find((calc) => calc.id === id);
+      if (!calculator) return;
+      setSelectedId(id);
+      setFormValues(buildDefaultValues(calculator));
+      clearCalculationState();
+
+      if (typeof window !== "undefined") {
+        const nextHash = `#${id}`;
+        if (window.location.hash !== nextHash) {
+          window.history.replaceState(null, "", nextHash);
+        }
+      }
+
+      if (scroll) {
+        window.requestAnimationFrame(() => {
+          window.setTimeout(() => {
+            document
+              .getElementById("calculator-workspace")
+              ?.scrollIntoView({ behavior: "smooth", block: "start" });
+          }, 40);
+        });
+      }
+    },
+    [clearCalculationState],
+  );
 
   useEffect(() => {
-    const onHashSelect = () => {
+    const applyHash = (scroll: boolean) => {
       const hash = window.location.hash.replace("#", "");
       if (hash && CALCULATORS.some((calc) => calc.id === hash)) {
-        selectCalculator(hash, false);
+        selectCalculator(hash, scroll);
       }
     };
-    onHashSelect();
-    window.addEventListener("hashchange", onHashSelect);
-    return () => window.removeEventListener("hashchange", onHashSelect);
+
+    applyHash(Boolean(window.location.hash));
+
+    const onHashChange = () => applyHash(true);
+    const onCustomSelect = (event: Event) => {
+      const detail = (event as CustomEvent<{ id?: string; scroll?: boolean }>).detail;
+      if (detail?.id) selectCalculator(detail.id, detail.scroll !== false);
+    };
+
+    window.addEventListener("hashchange", onHashChange);
+    window.addEventListener("damtech:select-calculator", onCustomSelect);
+    return () => {
+      window.removeEventListener("hashchange", onHashChange);
+      window.removeEventListener("damtech:select-calculator", onCustomSelect);
+    };
   }, [selectCalculator]);
 
   const handleFieldChange = (name: string, value: string) => {
@@ -196,9 +286,35 @@ export function CalculatorHub() {
     clearCalculationState();
   };
 
+  const valuesForQuote = () => ({
+    ...buildDefaultValues(selectedCalculator),
+    ...formValues,
+    ...Object.fromEntries(
+      fixedFields.map((field) => [field.name, field.defaultValue ?? ""]),
+    ),
+  });
+
+  const goToQuoteWithPrefill = () => {
+    const prefill = buildQuotePrefill({
+      calculatorId: selectedId,
+      formValues: valuesForQuote(),
+      result: hasCalculated && result && !calcError ? result : null,
+    });
+    if (prefill) storeQuotePrefill(prefill);
+    router.push("/quote/");
+  };
+
   const handleCalculate = (event: React.FormEvent) => {
     event.preventDefault();
-    const output = calculateCalculator(selectedId, formValues);
+    // Ensure fixed defaults are always present in submitted values.
+    const valuesWithFixed = {
+      ...buildDefaultValues(selectedCalculator),
+      ...formValues,
+      ...Object.fromEntries(
+        fixedFields.map((field) => [field.name, field.defaultValue ?? ""]),
+      ),
+    };
+    const output = calculateCalculator(selectedId, valuesWithFixed);
 
     if ("error" in output) {
       setResult(null);
@@ -268,7 +384,7 @@ export function CalculatorHub() {
                 role="tab"
                 id={`calc-tab-${calc.id}`}
                 aria-selected={isActive}
-                aria-controls={`calc-panel-${calc.id}`}
+                aria-controls="calculator-workspace"
                 className={`calc-selector-card${isActive ? " calc-selector-card--active" : ""}`}
                 onClick={() => selectCalculator(calc.id, true)}
               >
@@ -307,7 +423,7 @@ export function CalculatorHub() {
         className="calc-workspace mt-10 scroll-mt-[calc(var(--header-height)+1rem)]"
         role="region"
         aria-label={`${selectedCalculator.name} workspace`}
-        id={`calc-panel-${selectedId}`}
+        id="calculator-workspace"
       >
         <div className="calc-workspace__grid">
           <div className="calc-workspace__inputs site-form-card">
@@ -316,12 +432,15 @@ export function CalculatorHub() {
 
             <form className="mt-6 space-y-4" onSubmit={handleCalculate} noValidate>
               {calcError ? (
-                <p className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700" role="alert">
+                <p
+                  className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700"
+                  role="alert"
+                >
                   {calcError}
                 </p>
               ) : null}
 
-              {selectedCalculator.fields.map((field) => (
+              {editableFields.map((field) => (
                 <CalculatorFieldInput
                   key={field.name}
                   field={field}
@@ -330,6 +449,8 @@ export function CalculatorHub() {
                   error={fieldErrors[field.name]}
                 />
               ))}
+
+              <FixedAllowances fields={fixedFields} />
 
               <div className="calc-workspace__actions">
                 <button type="submit" className="btn-primary min-h-12 w-full sm:w-auto">
@@ -359,9 +480,7 @@ export function CalculatorHub() {
                   Correct the highlighted fields and calculate again.
                 </p>
               ) : result ? (
-                <p className="calc-results-card__status">
-                  Preliminary planning estimate
-                </p>
+                <p className="calc-results-card__status">Preliminary planning estimate</p>
               ) : null}
 
               <dl className="calc-results-card__list">
@@ -403,26 +522,39 @@ export function CalculatorHub() {
               </div>
 
               <div className="calc-results-card__cta">
-                <Link href="/quote" className="btn-primary min-h-12 w-full text-center">
-                  Request a Quote
-                </Link>
-                <Link
-                  href={selectedCalculator.relatedServiceHref}
-                  className="calc-results-card__service-link"
+                <button
+                  type="button"
+                  className="btn-primary min-h-12 w-full text-center"
+                  onClick={goToQuoteWithPrefill}
                 >
-                  {selectedCalculator.relatedServiceLabel}
-                  <ArrowRightIcon className="ml-1 inline h-4 w-4" aria-hidden />
-                </Link>
+                  Request a Quote
+                </button>
+                {selectedCalculator.relatedServiceHref.replace(/\/$/, "") ===
+                "/quote" ? (
+                  <button
+                    type="button"
+                    className="calc-results-card__service-link"
+                    onClick={goToQuoteWithPrefill}
+                  >
+                    {selectedCalculator.relatedServiceLabel}
+                    <ArrowRightIcon className="ml-1 inline h-4 w-4" aria-hidden />
+                  </button>
+                ) : (
+                  <Link
+                    href={selectedCalculator.relatedServiceHref}
+                    className="calc-results-card__service-link"
+                  >
+                    {selectedCalculator.relatedServiceLabel}
+                    <ArrowRightIcon className="ml-1 inline h-4 w-4" aria-hidden />
+                  </Link>
+                )}
               </div>
             </div>
           </aside>
         </div>
       </div>
 
-      <section
-        className="calc-use-cases mt-16"
-        aria-labelledby="calc-use-cases-heading"
-      >
+      <section className="calc-use-cases mt-16" aria-labelledby="calc-use-cases-heading">
         <PageSectionHeader
           id="calc-use-cases-heading"
           eyebrow="USE CASES"
@@ -450,10 +582,7 @@ export function CalculatorHub() {
         </div>
       </section>
 
-      <section
-        className="calc-guidance mt-16"
-        aria-labelledby="calc-guidance-heading"
-      >
+      <section className="calc-guidance mt-16" aria-labelledby="calc-guidance-heading">
         <div className="calc-guidance__grid">
           <div>
             <PageSectionHeader
@@ -463,9 +592,9 @@ export function CalculatorHub() {
             />
             <div className="calc-guidance__text space-y-4 text-body">
               <p>
-                These calculators provide early planning estimates only. They help you
-                prepare dimensions, water demand and material areas before requesting a
-                dam lining quote or site inspection from Damtech.
+                These calculators provide early planning estimates only. They help you prepare
+                dimensions, water demand and material areas before requesting a dam lining quote
+                or site inspection from Damtech.
               </p>
               <p>
                 Final material quantities depend on site inspection, slopes, anchor trenches,
@@ -474,9 +603,9 @@ export function CalculatorHub() {
                 seasonal demand.
               </p>
               <p>
-                Damtech can confirm requirements during quote and site inspection. For
-                accurate dam liner material estimates, steel water tank sizing or
-                waterproofing area calculations, send us your site photos and dimensions.
+                Damtech can confirm requirements during quote and site inspection. For accurate
+                dam liner material estimates, steel water tank sizing or waterproofing area
+                calculations, send us your site photos and dimensions.
               </p>
               <p>
                 Explore our{" "}
