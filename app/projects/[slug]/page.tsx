@@ -70,7 +70,7 @@ export default async function ProjectDetailPage({ params }: Props) {
 
       <InternalServiceLinks heading="Explore Damtech Services" />
       <CTA
-        title="Request a Similar Quote"
+        title={project.ctaTitle ?? "Request a Similar Quote"}
         description="Share your location, service requirements and project scope — our team will recommend a practical dam lining, waterproofing or water storage solution."
       />
     </>

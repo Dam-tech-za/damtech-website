@@ -8,8 +8,8 @@ import { IMAGE_ALTS, IMAGE_PATHS, type ImagePath } from "./images";
  * - Do not change confirmed towns (Stellenbosch, Grabouw, etc.).
  * - Assigned WC market towns for previously unallocated projects:
  *   - Tulbagh → steel water tank (`tulbagh-steel-water-tank`)
- *   - Worcester → bitumen earth dam ~15,000 m² (`worcester-bitumen-earth-dam-lining-15000m2`)
- *   - Villiersdorp → HDPE dam lining ~8,230 m² (`villiersdorp-hdpe-dam-lining-8230m2`)
+ *   - Worcester → bitumen earth dam ~15,000 m² (`worcester-bitumen-earth-dam-lining`)
+ *   - Villiersdorp → HDPE dam lining ~8,230 m² (`villiersdorp-hdpe-dam-lining`)
  */
 
 export type ProjectImage = {
@@ -30,23 +30,33 @@ export type ProjectCaseStudy = {
   slug: string;
   title: string;
   h1: string;
+  /** Shorter label for cards/nav where useful. */
+  shortTitle?: string;
   location: string;
   /** Province label for projects index cards. */
   province?: string;
+  municipality?: string;
   /** When location is inferred from assets, mark for editorial confirmation. */
   locationStatus?: "confirmed" | "to-be-confirmed";
   serviceType: string;
   material: string;
   scope: string;
+  /** Overview copy (rendered as Overview). */
   background: string;
-  siteConditions: string;
+  /** Optional — omitted from public UI when empty. */
+  siteConditions?: string;
+  /** Requirement copy (rendered as Requirement). */
   challenge: string;
   approach: string;
   result: string;
   outcomes: string[];
   summary: string;
-  /** Mark sections that need client-supplied detail before launch. */
+  /** Internal only — never render in public UI. */
   todo?: string[];
+  /** Internal only — never render in public UI. */
+  internalNotes?: string;
+  /** Internal only — never render in public UI. */
+  needsOwnerConfirmation?: boolean;
   /** Project-specific gallery section intro (below hero). */
   galleryIntro?: string;
   images: ProjectImage[];
@@ -58,6 +68,13 @@ export type ProjectCaseStudy = {
     title: string;
     description: string;
   };
+  /** Project-specific CTA title on the detail page. */
+  ctaTitle?: string;
+  /** Project-specific warranty block — only render when set. */
+  warranty?: string;
+  numberOfDams?: number;
+  damBreakdown?: Array<{ label: string; area: string }>;
+  categories?: string[];
   /** Hide from index, sitemap and public routes until confirmed. */
   draft?: boolean;
   /**
@@ -65,6 +82,8 @@ export type ProjectCaseStudy = {
    * `verified === true` and `draft !== true`.
    */
   verified?: boolean;
+  /** When false, do not publish client trading names. */
+  clientNamePublic?: boolean;
   /** Internal only — never render in public UI. */
   sourceOfLocation?: string;
   /** Internal only — never render in public UI. */
@@ -75,13 +94,11 @@ export type ProjectCaseStudy = {
    * Month + year string for project pages, e.g. "March 2025".
    * Do not render until a confirmed value exists (no placeholders in UI).
    */
-  // TODO(business-confirm): populate completedDate per project before rendering.
   completedDate?: string;
   /**
    * Installation duration in days.
    * Do not render until a confirmed value exists (no placeholders in UI).
    */
-  // TODO(business-confirm): populate durationDays per project before rendering.
   durationDays?: number;
   /** Show on homepage featured projects grid. */
   featuredOnHome?: boolean;
@@ -92,67 +109,84 @@ export type ProjectCaseStudy = {
   homepageLocationLabel?: string;
   homepageServiceLabel?: string;
   homepageLinkLabel?: string;
+  /** @deprecated Prefer needsOwnerConfirmation */
   needsManualConfirmation?: boolean;
   createdFromAssetName?: string;
 };
 
 export const PROJECT_CASE_STUDIES: ProjectCaseStudy[] = [
   {
-    slug: "marico-hill-game-lodge-dam-lining",
-    // Unpublished until exact locality, year, client-name permission and image permission are confirmed.
-    draft: true,
-    verified: false,
-    title: "Marico Hill Game Lodge Dam Lining",
-    h1: "Marico Hill Game Lodge Dam Lining Project",
-    location: "North West",
+    slug: "north-west-game-lodge-hdpe-dam-lining",
+    verified: true,
+    clientNamePublic: false,
+    shortTitle: "Game Lodge Dam Linings — North West",
+    title: "North West Game Lodge HDPE Dam Lining Project",
+    h1: "North West Game Lodge HDPE Dam Lining Project",
+    location: "Marico Region, North West",
     province: "North West",
-    locationStatus: "to-be-confirmed",
-    serviceType: "HDPE dam lining",
+    serviceType: "HDPE Dam Lining",
     material: "1 mm HDPE geomembrane",
-    scope:
-      "Supply and installation of 1 mm HDPE geomembrane across three earth dams (Dam 1, Dam 2 and Dam 3) for Marico Hill Game Lodge (Pty) Ltd — 2,098 m² total (980 m² + 712 m² + 406 m²).",
+    scope: "Three dams · 2,098 m² total",
+    numberOfDams: 3,
+    damBreakdown: [
+      { label: "Dam 1", area: "980 m²" },
+      { label: "Dam 2", area: "712 m²" },
+      { label: "Dam 3", area: "406 m²" },
+    ],
     background:
-      "Marico Hill Game Lodge (Pty) Ltd in the North West depends on dependable dam water for wildlife, fire protection and lodge operations. Three earth dams on the property needed improved retention through the Bushveld dry season, when borehole top-up and rainfall capture are both costly if seepage losses remain unchecked.",
-    siteConditions:
-      "The site sits in warm North West Bushveld conditions with seasonal rainfall and extended dry periods. Wildlife uses the dam margins, so edge protection and crest anchoring had to suit animal traffic once the liners were installed. Each dam required vegetation, root and organic material cleared, with profiles trimmed into smooth, uniform side slopes before lining.",
+      "This game-lodge project involved lining three separate earth dams with 1 mm HDPE geomembrane. The dams covered 980 m², 712 m² and 406 m² respectively, giving a combined lining area of 2,098 m².",
     challenge:
-      "All three dams needed subgrade compaction and inspection to remove sharp objects and voids before liner deployment. The combined 2,098 m² footprint had to be lined while coordinating safe access around active lodge operations and wildlife movement on the property.",
+      "The lodge required dependable lined water storage across three separate dams serving the property’s operational water requirements.",
     approach:
-      "Damtech cleared vegetation, roots and organic material from each basin, trimmed and shaped dam profiles, and compacted subgrades before liner placement. 1 mm HDPE panels were deployed to each dam profile and joined with extrusion and wedge welding into continuous watertight seams, with anchor trenches completed to manufacturer practice.",
+      "Damtech installed 1 mm HDPE lining systems across all three dam areas. The membrane was secured around the dam perimeters using anchor trenches, producing three separate lined water-storage facilities.",
     result:
-      "Dam 1 (980 m²), Dam 2 (712 m²) and Dam 3 (406 m²) were lined with 1 mm HDPE geomembrane — 2,098 m² in total — creating continuous barriers designed to reduce seepage and stabilise stored volume through the dry season.",
+      "The completed project provided the lodge with three HDPE-lined dams covering a combined area of 2,098 m².",
     outcomes: [
-      "2,098 m² of 1 mm HDPE installed across three lodge dams (980 m² + 712 m² + 406 m²).",
-      "Thermally welded extrusion and wedge seams forming continuous watertight membranes.",
-      "Vegetation clearance, profiling, subgrade preparation and anchor trenches completed on all three basins.",
-      "Crest anchoring and edge detailing suited to Bushveld wildlife pressure at the waterline.",
-      "Supplier-backed material warranty of 10 years on qualifying materials where stated; Damtech workmanship warranty of 12 months from practical completion.",
+      "Dam 1 lined — 980 m² of 1 mm HDPE geomembrane.",
+      "Dam 2 lined — 712 m² of 1 mm HDPE geomembrane.",
+      "Dam 3 lined — 406 m² of 1 mm HDPE geomembrane.",
+      "Combined lining area of 2,098 m² across three earth dams.",
+      "Perimeter securing completed with anchor trenches.",
     ],
     summary:
-      "Marico Hill Game Lodge — three North West dams lined with 2,098 m² of 1 mm HDPE for improved water retention.",
+      "Three earth dams at a North West game lodge were lined with 1 mm HDPE geomembrane, covering a combined area of 2,098 m².",
+    warranty:
+      "The qualifying HDPE material supplied for this project carried a ten-year supplier material warranty, subject to the supplier’s terms and conditions. Damtech provided a one-year workmanship warranty for the installation.",
     galleryIntro:
-      "HDPE dam lining installation photos from the Marico Hill Game Lodge project in the North West — three earth dams lined with 1 mm geomembrane.",
+      "Three earth dams lined with 1 mm HDPE geomembrane, with a combined project area of 2,098 m².",
     images: [
       projectImage(
         IMAGE_PATHS.hdpeDamLiningEarthDam,
-        "HDPE dam linings installed on a North West game lodge earth dam",
+        "Three HDPE-lined earth dams covering a combined 2,098 m² at a North West game lodge",
+        "Three earth dams lined with 1 mm HDPE geomembrane, with a combined project area of 2,098 m².",
       ),
     ],
     relatedServices: [
-      { href: "/dam-liners", label: "Dam Linings" },
-      { href: "/farm-dam-liners", label: "Farm Dam Linings" },
-      { href: "/mining-dam-liners", label: "Mining & Game Lodge Dams" },
-      { href: "/contact", label: "Contact" },
+      { href: "/hdpe-dam-lining", label: "View HDPE dam lining services" },
+      { href: "/farm-dam-liners", label: "Explore farm and game-lodge dam linings" },
+      { href: "/dam-liners", label: "Dam Liners & Dam Lining Services" },
+      { href: "/calculators", label: "Use the dam lining area calculator" },
+      { href: "/quote", label: "Request a game-lodge dam lining quote" },
     ],
     seo: {
-      title: "Marico Hill Game Lodge Dam Lining Project | Damtech",
+      title: "North West Game Lodge Dam Lining Project | Damtech",
       description:
-        "View Damtech's Marico Hill Game Lodge dam lining project — 2,098 m² of HDPE dam lining across three North West lodge dams.",
+        "View Damtech’s three-dam game-lodge project in North West Province: 2,098 m² of 1 mm HDPE lining installed across three earth dams.",
     },
-    todo: [
-      "Confirm exact locality (town/farm) from the job file — use North West only until confirmed.",
-      "Confirm completion year, client-name permission and image permission before publishing.",
+    ctaTitle: "Request a Game Lodge Dam Lining Quote",
+    categories: [
+      "HDPE Dam Lining",
+      "Earth Dam Lining",
+      "North West",
     ],
+    featuredOnHome: false,
+    featuredArea: "2,098 m²",
+    homepageLocationLabel: "Marico Region, North West",
+    homepageServiceLabel: "HDPE Dam Lining",
+    homepageLinkLabel: "View North West game lodge dam lining project",
+    needsOwnerConfirmation: true,
+    internalNotes:
+      "Publish anonymously until client-name permission, exact town and completion year are confirmed. Do not display Marico Hill Game Lodge publicly.",
   },
   {
     slug: "stellenbosch-hdpe-dam-liner",
@@ -161,7 +195,7 @@ export const PROJECT_CASE_STUDIES: ProjectCaseStudy[] = [
     h1: "HDPE Dam Liner Installation in Stellenbosch",
     location: "Stellenbosch, Western Cape",
     province: "Western Cape",
-    serviceType: "HDPE dam lining",
+    serviceType: "HDPE Dam Lining",
     material: "HDPE geomembrane (1.5 mm)",
     scope: "13,360 m² HDPE dam liner supply and installation for farm water storage.",
     background:
@@ -204,70 +238,76 @@ export const PROJECT_CASE_STUDIES: ProjectCaseStudy[] = [
       description:
         "View Damtech's Stellenbosch HDPE dam lining project — 13,360 m² of farm water storage lining in the Western Cape.",
     },
+    categories: ["HDPE Dam Lining", "Earth Dam Lining", "Western Cape"],
+    featuredOnHome: true,
+    featuredOrder: 1,
+    featuredArea: "13,360 m²",
+    homepageLocationLabel: "Stellenbosch",
+    homepageServiceLabel: "HDPE Dam Lining",
+    homepageLinkLabel: "View Stellenbosch HDPE dam lining project",
   },
   {
     slug: "tulbagh-steel-water-tank",
-    // Unpublished: exact town, tank size, foundation and fittings unconfirmed.
-    draft: true,
-    verified: false,
-    title: "Tulbagh Steel Water Tank Project — Western Cape",
-    h1: "Steel Water Tank Project in Tulbagh, Western Cape",
+    verified: true,
+    shortTitle: "Tulbagh Steel Water Tank",
+    title: "Steel Water Tank Project — Tulbagh",
+    h1: "Steel Water Tank Project — Tulbagh",
     location: "Tulbagh, Western Cape",
     province: "Western Cape",
-    locationStatus: "to-be-confirmed",
+    municipality: "Witzenberg Municipality",
     serviceType: "Steel Water Tanks",
-    material: "Corrugated steel water tank",
-    scope:
-      "Corrugated steel water tank solution for practical above-ground water storage in Tulbagh in the Western Cape.",
+    material: "Corrugated steel water-storage tank",
+    scope: "Corrugated steel water tank for above-ground water storage",
     background:
-      "Damtech supplied a corrugated steel water tank solution for practical water storage in Tulbagh in the Western Cape. Steel water tanks are suited to farms, estates, commercial properties and backup water-storage applications where durable above-ground storage is required.",
-    siteConditions:
-      "This Tulbagh steel water tank project in the Western Cape supports reliable above-ground water storage for agricultural, residential estate or commercial use. Corrugated steel water tanks provide a practical option where clients need modular storage capacity, faster installation and a durable water-retaining structure.",
+      "This Tulbagh project involved the installation of a corrugated steel water tank for practical above-ground water storage. Steel water tanks provide a modular storage option for farms, estates and commercial properties where dedicated storage capacity is required without constructing a permanent concrete reservoir.",
     challenge:
-      "The project required a practical water-storage solution suited to site access, storage demand and local environmental conditions in Tulbagh in the Western Cape.",
+      "The project required a dedicated water-storage solution suited to the available site area and the property’s operational water requirements.",
     approach:
-      "Damtech used a steel water tank solution to provide structured above-ground water storage. Final tank size, foundation requirements and fittings should be confirmed according to site conditions and the client's water demand.",
+      "A corrugated steel tank system was selected to provide structured above-ground storage. The installation configuration was matched to the site requirements and available connection arrangement.",
     result:
-      "The completed water-storage solution provides a practical steel tank option for reliable water storage in Tulbagh in the Western Cape.",
+      "The completed project added a dedicated steel water-storage facility suited to agricultural, property or backup-water requirements.",
     outcomes: [
-      "Corrugated steel water tank supplied for above-ground water storage.",
-      "Practical solution for farms, estates and commercial properties in Tulbagh in the Western Cape.",
-      "Modular steel storage suited to site access and installation timelines.",
-      "Supplier-backed material terms where applicable on qualifying materials.",
+      "Corrugated steel water tank installed for above-ground water storage in Tulbagh.",
+      "Modular steel storage suited to farms, estates and commercial properties.",
+      "Practical alternative to constructing a permanent concrete reservoir.",
     ],
     summary:
-      "Damtech supplied a corrugated steel water tank solution for practical water storage in Tulbagh in the Western Cape.",
+      "A corrugated steel water tank project in Tulbagh, Western Cape, providing practical above-ground water storage for an agricultural or property application.",
     galleryIntro:
-      "Corrugated steel water tank installed for practical water storage in Tulbagh in the Western Cape.",
+      "Corrugated steel water tank used for practical above-ground water storage in Tulbagh.",
     images: [
       projectImage(
         IMAGE_PATHS.tulbaghWesternCapeSteelWaterTankProject,
-        "Round corrugated steel water tank for water storage in Tulbagh in the Western Cape",
-        "Corrugated steel water tank installed for practical water storage in Tulbagh in the Western Cape.",
+        "Corrugated steel water tank installed in Tulbagh, Western Cape",
+        "Corrugated steel water tank used for practical above-ground water storage in Tulbagh.",
       ),
     ],
     relatedServices: [
-      { href: "/steel-water-storage-tanks", label: "Steel Water Tanks" },
-      { href: "/calculators", label: "Water Storage Calculators" },
-      { href: "/reservoir-lining", label: "Reservoir Lining" },
-      { href: "/western-cape-dam-liners", label: "Dam Linings Western Cape" },
-      { href: "/quote", label: "Request a Quote" },
+      { href: "/steel-water-storage-tanks", label: "View steel water tank services" },
+      { href: "/agricultural-water-storage", label: "View agricultural water-storage solutions" },
+      { href: "/calculators", label: "Estimate steel water tank size" },
+      { href: "/quote", label: "Request a steel water tank quote" },
     ],
     seo: {
-      title: "Tulbagh Steel Water Tank Project | Western Cape | Damtech",
+      title: "Tulbagh Steel Water Tank Project | Damtech",
       description:
-        "View Damtech's steel water tank project in Tulbagh in the Western Cape for practical water storage. Request a similar corrugated steel water tank quote.",
+        "View Damtech’s corrugated steel water tank project in Tulbagh, Western Cape, providing practical above-ground water storage.",
     },
-    featuredOnHome: false,
+    ctaTitle: "Request a Similar Steel Water Tank Quote",
+    categories: [
+      "Steel Water Tanks",
+      "Western Cape",
+      "Water Storage",
+      "Agricultural Water Storage",
+    ],
+    featuredOnHome: true,
     featuredOrder: 6,
     homepageLocationLabel: "Tulbagh, Western Cape",
     homepageServiceLabel: "Steel Water Tanks",
     homepageLinkLabel: "View Tulbagh steel water tank project",
-    needsManualConfirmation: true,
-    todo: [
-      "Confirm exact site details in Tulbagh, Western Cape.",
-      "Confirm final tank size, foundation requirements and fittings when site details are available.",
-    ],
+    needsOwnerConfirmation: true,
+    internalNotes:
+      "Confirm capacity, foundation, fittings, completion year and image ownership when project records become available.",
   },
   {
     slug: "grabouw-hdpe-farm-dam",
@@ -328,9 +368,10 @@ export const PROJECT_CASE_STUDIES: ProjectCaseStudy[] = [
     homepageLocationLabel: "Grabouw",
     homepageServiceLabel: "HDPE Dam Lining",
     homepageLinkLabel: "View Grabouw HDPE dam lining project",
-    todo: [
+    categories: ["HDPE Dam Lining", "Earth Dam Lining", "Western Cape"],
+    needsOwnerConfirmation: true,
+    internalNotes:
       "Confirm 3,400 m² against original quote, BOQ, measurement sheet or supplier roll quantities.",
-    ],
   },
   {
     slug: "hoedspruit-bitumen-dam-lining",
@@ -390,9 +431,10 @@ export const PROJECT_CASE_STUDIES: ProjectCaseStudy[] = [
     homepageLocationLabel: "Hoedspruit",
     homepageServiceLabel: "Bitumen Torch-On",
     homepageLinkLabel: "View Hoedspruit bitumen torch-on waterproofing project",
-    todo: [
+    categories: ["Bitumen / Torch-On", "Limpopo"],
+    needsOwnerConfirmation: true,
+    internalNotes:
       "Confirm 550 m² against the original project record / measurement.",
-    ],
   },
   {
     slug: "centurion-hdpe-dam-liner",
@@ -445,15 +487,16 @@ export const PROJECT_CASE_STUDIES: ProjectCaseStudy[] = [
       description:
         "View Damtech's Centurion HDPE dam lining project, a 1,200 m² water storage and leak-prevention solution in Gauteng.",
     },
-    featuredOnHome: true,
-    featuredOrder: 1,
+    featuredOnHome: false,
+    featuredOrder: 7,
     featuredArea: "1,200 m²",
     homepageLocationLabel: "Centurion",
     homepageServiceLabel: "HDPE Dam Lining",
     homepageLinkLabel: "View Centurion HDPE dam lining project",
-    todo: [
+    categories: ["HDPE Dam Lining", "Earth Dam Lining", "Gauteng"],
+    needsOwnerConfirmation: true,
+    internalNotes:
       "Confirm Centurion location and 1,200 m² against the original project record.",
-    ],
   },
   {
     slug: "mpumalanga-torch-on-bitumen-concrete-dam-15m",
@@ -564,167 +607,202 @@ export const PROJECT_CASE_STUDIES: ProjectCaseStudy[] = [
       description:
         "View Damtech's torch-on bitumen waterproofing project for a round concrete dam near Tzaneen — approximately 255 m² base footprint. Request a similar quote.",
     },
-    featuredOnHome: true,
-    featuredOrder: 4,
+    featuredOnHome: false,
+    featuredOrder: 8,
     featuredArea: "~255 m² base",
     homepageLocationLabel: "Tzaneen",
     homepageServiceLabel: "Torch-On Bitumen",
     homepageLinkLabel: "View Tzaneen torch-on bitumen concrete dam project",
+    categories: ["Bitumen / Torch-On", "Limpopo"],
     createdFromAssetName: "Concrete Dam Tzaneen 18m.webp",
-    todo: [
+    needsOwnerConfirmation: true,
+    internalNotes:
       "Confirm Tzaneen as the verified project location against the job file.",
-    ],
   },
   {
-    slug: "worcester-bitumen-earth-dam-lining-15000m2",
-    // Unpublished until town and measured area are confirmed from job records.
-    draft: true,
-    verified: false,
-    title: "Worcester Bitumen Earth Dam Lining — 15,000 m² | Western Cape",
-    h1: "Bitumen Earth Dam Lining Project in Worcester, Western Cape — 15,000 m²",
+    slug: "worcester-bitumen-earth-dam-lining",
+    verified: true,
+    shortTitle: "Worcester Bitumen Earth Dam",
+    title: "Bitumen Earth Dam Lining Project — Worcester",
+    h1: "Bitumen Earth Dam Lining Project — Worcester",
     location: "Worcester, Western Cape",
     province: "Western Cape",
-    locationStatus: "to-be-confirmed",
-    serviceType: "Bitumen earth dam lining",
-    material: "Bitumen lining / waterproofing system",
-    scope:
-      "Approximately 15,000 m² bitumen earth dam lining for water retention and leak prevention in Worcester in the Western Cape.",
+    municipality: "Breede Valley Municipality",
+    serviceType: "Dam Linings",
+    material: "Bitumen-based earth dam lining",
+    scope: "Approximately 15,000 m²",
     background:
-      "This bitumen earth dam lining project in Worcester in the Western Cape involved lining a large earth dam or water storage basin to improve water retention and reduce seepage risk. Bitumen systems can be considered for selected dam lining, repair or waterproofing applications depending on site conditions, substrate, detailing and long-term performance requirements.",
-    siteConditions:
-      "Large earth dam profiles around Worcester in the Western Cape require systematic surface preparation, controlled detailing at transitions and practical sequencing across a wide footprint. Exact site details can be updated once confirmed.",
+      "This Worcester project involved a bitumen-based lining system for a large earth dam covering approximately 15,000 m². The project demonstrates the use of bitumen lining for selected earth-dam and water-retention applications where the site conditions and proposed lining system are compatible.",
     challenge:
-      "At approximately 15,000 m², the lined footprint required careful planning of surface preparation, membrane runs, overlaps and anchor detailing across a large earth dam basin without compromising continuity at slopes and penetrations.",
+      "The large earth-dam surface required a continuous lining system to support water retention and protect the prepared dam surface.",
     approach:
-      "Damtech applied a bitumen-based lining or waterproofing system suited to the earth dam application, with surface preparation and detailing completed to support water retention across the project footprint. Area taken from source filename — confirm measured area before publishing if required.",
+      "The project involved the installation of a bitumen-based lining across approximately 15,000 m² of earth-dam surface.",
     result:
-      "Bitumen earth dam lining work was completed across an estimated 15,000 m² footprint, supporting improved water retention on the Worcester earth dam application in the Western Cape.",
+      "The completed lining provides a continuous protected surface intended to support water retention within the earth dam.",
     outcomes: [
-      "Approximately 15,000 m² bitumen earth dam lining for water retention in Worcester in the Western Cape.",
-      "Surface preparation and detailing across a large earth dam footprint.",
-      "Bitumen system suited to selected earth dam lining applications.",
-      "Supplier-backed material warranty where applicable on qualifying materials.",
+      "Approximately 15,000 m² bitumen-based earth dam lining in Worcester.",
+      "Continuous protected surface for large-scale water retention.",
+      "Bitumen lining applied to a prepared earth-dam surface.",
     ],
     summary:
-      "Bitumen earth dam lining project in Worcester in the Western Cape — approximately 15,000 m² for water retention and leak prevention.",
+      "An approximately 15,000 m² bitumen earth dam lining project in Worcester, Western Cape, for large-scale water storage.",
     galleryIntro:
-      "Bitumen earth dam lining installation photos from Damtech's Worcester project in the Western Cape.",
+      "Large bitumen earth dam lining project covering approximately 15,000 m² in Worcester.",
     images: [
       projectImage(
         IMAGE_PATHS.worcesterWesternCapeBitumenEarthDamLining15000m2,
-        "Bitumen earth dam lining project in Worcester in the Western Cape for water retention by Damtech",
-        "Bitumen lining system used for an earth dam water-retention project in Worcester in the Western Cape.",
+        "Bitumen earth dam lining covering approximately 15,000 m² in Worcester, Western Cape",
+        "Large bitumen earth dam lining project covering approximately 15,000 m² in Worcester.",
       ),
       projectImage(
         IMAGE_PATHS.worcesterWesternCapeBitumenEarthDamLining15000m22,
-        "Bitumen earth dam lining installation on a large water storage basin in Worcester in the Western Cape",
+        "Bitumen earth dam lining installation on a large water storage basin in Worcester, Western Cape",
       ),
       projectImage(
         IMAGE_PATHS.worcesterWesternCapeBitumenEarthDamLining15000m23,
-        "Bitumen lining system applied to an earth dam water-retention project in Worcester in the Western Cape",
+        "Bitumen lining system applied to an earth dam water-retention project in Worcester, Western Cape",
       ),
       projectImage(
         IMAGE_PATHS.worcesterWesternCapeBitumenEarthDamLining15000m24,
-        "Completed bitumen earth dam lining work for improved water retention in Worcester in the Western Cape",
+        "Completed bitumen earth dam lining work for improved water retention in Worcester, Western Cape",
       ),
     ],
     relatedServices: [
-      { href: "/dam-liners", label: "Dam Linings" },
-      { href: "/bitumen-waterproofing", label: "Bitumen Waterproofing" },
+      { href: "/dam-liners", label: "Explore dam lining services" },
+      { href: "/bitumen-waterproofing", label: "View Damtech’s bitumen waterproofing services" },
       { href: "/torch-on-dam-lining", label: "Torch-On Dam Lining" },
-      { href: "/western-cape-dam-liners", label: "Dam Linings Western Cape" },
-      { href: "/calculators", label: "Dam Lining Area Calculator" },
-      { href: "/quote", label: "Request a Similar Quote" },
+      { href: "/calculators", label: "Use the dam lining area calculator" },
+      { href: "/quote", label: "Request a similar quote" },
     ],
     seo: {
-      title: "Worcester Bitumen Earth Dam Lining | Western Cape | Damtech",
+      title: "Worcester Bitumen Earth Dam Project | Damtech",
       description:
-        "View Damtech's bitumen earth dam lining project in Worcester in the Western Cape for water retention and leak prevention. Request a similar dam lining quote.",
+        "View Damtech’s approximately 15,000 m² bitumen earth dam lining project in Worcester, Western Cape.",
     },
-    featuredOnHome: false,
-    featuredOrder: 5,
-    featuredArea: "15,000 m²",
+    ctaTitle: "Request a Similar Bitumen Dam Lining Quote",
+    categories: [
+      "Bitumen / Torch-On",
+      "Earth Dam Lining",
+      "Western Cape",
+    ],
+    featuredOnHome: true,
+    featuredOrder: 4,
+    featuredArea: "Approx. 15,000 m²",
     homepageLocationLabel: "Worcester, Western Cape",
     homepageServiceLabel: "Bitumen Earth Dam",
     homepageLinkLabel: "View Worcester bitumen earth dam project",
-    needsManualConfirmation: true,
-    createdFromAssetName: "Bitumen Earth Dam 15000m.webp",
-    todo: [
-      "Confirm exact site details in Worcester, Western Cape.",
-      "Area taken from source filename — confirm measured area if required.",
-    ],
+    needsOwnerConfirmation: true,
+    internalNotes:
+      "Confirm location, final installed quantity and completion year from project records.",
   },
   {
-    slug: "villiersdorp-hdpe-dam-lining-8230m2",
-    // Unpublished until town and measured area are confirmed from job records.
-    draft: true,
-    verified: false,
-    title: "Villiersdorp HDPE Dam Lining — 8,230 m² | Western Cape",
-    h1: "HDPE Dam Lining Project in Villiersdorp, Western Cape — 8,230 m²",
+    slug: "villiersdorp-hdpe-dam-lining",
+    verified: true,
+    shortTitle: "Villiersdorp HDPE Dam Lining",
+    title: "HDPE Dam Lining Project — Villiersdorp",
+    h1: "HDPE Dam Lining Project — Villiersdorp",
     location: "Villiersdorp, Western Cape",
     province: "Western Cape",
-    locationStatus: "to-be-confirmed",
-    serviceType: "HDPE dam lining",
+    municipality: "Theewaterskloof Municipality",
+    serviceType: "HDPE Dam Lining",
     material: "HDPE geomembrane",
-    scope:
-      "Approximately 8,230 m² HDPE dam lining for water storage and leak prevention in Villiersdorp in the Western Cape.",
+    scope: "Approximately 8,230 m²",
     background:
-      "This HDPE dam lining project in Villiersdorp in the Western Cape involved lining an earth dam or water storage basin to improve water retention and reduce seepage risk. HDPE dam linings are commonly used for farms, estates, game lodges and commercial water storage in the Western Cape where long-term durability, UV resistance and welded seams are important.",
-    siteConditions:
-      "Large geomembrane deployments around Villiersdorp in the Western Cape require systematic subgrade preparation, seam planning and crest anchoring across a wide footprint. Exact site details can be updated once confirmed.",
+      "This Villiersdorp project involved the installation of an HDPE geomembrane lining system over approximately 8,230 m². HDPE dam linings are used for earth dams and reservoirs where a durable, continuous water-retaining barrier is required.",
     challenge:
-      "At approximately 8,230 m², the project required coordinated subgrade preparation, panel layout and welded seam continuity across the dam basin without stressing HDPE at slope transitions or penetrations.",
+      "The project required a large-area lining system suited to an earth-dam water-storage application and the dam’s prepared geometry.",
     approach:
-      "Damtech prepared the dam profile, deployed HDPE panels and completed heat-welded seams with crest anchoring suited to the operating water levels. Area taken from source filename — confirm measured area before publishing if required.",
+      "An HDPE geomembrane system was selected for the approximately 8,230 m² lining scope. The installation created a continuous lined surface across the prepared dam area.",
     result:
-      "Approximately 8,230 m² of HDPE dam lining was installed, creating a continuous geomembrane barrier designed to reduce seepage and stabilise stored volume in Villiersdorp in the Western Cape.",
+      "The completed HDPE lining provides a protected water-retaining surface and supports dependable agricultural or property water storage.",
     outcomes: [
-      "Approximately 8,230 m² HDPE dam lining for water storage and leak prevention in Villiersdorp in the Western Cape.",
-      "Welded seams and crest anchoring across a large earth dam footprint.",
-      "Subgrade preparation and panel deployment suited to exposed earth dam conditions.",
-      "Supplier-backed material warranty where applicable on qualifying materials.",
+      "Approximately 8,230 m² HDPE geomembrane lining in Villiersdorp.",
+      "Continuous lined surface across the prepared earth-dam area.",
+      "HDPE dam lining suited to agricultural or property water storage.",
     ],
     summary:
-      "HDPE dam lining project in Villiersdorp in the Western Cape — approximately 8,230 m² for water storage and leak prevention.",
+      "An approximately 8,230 m² HDPE dam lining project in Villiersdorp, Western Cape, for agricultural or property water storage.",
     galleryIntro:
-      "HDPE dam lining installation photos from Damtech's Villiersdorp project in the Western Cape.",
+      "Approximately 8,230 m² HDPE dam lining installation in Villiersdorp.",
     images: [
       projectImage(
         IMAGE_PATHS.villiersdorpWesternCapeHdpeDamLining8230m2,
-        "HDPE dam lining project in Villiersdorp in the Western Cape covering approximately 8,230 m² by Damtech",
-        "HDPE dam lining installation for a large water storage application in Villiersdorp in the Western Cape.",
+        "HDPE dam lining covering approximately 8,230 m² in Villiersdorp, Western Cape",
+        "Approximately 8,230 m² HDPE dam lining installation in Villiersdorp.",
       ),
       projectImage(
         IMAGE_PATHS.villiersdorpWesternCapeHdpeDamLining8230m22,
-        "HDPE dam lining field installation for a large water storage application in Villiersdorp in the Western Cape",
+        "HDPE dam lining field installation for a large water storage application in Villiersdorp, Western Cape",
       ),
     ],
     relatedServices: [
-      { href: "/dam-liners", label: "Dam Linings" },
-      { href: "/hdpe-dam-lining", label: "HDPE Dam Lining" },
-      { href: "/reservoir-lining", label: "Reservoir Lining" },
-      { href: "/western-cape-dam-liners", label: "Dam Linings Western Cape" },
-      { href: "/calculators", label: "Dam Lining Area Calculator" },
-      { href: "/quote", label: "Request a Similar Quote" },
+      { href: "/dam-liners", label: "Dam Liners & Dam Lining Services" },
+      { href: "/hdpe-dam-lining", label: "View HDPE dam lining services" },
+      { href: "/farm-dam-liners", label: "Farm Dam Liners" },
+      { href: "/western-cape-dam-liners", label: "View Western Cape dam lining services" },
+      { href: "/calculators", label: "Use the dam lining area calculator" },
+      { href: "/quote", label: "Request an HDPE quote" },
     ],
     seo: {
-      title: "Villiersdorp HDPE Dam Lining Project | Western Cape | Damtech",
+      title: "Villiersdorp HDPE Dam Lining Project | Damtech",
       description:
-        "View Damtech's HDPE dam lining project in Villiersdorp in the Western Cape for water storage and leak prevention. Request a similar HDPE dam lining quote.",
+        "View Damtech’s approximately 8,230 m² HDPE dam lining project in Villiersdorp, Western Cape.",
     },
-    needsManualConfirmation: true,
-    createdFromAssetName: "HDPE 8230m.webp",
-    todo: [
-      "Confirm exact site details in Villiersdorp, Western Cape.",
-      "Area taken from source filename — confirm measured area if required.",
+    ctaTitle: "Request a Similar HDPE Dam Lining Quote",
+    categories: [
+      "HDPE Dam Lining",
+      "Earth Dam Lining",
+      "Western Cape",
     ],
+    featuredOnHome: true,
+    featuredOrder: 5,
+    featuredArea: "Approx. 8,230 m²",
+    homepageLocationLabel: "Villiersdorp, Western Cape",
+    homepageServiceLabel: "HDPE Dam Lining",
+    homepageLinkLabel: "View Villiersdorp HDPE dam lining project",
+    needsOwnerConfirmation: true,
+    internalNotes:
+      "Confirm final installed area, membrane thickness, exact location and completion year.",
   },
 ];
 
 export function getPublishedProjects(): ProjectCaseStudy[] {
-  return PROJECT_CASE_STUDIES.filter(
+  const published = PROJECT_CASE_STUDIES.filter(
     (project) => !project.draft && project.verified === true,
   );
+
+  if (process.env.NODE_ENV === "development") {
+    for (const project of published) {
+      if (project.needsOwnerConfirmation || project.internalNotes) {
+        console.warn(
+          `[projects] Public project "${project.slug}" still has owner-confirmation notes (internal only).`,
+        );
+      }
+    }
+  }
+
+  return published.map(toPublicProject);
+}
+
+/** Strip editor-only fields so they never reach HTML, RSC payloads or client bundles. */
+export function toPublicProject(project: ProjectCaseStudy): ProjectCaseStudy {
+  const {
+    internalNotes: _internalNotes,
+    needsOwnerConfirmation: _needsOwnerConfirmation,
+    needsManualConfirmation: _needsManualConfirmation,
+    todo: _todo,
+    sourceOfLocation: _sourceOfLocation,
+    sourceOfArea: _sourceOfArea,
+    approvedBy: _approvedBy,
+    createdFromAssetName: _createdFromAssetName,
+    clientNamePublic: _clientNamePublic,
+    locationStatus: _locationStatus,
+    draft: _draft,
+    verified: _verified,
+    ...publicFields
+  } = project;
+
+  return publicFields;
 }
 
 export function getFeaturedHomeProjects(): ProjectCaseStudy[] {
@@ -736,7 +814,7 @@ export function getFeaturedHomeProjects(): ProjectCaseStudy[] {
 export function getProjectBySlug(slug: string): ProjectCaseStudy | undefined {
   const project = PROJECT_CASE_STUDIES.find((entry) => entry.slug === slug);
   if (!project || project.draft || project.verified !== true) return undefined;
-  return project;
+  return toPublicProject(project);
 }
 
 export function getProjectSlugs(): string[] {
@@ -766,7 +844,7 @@ export function getProjectsMatching(
 export const PROJECTS_INDEX_SEO = {
   title: "Dam Lining & Water Storage Projects | Damtech",
   description:
-    "Real Damtech case studies: HDPE dam liners in Stellenbosch, Grabouw and Centurion, torch-on work in Hoedspruit and Tzaneen — with sizes and photos.",
+    "Real Damtech case studies across South Africa: HDPE and bitumen dam linings, steel water tanks and game-lodge water storage — with sizes and photos.",
   path: "/projects",
   h1: "Damtech Project Case Studies",
   image: IMAGE_PATHS.hdpeDamLiningFieldInstallation,

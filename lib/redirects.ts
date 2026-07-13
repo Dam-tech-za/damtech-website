@@ -130,92 +130,82 @@ export const redirects: Redirect[] = [
   },
   {
     source: "/projects/corrugated-steel-water-tank-installation",
-    destination: "/steel-water-storage-tanks/",
+    destination: "/projects/tulbagh-steel-water-tank/",
     permanent: true,
   },
   {
     source: "/projects/corrugated-steel-water-tank-installation/",
-    destination: "/steel-water-storage-tanks/",
+    destination: "/projects/tulbagh-steel-water-tank/",
     permanent: true,
   },
   {
     source: "/projects/western-cape-steel-water-tank",
-    destination: "/steel-water-storage-tanks/",
+    destination: "/projects/tulbagh-steel-water-tank/",
     permanent: true,
   },
   {
     source: "/projects/western-cape-steel-water-tank/",
-    destination: "/steel-water-storage-tanks/",
-    permanent: true,
-  },
-  {
-    source: "/projects/tulbagh-steel-water-tank",
-    destination: "/steel-water-storage-tanks/",
-    permanent: true,
-  },
-  {
-    source: "/projects/tulbagh-steel-water-tank/",
-    destination: "/steel-water-storage-tanks/",
+    destination: "/projects/tulbagh-steel-water-tank/",
     permanent: true,
   },
   {
     source: "/projects/free-state-bitumen-earth-dam-lining-15000m2",
-    destination: "/projects/",
+    destination: "/projects/worcester-bitumen-earth-dam-lining/",
     permanent: true,
   },
   {
     source: "/projects/free-state-bitumen-earth-dam-lining-15000m2/",
-    destination: "/projects/",
+    destination: "/projects/worcester-bitumen-earth-dam-lining/",
     permanent: true,
   },
   {
     source: "/projects/western-cape-bitumen-earth-dam-lining-15000m2",
-    destination: "/projects/",
+    destination: "/projects/worcester-bitumen-earth-dam-lining/",
     permanent: true,
   },
   {
     source: "/projects/western-cape-bitumen-earth-dam-lining-15000m2/",
-    destination: "/projects/",
+    destination: "/projects/worcester-bitumen-earth-dam-lining/",
     permanent: true,
   },
   {
     source: "/projects/worcester-bitumen-earth-dam-lining-15000m2",
-    destination: "/projects/",
+    destination: "/projects/worcester-bitumen-earth-dam-lining/",
     permanent: true,
   },
   {
     source: "/projects/worcester-bitumen-earth-dam-lining-15000m2/",
-    destination: "/projects/",
+    destination: "/projects/worcester-bitumen-earth-dam-lining/",
     permanent: true,
   },
   {
     source: "/projects/limpopo-hdpe-dam-lining-8230m2",
-    destination: "/projects/",
+    destination: "/projects/villiersdorp-hdpe-dam-lining/",
     permanent: true,
   },
   {
     source: "/projects/limpopo-hdpe-dam-lining-8230m2/",
-    destination: "/projects/",
+    destination: "/projects/villiersdorp-hdpe-dam-lining/",
     permanent: true,
   },
   {
     source: "/projects/western-cape-hdpe-dam-lining-8230m2",
-    destination: "/projects/",
+    destination: "/projects/villiersdorp-hdpe-dam-lining/",
     permanent: true,
   },
   {
     source: "/projects/western-cape-hdpe-dam-lining-8230m2/",
-    destination: "/projects/",
+    destination: "/projects/villiersdorp-hdpe-dam-lining/",
     permanent: true,
   },
   {
     source: "/projects/villiersdorp-hdpe-dam-lining-8230m2",
-    destination: "/projects/",
+    destination: "/projects/villiersdorp-hdpe-dam-lining/",
     permanent: true,
   },
   {
     source: "/projects/villiersdorp-hdpe-dam-lining-8230m2/",
-    destination: "/projects/",
+    destination: "/projects/villiersdorp-hdpe-dam-lining/",
     permanent: true,
   },
   {
@@ -238,15 +228,14 @@ export const redirects: Redirect[] = [
     destination: "/projects/",
     permanent: true,
   },
-  // Unpublished until client measurements confirmed
   {
     source: "/projects/marico-hill-game-lodge-dam-lining",
-    destination: "/projects/",
+    destination: "/projects/north-west-game-lodge-hdpe-dam-lining/",
     permanent: true,
   },
   {
     source: "/projects/marico-hill-game-lodge-dam-lining/",
-    destination: "/projects/",
+    destination: "/projects/north-west-game-lodge-hdpe-dam-lining/",
     permanent: true,
   },
 ];

@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Hero } from "@/components/Hero";
 import { PageSeo } from "@/components/PageSeo";
-import { ProjectCard } from "@/components/ProjectCard";
+import { ProjectsIndexClient } from "@/components/ProjectsIndexClient";
 import { SiteSection } from "@/components/SiteSection";
 import { createPageMetadata } from "@/lib/pages";
 import {
@@ -33,13 +33,7 @@ export default function ProjectsIndexPage() {
       />
 
       <SiteSection tone="muted">
-        <ul className="home-process-projects__project-grid">
-          {projects.map((project) => (
-            <li key={project.slug}>
-              <ProjectCard project={project} />
-            </li>
-          ))}
-        </ul>
+        <ProjectsIndexClient projects={projects} />
         <div className="mt-12 text-center">
           <Link href="/quote" className="btn-primary">
             Need similar work? Request a Free Quote

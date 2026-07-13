@@ -13,7 +13,7 @@ import type { StaticImageData } from "next/image";
  * - Do not rename confirmed-location assets (Grabouw, Stellenbosch hero, etc.) without cause.
  */
 
-import worcesterWesternCapeBitumenEarthDamLining15000m2 from "@/public/images/worcester-western-cape-bitumen-earth-dam-lining-15000m2.webp";
+import worcesterWesternCapeBitumenEarthDamLining15000m2 from "@/public/images/bitumen-earth-dam-lining-worcester-15000m2.webp";
 import worcesterWesternCapeBitumenEarthDamLining15000m22 from "@/public/images/worcester-western-cape-bitumen-earth-dam-lining-15000m2-2.webp";
 import worcesterWesternCapeBitumenEarthDamLining15000m23 from "@/public/images/worcester-western-cape-bitumen-earth-dam-lining-15000m2-3.webp";
 import worcesterWesternCapeBitumenEarthDamLining15000m24 from "@/public/images/worcester-western-cape-bitumen-earth-dam-lining-15000m2-4.webp";
@@ -28,9 +28,9 @@ import damtechWaterStorageHero from "@/public/images/damtech-dam-liners-water-st
 import grabouwHdpeDamLiningAfter from "@/public/images/grabouw-hdpe-dam-lining-after.webp";
 import hartswaterHdpeDamLiningProject from "@/public/images/hartswater-hdpe-dam-lining-project.webp";
 import hdpeDamLinerInstallationLimpopo from "@/public/images/hdpe-dam-liner-installation-limpopo.webp";
-import villiersdorpWesternCapeHdpeDamLining8230m2 from "@/public/images/villiersdorp-western-cape-hdpe-dam-lining-8230m2.webp";
+import villiersdorpWesternCapeHdpeDamLining8230m2 from "@/public/images/hdpe-dam-lining-villiersdorp-western-cape-8230m2.webp";
 import villiersdorpWesternCapeHdpeDamLining8230m22 from "@/public/images/villiersdorp-western-cape-hdpe-dam-lining-8230m2-2.webp";
-import tulbaghWesternCapeSteelWaterTankProject from "@/public/images/tulbagh-western-cape-steel-water-tank-project.webp";
+import tulbaghWesternCapeSteelWaterTankProject from "@/public/images/corrugated-steel-water-tank-tulbagh-western-cape.webp";
 import hdpeDamLiningAfterGeotextile from "@/public/images/hdpe-dam-lining-after-geotextile.webp";
 import hdpeDamLiningBeforeInstallation from "@/public/images/hdpe-dam-lining-before-installation.webp";
 import hdpeDamLiningEarthDam from "@/public/images/hdpe-dam-lining-earth-dam.webp";
@@ -43,7 +43,7 @@ import westernCapeDamLiningHero from "@/public/images/western-cape-dam-lining-re
 /** Stable public URLs for Open Graph, blog rewrites and JSON data. WebP only. */
 export const IMAGE_PATHS = {
   worcesterWesternCapeBitumenEarthDamLining15000m2:
-    "/images/worcester-western-cape-bitumen-earth-dam-lining-15000m2.webp",
+    "/images/bitumen-earth-dam-lining-worcester-15000m2.webp",
   worcesterWesternCapeBitumenEarthDamLining15000m22:
     "/images/worcester-western-cape-bitumen-earth-dam-lining-15000m2-2.webp",
   worcesterWesternCapeBitumenEarthDamLining15000m23:
@@ -68,11 +68,11 @@ export const IMAGE_PATHS = {
   hdpeDamLinerInstallationLimpopo:
     "/images/hdpe-dam-liner-installation-limpopo.webp",
   villiersdorpWesternCapeHdpeDamLining8230m2:
-    "/images/villiersdorp-western-cape-hdpe-dam-lining-8230m2.webp",
+    "/images/hdpe-dam-lining-villiersdorp-western-cape-8230m2.webp",
   villiersdorpWesternCapeHdpeDamLining8230m22:
     "/images/villiersdorp-western-cape-hdpe-dam-lining-8230m2-2.webp",
   tulbaghWesternCapeSteelWaterTankProject:
-    "/images/tulbagh-western-cape-steel-water-tank-project.webp",
+    "/images/corrugated-steel-water-tank-tulbagh-western-cape.webp",
   hdpeDamLiningAfterGeotextile: "/images/hdpe-dam-lining-after-geotextile.webp",
   hdpeDamLiningBeforeInstallation:
     "/images/hdpe-dam-lining-before-installation.webp",
@@ -93,13 +93,13 @@ export type ImagePath = (typeof IMAGE_PATHS)[keyof typeof IMAGE_PATHS];
 
 export const IMAGE_ALTS: Record<ImagePath, string> = {
   [IMAGE_PATHS.worcesterWesternCapeBitumenEarthDamLining15000m2]:
-    "Bitumen earth dam lining project in Worcester in the Western Cape for water retention and leak prevention by Damtech",
+    "Bitumen earth dam lining covering approximately 15,000 m² in Worcester, Western Cape",
   [IMAGE_PATHS.worcesterWesternCapeBitumenEarthDamLining15000m22]:
-    "Bitumen earth dam lining installation on a large water storage basin in Worcester in the Western Cape",
+    "Bitumen earth dam lining installation on a large water storage basin in Worcester, Western Cape",
   [IMAGE_PATHS.worcesterWesternCapeBitumenEarthDamLining15000m23]:
-    "Bitumen lining system applied to an earth dam water-retention project in Worcester in the Western Cape",
+    "Bitumen lining system applied to an earth dam water-retention project in Worcester, Western Cape",
   [IMAGE_PATHS.worcesterWesternCapeBitumenEarthDamLining15000m24]:
-    "Completed bitumen earth dam lining work for improved water retention in Worcester in the Western Cape",
+    "Completed bitumen earth dam lining work for improved water retention in Worcester, Western Cape",
   [IMAGE_PATHS.bitumenEarthDamWaterproofing]:
     "Bitumen torch-on waterproofing on an earth dam surface by Damtech",
   [IMAGE_PATHS.bitumenEarthDamWaterproofing2]:
@@ -125,11 +125,11 @@ export const IMAGE_ALTS: Record<ImagePath, string> = {
     // TODO(business-confirm): supply page-specific photos — keep generic alt while this asset remains shared.
     "HDPE dam liner installation on a South African farm dam",
   [IMAGE_PATHS.villiersdorpWesternCapeHdpeDamLining8230m2]:
-    "HDPE dam lining project in Villiersdorp in the Western Cape covering approximately 8,230 m² by Damtech",
+    "HDPE dam lining covering approximately 8,230 m² in Villiersdorp, Western Cape",
   [IMAGE_PATHS.villiersdorpWesternCapeHdpeDamLining8230m22]:
-    "HDPE dam lining field installation for a large water storage application in Villiersdorp in the Western Cape",
+    "HDPE dam lining field installation for a large water storage application in Villiersdorp, Western Cape",
   [IMAGE_PATHS.tulbaghWesternCapeSteelWaterTankProject]:
-    "Round corrugated steel water tank for agricultural and commercial water storage",
+    "Corrugated steel water tank installed in Tulbagh, Western Cape",
   [IMAGE_PATHS.hdpeDamLiningAfterGeotextile]:
     "HDPE dam lining after installation with geotextile protection on site",
   [IMAGE_PATHS.hdpeDamLiningBeforeInstallation]:
@@ -170,13 +170,16 @@ function siteImage(
 
 /** Static image data for homepage project cards (keyed by project slug). */
 export const FEATURED_PROJECT_IMAGES = {
-  "centurion-hdpe-dam-liner": hartswaterHdpeDamLiningProject,
+  "stellenbosch-hdpe-dam-liner": hdpeDamLiningFieldInstallation,
   "grabouw-hdpe-farm-dam": grabouwHdpeDamLiningAfter,
   "hoedspruit-bitumen-dam-lining": bitumenEarthDamWaterproofing,
-  "tzaneen-torch-on-bitumen-concrete-dam-18m": torchOnConcreteDam18mTzaneen,
-  "worcester-bitumen-earth-dam-lining-15000m2":
+  "worcester-bitumen-earth-dam-lining":
     worcesterWesternCapeBitumenEarthDamLining15000m2,
+  "villiersdorp-hdpe-dam-lining": villiersdorpWesternCapeHdpeDamLining8230m2,
   "tulbagh-steel-water-tank": tulbaghWesternCapeSteelWaterTankProject,
+  "north-west-game-lodge-hdpe-dam-lining": hdpeDamLiningEarthDam,
+  "centurion-hdpe-dam-liner": hartswaterHdpeDamLiningProject,
+  "tzaneen-torch-on-bitumen-concrete-dam-18m": torchOnConcreteDam18mTzaneen,
 } as const;
 
 /** Central registry for static page images (SEO filenames + alt text). */

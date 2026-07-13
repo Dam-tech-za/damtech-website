@@ -42,10 +42,10 @@ export function ProjectCard({ project }: ProjectCardProps) {
         </div>
         <h2 className="subsection-heading !mt-0 text-lg font-semibold text-navy">
           <Link href={href} className="hover:text-water">
-            {project.title}
+            {project.shortTitle ?? project.title}
           </Link>
         </h2>
-        <p className="home-process-projects__project-service">{project.material}</p>
+        <p className="home-process-projects__project-service">{project.scope}</p>
         <p className="mt-1 flex-1 text-sm leading-relaxed text-slate-600">
           {project.summary}
         </p>

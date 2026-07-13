@@ -354,6 +354,18 @@ export const LOCAL_LANDING_PAGES: LocalLandingPage[] = [
         label: "Grabouw farm dam lining",
       },
       {
+        href: "/projects/worcester-bitumen-earth-dam-lining",
+        label: "Worcester bitumen earth dam",
+      },
+      {
+        href: "/projects/villiersdorp-hdpe-dam-lining",
+        label: "Villiersdorp HDPE dam lining",
+      },
+      {
+        href: "/projects/tulbagh-steel-water-tank",
+        label: "Tulbagh steel water tank",
+      },
+      {
         href: "/steel-water-storage-tanks",
         label: "Steel water tanks",
       },
