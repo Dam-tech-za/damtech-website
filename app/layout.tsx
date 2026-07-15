@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { Analytics, AnalyticsNoScript } from "@/components/Analytics";
-import { PageShell } from "@/components/PageShell";
+import { ConditionalSiteShell } from "@/components/ConditionalSiteShell";
 import { SEOJsonLd } from "@/components/SEOJsonLd";
 import {
   createLocalBusinessSchema,
@@ -36,7 +36,7 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col font-sans">
         <AnalyticsNoScript />
         <SEOJsonLd data={globalSchemas} />
-        <PageShell>{children}</PageShell>
+        <ConditionalSiteShell>{children}</ConditionalSiteShell>
         <Analytics />
       </body>
     </html>

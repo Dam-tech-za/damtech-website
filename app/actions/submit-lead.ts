@@ -2,6 +2,7 @@
 
 import { sendLeadEmail, leadEmailChannel } from "@/lib/email";
 import { parseLeadFormData } from "@/lib/form";
+import { RATE_LIMITS, rateLimit } from "@/lib/security/rate-limit";
 import { insertLead, isSupabaseConfigured } from "@/lib/supabase/server";
 
 export type SubmitLeadResult =
@@ -12,6 +13,18 @@ export async function submitLead(
   formData: FormData,
   sourcePage: string,
 ): Promise<SubmitLeadResult> {
+  const limit = await rateLimit({
+    key: `public-rfq:${sourcePage}`,
+    ...RATE_LIMITS.publicRfqSubmission,
+  });
+
+  if (!limit.success) {
+    return {
+      success: false,
+      error: "Too many submissions. Please wait a minute and try again.",
+    };
+  }
+
   const parsed = parseLeadFormData(formData, sourcePage);
 
   if (!parsed.ok) {

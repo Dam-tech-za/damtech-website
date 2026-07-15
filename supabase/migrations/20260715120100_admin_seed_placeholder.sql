@@ -1,0 +1,14 @@
+-- Manual bootstrap: insert the first owner allowlist entry.
+-- Replace the placeholder email, then run in the Supabase SQL editor.
+-- Never commit a real address into source control.
+
+-- insert into public.admin_email_allowlist (
+--   email,
+--   assigned_role,
+--   is_active
+-- )
+-- values (
+--   'REPLACE_WITH_APPROVED_GOOGLE_EMAIL',
+--   'owner',
+--   true
+-- );

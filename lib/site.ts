@@ -296,6 +296,8 @@ export const ROBOTS_DISALLOW_PATHS = [
   "/api/",
   "/category/",
   "/author/",
+  "/admin/",
+  "/auth/",
 ] as const;
 
 /** Indexable static routes for sitemap generation. */

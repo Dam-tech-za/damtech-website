@@ -9,6 +9,8 @@ function isDisallowedSitemapPath(path: string): boolean {
   return (
     normalised.startsWith("/_next") ||
     normalised.startsWith("/api/") ||
+    normalised.startsWith("/admin/") ||
+    normalised.startsWith("/auth/") ||
     normalised.startsWith("/category/") ||
     normalised.startsWith("/author/") ||
     normalised === "/thank-you" ||
