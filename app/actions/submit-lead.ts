@@ -37,6 +37,10 @@ export async function submitLead(
       data: parsed.data,
       calculator: parsed.calculator,
       markSpam: true,
+      enquiryChannel: parsed.enquiryChannel,
+      softEstimates: parsed.softEstimates,
+      simpleServiceFields: parsed.simpleServiceFields,
+      assetsEstimate: parsed.assetsEstimate,
     });
     return { success: true };
   }
@@ -85,6 +89,10 @@ export async function submitLead(
     const rfqResult = await createRfqFromPublicSubmission({
       data,
       calculator: parsed.calculator,
+      enquiryChannel: parsed.enquiryChannel,
+      softEstimates: parsed.softEstimates,
+      simpleServiceFields: parsed.simpleServiceFields,
+      assetsEstimate: parsed.assetsEstimate,
     });
     if (!rfqResult.ok) {
       console.error("[rfq] create failed after email:", rfqResult.error);

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useSyncExternalStore } from "react";
 import { DamtechLogo } from "@/components/DamtechLogo";
 import { MobileNav } from "@/components/MobileNav";
 import { isNavItemActive, ServicesNavDropdown } from "@/components/ServicesNavDropdown";
@@ -15,14 +15,102 @@ const HIDE_AFTER_PX = 56;
 const REVEAL_AFTER_PX = 28;
 const HIDE_MIN_Y = 180;
 
+type ScrollHeaderState = {
+  visible: boolean;
+  scrolled: boolean;
+};
+
+const EMPTY_SCROLL: ScrollHeaderState = { visible: true, scrolled: false };
+
+let scrollState: ScrollHeaderState = EMPTY_SCROLL;
+const scrollListeners = new Set<() => void>();
+let scrollAttached = false;
+let lastScrollY = 0;
+let scrollAccumulator = 0;
+let ticking = false;
+
+function emitScroll() {
+  for (const listener of scrollListeners) listener();
+}
+
+function attachScrollIfNeeded() {
+  if (scrollAttached || typeof window === "undefined") return;
+  scrollAttached = true;
+  lastScrollY = window.scrollY;
+  scrollState = {
+    visible: true,
+    scrolled: window.scrollY > SCROLLED_AT_PX,
+  };
+
+  const onScroll = () => {
+    if (ticking) return;
+    ticking = true;
+    window.requestAnimationFrame(() => {
+      const currentY = window.scrollY;
+      const delta = currentY - lastScrollY;
+      if (Math.abs(delta) < 2) {
+        ticking = false;
+        return;
+      }
+
+      let visible = scrollState.visible;
+      if (currentY <= REVEAL_AT_TOP_PX) {
+        visible = true;
+        scrollAccumulator = 0;
+      } else if (delta > SCROLL_DELTA) {
+        scrollAccumulator =
+          scrollAccumulator >= 0 ? scrollAccumulator + delta : delta;
+        if (currentY >= HIDE_MIN_Y && scrollAccumulator >= HIDE_AFTER_PX) {
+          visible = false;
+          scrollAccumulator = 0;
+        }
+      } else if (delta < -SCROLL_DELTA) {
+        scrollAccumulator =
+          scrollAccumulator <= 0 ? scrollAccumulator + delta : delta;
+        if (Math.abs(scrollAccumulator) >= REVEAL_AFTER_PX) {
+          visible = true;
+          scrollAccumulator = 0;
+        }
+      }
+
+      scrollState = {
+        visible,
+        scrolled: currentY > SCROLLED_AT_PX,
+      };
+      lastScrollY = currentY;
+      ticking = false;
+      emitScroll();
+    });
+  };
+
+  window.addEventListener("scroll", onScroll, { passive: true });
+}
+
+function subscribeScroll(listener: () => void) {
+  attachScrollIfNeeded();
+  scrollListeners.add(listener);
+  return () => {
+    scrollListeners.delete(listener);
+  };
+}
+
+function getScrollSnapshot(): ScrollHeaderState {
+  attachScrollIfNeeded();
+  return scrollState;
+}
+
+function getServerScrollSnapshot(): ScrollHeaderState {
+  return EMPTY_SCROLL;
+}
+
 export function Header() {
   const pathname = usePathname();
-  const [visible, setVisible] = useState(true);
-  const [scrolled, setScrolled] = useState(false);
   const headerRef = useRef<HTMLElement>(null);
-  const lastScrollY = useRef(0);
-  const ticking = useRef(false);
-  const scrollAccumulator = useRef(0);
+  const { visible, scrolled } = useSyncExternalStore(
+    subscribeScroll,
+    getScrollSnapshot,
+    getServerScrollSnapshot,
+  );
 
   useEffect(() => {
     const header = headerRef.current;
@@ -36,63 +124,9 @@ export function Header() {
     };
 
     setHeaderHeightVar();
-
     const resizeObserver = new ResizeObserver(setHeaderHeightVar);
     resizeObserver.observe(header);
     return () => resizeObserver.disconnect();
-  }, []);
-
-  useEffect(() => {
-    lastScrollY.current = window.scrollY;
-    setScrolled(window.scrollY > SCROLLED_AT_PX);
-
-    const onScroll = () => {
-      if (ticking.current) {
-        return;
-      }
-
-      ticking.current = true;
-
-      window.requestAnimationFrame(() => {
-        const currentY = window.scrollY;
-        const delta = currentY - lastScrollY.current;
-        if (Math.abs(delta) < 2) {
-          ticking.current = false;
-          return;
-        }
-
-        if (currentY <= REVEAL_AT_TOP_PX) {
-          setVisible(true);
-          scrollAccumulator.current = 0;
-        } else if (delta > SCROLL_DELTA) {
-          scrollAccumulator.current =
-            scrollAccumulator.current >= 0
-              ? scrollAccumulator.current + delta
-              : delta;
-          if (currentY >= HIDE_MIN_Y && scrollAccumulator.current >= HIDE_AFTER_PX) {
-            setVisible(false);
-            scrollAccumulator.current = 0;
-          }
-        } else if (delta < -SCROLL_DELTA) {
-          scrollAccumulator.current =
-            scrollAccumulator.current <= 0
-              ? scrollAccumulator.current + delta
-              : delta;
-          if (Math.abs(scrollAccumulator.current) >= REVEAL_AFTER_PX) {
-            setVisible(true);
-            scrollAccumulator.current = 0;
-          }
-        }
-
-        setScrolled(currentY > SCROLLED_AT_PX);
-
-        lastScrollY.current = currentY;
-        ticking.current = false;
-      });
-    };
-
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
   return (
@@ -140,7 +174,7 @@ export function Header() {
         </nav>
 
         <div className="site-header__actions">
-          <Link href="/quote" className="site-header__cta">
+          <Link href="/quote/" className="site-header__cta">
             Request a Quote
           </Link>
           <MobileNav />

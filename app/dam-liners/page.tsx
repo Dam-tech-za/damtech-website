@@ -1,5 +1,3 @@
-import Link from "next/link";
-
 import { ComparisonTable } from "@/components/ComparisonTable";
 
 import { Hero } from "@/components/Hero";

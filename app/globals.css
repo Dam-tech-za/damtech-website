@@ -5119,6 +5119,39 @@
   .admin-status--closed { background: #e2e8f0; color: #334155; }
   .admin-status--spam { background: #fee2e2; color: #991b1b; }
 
+  .admin-source-badge {
+    display: inline-flex;
+    align-items: center;
+    border-radius: 999px;
+    padding: 0.15rem 0.55rem;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    background: #e2e8f0;
+    color: #334155;
+    white-space: nowrap;
+  }
+  .admin-source-badge--simple_public_rfq,
+  .admin-source-badge--simple {
+    background: #dbeafe;
+    color: #1e3a8a;
+  }
+  .admin-source-badge--calculator_quote_preparation,
+  .admin-source-badge--calculator {
+    background: #dcfce7;
+    color: #166534;
+  }
+  .admin-source-badge--contact_enquiry,
+  .admin-source-badge--contact {
+    background: #fef3c7;
+    color: #92400e;
+  }
+  .admin-source-badge--admin_created,
+  .admin-source-badge--admin {
+    background: #ede9fe;
+    color: #5b21b6;
+  }
+
   .admin-card-list {
     display: grid;
     gap: 0.75rem;
@@ -5241,6 +5274,41 @@
     color: var(--color-body-gray-dark);
   }
 
+  .admin-qty-list {
+    margin: 0.35rem 0 0;
+    padding-left: 1.1rem;
+    font-size: 0.85rem;
+  }
+
+  .admin-checkbox-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
+    gap: 0.4rem 0.75rem;
+    margin: 0.75rem 0;
+  }
+
+  .admin-asset-card {
+    margin-bottom: 0.85rem;
+    border: 1px solid rgba(3, 25, 38, 0.12);
+    border-radius: 0.4rem;
+    padding: 0.65rem 0.85rem;
+  }
+
+  .admin-asset-card__body {
+    margin-top: 0.85rem;
+  }
+
+  .admin-asset-actions {
+    display: grid;
+    gap: 1.25rem;
+    margin-top: 1rem;
+  }
+
+  .admin-metric-card.is-active {
+    border-color: var(--color-accent-blue-light);
+    box-shadow: 0 8px 20px rgba(3, 25, 38, 0.08);
+  }
+
   .admin-metric-card--link {
     text-decoration: none;
     color: inherit;
@@ -5257,4 +5325,258 @@
     font-weight: 600;
     text-decoration: none;
   }
+
+  .admin-quote-totals {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+    gap: 0.75rem;
+    margin: 1.25rem 0 0;
+  }
+
+  .admin-quote-totals dt {
+    font-size: 0.75rem;
+    color: var(--color-body-gray-dark);
+  }
+
+  .admin-quote-totals dd {
+    margin: 0.15rem 0 0;
+    font-weight: 700;
+  }
+
+  .admin-field--full {
+    grid-column: 1 / -1;
+  }
+
+  .admin-flash {
+    padding: 0.75rem 1rem;
+    border-radius: 0.35rem;
+    background: #eef6f1;
+    margin-bottom: 1rem;
+  }
+
+  .admin-flash--error {
+    background: #fdeceb;
+    color: #7a1f1a;
+  }
+
+  .admin-status--internal_review,
+  .admin-status--approved,
+  .admin-status--viewed,
+  .admin-status--superseded {
+    text-transform: capitalize;
+  }
+}
+
+.public-quote {
+  max-width: 52rem;
+  margin: 0 auto;
+  padding: 2rem 1.25rem 4rem;
+  color: #1a1a1a;
+  background:
+    linear-gradient(180deg, #f4f7f5 0%, #ffffff 18rem);
+  min-height: 100vh;
+  font-family: Georgia, "Times New Roman", serif;
+}
+
+.public-quote__brand {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1b4d3e;
+  margin: 0;
+}
+
+.public-quote h1 {
+  margin: 0.35rem 0 0.75rem;
+  font-size: 2rem;
+}
+
+.public-quote section {
+  margin-top: 1.75rem;
+}
+
+.public-quote__actions {
+  display: grid;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.public-quote .admin-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.public-quote .admin-table th,
+.public-quote .admin-table td {
+  border-bottom: 1px solid #ddd;
+  padding: 0.5rem;
+  text-align: left;
+  font-size: 0.9rem;
+}
+
+@media (max-width: 640px) {
+  .public-quote {
+    padding: 1.25rem 0.85rem 3rem;
+  }
+
+  .public-quote .admin-table-wrap {
+    overflow-x: auto;
+  }
+}
+
+.rfq-wizard {
+  display: grid;
+  gap: 1.25rem;
+}
+
+.rfq-wizard__progress {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.rfq-wizard__progress button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  border: 1px solid #d5ddd8;
+  background: #fff;
+  border-radius: 999px;
+  padding: 0.35rem 0.7rem;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.rfq-wizard__progress button span {
+  width: 1.2rem;
+  height: 1.2rem;
+  border-radius: 999px;
+  background: #e8eee9;
+  display: inline-grid;
+  place-items: center;
+  font-size: 0.7rem;
+}
+
+.rfq-wizard__progress button.is-active {
+  border-color: #1b4d3e;
+  color: #1b4d3e;
+  font-weight: 600;
+}
+
+.rfq-wizard__progress button.is-done span {
+  background: #1b4d3e;
+  color: #fff;
+}
+
+.rfq-wizard__panel {
+  display: grid;
+  gap: 1rem;
+  padding: 1.25rem;
+  border: 1px solid #e2e8e4;
+  border-radius: 0.75rem;
+  background: linear-gradient(180deg, #fbfcfb, #fff);
+}
+
+.rfq-wizard__panel h2 {
+  margin: 0;
+  font-size: 1.35rem;
+}
+
+.rfq-wizard .form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+  gap: 0.85rem;
+}
+
+.rfq-wizard .form-grid label,
+.rfq-wizard__checks label {
+  display: grid;
+  gap: 0.3rem;
+  font-size: 0.9rem;
+}
+
+.rfq-wizard .form-grid__full {
+  grid-column: 1 / -1;
+}
+
+.rfq-wizard__checks {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.rfq-wizard__nav {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: flex-end;
+}
+
+.rfq-wizard__hp {
+  position: absolute;
+  left: -9999px;
+  height: 0;
+  overflow: hidden;
+}
+
+.rfq-asset-card {
+  border: 1px solid #dce5df;
+  border-radius: 0.65rem;
+  padding: 1rem;
+  display: grid;
+  gap: 0.85rem;
+  background: #fff;
+}
+
+.rfq-asset-card header h3 {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+  margin: 0;
+  font-size: 1.05rem;
+}
+
+.rfq-method-cards {
+  border: 0;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.4rem;
+}
+
+.rfq-method-cards label {
+  display: flex;
+  gap: 0.5rem;
+  align-items: flex-start;
+  border: 1px solid #d7e0da;
+  border-radius: 0.5rem;
+  padding: 0.65rem 0.75rem;
+  cursor: pointer;
+}
+
+.rfq-method-cards label.is-selected {
+  border-color: #1b4d3e;
+  background: #f1f7f3;
+}
+
+.rfq-asset-preview {
+  background: #f6f8f6;
+  border-radius: 0.5rem;
+  padding: 0.75rem;
+  font-size: 0.9rem;
+}
+
+.rfq-review-assets {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 0.65rem;
+}
+
+.rfq-review-assets li {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+  border-bottom: 1px solid #e5ebe7;
+  padding-bottom: 0.5rem;
 }

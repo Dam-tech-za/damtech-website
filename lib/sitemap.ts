@@ -11,10 +11,13 @@ function isDisallowedSitemapPath(path: string): boolean {
     normalised.startsWith("/api/") ||
     normalised.startsWith("/admin/") ||
     normalised.startsWith("/auth/") ||
+    normalised.startsWith("/q/") ||
     normalised.startsWith("/category/") ||
     normalised.startsWith("/author/") ||
     normalised === "/thank-you" ||
-    normalised === "/thank-you/"
+    normalised === "/thank-you/" ||
+    normalised.startsWith("/quote/success") ||
+    /\/quote\/.+\/upload/.test(normalised)
   );
 }
 

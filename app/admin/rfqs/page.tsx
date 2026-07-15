@@ -4,20 +4,37 @@ import { canPerform } from "@/lib/auth/permissions";
 import { createClient } from "@/lib/supabase/server";
 import { SERVICE_OPTIONS, PROVINCE_OPTIONS } from "@/lib/form";
 import { RFQ_STATUSES } from "@/lib/rfq/schema";
-import { listRfqs, rfqSizeLabel, type RfqListFilters } from "@/lib/rfq/list";
+import { RFQ_ASSET_TYPES, MEASUREMENT_METHODS } from "@/lib/rfq/public-schema";
 import {
-  bulkUpdateRfqStatusAction,
-} from "./actions";
+  getRfqStatusCounts,
+  listRfqs,
+  rfqSizeLabel,
+  type RfqListFilters,
+} from "@/lib/rfq/list";
+import { bulkUpdateRfqStatusAction } from "./actions";
 import { RfqInboxClient } from "@/components/admin/RfqInboxClient";
 
 type PageProps = {
   searchParams: Promise<RfqListFilters>;
 };
 
+const STATUS_CARDS = [
+  { key: "new", label: "New" },
+  { key: "reviewing", label: "Reviewing" },
+  { key: "site_measurement_required", label: "Site measurement required" },
+  { key: "information_required", label: "Information required" },
+  { key: "ready_for_quote", label: "Ready for quote" },
+  { key: "converted", label: "Converted" },
+  { key: "closed", label: "Closed" },
+] as const;
+
 export default async function AdminRfqsPage({ searchParams }: PageProps) {
   const admin = await requireAdmin();
   const filters = await searchParams;
-  const result = await listRfqs(filters);
+  const [result, statusCounts] = await Promise.all([
+    listRfqs(filters),
+    getRfqStatusCounts(),
+  ]);
   const supabase = await createClient();
   const { data: staff } = await supabase
     .from("admin_profiles")
@@ -26,17 +43,40 @@ export default async function AdminRfqsPage({ searchParams }: PageProps) {
     .order("email");
 
   const canExport = canPerform(admin.profile.role, "exportRfqs");
-  const totalPages = Math.max(1, Math.ceil(result.total / result.pageSize));
+  const totalPages = result.totalPages || Math.max(1, Math.ceil(result.total / result.pageSize));
 
   return (
     <div className="admin-rfq-inbox">
+      <section className="admin-metric-grid" aria-label="RFQ status summary">
+        {STATUS_CARDS.map((card) => {
+          const params = new URLSearchParams(
+            Object.entries(filters)
+              .filter(([k, v]) => Boolean(v) && k !== "status" && k !== "page")
+              .map(([k, v]) => [k, String(v)]),
+          );
+          params.set("status", card.key);
+          return (
+            <Link
+              key={card.key}
+              href={`/admin/rfqs/?${params.toString()}`}
+              className={`admin-metric-card admin-metric-card--link${filters.status === card.key ? " is-active" : ""}`}
+            >
+              <p className="admin-metric-card__label">{card.label}</p>
+              <p className="admin-metric-card__value">
+                {statusCounts[card.key] ?? 0}
+              </p>
+            </Link>
+          );
+        })}
+      </section>
+
       <section className="admin-panel">
         <header className="admin-panel__header admin-panel__header--row">
           <div>
             <h2>RFQ inbox</h2>
             <p className="admin-empty__hint">
-              {result.total} record{result.total === 1 ? "" : "s"} · filters sync
-              to the URL
+              {result.total} record{result.total === 1 ? "" : "s"} · URL filters ·
+              quantities stay in separate units
             </p>
           </div>
           {canExport ? (
@@ -57,7 +97,7 @@ export default async function AdminRfqsPage({ searchParams }: PageProps) {
           <input
             className="form-input"
             name="q"
-            placeholder="Search RFQ, customer, email, phone…"
+            placeholder="RFQ, customer, company, email, phone, town, asset…"
             defaultValue={filters.q ?? ""}
           />
           <select name="status" className="form-input" defaultValue={filters.status ?? ""}>
@@ -67,6 +107,44 @@ export default async function AdminRfqsPage({ searchParams }: PageProps) {
                 {status}
               </option>
             ))}
+          </select>
+          <select
+            name="assetType"
+            className="form-input"
+            defaultValue={filters.assetType ?? ""}
+          >
+            <option value="">All asset types</option>
+            {RFQ_ASSET_TYPES.map((type) => (
+              <option key={type} value={type}>
+                {type.replace(/_/g, " ")}
+              </option>
+            ))}
+          </select>
+          <input
+            className="form-input"
+            name="materialPreference"
+            placeholder="Material preference"
+            defaultValue={filters.materialPreference ?? ""}
+          />
+          <select
+            name="measurementMethod"
+            className="form-input"
+            defaultValue={filters.measurementMethod ?? ""}
+          >
+            <option value="">Measurement method</option>
+            {MEASUREMENT_METHODS.map((method) => (
+              <option key={method} value={method}>
+                {method.replace(/_/g, " ")}
+              </option>
+            ))}
+          </select>
+          <select
+            name="measurementRequired"
+            className="form-input"
+            defaultValue={filters.measurementRequired ?? ""}
+          >
+            <option value="">Measurement required: any</option>
+            <option value="1">Site measurement required</option>
           </select>
           <select name="service" className="form-input" defaultValue={filters.service ?? ""}>
             <option value="">All services</option>
@@ -100,9 +178,17 @@ export default async function AdminRfqsPage({ searchParams }: PageProps) {
             className="form-input"
             defaultValue={filters.hasCalculator ?? ""}
           >
-            <option value="">Calculator: any</option>
-            <option value="1">Has calculator</option>
+            <option value="">Calculator inputs: any</option>
+            <option value="1">Has calculator / assets</option>
             <option value="0">No calculator</option>
+          </select>
+          <select
+            name="hasDrawings"
+            className="form-input"
+            defaultValue={filters.hasDrawings ?? ""}
+          >
+            <option value="">Drawings: any</option>
+            <option value="1">Has drawings</option>
           </select>
           <select
             name="hasAttachments"
@@ -115,9 +201,35 @@ export default async function AdminRfqsPage({ searchParams }: PageProps) {
           </select>
           <input
             className="form-input"
-            name="sourcePage"
-            placeholder="Source page"
-            defaultValue={filters.sourcePage ?? ""}
+            name="minMaterialArea"
+            type="number"
+            step="any"
+            placeholder="Min material m²"
+            defaultValue={filters.minMaterialArea ?? ""}
+          />
+          <input
+            className="form-input"
+            name="maxMaterialArea"
+            type="number"
+            step="any"
+            placeholder="Max material m²"
+            defaultValue={filters.maxMaterialArea ?? ""}
+          />
+          <input
+            className="form-input"
+            name="minTankCapacity"
+            type="number"
+            step="any"
+            placeholder="Min tank kL"
+            defaultValue={filters.minTankCapacity ?? ""}
+          />
+          <input
+            className="form-input"
+            name="maxTankCapacity"
+            type="number"
+            step="any"
+            placeholder="Max tank kL"
+            defaultValue={filters.maxTankCapacity ?? ""}
           />
           <select name="sort" className="form-input" defaultValue={filters.sort ?? "submitted_at_desc"}>
             <option value="submitted_at_desc">Newest submitted</option>
@@ -146,8 +258,8 @@ export default async function AdminRfqsPage({ searchParams }: PageProps) {
           <div className="admin-empty">
             <p>No RFQs match these filters.</p>
             <p className="admin-empty__hint">
-              Public quote/contact submissions appear here once Supabase Phase 2
-              migrations are applied.
+              Public `/quote/` simple submissions and calculator quote-preparation
+              RFQs appear here immediately after save.
             </p>
           </div>
         </div>

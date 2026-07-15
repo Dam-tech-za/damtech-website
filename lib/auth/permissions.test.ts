@@ -24,10 +24,13 @@ describe("admin permissions", () => {
     assert.equal(canAccessNavItem("viewer", "dashboard"), true);
   });
 
-  it("allows sales customers but not allowlist management", () => {
-    assert.equal(canAccessNavItem("sales", "customers"), true);
-    assert.equal(canPerform("sales", "manageAllowlist"), false);
-    assert.equal(canPerform("owner", "manageAllowlist"), true);
+  it("allows sales to manage quotes but not approve", () => {
+    assert.equal(canPerform("sales", "manageQuotes"), true);
+    assert.equal(canPerform("sales", "approveQuotes"), false);
+    assert.equal(canPerform("admin", "approveQuotes"), true);
+    assert.equal(canPerform("sales", "sendQuotes"), true);
+    assert.equal(canPerform("estimator", "viewQuoteMargin"), true);
+    assert.equal(canPerform("sales", "viewQuoteMargin"), false);
   });
 
   it("compares role ranks", () => {

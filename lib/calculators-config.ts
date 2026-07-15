@@ -752,9 +752,9 @@ export const CALCULATORS: CalculatorConfig[] = [
     id: "project-budget",
     name: "Project Budget Preparation Tool",
     shortName: "Quote Preparation",
-    bestFor: "Faster estimates",
+    bestFor: "Detailed RFQ",
     description:
-      "Prepare basic project information so Damtech can provide a faster, more accurate dam lining or waterproofing quote.",
+      "Multi-step quote preparation with contact, company, site, services and asset measurements for Damtech's RFQ inbox.",
     icon: FileTextIcon,
     fields: [
       {

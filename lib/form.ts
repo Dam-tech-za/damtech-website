@@ -3,9 +3,26 @@ export const SERVICE_OPTIONS = [
   "PVC dam liner",
   "Steel water tank",
   "Bitumen waterproofing",
-  "Leak repair",
+  "Dam leak repair",
   "Reservoir repair",
+  "Water storage consultation",
   "Other",
+] as const;
+
+export const MATERIAL_PREFERENCE_OPTIONS = [
+  "HDPE",
+  "PVC",
+  "Steel",
+  "Bitumen / torch-on",
+  "Unsure",
+] as const;
+
+export const TIMEFRAME_OPTIONS = [
+  "As soon as possible",
+  "Within 1 month",
+  "1–3 months",
+  "3–6 months",
+  "Planning / budget only",
 ] as const;
 
 export const PROVINCE_OPTIONS = [
@@ -23,6 +40,23 @@ export const PROVINCE_OPTIONS = [
 
 export type ServiceOption = (typeof SERVICE_OPTIONS)[number];
 export type ProvinceOption = (typeof PROVINCE_OPTIONS)[number];
+export type MaterialPreferenceOption =
+  (typeof MATERIAL_PREFERENCE_OPTIONS)[number];
+export type TimeframeOption = (typeof TIMEFRAME_OPTIONS)[number];
+
+/** Legacy labels still accepted on parse (mapped onto current SERVICE_OPTIONS). */
+export const LEGACY_SERVICE_ALIASES: Record<string, ServiceOption> = {
+  "Leak repair": "Dam leak repair",
+  "Water-storage consultation": "Water storage consultation",
+};
+
+export function normaliseServiceOption(value: string): ServiceOption | null {
+  if ((SERVICE_OPTIONS as readonly string[]).includes(value)) {
+    return value as ServiceOption;
+  }
+  const aliased = LEGACY_SERVICE_ALIASES[value];
+  return aliased ?? null;
+}
 
 export type LeadFormData = {
   name: string;
@@ -78,7 +112,8 @@ export function parseLeadFormData(
     return { ok: false, error: "Please select the service you require." };
   }
 
-  if (!SERVICE_OPTIONS.includes(serviceRequired as ServiceOption)) {
+  const normalisedService = normaliseServiceOption(serviceRequired);
+  if (!normalisedService) {
     return { ok: false, error: "Please select a valid service." };
   }
 
@@ -97,7 +132,7 @@ export function parseLeadFormData(
       phone,
       email,
       province,
-      serviceRequired,
+      serviceRequired: normalisedService,
       projectSize,
       projectLocation,
       message,

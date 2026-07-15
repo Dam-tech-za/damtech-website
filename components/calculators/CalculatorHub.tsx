@@ -9,6 +9,7 @@ import {
   InfoCircleIcon,
 } from "@/components/icons/StrokeIcons";
 import { PageSectionHeader } from "@/components/PageSectionHeader";
+import { PublicRfqWizard } from "@/components/PublicRfqWizard";
 import {
   CALCULATOR_FAQS,
   CALCULATOR_GUIDANCE_CHECKLIST,
@@ -22,10 +23,24 @@ import {
   buildQuotePrefill,
   storeQuotePrefill,
 } from "@/lib/calculator-rfq-prefill";
+import { createCalculatorDraftAction } from "@/app/actions/create-calculator-draft";
 import {
   calculateCalculator,
   type CalculatorResult,
 } from "@/lib/calculators-logic";
+
+const QUOTE_PREP_ID = "project-budget";
+
+type CalculatorHubProps = {
+  /** When a calculator draft was consumed server-side, open Quote Preparation. */
+  initialCalculatorId?: string;
+  initialCalculatorSource?: {
+    calculatorType: string;
+    inputs: Record<string, unknown>;
+    results: Record<string, unknown>;
+  } | null;
+  draftError?: string | null;
+};
 
 function buildDefaultValues(calculator: CalculatorConfig): Record<string, string> {
   return Object.fromEntries(
@@ -190,16 +205,28 @@ function FixedAllowances({ fields }: { fields: CalculatorField[] }) {
   );
 }
 
-export function CalculatorHub() {
+export function CalculatorHub({
+  initialCalculatorId,
+  initialCalculatorSource = null,
+  draftError = null,
+}: CalculatorHubProps) {
   const router = useRouter();
-  const [selectedId, setSelectedId] = useState(DEFAULT_CALCULATOR_ID);
+  const startingId =
+    initialCalculatorId &&
+    CALCULATORS.some((calc) => calc.id === initialCalculatorId)
+      ? initialCalculatorId
+      : DEFAULT_CALCULATOR_ID;
+  const [selectedId, setSelectedId] = useState(startingId);
   const [formValues, setFormValues] = useState<Record<string, string>>(() =>
-    buildDefaultValues(CALCULATORS[0]!),
+    buildDefaultValues(
+      CALCULATORS.find((calc) => calc.id === startingId) ?? CALCULATORS[0]!,
+    ),
   );
   const [result, setResult] = useState<CalculatorResult | null>(null);
   const [calcError, setCalcError] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [hasCalculated, setHasCalculated] = useState(false);
+  const isQuotePreparation = selectedId === QUOTE_PREP_ID;
 
   const selectedCalculator =
     CALCULATORS.find((calc) => calc.id === selectedId) ?? CALCULATORS[0]!;
@@ -245,12 +272,21 @@ export function CalculatorHub() {
   useEffect(() => {
     const applyHash = (scroll: boolean) => {
       const hash = window.location.hash.replace("#", "");
+      // Draft-seeded Quote Preparation wins over a conflicting hash once.
+      if (
+        initialCalculatorId === QUOTE_PREP_ID &&
+        initialCalculatorSource &&
+        !hash
+      ) {
+        selectCalculator(QUOTE_PREP_ID, scroll);
+        return;
+      }
       if (hash && CALCULATORS.some((calc) => calc.id === hash)) {
         selectCalculator(hash, scroll);
       }
     };
 
-    applyHash(Boolean(window.location.hash));
+    applyHash(Boolean(window.location.hash) || Boolean(initialCalculatorId));
 
     const onHashChange = () => applyHash(true);
     const onCustomSelect = (event: Event) => {
@@ -264,7 +300,16 @@ export function CalculatorHub() {
       window.removeEventListener("hashchange", onHashChange);
       window.removeEventListener("damtech:select-calculator", onCustomSelect);
     };
-  }, [selectCalculator]);
+  }, [selectCalculator, initialCalculatorId, initialCalculatorSource]);
+
+  // Ensure hash reflects Quote Preparation when opened via draft.
+  useEffect(() => {
+    if (initialCalculatorId !== QUOTE_PREP_ID) return;
+    if (typeof window === "undefined") return;
+    if (window.location.hash !== `#${QUOTE_PREP_ID}`) {
+      window.history.replaceState(null, "", `#${QUOTE_PREP_ID}`);
+    }
+  }, [initialCalculatorId]);
 
   const handleFieldChange = (name: string, value: string) => {
     setFormValues((current) => ({ ...current, [name]: value }));
@@ -294,15 +339,41 @@ export function CalculatorHub() {
     ),
   });
 
-  const goToQuoteWithPrefill = () => {
+  /** Hand off planning figures into the Quote Preparation (#project-budget) wizard. */
+  const goToQuotePreparation = async () => {
+    const forQuote = valuesForQuote();
+    const resultPayload =
+      hasCalculated && result && !calcError ? result : null;
     const prefill = buildQuotePrefill({
       calculatorId: selectedId,
-      formValues: valuesForQuote(),
-      result: hasCalculated && result && !calcError ? result : null,
+      formValues: forQuote,
+      result: resultPayload,
     });
     if (prefill) storeQuotePrefill(prefill);
-    router.push("/quote/");
+
+    const draftResult = await createCalculatorDraftAction({
+      calculatorType: selectedId,
+      inputs: Object.fromEntries(
+        Object.entries(forQuote).map(([key, value]) => [key, value]),
+      ),
+      results: Object.fromEntries(
+        Object.entries(resultPayload?.values ?? {}).map(([label, value]) => [
+          label,
+          value,
+        ]),
+      ),
+    });
+
+    if (!draftResult.ok) {
+      selectCalculator(QUOTE_PREP_ID, true);
+      return;
+    }
+
+    router.push(
+      `/calculators/?draft=${encodeURIComponent(draftResult.token)}&tool=project-budget`,
+    );
   };
+
 
   const handleCalculate = (event: React.FormEvent) => {
     event.preventDefault();
@@ -425,133 +496,203 @@ export function CalculatorHub() {
         aria-label={`${selectedCalculator.name} workspace`}
         id="calculator-workspace"
       >
-        <div className="calc-workspace__grid">
-          <div className="calc-workspace__inputs site-form-card">
-            <h3 className="calc-workspace__title">{selectedCalculator.name}</h3>
-            <p className="calc-workspace__desc">{selectedCalculator.description}</p>
-
-            <form className="mt-6 space-y-4" onSubmit={handleCalculate} noValidate>
-              {calcError ? (
-                <p
-                  className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700"
-                  role="alert"
-                >
-                  {calcError}
-                </p>
-              ) : null}
-
-              {editableFields.map((field) => (
-                <CalculatorFieldInput
-                  key={field.name}
-                  field={field}
-                  value={formValues[field.name] ?? ""}
-                  onChange={handleFieldChange}
-                  error={fieldErrors[field.name]}
-                />
-              ))}
-
-              <FixedAllowances fields={fixedFields} />
-
-              <div className="calc-workspace__actions">
-                <button type="submit" className="btn-primary min-h-12 w-full sm:w-auto">
-                  Calculate Estimate
-                </button>
-                <button
-                  type="button"
-                  className="btn-secondary min-h-12 w-full sm:w-auto"
-                  onClick={handleReset}
-                >
-                  Reset
-                </button>
-              </div>
-            </form>
+        {isQuotePreparation ? (
+          <div className="space-y-4">
+            <div className="site-form-card">
+              <h3 className="calc-workspace__title">{selectedCalculator.name}</h3>
+              <p className="calc-workspace__desc">
+                Complete this multi-step quote preparation so Damtech has your
+                contact details, company information, site location, services and
+                asset measurements for the admin RFQ inbox and confirmation emails.
+              </p>
+              <p className="mt-3 text-sm text-slate-600">
+                Prefer a quicker form without assets?{" "}
+                <Link href="/quote/" className="text-water hover:underline">
+                  Request a simple quote
+                </Link>
+                .
+              </p>
+            </div>
+            {draftError ? (
+              <p className="form-error" role="alert">
+                {draftError} You can still complete the form below.
+              </p>
+            ) : null}
+            {initialCalculatorSource ? (
+              <p
+                className="rounded-lg border border-sky-200 bg-sky-50 px-3 py-2 text-sm text-navy"
+                role="status"
+              >
+                Calculator results were loaded securely for this session. Review
+                assets and contact details before submitting.
+              </p>
+            ) : null}
+            <PublicRfqWizard
+              key={
+                initialCalculatorSource
+                  ? `draft-${initialCalculatorSource.calculatorType}`
+                  : "quote-prep"
+              }
+              sourcePage="/calculators#project-budget"
+              initialCalculatorSource={
+                selectedId === QUOTE_PREP_ID ? initialCalculatorSource : null
+              }
+            />
           </div>
+        ) : (
+          <div className="calc-workspace__grid">
+            <div className="calc-workspace__inputs site-form-card">
+              <h3 className="calc-workspace__title">{selectedCalculator.name}</h3>
+              <p className="calc-workspace__desc">
+                {selectedCalculator.description}
+              </p>
 
-          <aside className="calc-workspace__results" aria-live="polite" aria-atomic="true">
-            <div className="calc-results-card">
-              <h3 className="calc-results-card__title">Estimate Preview</h3>
+              <form
+                className="mt-6 space-y-4"
+                onSubmit={handleCalculate}
+                noValidate
+              >
+                {calcError ? (
+                  <p
+                    className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700"
+                    role="alert"
+                  >
+                    {calcError}
+                  </p>
+                ) : null}
 
-              {!hasCalculated ? (
-                <p className="calc-results-card__hint">
-                  Enter your project details and click Calculate Estimate.
-                </p>
-              ) : calcError ? (
-                <p className="calc-results-card__hint text-red-700">
-                  Correct the highlighted fields and calculate again.
-                </p>
-              ) : result ? (
-                <p className="calc-results-card__status">Preliminary planning estimate</p>
-              ) : null}
-
-              <dl className="calc-results-card__list">
-                {selectedCalculator.resultLabels.map((label) => (
-                  <div key={label} className="calc-results-card__item">
-                    <dt className="calc-results-card__label">{label}</dt>
-                    <dd className="calc-results-card__value">
-                      {hasCalculated && result ? getResultValue(label) : "—"}
-                    </dd>
-                  </div>
+                {editableFields.map((field) => (
+                  <CalculatorFieldInput
+                    key={field.name}
+                    field={field}
+                    value={formValues[field.name] ?? ""}
+                    onChange={handleFieldChange}
+                    error={fieldErrors[field.name]}
+                  />
                 ))}
-              </dl>
 
-              {result?.warnings && result.warnings.length > 0 ? (
-                <div className="calc-results-card__warnings mt-4 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2">
-                  <p className="text-sm font-medium text-amber-900">Warnings</p>
-                  <ul className="mt-1 list-disc space-y-1 pl-4 text-sm text-amber-800">
-                    {result.warnings.map((warning) => (
-                      <li key={warning}>{warning}</li>
-                    ))}
-                  </ul>
+                <FixedAllowances fields={fixedFields} />
+
+                <div className="calc-workspace__actions">
+                  <button
+                    type="submit"
+                    className="btn-primary min-h-12 w-full sm:w-auto"
+                  >
+                    Calculate Estimate
+                  </button>
+                  <button
+                    type="button"
+                    className="btn-secondary min-h-12 w-full sm:w-auto"
+                    onClick={handleReset}
+                  >
+                    Reset
+                  </button>
                 </div>
-              ) : null}
+              </form>
+            </div>
 
-              {result?.assumptions && result.assumptions.length > 0 ? (
-                <div className="calc-results-card__assumptions mt-4 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2">
-                  <p className="text-sm font-medium text-slate-800">Assumptions</p>
-                  <ul className="mt-1 list-disc space-y-1 pl-4 text-sm text-slate-600">
-                    {result.assumptions.map((assumption) => (
-                      <li key={assumption}>{assumption}</li>
-                    ))}
-                  </ul>
+            <aside
+              className="calc-workspace__results"
+              aria-live="polite"
+              aria-atomic="true"
+            >
+              <div className="calc-results-card">
+                <h3 className="calc-results-card__title">Estimate Preview</h3>
+
+                {!hasCalculated ? (
+                  <p className="calc-results-card__hint">
+                    Enter your project details and click Calculate Estimate.
+                  </p>
+                ) : calcError ? (
+                  <p className="calc-results-card__hint text-red-700">
+                    Correct the highlighted fields and calculate again.
+                  </p>
+                ) : result ? (
+                  <p className="calc-results-card__status">
+                    Preliminary planning estimate
+                  </p>
+                ) : null}
+
+                <dl className="calc-results-card__list">
+                  {selectedCalculator.resultLabels.map((label) => (
+                    <div key={label} className="calc-results-card__item">
+                      <dt className="calc-results-card__label">{label}</dt>
+                      <dd className="calc-results-card__value">
+                        {hasCalculated && result ? getResultValue(label) : "—"}
+                      </dd>
+                    </div>
+                  ))}
+                </dl>
+
+                {result?.warnings && result.warnings.length > 0 ? (
+                  <div className="calc-results-card__warnings mt-4 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2">
+                    <p className="text-sm font-medium text-amber-900">Warnings</p>
+                    <ul className="mt-1 list-disc space-y-1 pl-4 text-sm text-amber-800">
+                      {result.warnings.map((warning) => (
+                        <li key={warning}>{warning}</li>
+                      ))}
+                    </ul>
+                  </div>
+                ) : null}
+
+                {result?.assumptions && result.assumptions.length > 0 ? (
+                  <div className="calc-results-card__assumptions mt-4 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2">
+                    <p className="text-sm font-medium text-slate-800">
+                      Assumptions
+                    </p>
+                    <ul className="mt-1 list-disc space-y-1 pl-4 text-sm text-slate-600">
+                      {result.assumptions.map((assumption) => (
+                        <li key={assumption}>{assumption}</li>
+                      ))}
+                    </ul>
+                  </div>
+                ) : null}
+
+                <div className="calc-results-card__help">
+                  <p className="text-sm font-medium text-navy">
+                    How this estimate helps
+                  </p>
+                  <p className="mt-1 text-sm text-slate-600">
+                    {selectedCalculator.resultHelp}
+                  </p>
                 </div>
-              ) : null}
 
-              <div className="calc-results-card__help">
-                <p className="text-sm font-medium text-navy">How this estimate helps</p>
-                <p className="mt-1 text-sm text-slate-600">{selectedCalculator.resultHelp}</p>
-              </div>
-
-              <div className="calc-results-card__cta">
-                <button
-                  type="button"
-                  className="btn-primary min-h-12 w-full text-center"
-                  onClick={goToQuoteWithPrefill}
-                >
-                  Request a Quote
-                </button>
-                {selectedCalculator.relatedServiceHref.replace(/\/$/, "") ===
-                "/quote" ? (
+                <div className="calc-results-card__cta">
+                  <Link
+                    href="/quote/"
+                    className="btn-primary min-h-12 w-full text-center"
+                  >
+                    Request a Quote
+                  </Link>
                   <button
                     type="button"
                     className="calc-results-card__service-link"
-                    onClick={goToQuoteWithPrefill}
+                    onClick={() => void goToQuotePreparation()}
                   >
-                    {selectedCalculator.relatedServiceLabel}
-                    <ArrowRightIcon className="ml-1 inline h-4 w-4" aria-hidden />
+                    Continue in Quote Preparation
+                    <ArrowRightIcon
+                      className="ml-1 inline h-4 w-4"
+                      aria-hidden
+                    />
                   </button>
-                ) : (
-                  <Link
-                    href={selectedCalculator.relatedServiceHref}
-                    className="calc-results-card__service-link"
-                  >
-                    {selectedCalculator.relatedServiceLabel}
-                    <ArrowRightIcon className="ml-1 inline h-4 w-4" aria-hidden />
-                  </Link>
-                )}
+                  {selectedCalculator.relatedServiceHref.replace(/\/$/, "") ===
+                  "/quote" ? null : (
+                    <Link
+                      href={selectedCalculator.relatedServiceHref}
+                      className="calc-results-card__service-link"
+                    >
+                      {selectedCalculator.relatedServiceLabel}
+                      <ArrowRightIcon
+                        className="ml-1 inline h-4 w-4"
+                        aria-hidden
+                      />
+                    </Link>
+                  )}
+                </div>
               </div>
-            </div>
-          </aside>
-        </div>
+            </aside>
+          </div>
+        )}
       </div>
 
       <section className="calc-use-cases mt-16" aria-labelledby="calc-use-cases-heading">

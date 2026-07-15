@@ -18,7 +18,28 @@ type Row = {
   sizeLabel: string;
   assignee_email?: string | null;
   attachment_count?: number;
+  asset_count?: number;
+  asset_types?: string[];
+  quantity_lines?: string[];
+  measurement_status_label?: string;
+  enquiry_channel?: string | null;
+  source_badge_label?: string;
+  approximate_project_size_text?: string | null;
 };
+
+function quantityCell(row: Row): string {
+  if ((row.quantity_lines ?? []).length) {
+    return row.quantity_lines!.join(" · ");
+  }
+  if ((row.asset_count ?? 0) === 0) {
+    return (
+      row.approximate_project_size_text ||
+      row.sizeLabel ||
+      "Simple enquiry — no assets yet"
+    );
+  }
+  return row.sizeLabel;
+}
 
 type Props = {
   rows: Row[];
@@ -88,15 +109,18 @@ export function RfqInboxClient({ rows, bulkAction }: Props) {
             <tr>
               <th />
               <th>RFQ</th>
+              <th>Source</th>
               <th>Submitted</th>
               <th>Customer</th>
-              <th>Service</th>
+              <th>Company / farm</th>
+              <th>Project location</th>
               <th>Province</th>
-              <th>Location</th>
-              <th>Size</th>
+              <th>Assets</th>
+              <th>Types</th>
+              <th>Provisional quantities</th>
+              <th>Measurement</th>
               <th>Status</th>
-              <th>Assigned</th>
-              <th>Updated</th>
+              <th>Estimator</th>
               <th />
             </tr>
           </thead>
@@ -113,24 +137,42 @@ export function RfqInboxClient({ rows, bulkAction }: Props) {
                 <td>
                   <Link href={`/admin/rfqs/${row.id}/`}>{row.rfq_number}</Link>
                 </td>
-                <td>{new Date(row.submitted_at).toLocaleString("en-ZA")}</td>
                 <td>
-                  {row.contact_name}
-                  {row.company_name ? (
-                    <span className="admin-muted"> · {row.company_name}</span>
-                  ) : null}
+                  <span
+                    className={`admin-source-badge admin-source-badge--${row.enquiry_channel || "other"}`}
+                  >
+                    {row.source_badge_label ?? "Unknown"}
+                  </span>
                 </td>
-                <td>{row.service_required ?? "—"}</td>
-                <td>{row.province ?? "—"}</td>
+                <td>{new Date(row.submitted_at).toLocaleString("en-ZA")}</td>
+                <td>{row.contact_name}</td>
+                <td>{row.company_name ?? "—"}</td>
                 <td>{row.project_location ?? "—"}</td>
-                <td>{row.sizeLabel}</td>
+                <td>{row.province ?? "—"}</td>
+                <td>{row.asset_count ?? 0}</td>
+                <td>
+                  {(row.asset_types ?? []).length
+                    ? row.asset_types!.map((t) => t.replace(/_/g, " ")).join(", ")
+                    : "—"}
+                </td>
+                <td>
+                  {(row.quantity_lines ?? []).length ? (
+                    <ul className="admin-qty-list">
+                      {row.quantity_lines!.map((line) => (
+                        <li key={line}>{line}</li>
+                      ))}
+                    </ul>
+                  ) : (
+                    quantityCell(row)
+                  )}
+                </td>
+                <td>{row.measurement_status_label ?? "—"}</td>
                 <td>
                   <span className={`admin-status admin-status--${row.status}`}>
                     {row.status}
                   </span>
                 </td>
                 <td>{row.assignee_email ?? "—"}</td>
-                <td>{new Date(row.updated_at).toLocaleString("en-ZA")}</td>
                 <td>
                   <Link href={`/admin/rfqs/${row.id}/`} className="admin-link">
                     Open
@@ -159,14 +201,27 @@ export function RfqInboxClient({ rows, bulkAction }: Props) {
               </span>
             </header>
             <p>
+              <span
+                className={`admin-source-badge admin-source-badge--${row.enquiry_channel || "other"}`}
+              >
+                {row.source_badge_label ?? "Unknown"}
+              </span>
+            </p>
+            <p>
               <strong>{row.contact_name}</strong>
               {row.company_name ? ` · ${row.company_name}` : ""}
             </p>
             <p className="admin-muted">
-              {row.service_required ?? "Service TBD"} · {row.province ?? "Province TBD"}
+              {row.project_location ?? "Location TBD"} · {row.province ?? "—"}
             </p>
             <p className="admin-muted">
-              {row.sizeLabel} · {new Date(row.submitted_at).toLocaleDateString("en-ZA")}
+              {(row.asset_count ?? 0) > 0
+                ? `${row.asset_count} asset(s) · ${(row.quantity_lines ?? []).join(" · ") || row.sizeLabel}`
+                : quantityCell(row)}
+            </p>
+            <p className="admin-muted">
+              {row.measurement_status_label} ·{" "}
+              {new Date(row.submitted_at).toLocaleDateString("en-ZA")}
             </p>
           </article>
         ))}

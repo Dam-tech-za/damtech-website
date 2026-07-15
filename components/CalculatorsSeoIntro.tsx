@@ -1,6 +1,7 @@
+import Link from "next/link";
 import { CalculatorJumpLink } from "@/components/calculators/CalculatorJumpLink";
 
-/** Crawlable overview and H2 sections for calculator hub SEO signals. */
+/** Crawlable overview and H2 sections for calculator hub SEO signals. Never emits an H1. */
 export function CalculatorsSeoIntro() {
   return (
     <div className="calc-seo-intro max-w-3xl space-y-8">
@@ -10,9 +11,9 @@ export function CalculatorsSeoIntro() {
         requirements, rainwater harvesting potential and water storage needs across South
         Africa. These tools help farms, mines, game lodges and commercial properties prepare
         dimensions and demand figures before{" "}
-        <a href="/quote" className="text-water hover:underline">
+        <Link href="/quote/" className="text-water hover:underline">
           requesting a dam lining quote
-        </a>
+        </Link>
         .
       </p>
 

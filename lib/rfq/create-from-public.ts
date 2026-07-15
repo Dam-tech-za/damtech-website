@@ -1,10 +1,23 @@
+import { createHash, randomBytes } from "node:crypto";
 import { createServiceRoleClient } from "@/lib/supabase/admin";
 import { isSupabaseServiceConfigured } from "@/lib/supabase/env";
 import { writeAuditLog } from "@/lib/auth/audit";
-import type { CalculatorPayload, PublicRfqSubmission } from "./schema";
+import type { EnquiryChannel } from "./enquiry-channel";
+import type {
+  CalculatorPayload,
+  ParsedSimpleServiceFields,
+  PublicRfqSubmission,
+} from "./schema";
+import type { SoftSizeEstimates } from "./soft-size-parse";
 
 export type CreateRfqResult =
-  | { ok: true; rfqId: string; rfqNumber: string; customerId: string }
+  | {
+      ok: true;
+      rfqId: string;
+      rfqNumber: string;
+      customerId: string;
+      uploadToken: string;
+    }
   | { ok: false; error: string };
 
 async function findOrCreateCustomer(input: {
@@ -63,6 +76,10 @@ export async function createRfqFromPublicSubmission(input: {
   data: PublicRfqSubmission;
   calculator: CalculatorPayload | null;
   markSpam?: boolean;
+  enquiryChannel?: EnquiryChannel;
+  softEstimates?: SoftSizeEstimates;
+  simpleServiceFields?: ParsedSimpleServiceFields;
+  assetsEstimate?: number | null;
 }): Promise<CreateRfqResult> {
   if (!isSupabaseServiceConfigured()) {
     return { ok: false, error: "RFQ storage is not configured." };
@@ -91,6 +108,25 @@ export async function createRfqFromPublicSubmission(input: {
       return { ok: false, error: "Unable to save customer record." };
     }
 
+    const uploadToken = randomBytes(32).toString("base64url");
+    const uploadTokenHash = createHash("sha256")
+      .update(uploadToken, "utf8")
+      .digest("hex");
+    const uploadExpires = new Date();
+    uploadExpires.setDate(uploadExpires.getDate() + 14);
+
+    const enquiryChannel =
+      input.enquiryChannel ??
+      (input.calculator
+        ? "calculator_quote_preparation"
+        : input.data.sourcePage.toLowerCase().includes("contact")
+          ? "contact_enquiry"
+          : "simple_public_rfq");
+
+    const soft = input.softEstimates;
+    const sizeText = input.data.projectSize || null;
+    const hasCalculator = Boolean(input.calculator);
+
     const { data: rfq, error } = await client
       .from("rfqs")
       .insert({
@@ -98,6 +134,7 @@ export async function createRfqFromPublicSubmission(input: {
         status: input.markSpam ? "spam" : "new",
         source: "website",
         source_page: input.data.sourcePage,
+        enquiry_channel: enquiryChannel,
         customer_id: customerId,
         contact_name: input.data.name,
         company_name: input.data.company || null,
@@ -107,11 +144,24 @@ export async function createRfqFromPublicSubmission(input: {
         project_location: input.data.projectLocation || null,
         service_required: input.data.serviceRequired,
         project_description: input.data.message,
-        approximate_project_size: input.data.projectSize || null,
+        approximate_project_size: sizeText,
+        approximate_project_size_text: sizeText,
+        estimated_area_m2: soft?.estimated_area_m2 ?? null,
+        estimated_capacity_kl: soft?.estimated_capacity_kl ?? null,
+        estimated_diameter_m: soft?.estimated_diameter_m ?? null,
+        estimated_height_m: soft?.estimated_height_m ?? null,
+        material_preference: input.data.materialPreference || null,
+        number_of_assets_estimate: input.assetsEstimate ?? null,
+        preferred_timeframe: input.data.preferredTimeframe || null,
+        simple_service_fields: input.simpleServiceFields ?? {},
+        measurement_status: "information_not_yet_confirmed",
+        has_calculator_data: hasCalculator,
         preferred_contact_method: input.data.preferredContactMethod || null,
         calculator_type: input.calculator?.calculatorType ?? null,
         calculator_input: input.calculator?.inputs ?? null,
         calculator_result: input.calculator?.results ?? null,
+        public_upload_token_hash: uploadTokenHash,
+        public_upload_token_expires_at: uploadExpires.toISOString(),
       })
       .select("id, rfq_number")
       .single();
@@ -127,7 +177,9 @@ export async function createRfqFromPublicSubmission(input: {
       message: "RFQ submitted from public website",
       metadata: {
         source_page: input.data.sourcePage,
-        has_calculator: Boolean(input.calculator),
+        enquiry_channel: enquiryChannel,
+        has_calculator: hasCalculator,
+        asset_count: 0,
         spam: Boolean(input.markSpam),
       },
     });
@@ -139,6 +191,7 @@ export async function createRfqFromPublicSubmission(input: {
       afterData: {
         rfq_number: rfq.rfq_number,
         source_page: input.data.sourcePage,
+        enquiry_channel: enquiryChannel,
         status: input.markSpam ? "spam" : "new",
       },
       metadata: { public: true },
@@ -149,6 +202,7 @@ export async function createRfqFromPublicSubmission(input: {
       rfqId: rfq.id,
       rfqNumber: rfq.rfq_number,
       customerId,
+      uploadToken,
     };
   } catch (error) {
     console.error("[rfq] unexpected create failure:", error);

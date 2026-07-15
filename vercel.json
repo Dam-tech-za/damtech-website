@@ -24,5 +24,15 @@
       "destination": "https://www.dam-tech.co.za/:path/",
       "permanent": true
     }
+  ],
+  "crons": [
+    {
+      "path": "/api/cron/expire-quotes",
+      "schedule": "0 4 * * *"
+    },
+    {
+      "path": "/api/cron/quote-reminders",
+      "schedule": "30 4 * * *"
+    }
   ]
 }

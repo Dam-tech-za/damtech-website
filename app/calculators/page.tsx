@@ -10,12 +10,45 @@ import { createPageMetadata, PAGE_SEO } from "@/lib/pages";
 import { createFaqPageSchema, createWebPageSchema } from "@/lib/seo";
 import { CALCULATOR_FAQS } from "@/lib/calculators-config";
 import { CALCULATORS_RELATED_LINK } from "@/lib/calculator-links";
+import { consumeCalculatorQuoteDraft } from "@/lib/rfq/calculator-draft";
 
 const seo = PAGE_SEO.calculators;
 
 export const metadata = createPageMetadata(seo);
 
-export default function CalculatorsPage() {
+type PageProps = {
+  searchParams: Promise<{ draft?: string; tool?: string }>;
+};
+
+export default async function CalculatorsPage({ searchParams }: PageProps) {
+  const params = await searchParams;
+  const draftToken = params.draft?.trim() || "";
+  const tool = params.tool?.trim() || "";
+
+  let calculatorSource: {
+    calculatorType: string;
+    inputs: Record<string, unknown>;
+    results: Record<string, unknown>;
+  } | null = null;
+  let draftError: string | null = null;
+  let initialCalculatorId: string | undefined =
+    tool === "project-budget" ? "project-budget" : undefined;
+
+  if (draftToken) {
+    const consumed = await consumeCalculatorQuoteDraft(draftToken);
+    if (consumed.ok) {
+      calculatorSource = {
+        calculatorType: consumed.draft.calculatorType,
+        inputs: consumed.draft.inputs,
+        results: consumed.draft.results,
+      };
+      initialCalculatorId = "project-budget";
+    } else {
+      draftError = consumed.error;
+      initialCalculatorId = "project-budget";
+    }
+  }
+
   const breadcrumbs = [
     { name: "Home", path: "/" },
     { name: "Calculators", path: seo.path },
@@ -49,7 +82,11 @@ export default function CalculatorsPage() {
       <SiteSection>
         <CalculatorsSeoIntro />
         <div className="mt-12">
-          <CalculatorHub />
+          <CalculatorHub
+            initialCalculatorId={initialCalculatorId}
+            initialCalculatorSource={calculatorSource}
+            draftError={draftError}
+          />
         </div>
       </SiteSection>
 
@@ -65,7 +102,10 @@ export default function CalculatorsPage() {
             { href: "/bitumen-waterproofing", label: "Waterproofing" },
             { href: "/dam-repair-services", label: "Leaking Dam Repair" },
             { href: "/reservoir-lining", label: "Reservoir Lining" },
-            { href: CALCULATORS_RELATED_LINK.href, label: CALCULATORS_RELATED_LINK.label },
+            {
+              href: CALCULATORS_RELATED_LINK.href,
+              label: CALCULATORS_RELATED_LINK.label,
+            },
             { href: "/quote", label: "Request a Quote" },
           ]}
         />

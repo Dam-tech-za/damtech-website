@@ -3,10 +3,10 @@ import { Hero } from "@/components/Hero";
 import { PageSeo } from "@/components/PageSeo";
 import { QuoteTrustPanel } from "@/components/QuoteTrustPanel";
 import { SiteSection } from "@/components/SiteSection";
+import { SimpleQuoteForm } from "@/components/SimpleQuoteForm";
 import { createPageMetadata, PAGE_SEO } from "@/lib/pages";
 import {
   LazyCTA as CTA,
-  LazyFormSection as FormSection,
   LazyInternalServiceLinks as InternalServiceLinks,
 } from "@/components/lazy";
 
@@ -28,7 +28,7 @@ export default function QuotePage() {
         compact
         eyebrow="Free quote"
         title={seo.h1}
-        description="Share your project details and our team will recommend a practical dam lining, tank or waterproofing solution with a tailored quote."
+        description="Share your project details — exact measurements are not required. We typically respond within one business day."
         breadcrumbs={[
           { name: "Home", path: "/" },
           { name: "Request a Free Quote", path: seo.path },
@@ -37,32 +37,28 @@ export default function QuotePage() {
 
       <SiteSection>
         <div className="site-quote-grid">
-          <FormSection
-            title="Request Your Free Quote"
-            subtitle="Tell us about your project and we'll respond within one business day."
-            sourcePage="/quote"
-            id="quote-form"
-            applyCalculatorPrefill
-          />
+          <SimpleQuoteForm sourcePage="/quote" />
           <QuoteTrustPanel />
         </div>
       </SiteSection>
 
       <SiteSection tone="muted">
         <p className="site-overview__intro max-w-3xl">
-          Not sure about dimensions or storage needs?{" "}
-          <Link href="/calculators" className="text-water hover:underline">
-            Use Damtech&apos;s calculators
+          Prefer a detailed, multi-step quote with company and site details?{" "}
+          <Link
+            href="/calculators/#project-budget"
+            className="text-water hover:underline"
+          >
+            Use Quote Preparation
           </Link>{" "}
-          to estimate dam lining area, steel water tank size or waterproofing material
-          before you submit your quote request.
+          on the calculators page.
         </p>
       </SiteSection>
 
       <InternalServiceLinks currentPath={seo.path} />
       <CTA
         title="Need help choosing a service?"
-        description="Browse our dam lining, steel tank and waterproofing pages, then submit your quote request when you are ready."
+        description="Browse dam lining, steel tank and waterproofing pages, then return here to submit your quote request."
       />
     </>
   );

@@ -8,12 +8,15 @@
     "start": "next start",
     "lint": "eslint",
     "typecheck": "tsc --noEmit",
-    "test": "node --experimental-strip-types --test lib/auth/permissions.test.ts lib/auth/auth-guards.test.ts lib/estimating/estimating.test.ts lib/rfq/rfq.test.ts",
+    "test": "node --experimental-strip-types --test lib/auth/permissions.test.ts lib/auth/auth-guards.test.ts lib/estimating/estimating.test.ts lib/rfq/rfq.test.ts lib/rfq/calculations/calculations.test.ts lib/rfq/phase2.test.ts lib/rfq/list.test.ts lib/rfq/simple-quote.test.ts lib/admin/phase4.test.ts lib/quotes/quotes.test.ts",
     "optimize-images": "node scripts/optimize-images.mjs"
   },
   "dependencies": {
+    "@react-pdf/renderer": "^4.5.1",
     "@supabase/ssr": "^0.12.3",
     "@supabase/supabase-js": "^2.108.2",
+    "@upstash/ratelimit": "^2.0.8",
+    "@upstash/redis": "^1.38.0",
     "next": "16.2.9",
     "react": "19.2.4",
     "react-dom": "19.2.4",

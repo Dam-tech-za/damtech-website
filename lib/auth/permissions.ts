@@ -72,8 +72,8 @@ export const ADMIN_NAV_ITEMS: AdminNavItem[] = [
   {
     id: "settings",
     label: "Settings",
-    href: "/admin/settings/estimating/",
-    description: "Estimating defaults and security",
+    href: "/admin/settings/",
+    description: "Company, quote, PDF and estimating",
   },
   {
     id: "audit",
@@ -98,6 +98,12 @@ export const PERMISSIONS = {
   manageSettings: ["owner", "admin"] as const satisfies readonly AdminRole[],
   manageEstimatingSettings: ["owner", "admin"] as const satisfies readonly AdminRole[],
   manageQuotes: ["owner", "admin", "sales", "estimator"] as const,
+  approveQuotes: ["owner", "admin"] as const,
+  sendQuotes: ["owner", "admin", "sales"] as const,
+  viewQuoteMargin: ["owner", "admin", "estimator"] as const,
+  manageBankDetails: ["owner", "admin"] as const,
+  manageQuoteNumbering: ["owner", "admin"] as const,
+  exportQuotes: ["owner", "admin", "sales"] as const,
   manageRfqs: ["owner", "admin", "sales", "estimator"] as const,
   manageCustomers: ["owner", "admin", "sales"] as const,
   managePricing: ["owner", "admin", "estimator"] as const,

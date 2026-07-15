@@ -92,12 +92,12 @@ function mapServiceFromCalculator(
     case "waterproofing-area":
       return "Bitumen waterproofing";
     case "leaking-dam-repair":
-      return "Leak repair";
+      return "Dam leak repair";
     case "project-budget": {
       const service = clean(formValues.serviceRequired);
       if (service === "steel-tank") return "Steel water tank";
       if (service === "waterproofing") return "Bitumen waterproofing";
-      if (service === "repair") return "Leak repair";
+      if (service === "repair") return "Dam leak repair";
       if (service === "reservoir") return "Reservoir repair";
       return "HDPE dam liner";
     }

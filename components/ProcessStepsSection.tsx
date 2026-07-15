@@ -1,4 +1,3 @@
-import { PageSectionHeader } from "@/components/PageSectionHeader";
 import { SiteSection } from "@/components/SiteSection";
 import {
   SERVICE_HUB_PROCESS_STEPS,

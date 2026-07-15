@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { isNavItemActive, MobileDropdownNav } from "@/components/ServicesNavDropdown";
 import { HEADER_NAV_ITEMS } from "@/lib/site";
 
@@ -28,21 +28,33 @@ function MenuIcon({ open }: { open: boolean }) {
 export function MobileNav() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
+  const [pathWhenOpened, setPathWhenOpened] = useState(pathname);
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const panelId = useId();
+  const wasOpen = useRef(false);
+
+  if (pathname !== pathWhenOpened) {
+    setPathWhenOpened(pathname);
+    if (open) setOpen(false);
+  }
 
   useEffect(() => {
-    if (!open) return;
+    if (!open) {
+      if (wasOpen.current) {
+        triggerRef.current?.focus();
+      }
+      wasOpen.current = false;
+      return;
+    }
+    wasOpen.current = true;
     const onKey = (event: KeyboardEvent) => {
       if (event.key === "Escape") setOpen(false);
     };
     document.addEventListener("keydown", onKey);
-    return () => document.removeEventListener("keydown", onKey);
-  }, [open]);
-
-  useEffect(() => {
-    if (!open) return;
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
     return () => {
+      document.removeEventListener("keydown", onKey);
       document.body.style.overflow = previousOverflow;
     };
   }, [open]);
@@ -52,10 +64,11 @@ export function MobileNav() {
   return (
     <div className="relative lg:hidden">
       <button
+        ref={triggerRef}
         type="button"
         className="inline-flex h-12 w-12 items-center justify-center rounded-lg border border-slate-200 text-navy transition hover:border-water hover:text-water"
         aria-expanded={open}
-        aria-controls="mobile-nav-panel"
+        aria-controls={panelId}
         aria-label={open ? "Close menu" : "Open menu"}
         onClick={() => setOpen((value) => !value)}
       >
@@ -71,7 +84,7 @@ export function MobileNav() {
             onClick={close}
           />
           <nav
-            id="mobile-nav-panel"
+            id={panelId}
             className="scrollbar-hide fixed inset-x-0 top-[var(--header-height)] z-50 max-h-[calc(100dvh-var(--header-height))] overflow-y-auto border-b border-slate-200 bg-white px-4 py-4 shadow-lg sm:px-6 lg:hidden"
             aria-label="Mobile"
           >
@@ -107,7 +120,7 @@ export function MobileNav() {
             </ul>
             <div className="site-container mt-3 border-t border-slate-100 pt-4 !px-0">
               <Link
-                href="/quote"
+                href="/quote/"
                 className="btn-primary w-full text-center"
                 onClick={close}
               >

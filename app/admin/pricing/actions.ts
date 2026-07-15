@@ -5,6 +5,118 @@ import { assertAdmin } from "@/lib/auth/require-admin";
 import { writeAuditLog } from "@/lib/auth/audit";
 import { createClient } from "@/lib/supabase/server";
 
+function escapeLike(term: string) {
+  return term.replace(/[%_]/g, "\\$&");
+}
+
+function selectMaterialSearchFields() {
+  return "id, item_code, category, name, description, unit, default_cost, default_sell_price, waste_percent, is_active, metadata, created_at, updated_at";
+}
+
+function selectLabourSearchFields() {
+  return "id, item_code, category, name, unit, hourly_cost, unit_cost, productivity_rate, productivity_unit, is_active, notes, created_at, updated_at";
+}
+
+export async function searchMaterialItemsAction(q: string) {
+  const admin = await assertAdmin({ permission: "manageQuotes" });
+  const supabase = await createClient();
+  const term = q.trim();
+  let query = supabase
+    .from("material_items")
+    .select(selectMaterialSearchFields())
+    .eq("is_active", true)
+    .order("category")
+    .order("name")
+    .limit(20);
+
+  if (term) {
+    query = query.or(
+      `name.ilike.%${escapeLike(term)}%,item_code.ilike.%${escapeLike(term)}%,description.ilike.%${escapeLike(term)}%,category.ilike.%${escapeLike(term)}%`,
+    );
+  }
+
+  const { data, error } = await query;
+  if (error) {
+    return { ok: false as const, error: error.message, materials: [] as Array<Record<string, unknown>> };
+  }
+
+  const canSeeCost = admin.profile.role === "owner" || admin.profile.role === "admin" || admin.profile.role === "estimator";
+  const rows = ((data ?? []) as unknown) as Array<Record<string, unknown>>;
+  return {
+    ok: true as const,
+    materials: rows.map((row) => ({
+      ...row,
+      default_cost: canSeeCost ? row.default_cost ?? null : null,
+    })),
+  };
+}
+
+export async function searchLabourItemsAction(q: string) {
+  const admin = await assertAdmin({ permission: "manageQuotes" });
+  const supabase = await createClient();
+  const term = q.trim();
+  let query = supabase
+    .from("labour_items")
+    .select(selectLabourSearchFields())
+    .eq("is_active", true)
+    .order("category")
+    .order("name")
+    .limit(20);
+
+  if (term) {
+    query = query.or(
+      `name.ilike.%${escapeLike(term)}%,item_code.ilike.%${escapeLike(term)}%,category.ilike.%${escapeLike(term)}%,notes.ilike.%${escapeLike(term)}%`,
+    );
+  }
+
+  const { data, error } = await query;
+  if (error) {
+    return { ok: false as const, error: error.message, labour: [] as Array<Record<string, unknown>> };
+  }
+
+  const canSeeCost = admin.profile.role === "owner" || admin.profile.role === "admin" || admin.profile.role === "estimator";
+  const rows = ((data ?? []) as unknown) as Array<Record<string, unknown>>;
+  return {
+    ok: true as const,
+    labour: rows.map((row) => ({
+      ...row,
+      hourly_cost: canSeeCost ? row.hourly_cost ?? null : null,
+      unit_cost: canSeeCost ? row.unit_cost ?? null : null,
+    })),
+  };
+}
+
+export async function getSupplierPricesForMaterialAction(materialItemId: string) {
+  await assertAdmin({ permission: "viewCostPrices" });
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("supplier_prices")
+    .select(
+      "id, supplier_id, material_item_id, supplier_sku, unit_cost, currency, minimum_quantity, price_valid_from, price_valid_to, lead_time_days, is_preferred, quote_reference, notes, suppliers(name)",
+    )
+    .eq("material_item_id", materialItemId)
+    .order("is_preferred", { ascending: false })
+    .order("price_valid_to", { ascending: false, nullsFirst: false })
+    .order("unit_cost");
+
+  if (error) {
+    return { ok: false as const, error: error.message, supplierPrices: [] as Array<Record<string, unknown>> };
+  }
+
+  const rows = ((data ?? []) as unknown) as Array<Record<string, unknown>>;
+  return {
+    ok: true as const,
+    supplierPrices: rows.map((row) => ({
+      ...row,
+      supplier_name:
+        typeof row.suppliers === "object" && row.suppliers && "name" in row.suppliers
+          ? (row.suppliers as { name?: string | null }).name ?? null
+          : null,
+      expired: row.price_valid_to ? new Date(`${row.price_valid_to}T23:59:59`).getTime() < Date.now() : false,
+    })),
+  };
+}
+
 export async function upsertMaterialAction(formData: FormData): Promise<void> {
   const admin = await assertAdmin({ permission: "managePricing" });
   const supabase = await createClient();

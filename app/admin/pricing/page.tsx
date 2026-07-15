@@ -25,6 +25,11 @@ export default async function AdminPricingHubPage() {
       title: "Travel & delivery",
       body: "Km rates, delivery defaults and travel labour settings",
     },
+    {
+      href: "/admin/pricing/tank-models/",
+      title: "Tank models",
+      body: "Corrugated steel tank catalogue for RFQ matching",
+    },
   ];
 
   return (
