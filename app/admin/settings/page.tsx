@@ -1,11 +1,7 @@
-import { AdminModulePlaceholder } from "@/components/admin/AdminModulePlaceholder";
+import { redirect } from "next/navigation";
+import { requireAdmin } from "@/lib/auth/require-admin";
 
-export default function AdminSettingsPage() {
-  return (
-    <AdminModulePlaceholder
-      navId="settings"
-      title="Settings"
-      description="Allowlist management and role administration UI will land in a later phase. Use SQL for now — see docs/admin-auth-setup.md."
-    />
-  );
+export default async function AdminSettingsIndexPage() {
+  await requireAdmin({ permission: "manageSettings" });
+  redirect("/admin/settings/estimating/");
 }

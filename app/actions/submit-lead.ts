@@ -1,9 +1,10 @@
 "use server";
 
 import { sendLeadEmail, leadEmailChannel } from "@/lib/email";
-import { parseLeadFormData } from "@/lib/form";
-import { RATE_LIMITS, rateLimit } from "@/lib/security/rate-limit";
 import { insertLead, isSupabaseConfigured } from "@/lib/supabase/server";
+import { RATE_LIMITS, rateLimit } from "@/lib/security/rate-limit";
+import { createRfqFromPublicSubmission } from "@/lib/rfq/create-from-public";
+import { parsePublicRfqFormData } from "@/lib/rfq/schema";
 
 export type SubmitLeadResult =
   | { success: true }
@@ -25,22 +26,47 @@ export async function submitLead(
     };
   }
 
-  const parsed = parseLeadFormData(formData, sourcePage);
-
+  const parsed = parsePublicRfqFormData(formData, sourcePage);
   if (!parsed.ok) {
     return { success: false, error: parsed.error };
+  }
+
+  // Honeypot: accept silently without creating operational work
+  if (parsed.isSpam) {
+    await createRfqFromPublicSubmission({
+      data: parsed.data,
+      calculator: parsed.calculator,
+      markSpam: true,
+    });
+    return { success: true };
   }
 
   const { data } = parsed;
   const channel = leadEmailChannel(sourcePage);
 
-  const emailResult = await sendLeadEmail(data, channel);
+  const emailResult = await sendLeadEmail(
+    {
+      name: data.name,
+      company: data.company,
+      phone: data.phone,
+      email: data.email,
+      province: data.province,
+      serviceRequired: data.serviceRequired,
+      projectSize: data.projectSize,
+      projectLocation: data.projectLocation,
+      message: data.message,
+      sourcePage: data.sourcePage,
+    },
+    channel,
+  );
+
   if (!emailResult.ok) {
     return { success: false, error: emailResult.error };
   }
 
   if (isSupabaseConfigured()) {
-    const result = await insertLead({
+    // Legacy leads table (best-effort)
+    const leadResult = await insertLead({
       name: data.name,
       company: data.company || null,
       phone: data.phone || null,
@@ -52,9 +78,16 @@ export async function submitLead(
       message: data.message,
       source_page: data.sourcePage,
     });
+    if (!leadResult.ok) {
+      console.error("[leads] insert failed after email:", leadResult.error);
+    }
 
-    if (!result.ok) {
-      console.error("[leads] Supabase insert failed after email sent:", result.error);
+    const rfqResult = await createRfqFromPublicSubmission({
+      data,
+      calculator: parsed.calculator,
+    });
+    if (!rfqResult.ok) {
+      console.error("[rfq] create failed after email:", rfqResult.error);
     }
   }
 

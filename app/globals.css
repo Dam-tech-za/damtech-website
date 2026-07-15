@@ -5045,4 +5045,216 @@
   .admin-sign-out {
     white-space: nowrap;
   }
+
+  .admin-filters {
+    display: grid;
+    gap: 0.65rem;
+    margin-top: 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
+  }
+
+  .admin-bulk-bar,
+  .admin-inline-form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.65rem;
+    align-items: center;
+    margin-top: 0.85rem;
+  }
+
+  .admin-form-grid {
+    display: grid;
+    gap: 0.75rem;
+    margin-top: 0.85rem;
+    grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+  }
+
+  .admin-stack {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .admin-stack-form {
+    display: grid;
+    gap: 0.65rem;
+    margin-top: 0.85rem;
+  }
+
+  .admin-panel__header--row {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    align-items: flex-start;
+  }
+
+  .admin-checkbox {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.875rem;
+  }
+
+  .admin-muted {
+    color: var(--color-body-gray-dark);
+  }
+
+  .admin-status {
+    display: inline-flex;
+    align-items: center;
+    border-radius: 999px;
+    padding: 0.15rem 0.55rem;
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    background: #e2e8f0;
+    color: var(--color-navy-dark);
+  }
+
+  .admin-status--new { background: #dbeafe; color: #1e3a8a; }
+  .admin-status--reviewing { background: #fef3c7; color: #92400e; }
+  .admin-status--information_required { background: #ffedd5; color: #9a3412; }
+  .admin-status--ready_for_quote { background: #dcfce7; color: #166534; }
+  .admin-status--converted { background: #ede9fe; color: #5b21b6; }
+  .admin-status--closed { background: #e2e8f0; color: #334155; }
+  .admin-status--spam { background: #fee2e2; color: #991b1b; }
+
+  .admin-card-list {
+    display: grid;
+    gap: 0.75rem;
+    margin-top: 1rem;
+  }
+
+  .admin-rfq-card {
+    border: 1px solid var(--border-subtle);
+    border-radius: 0.85rem;
+    padding: 0.9rem 1rem;
+    background: #fff;
+  }
+
+  .admin-rfq-card header {
+    display: flex;
+    justify-content: space-between;
+    gap: 0.75rem;
+    margin-bottom: 0.45rem;
+  }
+
+  .admin-table-wrap--desktop {
+    display: none;
+  }
+
+  @media (min-width: 1024px) {
+    .admin-table-wrap--desktop {
+      display: block;
+    }
+    .admin-card-list {
+      display: none;
+    }
+  }
+
+  .admin-pagination {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-top: 1rem;
+  }
+
+  .admin-pagination__link {
+    display: inline-flex;
+    min-width: 2rem;
+    justify-content: center;
+    padding: 0.35rem 0.55rem;
+    border-radius: var(--radius-button);
+    border: 1px solid var(--border-subtle);
+    text-decoration: none;
+    color: var(--color-navy-dark);
+    background: #fff;
+  }
+
+  .admin-pagination__link.is-active {
+    background: var(--color-accent-blue);
+    border-color: var(--color-accent-blue);
+    color: #fff;
+  }
+
+  .admin-rfq-detail__grid {
+    display: grid;
+    gap: 1rem;
+  }
+
+  @media (min-width: 1024px) {
+    .admin-rfq-detail__grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  .admin-dl {
+    display: grid;
+    gap: 0.75rem;
+    margin: 0.85rem 0 0;
+  }
+
+  .admin-dl dt {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--color-body-gray-dark);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  .admin-dl dd {
+    margin: 0.15rem 0 0;
+  }
+
+  .admin-subheading {
+    margin: 1.25rem 0 0.5rem;
+    font-size: 0.95rem;
+  }
+
+  .admin-prose,
+  .admin-notes {
+    white-space: pre-wrap;
+    line-height: 1.55;
+    margin: 0;
+    font-family: inherit;
+  }
+
+  .admin-notes {
+    background: #f8fafc;
+    border: 1px solid var(--border-subtle);
+    border-radius: 0.75rem;
+    padding: 0.85rem;
+    font-size: 0.875rem;
+  }
+
+  .admin-list,
+  .admin-timeline {
+    margin: 0.85rem 0 0;
+    padding-left: 1.1rem;
+    display: grid;
+    gap: 0.55rem;
+  }
+
+  .admin-disclaimer {
+    margin-top: 0.85rem;
+    font-size: 0.8rem;
+    color: var(--color-body-gray-dark);
+  }
+
+  .admin-metric-card--link {
+    text-decoration: none;
+    color: inherit;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  }
+
+  .admin-metric-card--link:hover {
+    border-color: var(--color-accent-blue-light);
+    box-shadow: 0 8px 20px rgba(3, 25, 38, 0.08);
+  }
+
+  .admin-link {
+    color: var(--color-accent-blue);
+    font-weight: 600;
+    text-decoration: none;
+  }
 }

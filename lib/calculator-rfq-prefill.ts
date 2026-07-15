@@ -17,6 +17,8 @@ export type QuotePrefill = {
   message: string;
   sourceCalculatorId: string;
   sourceCalculatorName: string;
+  /** Structured calculator data for RFQ import (JSON string for form hidden field). */
+  calculatorJson?: string;
 };
 
 type BuildQuotePrefillArgs = {
@@ -278,6 +280,19 @@ export function buildQuotePrefill({
     notes.length > 0 ? notes.join(", ") : "",
   ].filter(Boolean);
 
+  const calculatorPayload = {
+    calculatorType: calculator.id,
+    inputs: Object.fromEntries(
+      Object.entries(formValues).map(([key, value]) => [key, value]),
+    ),
+    results: Object.fromEntries(
+      Object.entries(result?.values ?? {}).map(([label, value]) => [
+        label,
+        value,
+      ]),
+    ),
+  };
+
   return {
     serviceRequired,
     projectSize: projectSize || undefined,
@@ -286,6 +301,7 @@ export function buildQuotePrefill({
     message: messageParts.join(" "),
     sourceCalculatorId: calculator.id,
     sourceCalculatorName: calculator.name,
+    calculatorJson: JSON.stringify(calculatorPayload),
   };
 }
 

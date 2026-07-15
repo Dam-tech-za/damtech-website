@@ -104,7 +104,7 @@ export function FormSection({
   }
 
   return (
-    <div className="site-form-card">
+    <div className="site-form-card relative">
       <h2 className="section-heading !mt-0">{title}</h2>
       {subtitle ? (
         <p className="mt-2 text-sm leading-relaxed text-slate-600 sm:text-base">
@@ -130,6 +130,29 @@ export function FormSection({
         className="mt-6 space-y-6"
         noValidate
       >
+        {/* Honeypot — leave empty. Bots that fill it are marked spam. */}
+        <div
+          aria-hidden
+          className="absolute -left-[9999px] h-0 w-0 overflow-hidden opacity-0"
+        >
+          <label htmlFor={`${id}-website`}>Website</label>
+          <input
+            id={`${id}-website`}
+            name="website"
+            type="text"
+            tabIndex={-1}
+            autoComplete="off"
+            defaultValue=""
+          />
+        </div>
+        {prefill?.calculatorJson ? (
+          <input
+            type="hidden"
+            name="calculatorJson"
+            value={prefill.calculatorJson}
+          />
+        ) : null}
+
         <Field id={`${id}-name`} label="Name" required>
           <input
             id={`${id}-name`}

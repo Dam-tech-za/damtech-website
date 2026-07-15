@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "eslint",
     "typecheck": "tsc --noEmit",
-    "test": "node --experimental-strip-types --test lib/auth/permissions.test.ts lib/auth/auth-guards.test.ts",
+    "test": "node --experimental-strip-types --test lib/auth/permissions.test.ts lib/auth/auth-guards.test.ts lib/estimating/estimating.test.ts lib/rfq/rfq.test.ts",
     "optimize-images": "node scripts/optimize-images.mjs"
   },
   "dependencies": {

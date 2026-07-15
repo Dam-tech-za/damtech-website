@@ -5,13 +5,14 @@ import { createClient } from "@/lib/supabase/server";
 export default async function AdminDashboardPage() {
   await requireAdmin();
   const metrics = await getDashboardMetrics();
+  const recent = await getRecentRfqs();
 
   return (
     <div className="admin-dashboard">
       <section className="admin-dashboard__intro">
         <p>
-          Operational overview for Damtech quoting. Metrics use live database
-          aggregates when RFQ and quote tables exist; otherwise zeros are shown.
+          Operational overview for Damtech quoting. Metrics use live RFQ and
+          quote aggregates when Phase 2 tables are available.
         </p>
       </section>
 
@@ -34,8 +35,8 @@ export default async function AdminDashboardPage() {
             <Link href="/admin/rfqs/" className="btn btn--md btn--primary">
               Review RFQs
             </Link>
-            <Link href="/admin/quotes/" className="btn btn--md btn--secondary">
-              Open quotes
+            <Link href="/admin/pricing/" className="btn btn--md btn--secondary">
+              Pricing library
             </Link>
             <Link href="/admin/customers/" className="btn btn--md btn--secondary">
               Customers
@@ -47,24 +48,42 @@ export default async function AdminDashboardPage() {
           <header className="admin-panel__header">
             <h2>Recent RFQs</h2>
           </header>
-          <div className="admin-empty">
-            <p>No RFQs yet.</p>
-            <p className="admin-empty__hint">
-              Incoming public form leads will appear here once the RFQ module is
-              connected in a later phase.
-            </p>
-          </div>
+          {recent.length === 0 ? (
+            <div className="admin-empty">
+              <p>No RFQs yet.</p>
+              <p className="admin-empty__hint">
+                Submissions from /quote, /contact and calculator prefill create
+                RFQs after the Phase 2 migration is applied.
+              </p>
+            </div>
+          ) : (
+            <ul className="admin-list">
+              {recent.map((rfq) => (
+                <li key={rfq.id}>
+                  <Link href={`/admin/rfqs/${rfq.id}/`}>{rfq.rfq_number}</Link>
+                  {" · "}
+                  {rfq.contact_name}
+                  {" · "}
+                  <span className={`admin-status admin-status--${rfq.status}`}>
+                    {rfq.status}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          )}
         </article>
 
         <article className="admin-panel">
           <header className="admin-panel__header">
-            <h2>Recent activity</h2>
+            <h2>Pricing shortcuts</h2>
           </header>
-          <div className="admin-empty">
-            <p>No recent activity.</p>
-            <p className="admin-empty__hint">
-              Login events and future mutations are written to the audit log.
-            </p>
+          <div className="admin-panel__actions">
+            <Link href="/admin/pricing/materials/" className="btn btn--md btn--secondary">
+              Materials
+            </Link>
+            <Link href="/admin/settings/estimating/" className="btn btn--md btn--secondary">
+              Estimating settings
+            </Link>
           </div>
         </article>
       </section>
@@ -86,16 +105,12 @@ async function getDashboardMetrics(): Promise<Metric[]> {
 
   try {
     const supabase = await createClient();
-
-    // Tables may not exist until later phases — fail soft to zeros.
     const { count: rfqNew, error: rfqError } = await supabase
       .from("rfqs")
       .select("*", { count: "exact", head: true })
       .eq("status", "new");
 
-    if (rfqError) {
-      return defaults;
-    }
+    if (rfqError) return defaults;
 
     const [
       rfqReview,
@@ -107,7 +122,7 @@ async function getDashboardMetrics(): Promise<Metric[]> {
       supabase
         .from("rfqs")
         .select("*", { count: "exact", head: true })
-        .eq("status", "awaiting_review"),
+        .in("status", ["reviewing", "information_required", "ready_for_quote"]),
       supabase
         .from("quotes")
         .select("*", { count: "exact", head: true })
@@ -131,11 +146,7 @@ async function getDashboardMetrics(): Promise<Metric[]> {
     ]);
 
     return [
-      {
-        label: "New RFQs",
-        value: rfqNew ?? 0,
-        hint: "Awaiting first review",
-      },
+      { label: "New RFQs", value: rfqNew ?? 0, hint: "Awaiting first review" },
       {
         label: "RFQs awaiting review",
         value: rfqReview.count ?? 0,
@@ -164,5 +175,19 @@ async function getDashboardMetrics(): Promise<Metric[]> {
     ];
   } catch {
     return defaults;
+  }
+}
+
+async function getRecentRfqs() {
+  try {
+    const supabase = await createClient();
+    const { data } = await supabase
+      .from("rfqs")
+      .select("id, rfq_number, contact_name, status")
+      .order("submitted_at", { ascending: false })
+      .limit(6);
+    return data ?? [];
+  } catch {
+    return [];
   }
 }
