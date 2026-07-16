@@ -17,8 +17,18 @@ export type CreateRfqResult =
       rfqNumber: string;
       customerId: string;
       uploadToken: string;
+      idempotentReplay?: boolean;
     }
-  | { ok: false; error: string };
+  | {
+      ok: false;
+      error: string;
+      code?:
+        | "CONFIGURATION_ERROR"
+        | "DATABASE_UNAVAILABLE"
+        | "DATABASE_CONSTRAINT"
+        | "UNKNOWN_ERROR";
+      details?: string;
+    };
 
 async function findOrCreateCustomer(input: {
   name: string;
@@ -80,20 +90,62 @@ export async function createRfqFromPublicSubmission(input: {
   softEstimates?: SoftSizeEstimates;
   simpleServiceFields?: ParsedSimpleServiceFields;
   assetsEstimate?: number | null;
+  submissionId?: string | null;
 }): Promise<CreateRfqResult> {
   if (!isSupabaseServiceConfigured()) {
-    return { ok: false, error: "RFQ storage is not configured." };
+    return {
+      ok: false,
+      error: "RFQ storage is not configured.",
+      code: "CONFIGURATION_ERROR",
+    };
   }
 
   try {
     const client = createServiceRoleClient();
+
+    if (input.submissionId) {
+      const { data: existing } = await client
+        .from("rfqs")
+        .select("id, rfq_number, customer_id")
+        .eq("public_submission_id", input.submissionId)
+        .maybeSingle();
+      if (existing?.id && existing.rfq_number) {
+        const uploadToken = randomBytes(32).toString("base64url");
+        const uploadTokenHash = createHash("sha256")
+          .update(uploadToken, "utf8")
+          .digest("hex");
+        const uploadExpires = new Date();
+        uploadExpires.setDate(uploadExpires.getDate() + 14);
+        await client
+          .from("rfqs")
+          .update({
+            public_upload_token_hash: uploadTokenHash,
+            public_upload_token_expires_at: uploadExpires.toISOString(),
+          })
+          .eq("id", existing.id);
+        return {
+          ok: true,
+          rfqId: existing.id,
+          rfqNumber: existing.rfq_number,
+          customerId: existing.customer_id || "",
+          uploadToken,
+          idempotentReplay: true,
+        };
+      }
+    }
+
     const { data: numberData, error: numberError } = await client.rpc(
       "next_rfq_number",
     );
 
     if (numberError || typeof numberData !== "string") {
       console.error("[rfq] number generation failed:", numberError?.message);
-      return { ok: false, error: "Unable to allocate RFQ number." };
+      return {
+        ok: false,
+        error: "Unable to allocate RFQ number.",
+        code: "DATABASE_UNAVAILABLE",
+        details: numberError?.message,
+      };
     }
 
     const customerId = await findOrCreateCustomer({
@@ -105,7 +157,11 @@ export async function createRfqFromPublicSubmission(input: {
     });
 
     if (!customerId) {
-      return { ok: false, error: "Unable to save customer record." };
+      return {
+        ok: false,
+        error: "Unable to save customer record.",
+        code: "DATABASE_UNAVAILABLE",
+      };
     }
 
     const uploadToken = randomBytes(32).toString("base64url");
@@ -162,13 +218,40 @@ export async function createRfqFromPublicSubmission(input: {
         calculator_result: input.calculator?.results ?? null,
         public_upload_token_hash: uploadTokenHash,
         public_upload_token_expires_at: uploadExpires.toISOString(),
+        public_submission_id: input.submissionId || null,
       })
       .select("id, rfq_number")
       .single();
 
     if (error || !rfq) {
-      console.error("[rfq] insert failed:", error?.message);
-      return { ok: false, error: "Unable to save RFQ." };
+      // Unique violation on public_submission_id → return original
+      if (error?.code === "23505" && input.submissionId) {
+        const { data: existing } = await client
+          .from("rfqs")
+          .select("id, rfq_number, customer_id")
+          .eq("public_submission_id", input.submissionId)
+          .maybeSingle();
+        if (existing) {
+          return {
+            ok: true,
+            rfqId: existing.id,
+            rfqNumber: existing.rfq_number,
+            customerId: existing.customer_id || customerId,
+            uploadToken: "",
+            idempotentReplay: true,
+          };
+        }
+      }
+      console.error("[rfq] insert failed:", error?.message, error?.code);
+      return {
+        ok: false,
+        error: "Unable to save RFQ.",
+        code:
+          error?.code === "23505"
+            ? "DATABASE_CONSTRAINT"
+            : "DATABASE_UNAVAILABLE",
+        details: error?.message,
+      };
     }
 
     await client.from("rfq_events").insert({
@@ -206,6 +289,11 @@ export async function createRfqFromPublicSubmission(input: {
     };
   } catch (error) {
     console.error("[rfq] unexpected create failure:", error);
-    return { ok: false, error: "Unable to save RFQ." };
+    return {
+      ok: false,
+      error: "Unable to save RFQ.",
+      code: "UNKNOWN_ERROR",
+      details: error instanceof Error ? error.message : undefined,
+    };
   }
 }

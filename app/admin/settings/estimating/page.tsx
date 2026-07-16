@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { requireAdmin } from "@/lib/auth/require-admin";
 import { createClient } from "@/lib/supabase/server";
 import { updateEstimatingSettingAction } from "@/app/admin/pricing/actions";
@@ -47,7 +48,19 @@ export default async function AdminEstimatingSettingsPage() {
   ] as const;
 
   return (
-    <div className="admin-stack">
+    <div className="admin-stack--page">
+      <header className="admin-page-header">
+        <div className="admin-page-header__copy">
+          <h1 className="admin-page-header__title">Estimating inputs</h1>
+          <p className="admin-page-header__description">
+            VAT, markup versus margin, allowances, labour burden and travel.
+          </p>
+        </div>
+        <div className="admin-page-header__actions">
+          <Link href="/admin/settings/" className="btn btn--md btn--secondary">All settings</Link>
+        </div>
+      </header>
+
       <section className="admin-panel">
         <header className="admin-panel__header">
           <h2>Estimating settings</h2>

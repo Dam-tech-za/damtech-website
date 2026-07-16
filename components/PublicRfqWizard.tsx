@@ -32,6 +32,7 @@ const DRAFT_KEY = "damtech.rfqWizardDraft.v1";
 type DraftState = {
   stage: number;
   formStartedAt: number;
+  submissionId: string;
   name: string;
   company: string;
   email: string;
@@ -96,6 +97,7 @@ function emptyDraft(): DraftState {
   return {
     stage: 0,
     formStartedAt: Date.now(),
+    submissionId: crypto.randomUUID(),
     name: "",
     company: "",
     email: "",
@@ -183,6 +185,7 @@ export function PublicRfqWizard({
   });
   const [hydrated, setHydrated] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [honeypot, setHoneypot] = useState("");
   const [pending, startTransition] = useTransition();
 
   if (isClient && !hydrated) {
@@ -191,6 +194,9 @@ export function PublicRfqWizard({
     if (saved) {
       try {
         next = { ...emptyDraft(), ...(JSON.parse(saved) as DraftState) };
+        if (!next.submissionId) {
+          next.submissionId = crypto.randomUUID();
+        }
       } catch {
         /* ignore */
       }
@@ -431,13 +437,14 @@ export function PublicRfqWizard({
         message: draft.message,
         assets: draft.assets,
         sourcePage,
-        website: "",
+        website: honeypot,
         formStartedAt: draft.formStartedAt,
+        submissionId: draft.submissionId,
         calculatorSource: draft.calculatorSource,
       });
 
       if (!result.ok) {
-        setError(result.error);
+        setError(result.message);
         return;
       }
       sessionStorage.removeItem(DRAFT_KEY);
@@ -490,8 +497,8 @@ export function PublicRfqWizard({
             name="website"
             tabIndex={-1}
             autoComplete="off"
-            value=""
-            readOnly
+            value={honeypot}
+            onChange={(e) => setHoneypot(e.target.value)}
           />
         </label>
       </div>

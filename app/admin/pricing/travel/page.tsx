@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { requireAdmin } from "@/lib/auth/require-admin";
 import { createClient } from "@/lib/supabase/server";
 import { calculateDeliveryCost, calculateTravelCost } from "@/lib/estimating/travel";
@@ -37,7 +38,20 @@ export default async function AdminTravelPricingPage() {
   });
 
   return (
-    <div className="admin-stack">
+    <div className="admin-stack--page">
+      <header className="admin-page-header">
+        <div className="admin-page-header__copy">
+          <h1 className="admin-page-header__title">Travel &amp; Delivery</h1>
+          <p className="admin-page-header__description">
+            Manage vehicle, distance and delivery costing assumptions.
+          </p>
+        </div>
+        <div className="admin-page-header__actions">
+          <Link href="/admin/pricing/" className="btn btn--md btn--secondary">Pricing hub</Link>
+        </div>
+      </header>
+
+      <div className="admin-stack">
       <section className="admin-panel">
         <header className="admin-panel__header">
           <h2>Travel & delivery rates</h2>
@@ -78,6 +92,7 @@ export default async function AdminTravelPricingPage() {
           {formatZar(sampleDelivery.total)}.
         </p>
       </section>
+      </div>
     </div>
   );
 }

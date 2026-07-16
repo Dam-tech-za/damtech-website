@@ -27,6 +27,7 @@ import {
   inferEnquiryChannel,
   isSimpleEnquiryChannel,
 } from "@/lib/rfq/enquiry-channel";
+import { ResendRfqNotificationButton } from "@/components/admin/ResendRfqNotificationButton";
 
 type PageProps = {
   params: Promise<{ id: string }>;
@@ -68,6 +69,7 @@ export default async function AdminRfqDetailPage({
     { data: quote },
     { data: assets },
     { data: infoRequests },
+    { data: communications },
   ] = await Promise.all([
     rfq.customer_id
       ? supabase.from("customers").select("*").eq("id", rfq.customer_id).maybeSingle()
@@ -100,6 +102,14 @@ export default async function AdminRfqDetailPage({
       .select("id, status, requested_fields, created_at, answered_at")
       .eq("rfq_id", id)
       .order("created_at", { ascending: false }),
+    supabase
+      .from("rfq_communications")
+      .select(
+        "id, communication_type, recipient, status, provider_error, created_at",
+      )
+      .eq("rfq_id", id)
+      .order("created_at", { ascending: false })
+      .limit(20),
   ]);
 
   const assetRows = assets ?? [];
@@ -157,81 +167,119 @@ export default async function AdminRfqDetailPage({
         : null;
 
   return (
-    <div className="admin-rfq-detail">
-      <section className="admin-panel">
-        <header className="admin-panel__header admin-panel__header--row">
-          <div>
-            <h2>{rfq.rfq_number}</h2>
-            <p className="admin-empty__hint">
-              Submitted {new Date(rfq.submitted_at).toLocaleString("en-ZA")} ·{" "}
-              <span className={enquiryChannelBadgeClass(enquiryChannel)}>
-                {enquiryChannelLabel(enquiryChannel)}
-              </span>{" "}
-              ·{" "}
-              <span className={`admin-status admin-status--${rfq.status}`}>
-                {rfq.status}
-              </span>
-              {assignee
-                ? ` · Estimator: ${assignee.full_name || assignee.email}`
-                : " · Unassigned"}
-            </p>
-            {quantityLines.length ? (
-              <ul className="admin-qty-list">
-                {quantityLines.map((line) => (
-                  <li key={line}>{line} (estimate)</li>
-                ))}
-              </ul>
-            ) : rfq.approximate_project_size_text ||
-              rfq.approximate_project_size ? (
-              <p className="admin-empty__hint">
-                Customer size note:{" "}
-                {rfq.approximate_project_size_text ||
-                  rfq.approximate_project_size}
-              </p>
-            ) : null}
-          </div>
-          <div className="admin-panel__actions">
-            {rfq.email ? (
-              <a className="btn btn--md btn--secondary" href={`mailto:${rfq.email}`}>
-                Email customer
-              </a>
-            ) : null}
-            {rfq.phone ? (
-              <a className="btn btn--md btn--secondary" href={`tel:${rfq.phone}`}>
-                Call
-              </a>
-            ) : null}
-            {quote ? (
-              <Link
-                className="btn btn--md btn--secondary"
-                href={`/admin/quotes/${quote.id}/edit/`}
-              >
-                Open quote {quote.quote_number}
-              </Link>
-            ) : null}
-          </div>
-        </header>
-
-        {query.convertError ? (
-          <p className="form-error">{query.convertError}</p>
-        ) : null}
-        {query.assetError ? <p className="form-error">{query.assetError}</p> : null}
-        {query.infoError ? <p className="form-error">{query.infoError}</p> : null}
-        {query.infoLink ? (
-          <p className="admin-empty__hint">
-            Customer information link (copy now — token is not stored in plain
-            text):{" "}
-            <code>
-              {typeof process.env.NEXT_PUBLIC_SITE_URL === "string"
-                ? process.env.NEXT_PUBLIC_SITE_URL.replace(/\/$/, "")
-                : ""}
-              {query.infoLink}
-            </code>
+    <div className="admin-rfq-detail admin-stack--page">
+      <header className="admin-page-header">
+        <div className="admin-page-header__copy">
+          <h1 className="admin-page-header__title">{rfq.rfq_number}</h1>
+          <p className="admin-page-header__description">
+            Submitted {new Date(rfq.submitted_at).toLocaleString("en-ZA")} ·{" "}
+            <span className={enquiryChannelBadgeClass(enquiryChannel)}>
+              {enquiryChannelLabel(enquiryChannel)}
+            </span>
+            {" · "}
+            <span className={`admin-status admin-status--${rfq.status}`}>
+              {rfq.status.replaceAll("_", " ")}
+            </span>
+            {assignee
+              ? ` · Estimator: ${assignee.full_name || assignee.email}`
+              : " · Unassigned"}
           </p>
-        ) : null}
-      </section>
+          {quantityLines.length ? (
+            <ul className="admin-qty-list">
+              {quantityLines.map((line) => (
+                <li key={line}>{line} (estimate)</li>
+              ))}
+            </ul>
+          ) : rfq.approximate_project_size_text ||
+            rfq.approximate_project_size ? (
+            <p className="admin-empty__hint">
+              Customer size note:{" "}
+              {rfq.approximate_project_size_text ||
+                rfq.approximate_project_size}
+            </p>
+          ) : null}
+        </div>
+        <div className="admin-page-header__actions">
+          {canManage ? <ResendRfqNotificationButton rfqId={rfq.id} /> : null}
+          {rfq.email ? (
+            <a className="btn btn--md btn--secondary" href={`mailto:${rfq.email}`}>
+              Email customer
+            </a>
+          ) : null}
+          {rfq.phone ? (
+            <a className="btn btn--md btn--secondary" href={`tel:${rfq.phone}`}>
+              Call
+            </a>
+          ) : null}
+          {quote ? (
+            <Link
+              className="btn btn--md btn--secondary"
+              href={`/admin/quotes/${quote.id}/edit/`}
+            >
+              Open quote {quote.quote_number}
+            </Link>
+          ) : null}
+          {canQuote && !quote ? (
+            <a className="btn btn--md btn--primary" href="#rfq-prepare-quote">
+              Convert to Quote
+            </a>
+          ) : null}
+        </div>
+      </header>
 
-      <div className="admin-rfq-detail__grid">
+      {query.convertError ? (
+        <p className="form-error">{query.convertError}</p>
+      ) : null}
+      {query.assetError ? <p className="form-error">{query.assetError}</p> : null}
+      {query.infoError ? <p className="form-error">{query.infoError}</p> : null}
+      {query.infoLink ? (
+        <p className="admin-empty__hint">
+          Customer information link (copy now — token is not stored in plain
+          text):{" "}
+          <code>
+            {typeof process.env.NEXT_PUBLIC_SITE_URL === "string"
+              ? process.env.NEXT_PUBLIC_SITE_URL.replace(/\/$/, "")
+              : ""}
+            {query.infoLink}
+          </code>
+        </p>
+      ) : null}
+
+      <div className="admin-tabs">
+        <nav className="admin-tabs__nav" aria-label="RFQ sections">
+          <ul>
+            <li>
+              <a className="admin-tabs__link" href="#rfq-overview">
+                Overview
+              </a>
+            </li>
+            <li>
+              <a className="admin-tabs__link" href="#rfq-assets">
+                Assets &amp; Measurements
+              </a>
+            </li>
+            <li>
+              <a className="admin-tabs__link" href="#rfq-attachments">
+                Attachments
+              </a>
+            </li>
+            <li>
+              <a className="admin-tabs__link" href="#rfq-communication">
+                Communication
+              </a>
+            </li>
+            <li>
+              <a className="admin-tabs__link" href="#rfq-activity">
+                Activity
+              </a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+
+      <div className="admin-detail-layout admin-detail-layout--with-aside">
+        <div className="admin-rfq-detail__main">
+      <div className="admin-rfq-detail__grid" id="rfq-overview">
         <section className="admin-panel">
           <header className="admin-panel__header">
             <h2>Customer</h2>
@@ -349,9 +397,9 @@ export default async function AdminRfqDetailPage({
           <p className="admin-prose">{rfq.project_description}</p>
         </section>
 
-        <section className="admin-panel">
+        <section className="admin-panel" id="rfq-assets">
           <header className="admin-panel__header">
-            <h2>Assets</h2>
+            <h2>Assets &amp; measurements</h2>
             <p className="admin-empty__hint">
               {isSimpleLead
                 ? "Simple public quotes start without assets. Enrich when more detail arrives."
@@ -403,7 +451,7 @@ export default async function AdminRfqDetailPage({
           results={rfq.calculator_result as Record<string, unknown> | null}
         />
 
-        <section className="admin-panel">
+        <section className="admin-panel" id="rfq-attachments">
           <header className="admin-panel__header">
             <h2>Attachments</h2>
           </header>
@@ -629,8 +677,8 @@ export default async function AdminRfqDetailPage({
         ) : null}
 
         {canQuote ? (
-          <section className="admin-panel">
-            <header className="admin-panel__header">
+        <section className="admin-panel" id="rfq-prepare-quote">
+          <header className="admin-panel__header">
               <h2>Prepare quote</h2>
             </header>
             <p className="admin-empty__hint">
@@ -703,6 +751,26 @@ export default async function AdminRfqDetailPage({
           </section>
         ) : null}
 
+        <section className="admin-panel" id="rfq-communication">
+          <header className="admin-panel__header">
+            <h2>Notifications</h2>
+          </header>
+          {(communications ?? []).length === 0 ? (
+            <p className="admin-empty__hint">No notification attempts recorded yet.</p>
+          ) : (
+            <ul className="admin-list">
+              {(communications ?? []).map((row) => (
+                <li key={row.id}>
+                  {row.communication_type} · {row.status}
+                  {row.recipient ? ` · ${row.recipient}` : ""} ·{" "}
+                  {new Date(row.created_at).toLocaleString("en-ZA")}
+                  {row.provider_error ? ` · ${row.provider_error}` : ""}
+                </li>
+              ))}
+            </ul>
+          )}
+        </section>
+
         <section className="admin-panel">
           <header className="admin-panel__header">
             <h2>Internal notes</h2>
@@ -719,7 +787,7 @@ export default async function AdminRfqDetailPage({
           ) : null}
         </section>
 
-        <section className="admin-panel">
+        <section className="admin-panel" id="rfq-activity">
           <header className="admin-panel__header">
             <h2>Timeline</h2>
           </header>
@@ -756,6 +824,71 @@ export default async function AdminRfqDetailPage({
             </>
           ) : null}
         </section>
+      </div>
+        </div>
+
+        <aside className="admin-detail-aside" aria-label="RFQ actions">
+          <section className="admin-ui-card">
+            <h2 className="admin-section__title">Quick status</h2>
+            <dl className="admin-dl">
+              <div>
+                <dt>Status</dt>
+                <dd>
+                  <span className={`admin-status admin-status--${rfq.status}`}>
+                    {rfq.status.replaceAll("_", " ")}
+                  </span>
+                </dd>
+              </div>
+              <div>
+                <dt>Assigned estimator</dt>
+                <dd>
+                  {assignee
+                    ? assignee.full_name || assignee.email
+                    : "Unassigned"}
+                </dd>
+              </div>
+              <div>
+                <dt>Measurement required</dt>
+                <dd>
+                  {rfq.site_measurement_required ||
+                  rfq.status === "site_measurement_required"
+                    ? "Yes"
+                    : "No"}
+                </dd>
+              </div>
+              <div>
+                <dt>Conversion readiness</dt>
+                <dd>
+                  {quote
+                    ? "Already converted"
+                    : rfq.status === "ready_for_quote"
+                      ? "Ready for quote"
+                      : "Needs review"}
+                </dd>
+              </div>
+            </dl>
+            <div className="admin-page-header__actions" style={{ marginTop: "0.85rem" }}>
+              {canManage ? (
+                <a className="btn btn--sm btn--secondary" href="#rfq-info-request">
+                  Request information
+                </a>
+              ) : null}
+              {canManage ? (
+                <a
+                  className="btn btn--sm btn--secondary"
+                  href="#rfq-site-measurement"
+                >
+                  Schedule measurement
+                </a>
+              ) : null}
+              {canQuote && !quote ? (
+                <a className="btn btn--sm btn--primary" href="#rfq-prepare-quote">
+                  Convert to quote
+                </a>
+              ) : null}
+            </div>
+          </section>
+        </aside>
       </div>
     </div>
   );

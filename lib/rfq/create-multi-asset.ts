@@ -14,8 +14,19 @@ export type MultiRfqCreateResult =
       rfqId: string;
       rfqNumber: string;
       uploadToken: string;
+      idempotentReplay?: boolean;
     }
-  | { ok: false; error: string };
+  | {
+      ok: false;
+      error: string;
+      code?:
+        | "VALIDATION_ERROR"
+        | "CONFIGURATION_ERROR"
+        | "DATABASE_UNAVAILABLE"
+        | "DATABASE_CONSTRAINT"
+        | "UNKNOWN_ERROR";
+      details?: string;
+    };
 
 async function findOrCreateCustomer(input: {
   name: string;
@@ -76,16 +87,51 @@ async function findOrCreateCustomer(input: {
  */
 export async function createMultiAssetRfqFromPublic(
   input: PublicMultiRfqInput,
-  options: { markSpam?: boolean } = {},
+  options: { markSpam?: boolean; submissionId?: string | null } = {},
 ): Promise<MultiRfqCreateResult> {
   if (!isSupabaseServiceConfigured()) {
-    return { ok: false, error: "RFQ storage is not configured." };
+    return {
+      ok: false,
+      error: "RFQ storage is not configured.",
+      code: "CONFIGURATION_ERROR",
+    };
   }
 
   const client = createServiceRoleClient();
   let rfqId: string | null = null;
+  const submissionId = options.submissionId || input.submissionId || null;
 
   try {
+    if (submissionId) {
+      const { data: existing } = await client
+        .from("rfqs")
+        .select("id, rfq_number")
+        .eq("public_submission_id", submissionId)
+        .maybeSingle();
+      if (existing?.id && existing.rfq_number) {
+        const uploadToken = randomBytes(32).toString("base64url");
+        const uploadTokenHash = createHash("sha256")
+          .update(uploadToken, "utf8")
+          .digest("hex");
+        const uploadExpires = new Date();
+        uploadExpires.setDate(uploadExpires.getDate() + 14);
+        await client
+          .from("rfqs")
+          .update({
+            public_upload_token_hash: uploadTokenHash,
+            public_upload_token_expires_at: uploadExpires.toISOString(),
+          })
+          .eq("id", existing.id);
+        return {
+          ok: true,
+          rfqId: existing.id,
+          rfqNumber: existing.rfq_number,
+          uploadToken,
+          idempotentReplay: true,
+        };
+      }
+    }
+
     // Recalculate every asset server-side
     const calculatedAssets = input.assets.map((asset, index) => {
       const calc = calculateRfqAsset({
@@ -110,6 +156,7 @@ export async function createMultiAssetRfqFromPublic(
         error:
           (!first.ok && first.errors[0]) ||
           "One or more assets have invalid dimensions.",
+        code: "VALIDATION_ERROR",
       };
     }
 
@@ -117,7 +164,12 @@ export async function createMultiAssetRfqFromPublic(
       "next_rfq_number",
     );
     if (numberError || typeof numberData !== "string") {
-      return { ok: false, error: "Unable to allocate RFQ number." };
+      return {
+        ok: false,
+        error: "Unable to allocate RFQ number.",
+        code: "DATABASE_UNAVAILABLE",
+        details: numberError?.message,
+      };
     }
 
     const customerId = await findOrCreateCustomer({
@@ -129,7 +181,11 @@ export async function createMultiAssetRfqFromPublic(
       vatNumber: input.vatNumber,
     });
     if (!customerId) {
-      return { ok: false, error: "Unable to save customer record." };
+      return {
+        ok: false,
+        error: "Unable to save customer record.",
+        code: "DATABASE_UNAVAILABLE",
+      };
     }
 
     const uploadToken = randomBytes(32).toString("base64url");
@@ -204,6 +260,7 @@ export async function createMultiAssetRfqFromPublic(
         calculator_result: input.calculatorSource?.results ?? null,
         public_upload_token_hash: uploadTokenHash,
         public_upload_token_expires_at: uploadExpires.toISOString(),
+        public_submission_id: submissionId,
         submission_payload: {
           assetCount: input.assets.length,
           services: input.servicesRequested,
@@ -213,8 +270,32 @@ export async function createMultiAssetRfqFromPublic(
       .single();
 
     if (rfqError || !rfq) {
-      console.error("[rfq] insert failed:", rfqError?.message);
-      return { ok: false, error: "Unable to save RFQ." };
+      if (rfqError?.code === "23505" && submissionId) {
+        const { data: existing } = await client
+          .from("rfqs")
+          .select("id, rfq_number")
+          .eq("public_submission_id", submissionId)
+          .maybeSingle();
+        if (existing) {
+          return {
+            ok: true,
+            rfqId: existing.id,
+            rfqNumber: existing.rfq_number,
+            uploadToken,
+            idempotentReplay: true,
+          };
+        }
+      }
+      console.error("[rfq] insert failed:", rfqError?.message, rfqError?.code);
+      return {
+        ok: false,
+        error: "Unable to save RFQ.",
+        code:
+          rfqError?.code === "23505"
+            ? "DATABASE_CONSTRAINT"
+            : "DATABASE_UNAVAILABLE",
+        details: rfqError?.message,
+      };
     }
     rfqId = rfq.id;
 
@@ -256,7 +337,12 @@ export async function createMultiAssetRfqFromPublic(
     if (assetsError || !insertedAssets?.length) {
       console.error("[rfq] assets insert failed:", assetsError?.message);
       await client.from("rfqs").delete().eq("id", rfq.id);
-      return { ok: false, error: "Unable to save RFQ assets." };
+      return {
+        ok: false,
+        error: "Unable to save RFQ assets.",
+        code: "DATABASE_UNAVAILABLE",
+        details: assetsError?.message,
+      };
     }
 
     const calcSnapshots = calculatedAssets.flatMap((row) => {
@@ -286,7 +372,12 @@ export async function createMultiAssetRfqFromPublic(
       if (snapError) {
         console.error("[rfq] calc snapshot failed:", snapError.message);
         await client.from("rfqs").delete().eq("id", rfq.id);
-        return { ok: false, error: "Unable to save calculation records." };
+        return {
+          ok: false,
+          error: "Unable to save calculation records.",
+          code: "DATABASE_UNAVAILABLE",
+          details: snapError.message,
+        };
       }
     }
 
@@ -323,6 +414,11 @@ export async function createMultiAssetRfqFromPublic(
     if (rfqId) {
       await createServiceRoleClient().from("rfqs").delete().eq("id", rfqId);
     }
-    return { ok: false, error: "Unable to save RFQ." };
+    return {
+      ok: false,
+      error: "Unable to save RFQ.",
+      code: "UNKNOWN_ERROR",
+      details: error instanceof Error ? error.message : undefined,
+    };
   }
 }

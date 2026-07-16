@@ -1,21 +1,20 @@
 import { Ratelimit } from "@upstash/ratelimit";
 import { Redis } from "@upstash/redis";
+import { createServiceRoleClient } from "@/lib/supabase/admin";
+import { isSupabaseServiceConfigured } from "@/lib/supabase/env";
+import { memoryLimit } from "./memory";
 import {
+  hasUpstashConfiguration,
   isProductionRuntime,
-  isUpstashConfigured,
   type RateLimitDecision,
   type RateLimitPolicy,
 } from "./types";
 
-type Bucket = { count: number; resetAt: number };
-
-const memoryBuckets = new Map<string, Bucket>();
 const limiterCache = new Map<string, Ratelimit>();
-
 let redisClient: Redis | null = null;
 
 function getRedis(): Redis | null {
-  if (!isUpstashConfigured()) return null;
+  if (!hasUpstashConfiguration()) return null;
   if (!redisClient) {
     redisClient = new Redis({
       url: process.env.UPSTASH_REDIS_REST_URL!,
@@ -43,47 +42,63 @@ function getLimiter(policy: RateLimitPolicy): Ratelimit | null {
   return limiter;
 }
 
-function memoryLimit(
-  key: string,
+async function supabaseLimit(
+  keyHash: string,
   policy: RateLimitPolicy,
-): RateLimitDecision {
-  const now = Date.now();
-  const existing = memoryBuckets.get(key);
-  if (!existing || existing.resetAt <= now) {
-    const resetAt = now + policy.windowMs;
-    memoryBuckets.set(key, { count: 1, resetAt });
-    return {
-      success: true,
-      remaining: policy.limit - 1,
-      resetAt,
-      degraded: true,
-      limit: policy.limit,
+): Promise<RateLimitDecision | null> {
+  if (!isSupabaseServiceConfigured()) return null;
+  try {
+    const client = createServiceRoleClient();
+    const windowSeconds = Math.max(1, Math.ceil(policy.windowMs / 1000));
+    const { data, error } = await client.rpc(
+      "check_public_submission_rate_limit",
+      {
+        p_rate_key_hash: keyHash,
+        p_action: policy.name,
+        p_limit: policy.limit,
+        p_window_seconds: windowSeconds,
+      },
+    );
+    if (error || !data || typeof data !== "object") {
+      console.error(
+        `[rate-limit] Supabase fallback error for ${policy.name}:`,
+        error?.message || "invalid response",
+      );
+      return null;
+    }
+    const payload = data as {
+      allowed?: boolean;
+      remaining?: number;
+      resetAt?: number;
+      limit?: number;
     };
-  }
-  if (existing.count >= policy.limit) {
+    const allowed = Boolean(payload.allowed);
     return {
-      success: false,
-      remaining: 0,
-      resetAt: existing.resetAt,
-      degraded: true,
-      limit: policy.limit,
-      reason: "rate_limited",
+      success: allowed,
+      remaining: Number(payload.remaining ?? 0),
+      resetAt: Number(payload.resetAt ?? Date.now() + policy.windowMs),
+      degraded: false,
+      limit: Number(payload.limit ?? policy.limit),
+      reason: allowed ? undefined : "rate_limited",
+      provider: "supabase",
     };
+  } catch (error) {
+    console.error(
+      `[rate-limit] Supabase fallback exception for ${policy.name}:`,
+      error instanceof Error ? error.message : error,
+    );
+    return null;
   }
-  existing.count += 1;
-  return {
-    success: true,
-    remaining: policy.limit - existing.count,
-    resetAt: existing.resetAt,
-    degraded: true,
-    limit: policy.limit,
-  };
 }
 
 /**
  * Enforce a rate-limit policy.
- * Production refuses silent in-memory fallback when Upstash is missing
- * for fail_closed policies (and warns for all).
+ *
+ * Public policies (`fail_open_public`):
+ *   Upstash → Supabase RPC → tiny in-memory burst → allow (log outage)
+ *
+ * Sensitive policies (`fail_closed`):
+ *   Upstash preferred; memory in non-production; deny in production when unavailable.
  */
 export async function enforceRateLimit(
   key: string,
@@ -101,52 +116,47 @@ export async function enforceRateLimit(
         degraded: false,
         limit: policy.limit,
         reason: result.success ? undefined : "rate_limited",
+        provider: "upstash",
       };
     } catch (error) {
       console.error(
         `[rate-limit] Upstash error for ${policy.name}:`,
         error instanceof Error ? error.message : error,
       );
-      if (policy.onProviderError === "fail_closed") {
-        return {
-          success: false,
-          remaining: 0,
-          resetAt: Date.now() + policy.windowMs,
-          degraded: false,
-          limit: policy.limit,
-          reason: "provider_unavailable",
-        };
-      }
-      if (isProductionRuntime()) {
-        return {
-          success: false,
-          remaining: 0,
-          resetAt: Date.now() + policy.windowMs,
-          degraded: false,
-          limit: policy.limit,
-          reason: "provider_unavailable",
-        };
-      }
-      return memoryLimit(key, policy);
     }
-  }
-
-  // Upstash not configured
-  if (isProductionRuntime()) {
+  } else if (isProductionRuntime() && policy.onProviderError === "fail_closed") {
     console.error(
       `[rate-limit] ${policy.name}: UPSTASH not configured in production.`,
     );
-    if (policy.onProviderError === "fail_closed") {
-      return {
-        success: false,
-        remaining: 0,
-        resetAt: Date.now() + policy.windowMs,
-        degraded: false,
-        limit: policy.limit,
-        reason: "provider_unavailable",
-      };
+  }
+
+  if (policy.onProviderError === "fail_open_public") {
+    const supabase = await supabaseLimit(key, policy);
+    if (supabase) return supabase;
+
+    const burstPolicy: RateLimitPolicy = {
+      ...policy,
+      name: `${policy.name}-burst-memory`,
+      limit: Math.min(policy.limit, 5),
+      windowMs: Math.min(policy.windowMs, 5 * 60_000),
+    };
+    const burst = memoryLimit(`burst:${key}`, burstPolicy);
+    if (!burst.success) return burst;
+
+    console.error(
+      `[rate-limit] ${policy.name}: no distributed provider — allowing with memory burst only.`,
+    );
+    return {
+      ...burst,
+      reason: "allowed_without_provider",
+      provider: "none",
+    };
+  }
+
+  if (policy.onProviderError === "fail_closed") {
+    if (!isProductionRuntime()) {
+      return memoryLimit(key, policy);
     }
-    // Non-fail-closed in production without Upstash still refuses silent memory
     return {
       success: false,
       remaining: 0,
@@ -154,9 +164,23 @@ export async function enforceRateLimit(
       degraded: false,
       limit: policy.limit,
       reason: "provider_unavailable",
+      provider: hasUpstashConfiguration() ? "upstash" : "none",
     };
   }
 
-  // Documented local-development memory fallback only
-  return memoryLimit(key, policy);
+  if (!isProductionRuntime()) {
+    return memoryLimit(key, policy);
+  }
+
+  return {
+    success: false,
+    remaining: 0,
+    resetAt: Date.now() + policy.windowMs,
+    degraded: false,
+    limit: policy.limit,
+    reason: "provider_unavailable",
+    provider: "none",
+  };
 }
+
+export { memoryLimit } from "./memory";

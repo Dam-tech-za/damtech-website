@@ -1,16 +1,13 @@
 "use server";
 
 import { headers } from "next/headers";
-import {
-  RATE_LIMITS,
-  publicSubmissionLimitError,
-  rateLimit,
-} from "@/lib/security/rate-limit";
-import { clientIpFromHeaders } from "@/lib/rate-limit/types";
+import { RATE_LIMITS, rateLimit } from "@/lib/security/rate-limit";
+import { publicClientRateKey } from "@/lib/rate-limit/types";
 import {
   createCalculatorQuoteDraft,
   type CalculatorDraftPayload,
 } from "@/lib/rfq/calculator-draft";
+import { customerMessageForCode } from "@/lib/rfq/submission-result";
 
 export type CreateCalculatorDraftResult =
   | { ok: true; token: string }
@@ -24,16 +21,19 @@ export async function createCalculatorDraftAction(
   }
 
   const headerList = await headers();
-  const ip = clientIpFromHeaders(headerList);
-
+  const key = publicClientRateKey(headerList, "calculator-draft");
   const limited = await rateLimit({
-    key: `calc-draft:${ip}`,
+    key,
     ...RATE_LIMITS.calculatorDraftCreate,
   });
-  if (!limited.success) {
+  if (!limited.success && limited.reason === "rate_limited") {
+    const retryAfterSeconds = Math.max(
+      1,
+      Math.ceil((limited.resetAt - Date.now()) / 1000),
+    );
     return {
       ok: false,
-      error: publicSubmissionLimitError(limited),
+      error: customerMessageForCode("RATE_LIMITED", { retryAfterSeconds }),
     };
   }
 

@@ -18,7 +18,8 @@ export async function limitAdminSensitive(
   userId: string,
 ): Promise<RateLimitDecision> {
   const userHash = hashRateLimitIdentifier(userId);
-  const ipHash = hashRateLimitIdentifier(clientIpFromHeaders(headers));
+  const ip = clientIpFromHeaders(headers);
+  const ipHash = hashRateLimitIdentifier(ip ? `ip:${ip}` : `fp:${userId}`);
   return enforceRateLimit(
     `user:${userHash}:ip:${ipHash}`,
     ADMIN_SENSITIVE_POLICY,

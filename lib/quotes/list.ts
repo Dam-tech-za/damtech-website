@@ -121,3 +121,52 @@ export async function sumPipelineValue(
   if (error || !data) return 0;
   return data.reduce((sum, row) => sum + Number(row.total_inc_vat || 0), 0);
 }
+
+export type QuoteStatusCounts = Record<string, number>;
+
+const QUOTE_METRIC_STATUSES = [
+  "draft",
+  "internal_review",
+  "approved",
+  "sent",
+  "viewed",
+  "accepted",
+] as const;
+
+/** Parallel status counts for latest quote revisions (compact list metrics). */
+export async function getQuoteStatusCounts(): Promise<QuoteStatusCounts> {
+  const supabase = await createClient();
+  const counts: QuoteStatusCounts = Object.fromEntries(
+    QUOTE_METRIC_STATUSES.map((status) => [status, 0]),
+  );
+  counts.expiring_soon = 0;
+
+  const in7 = new Date();
+  in7.setDate(in7.getDate() + 7);
+  const expiringUntil = in7.toISOString().slice(0, 10);
+
+  const results = await Promise.all([
+    ...QUOTE_METRIC_STATUSES.map(async (status) => {
+      const { count } = await supabase
+        .from("quotes")
+        .select("id", { count: "exact", head: true })
+        .eq("is_latest_revision", true)
+        .eq("status", status);
+      return [status, count ?? 0] as const;
+    }),
+    (async () => {
+      const { count } = await supabase
+        .from("quotes")
+        .select("id", { count: "exact", head: true })
+        .eq("is_latest_revision", true)
+        .in("status", ["sent", "viewed"])
+        .lte("valid_until", expiringUntil);
+      return ["expiring_soon", count ?? 0] as const;
+    })(),
+  ]);
+
+  for (const [key, value] of results) {
+    counts[key] = value;
+  }
+  return counts;
+}

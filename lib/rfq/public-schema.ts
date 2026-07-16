@@ -90,6 +90,8 @@ export const publicMultiRfqSchema = z.object({
   sourcePage: z.string().min(1).max(300).default("/quote"),
   website: z.string().max(200).optional().default(""),
   formStartedAt: z.number().optional(),
+  /** Client-generated UUID for idempotent retries / double-submit protection. */
+  submissionId: z.string().uuid().optional(),
   calculatorSource: z
     .object({
       calculatorType: z.string().max(120),

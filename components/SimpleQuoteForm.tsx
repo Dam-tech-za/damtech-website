@@ -76,6 +76,7 @@ export function SimpleQuoteForm({
   const [error, setError] = useState<string | null>(null);
   const [service, setService] = useState("");
   const [formStartedAt] = useState(() => Date.now());
+  const [submissionId] = useState(() => crypto.randomUUID());
 
   const serviceHints = useMemo(() => {
     const lining =
@@ -131,6 +132,8 @@ export function SimpleQuoteForm({
         className="mt-6 space-y-6"
         noValidate
       >
+        <input type="hidden" name="submissionId" value={submissionId} />
+        <input type="hidden" name="formStartedAt" value={String(formStartedAt)} />
         <div
           aria-hidden
           className="absolute -left-[9999px] h-0 w-0 overflow-hidden opacity-0"
@@ -442,7 +445,7 @@ export function SimpleQuoteForm({
             className="btn-primary min-h-11 w-full sm:w-auto disabled:opacity-60"
             disabled={isPending}
           >
-            {isPending ? "Sending…" : submitLabel}
+            {isPending ? "Submitting..." : submitLabel}
           </button>
           <p className="text-sm text-slate-600">
             Or call{" "}

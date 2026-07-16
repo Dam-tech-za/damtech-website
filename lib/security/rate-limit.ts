@@ -2,8 +2,7 @@
  * Compatibility facade over Upstash-backed rate limiting.
  * Prefer lib/rate-limit/* for new call sites.
  *
- * Implementation stays in this file so Node strip-types tests can import it
- * without Path alias resolution.
+ * Kept self-contained (no Path aliases) so Node strip-types unit tests can import it.
  */
 
 import { Ratelimit } from "@upstash/ratelimit";
@@ -15,15 +14,18 @@ export type RateLimitResult = {
   resetAt: number;
   degraded: boolean;
   limit?: number;
-  /** Why a request was denied — distinguishes config/outage from a real limit hit. */
-  reason?: "rate_limited" | "provider_unavailable";
+  reason?: "rate_limited" | "provider_unavailable" | "allowed_without_provider";
+  provider?: "upstash" | "supabase" | "memory" | "none";
 };
 
 export type RateLimitOptions = {
   key: string;
   limit: number;
   windowMs: number;
-  onProviderError?: "fail_closed" | "fail_open_dev_only";
+  onProviderError?:
+    | "fail_closed"
+    | "fail_open_public"
+    | "fail_open_dev_only";
   name?: string;
 };
 
@@ -37,7 +39,7 @@ function isProductionRuntime() {
   return process.env.NODE_ENV === "production";
 }
 
-function isUpstashConfigured() {
+function hasUpstashConfiguration() {
   return Boolean(
     process.env.UPSTASH_REDIS_REST_URL?.trim() &&
       process.env.UPSTASH_REDIS_REST_TOKEN?.trim(),
@@ -45,7 +47,7 @@ function isUpstashConfigured() {
 }
 
 function getRedis(): Redis | null {
-  if (!isUpstashConfigured()) return null;
+  if (!hasUpstashConfiguration()) return null;
   if (!redisClient) {
     redisClient = new Redis({
       url: process.env.UPSTASH_REDIS_REST_URL!,
@@ -67,6 +69,7 @@ function memoryLimit(options: RateLimitOptions): RateLimitResult {
       resetAt,
       degraded: true,
       limit: options.limit,
+      provider: "memory",
     };
   }
   if (existing.count >= options.limit) {
@@ -77,6 +80,7 @@ function memoryLimit(options: RateLimitOptions): RateLimitResult {
       degraded: true,
       limit: options.limit,
       reason: "rate_limited",
+      provider: "memory",
     };
   }
   existing.count += 1;
@@ -86,6 +90,7 @@ function memoryLimit(options: RateLimitOptions): RateLimitResult {
     resetAt: existing.resetAt,
     degraded: true,
     limit: options.limit,
+    provider: "memory",
   };
 }
 
@@ -118,28 +123,41 @@ export async function rateLimit(
         degraded: false,
         limit: options.limit,
         reason: result.success ? undefined : "rate_limited",
+        provider: "upstash",
       };
     } catch (error) {
       console.error(
         `[rate-limit] Upstash error for ${name}:`,
         error instanceof Error ? error.message : error,
       );
-      if (onProviderError === "fail_closed" || isProductionRuntime()) {
-        return {
-          success: false,
-          remaining: 0,
-          resetAt: Date.now() + options.windowMs,
-          degraded: false,
-          limit: options.limit,
-          reason: "provider_unavailable",
-        };
-      }
-      return memoryLimit(options);
     }
   }
 
-  if (isProductionRuntime()) {
-    console.error(`[rate-limit] ${name}: UPSTASH not configured in production.`);
+  if (onProviderError === "fail_open_public") {
+    const burst = memoryLimit({
+      ...options,
+      key: `burst:${options.key}`,
+      limit: Math.min(options.limit, 5),
+      windowMs: Math.min(options.windowMs, 5 * 60_000),
+    });
+    if (!burst.success) return burst;
+    console.error(
+      `[rate-limit] ${name}: no distributed provider — allowing with memory burst.`,
+    );
+    return {
+      ...burst,
+      reason: "allowed_without_provider",
+      provider: "none",
+    };
+  }
+
+  if (onProviderError === "fail_closed") {
+    if (!isProductionRuntime()) {
+      return memoryLimit(options);
+    }
+    console.error(
+      `[rate-limit] ${name}: UPSTASH not configured or unavailable in production.`,
+    );
     return {
       success: false,
       remaining: 0,
@@ -147,13 +165,26 @@ export async function rateLimit(
       degraded: false,
       limit: options.limit,
       reason: "provider_unavailable",
+      provider: "none",
     };
   }
 
-  return memoryLimit(options);
+  // fail_open_dev_only
+  if (!isProductionRuntime()) {
+    return memoryLimit(options);
+  }
+
+  return {
+    success: false,
+    remaining: 0,
+    resetAt: Date.now() + options.windowMs,
+    degraded: false,
+    limit: options.limit,
+    reason: "provider_unavailable",
+    provider: "none",
+  };
 }
 
-/** User-facing denial copy for public RFQ / quote submissions. */
 export function publicSubmissionLimitError(result: RateLimitResult): string {
   if (result.reason === "provider_unavailable") {
     return "Unable to submit right now. Please try again shortly, or email info@dam-tech.co.za.";
@@ -162,10 +193,7 @@ export function publicSubmissionLimitError(result: RateLimitResult): string {
     1,
     Math.ceil((result.resetAt - Date.now()) / 60_000),
   );
-  if (minutes <= 2) {
-    return "Too many submissions. Please wait a minute and try again.";
-  }
-  return `Too many submissions. Please wait about ${minutes} minutes and try again.`;
+  return `You have submitted several enquiries recently. Please wait ${minutes} minute${minutes === 1 ? "" : "s"} before trying again, or contact Damtech directly.`;
 }
 
 export const RATE_LIMITS = {
@@ -182,23 +210,22 @@ export const RATE_LIMITS = {
     onProviderError: "fail_closed" as const,
   },
   publicRfqSubmission: {
-    // Allow retries after validation/network issues without locking farms out for an hour.
-    limit: 15,
+    limit: 10,
     windowMs: 60 * 60 * 1000,
-    name: "public-rfq-submit",
-    onProviderError: "fail_closed" as const,
+    name: "public-rfq-submit-hourly",
+    onProviderError: "fail_open_public" as const,
   },
   publicRfqUpload: {
     limit: 20,
     windowMs: 60 * 60 * 1000,
     name: "public-rfq-upload",
-    onProviderError: "fail_closed" as const,
+    onProviderError: "fail_open_public" as const,
   },
   calculatorDraftCreate: {
     limit: 30,
     windowMs: 60 * 60 * 1000,
     name: "calculator-draft-create",
-    onProviderError: "fail_closed" as const,
+    onProviderError: "fail_open_public" as const,
   },
   publicQuoteView: {
     limit: 60,

@@ -66,37 +66,78 @@ export default async function AdminQuoteDetailPage({ params }: PageProps) {
   const showCost = canViewCostMargin(admin.profile.role);
 
   return (
-    <div className="admin-quote-detail">
-      <section className="admin-panel">
-        <header className="admin-panel__header admin-panel__header--row">
-          <div>
-            <h2>{display.label}</h2>
-            <p className="admin-empty__hint">{quote.title}</p>
-            <p>
-              <span className={`admin-status admin-status--${status}`}>{status}</span>
-              {expired ? (
-                <span className="admin-status admin-status--expired"> Expired</span>
-              ) : remaining <= 7 && ["sent", "viewed"].includes(status) ? (
-                <span className="admin-status admin-status--reviewing">
-                  {" "}
-                  Expires in {remaining} day{remaining === 1 ? "" : "s"}
-                </span>
-              ) : null}
-            </p>
-          </div>
-          <div className="admin-panel__actions">
-            {canEditQuote(status, admin.profile.role) ? (
-              <Link className="btn btn--md btn--secondary" href={`/admin/quotes/${id}/edit/`}>
-                Edit
-              </Link>
+    <div className="admin-quote-detail admin-stack--page">
+      <header className="admin-page-header">
+        <div className="admin-page-header__copy">
+          <h1 className="admin-page-header__title">{display.label}</h1>
+          <p className="admin-page-header__description">
+            {quote.title || "Customer quotation"}
+            {" · "}
+            <span className={`admin-status admin-status--${status}`}>{status}</span>
+            {expired ? (
+              <span className="admin-status admin-status--expired"> Expired</span>
+            ) : remaining <= 7 && ["sent", "viewed"].includes(status) ? (
+              <span className="admin-status admin-status--reviewing">
+                {" "}
+                Expires in {remaining} day{remaining === 1 ? "" : "s"}
+              </span>
             ) : null}
-            <Link className="btn btn--md btn--secondary" href={`/admin/quotes/${id}/preview/`}>
-              PDF preview
+            {" · "}
+            {formatZar(Number(quote.total_inc_vat))}
+            {" · Valid until "}
+            {quote.valid_until}
+          </p>
+        </div>
+        <div className="admin-page-header__actions">
+          {canEditQuote(status, admin.profile.role) ? (
+            <Link className="btn btn--md btn--primary" href={`/admin/quotes/${id}/edit/`}>
+              Edit
             </Link>
-            <Link className="btn btn--md btn--secondary" href={`/admin/quotes/${id}/revisions/`}>
-              Revisions
-            </Link>
-          </div>
+          ) : null}
+          <Link className="btn btn--md btn--secondary" href={`/admin/quotes/${id}/preview/`}>
+            Preview PDF
+          </Link>
+          <Link className="btn btn--md btn--secondary" href={`/admin/quotes/${id}/revisions/`}>
+            Revisions
+          </Link>
+        </div>
+      </header>
+
+      <div className="admin-tabs">
+        <nav className="admin-tabs__nav" aria-label="Quote sections">
+          <ul>
+            <li>
+              <a className="admin-tabs__link" href="#quote-overview">
+                Overview
+              </a>
+            </li>
+            <li>
+              <a className="admin-tabs__link" href="#quote-lines">
+                Line items
+              </a>
+            </li>
+            <li>
+              <a className="admin-tabs__link" href="#quote-comms">
+                Communications
+              </a>
+            </li>
+            <li>
+              <a className="admin-tabs__link" href="#quote-activity">
+                Activity
+              </a>
+            </li>
+            <li>
+              <a className="admin-tabs__link" href="#quote-revisions">
+                Revisions
+              </a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+
+      <section className="admin-panel" id="quote-overview">
+        <header className="admin-panel__header">
+          <h2>Overview</h2>
         </header>
 
         <dl className="admin-definition-list">
@@ -175,7 +216,7 @@ export default async function AdminQuoteDetailPage({ params }: PageProps) {
         />
       </section>
 
-      <section className="admin-panel">
+      <section className="admin-panel" id="quote-lines">
         <header className="admin-panel__header">
           <h2>Line items</h2>
         </header>
@@ -216,7 +257,7 @@ export default async function AdminQuoteDetailPage({ params }: PageProps) {
       </section>
 
       <div className="admin-dashboard-panels">
-        <section className="admin-panel">
+        <section className="admin-panel" id="quote-activity">
           <header className="admin-panel__header">
             <h2>Events</h2>
           </header>
@@ -229,7 +270,7 @@ export default async function AdminQuoteDetailPage({ params }: PageProps) {
             ))}
           </ul>
         </section>
-        <section className="admin-panel">
+        <section className="admin-panel" id="quote-comms">
           <header className="admin-panel__header">
             <h2>Communications</h2>
           </header>
@@ -245,7 +286,7 @@ export default async function AdminQuoteDetailPage({ params }: PageProps) {
             )}
           </ul>
         </section>
-        <section className="admin-panel">
+        <section className="admin-panel" id="quote-revisions">
           <header className="admin-panel__header">
             <h2>Revisions</h2>
           </header>

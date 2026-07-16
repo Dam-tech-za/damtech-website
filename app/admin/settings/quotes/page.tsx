@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { requireAdmin } from "@/lib/auth/require-admin";
 import { getQuoteSettings } from "@/lib/quotes/settings";
 import { updateQuoteSettingsAction } from "@/app/admin/quotes/actions";
@@ -8,7 +9,20 @@ export default async function AdminQuoteSettingsPage() {
   const settings = await getQuoteSettings();
 
   return (
-    <div className="admin-panel">
+    <div className="admin-stack--page">
+      <header className="admin-page-header">
+        <div className="admin-page-header__copy">
+          <h1 className="admin-page-header__title">Quote defaults</h1>
+          <p className="admin-page-header__description">
+            Numbering, validity, payment terms, deposits and approval rules.
+          </p>
+        </div>
+        <div className="admin-page-header__actions">
+          <Link href="/admin/settings/" className="btn btn--md btn--secondary">All settings</Link>
+        </div>
+      </header>
+
+      <div className="admin-panel">
       <header className="admin-panel__header">
         <h2>Quote settings</h2>
         <p className="admin-empty__hint">
@@ -139,6 +153,7 @@ export default async function AdminQuoteSettingsPage() {
           Save quote settings
         </button>
       </SettingsFormClient>
+      </div>
     </div>
   );
 }

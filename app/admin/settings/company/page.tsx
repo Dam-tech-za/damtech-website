@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { requireAdmin } from "@/lib/auth/require-admin";
 import { getCompanySettings } from "@/lib/quotes/settings";
 import { updateCompanySettingsAction } from "@/app/admin/quotes/actions";
@@ -28,7 +29,20 @@ export default async function AdminCompanySettingsPage() {
   ]);
 
   return (
-    <div className="admin-panel">
+    <div className="admin-stack--page">
+      <header className="admin-page-header">
+        <div className="admin-page-header__copy">
+          <h1 className="admin-page-header__title">Company details</h1>
+          <p className="admin-page-header__description">
+            Legal name, trading details, addresses, banking and branding.
+          </p>
+        </div>
+        <div className="admin-page-header__actions">
+          <Link href="/admin/settings/" className="btn btn--md btn--secondary">All settings</Link>
+        </div>
+      </header>
+
+      <div className="admin-panel">
       <header className="admin-panel__header">
         <h2>Company settings</h2>
         <p className="admin-empty__hint">
@@ -213,6 +227,7 @@ export default async function AdminCompanySettingsPage() {
           />
         </>
       ) : null}
+      </div>
     </div>
   );
 }

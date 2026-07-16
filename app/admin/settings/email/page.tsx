@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { requireAdmin } from "@/lib/auth/require-admin";
 import { isResendConfigured } from "@/lib/email";
 
@@ -6,33 +7,47 @@ export default async function AdminEmailSettingsPage() {
   const configured = isResendConfigured();
 
   return (
-    <div className="admin-panel">
-      <header className="admin-panel__header">
-        <h2>Email settings</h2>
+    <div className="admin-stack--page">
+      <header className="admin-page-header">
+        <div className="admin-page-header__copy">
+          <h1 className="admin-page-header__title">Email delivery</h1>
+          <p className="admin-page-header__description">
+            Sender address, reply-to, notifications and test delivery.
+          </p>
+        </div>
+        <div className="admin-page-header__actions">
+          <Link href="/admin/settings/" className="btn btn--md btn--secondary">All settings</Link>
+        </div>
       </header>
-      <p>
-        Customer quotations are sent with Resend. Configure these environment
-        variables on Vercel (not in the database):
-      </p>
-      <ul className="admin-list">
-        <li>
-          <code>RESEND_API_KEY</code> —{" "}
-          {configured ? "present on this runtime" : "missing"}
-        </li>
-        <li>
-          <code>QUOTE_FROM_EMAIL</code> — verified sender for outbound quotes
-        </li>
-        <li>
-          <code>QUOTE_REPLY_TO_EMAIL</code> — customer reply destination
-        </li>
-        <li>
-          <code>QUOTE_INTERNAL_NOTIFY_EMAIL</code> — optional internal accept/reject
-          alerts (defaults to LEAD_INBOX_EMAIL)
-        </li>
-      </ul>
-      <p className="admin-empty__hint">
-        See <code>docs/email-setup.md</code> for domain verification steps.
-      </p>
+
+      <div className="admin-panel">
+        <header className="admin-panel__header">
+          <h2>Email settings</h2>
+        </header>
+        <p>
+          Customer quotations are sent with Resend. Configure these environment
+          variables on Vercel (not in the database):
+        </p>
+        <ul className="admin-list">
+          <li>
+            <code>RESEND_API_KEY</code> —{" "}
+            {configured ? "present on this runtime" : "missing"}
+          </li>
+          <li>
+            <code>QUOTE_FROM_EMAIL</code> — verified sender for outbound quotes
+          </li>
+          <li>
+            <code>QUOTE_REPLY_TO_EMAIL</code> — customer reply destination
+          </li>
+          <li>
+            <code>QUOTE_INTERNAL_NOTIFY_EMAIL</code> — optional internal accept/reject
+            alerts (defaults to LEAD_INBOX_EMAIL)
+          </li>
+        </ul>
+        <p className="admin-empty__hint">
+          See <code>docs/email-setup.md</code> for domain verification steps.
+        </p>
+      </div>
     </div>
   );
 }

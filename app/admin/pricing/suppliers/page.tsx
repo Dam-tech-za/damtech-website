@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { requireAdmin } from "@/lib/auth/require-admin";
 import { canPerform } from "@/lib/auth/permissions";
 import { createClient } from "@/lib/supabase/server";
@@ -31,10 +32,28 @@ export default async function AdminSuppliersPricingPage() {
   const today = new Date().toISOString().slice(0, 10);
 
   return (
-    <div className="admin-stack">
+    <div className="admin-stack--page">
+      <header className="admin-page-header">
+        <div className="admin-page-header__copy">
+          <h1 className="admin-page-header__title">Suppliers</h1>
+          <p className="admin-page-header__description">
+            Manage supplier contacts, pricing and lead times.
+          </p>
+        </div>
+        <div className="admin-page-header__actions">
+          <Link href="/admin/pricing/" className="btn btn--md btn--secondary">Pricing hub</Link>
+          {canManage ? (
+            <a href="#add-supplier" className="btn btn--md btn--primary">
+              Add Supplier
+            </a>
+          ) : null}
+        </div>
+      </header>
+
+      <div className="admin-stack">
       {canManage ? (
         <>
-          <section className="admin-panel">
+          <section className="admin-panel" id="add-supplier">
             <header className="admin-panel__header">
               <h2>Add supplier</h2>
             </header>
@@ -198,6 +217,7 @@ export default async function AdminSuppliersPricingPage() {
           </div>
         </section>
       )}
+    </div>
     </div>
   );
 }

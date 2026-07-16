@@ -14,18 +14,26 @@ export default async function AdminTankModelsPage() {
     .order("nominal_capacity_kl");
 
   return (
-    <div className="admin-panel">
-      <header className="admin-panel__header admin-panel__header--row">
-        <div>
-          <h2>Tank models</h2>
-          <p className="admin-empty__hint">
-            Do not invent Damtech tank sizes. Load real supplier catalogue data
-            before matching RFQs.
+    <div className="admin-stack--page">
+      <header className="admin-page-header">
+        <div className="admin-page-header__copy">
+          <h1 className="admin-page-header__title">Tank Models</h1>
+          <p className="admin-page-header__description">
+            Catalogue capacities and dimensions used for RFQ matching. Do not invent sizes.
           </p>
         </div>
-        <Link className="btn btn--md btn--secondary" href="/admin/pricing/">
-          Pricing hub
-        </Link>
+        <div className="admin-page-header__actions">
+          <Link className="btn btn--md btn--secondary" href="/admin/pricing/">
+            Pricing hub
+          </Link>
+        </div>
+      </header>
+
+      <div className="admin-panel">
+      <header className="admin-panel__header">
+        <div>
+          <h2>Catalogue</h2>
+        </div>
       </header>
 
       {(models ?? []).length === 0 ? (
@@ -69,6 +77,7 @@ export default async function AdminTankModelsPage() {
           </table>
         </div>
       )}
+    </div>
     </div>
   );
 }

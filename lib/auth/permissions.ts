@@ -37,19 +37,19 @@ export const ADMIN_NAV_ITEMS: AdminNavItem[] = [
     id: "dashboard",
     label: "Dashboard",
     href: "/admin/",
-    description: "Overview and metrics",
+    description: "Operations overview",
   },
   {
     id: "rfqs",
     label: "RFQs",
     href: "/admin/rfqs/",
-    description: "Incoming requests for quote",
+    description: "Incoming enquiries",
   },
   {
     id: "quotes",
     label: "Quotes",
     href: "/admin/quotes/",
-    description: "Draft and sent quotes",
+    description: "Draft and sent",
   },
   {
     id: "customers",
@@ -61,25 +61,25 @@ export const ADMIN_NAV_ITEMS: AdminNavItem[] = [
     id: "pricing",
     label: "Pricing",
     href: "/admin/pricing/",
-    description: "Materials, labour and suppliers",
+    description: "Materials and labour",
   },
   {
     id: "suppliers",
     label: "Suppliers",
     href: "/admin/pricing/suppliers/",
-    description: "Supplier directory and prices",
+    description: "Supplier directory",
   },
   {
     id: "settings",
     label: "Settings",
     href: "/admin/settings/",
-    description: "Company, quote, PDF and estimating",
+    description: "Company and system",
   },
   {
     id: "audit",
     label: "Audit Log",
     href: "/admin/audit/",
-    description: "Security and change history",
+    description: "Change history",
   },
 ];
 

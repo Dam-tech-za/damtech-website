@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { requireAdmin } from "@/lib/auth/require-admin";
 import { getQuotePdfSettings } from "@/lib/quotes/settings";
 import { updatePdfSettingsAction } from "@/app/admin/quotes/actions";
@@ -28,7 +29,20 @@ export default async function AdminPdfSettingsPage() {
   ]);
 
   return (
-    <div className="admin-panel">
+    <div className="admin-stack--page">
+      <header className="admin-page-header">
+        <div className="admin-page-header__copy">
+          <h1 className="admin-page-header__title">PDF branding</h1>
+          <p className="admin-page-header__description">
+            Logo, header, footer, colours and banking display.
+          </p>
+        </div>
+        <div className="admin-page-header__actions">
+          <Link href="/admin/settings/" className="btn btn--md btn--secondary">All settings</Link>
+        </div>
+      </header>
+
+      <div className="admin-panel">
       <header className="admin-panel__header">
         <h2>PDF settings</h2>
       </header>
@@ -131,6 +145,7 @@ export default async function AdminPdfSettingsPage() {
           />
         </>
       ) : null}
+      </div>
     </div>
   );
 }

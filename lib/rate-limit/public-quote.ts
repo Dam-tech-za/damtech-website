@@ -20,11 +20,18 @@ export const PUBLIC_QUOTE_RESPOND_POLICY: RateLimitPolicy = {
   onProviderError: "fail_closed",
 };
 
+function clientKeyHash(headers: Headers): string {
+  const ip = clientIpFromHeaders(headers);
+  if (ip) return hashRateLimitIdentifier(`ip:${ip}`);
+  const ua = headers.get("user-agent")?.trim() || "no-ua";
+  return hashRateLimitIdentifier(`fp:${ua}`);
+}
+
 export async function limitPublicQuoteView(
   headers: Headers,
   token: string,
 ): Promise<RateLimitDecision> {
-  const ipHash = hashRateLimitIdentifier(clientIpFromHeaders(headers));
+  const ipHash = clientKeyHash(headers);
   const tokenHash = hashRateLimitIdentifier(token);
   return enforceRateLimit(
     `view:${tokenHash}:${ipHash}`,
@@ -36,7 +43,7 @@ export async function limitPublicQuoteRespond(
   headers: Headers,
   token: string,
 ): Promise<RateLimitDecision> {
-  const ipHash = hashRateLimitIdentifier(clientIpFromHeaders(headers));
+  const ipHash = clientKeyHash(headers);
   const tokenHash = hashRateLimitIdentifier(token);
   return enforceRateLimit(
     `respond:${tokenHash}:${ipHash}`,
