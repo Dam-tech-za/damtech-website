@@ -7,6 +7,8 @@ export type RateLimitDecision = {
   /** True only when using documented local-dev memory fallback. */
   degraded: boolean;
   limit: number;
+  /** Why a request was denied — distinguishes config/outage from a real limit hit. */
+  reason?: "rate_limited" | "provider_unavailable";
 };
 
 export type RateLimitPolicy = {

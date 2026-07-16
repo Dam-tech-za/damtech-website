@@ -8,7 +8,7 @@ import {
 
 export const PUBLIC_RFQ_SUBMIT_POLICY: RateLimitPolicy = {
   name: "public-rfq-submit",
-  limit: 5,
+  limit: 15,
   windowMs: 60 * 60 * 1000,
   onProviderError: "fail_closed",
 };

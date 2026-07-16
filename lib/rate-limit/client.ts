@@ -67,6 +67,7 @@ function memoryLimit(
       resetAt: existing.resetAt,
       degraded: true,
       limit: policy.limit,
+      reason: "rate_limited",
     };
   }
   existing.count += 1;
@@ -99,6 +100,7 @@ export async function enforceRateLimit(
         resetAt: result.reset,
         degraded: false,
         limit: policy.limit,
+        reason: result.success ? undefined : "rate_limited",
       };
     } catch (error) {
       console.error(
@@ -112,6 +114,7 @@ export async function enforceRateLimit(
           resetAt: Date.now() + policy.windowMs,
           degraded: false,
           limit: policy.limit,
+          reason: "provider_unavailable",
         };
       }
       if (isProductionRuntime()) {
@@ -121,6 +124,7 @@ export async function enforceRateLimit(
           resetAt: Date.now() + policy.windowMs,
           degraded: false,
           limit: policy.limit,
+          reason: "provider_unavailable",
         };
       }
       return memoryLimit(key, policy);
@@ -139,6 +143,7 @@ export async function enforceRateLimit(
         resetAt: Date.now() + policy.windowMs,
         degraded: false,
         limit: policy.limit,
+        reason: "provider_unavailable",
       };
     }
     // Non-fail-closed in production without Upstash still refuses silent memory
@@ -148,6 +153,7 @@ export async function enforceRateLimit(
       resetAt: Date.now() + policy.windowMs,
       degraded: false,
       limit: policy.limit,
+      reason: "provider_unavailable",
     };
   }
 

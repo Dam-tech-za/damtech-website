@@ -1,6 +1,12 @@
 "use server";
 
-import { RATE_LIMITS, rateLimit } from "@/lib/security/rate-limit";
+import { headers } from "next/headers";
+import {
+  RATE_LIMITS,
+  publicSubmissionLimitError,
+  rateLimit,
+} from "@/lib/security/rate-limit";
+import { clientIpFromHeaders } from "@/lib/rate-limit/types";
 import {
   createCalculatorQuoteDraft,
   type CalculatorDraftPayload,
@@ -13,19 +19,22 @@ export type CreateCalculatorDraftResult =
 export async function createCalculatorDraftAction(
   payload: CalculatorDraftPayload,
 ): Promise<CreateCalculatorDraftResult> {
+  if (!payload.calculatorType?.trim()) {
+    return { ok: false, error: "Calculator type is required." };
+  }
+
+  const headerList = await headers();
+  const ip = clientIpFromHeaders(headerList);
+
   const limited = await rateLimit({
-    key: `calc-draft:${payload.calculatorType || "unknown"}`,
-    ...RATE_LIMITS.publicRfqSubmission,
+    key: `calc-draft:${ip}`,
+    ...RATE_LIMITS.calculatorDraftCreate,
   });
   if (!limited.success) {
     return {
       ok: false,
-      error: "Too many requests. Please wait a moment and try again.",
+      error: publicSubmissionLimitError(limited),
     };
-  }
-
-  if (!payload.calculatorType?.trim()) {
-    return { ok: false, error: "Calculator type is required." };
   }
 
   return createCalculatorQuoteDraft({

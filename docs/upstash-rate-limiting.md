@@ -19,7 +19,8 @@ UPSTASH_REDIS_REST_TOKEN=...
 
 | Policy | Limit | Window | Failure |
 | --- | --- | --- | --- |
-| Public RFQ submit | 5 | 1 hour / IP hash | Fail closed |
+| Public RFQ submit | 15 | 1 hour / IP hash | Fail closed |
+| Calculator draft create | 30 | 1 hour / IP hash | Fail closed |
 | Public RFQ upload init | 20 | 1 hour / IP hash | Fail closed |
 | Public quote view | 60 | 1 hour / token+IP hash | Fail closed |
 | Quote accept/reject | 10 | 1 hour / token+IP hash | Fail closed |

@@ -1,7 +1,12 @@
 "use server";
 
 import { headers } from "next/headers";
-import { RATE_LIMITS, rateLimit } from "@/lib/security/rate-limit";
+import {
+  RATE_LIMITS,
+  publicSubmissionLimitError,
+  rateLimit,
+} from "@/lib/security/rate-limit";
+import { clientIpFromHeaders } from "@/lib/rate-limit/types";
 import { createRfqFromPublicSubmission } from "@/lib/rfq/create-from-public";
 import { parsePublicRfqFormData } from "@/lib/rfq/schema";
 import {
@@ -17,11 +22,13 @@ export async function submitSimpleQuote(
   formData: FormData,
   sourcePage = "/quote",
 ): Promise<SubmitSimpleQuoteResult> {
+  const parsed = parsePublicRfqFormData(formData, sourcePage);
+  if (!parsed.ok) {
+    return { success: false, error: parsed.error };
+  }
+
   const headerList = await headers();
-  const ip =
-    headerList.get("x-forwarded-for")?.split(",")[0]?.trim() ||
-    headerList.get("x-real-ip") ||
-    "unknown";
+  const ip = clientIpFromHeaders(headerList);
 
   const limited = await rateLimit({
     key: `simple-quote:${ip}`,
@@ -30,13 +37,8 @@ export async function submitSimpleQuote(
   if (!limited.success) {
     return {
       success: false,
-      error: "Too many submissions. Please wait a minute and try again.",
+      error: publicSubmissionLimitError(limited),
     };
-  }
-
-  const parsed = parsePublicRfqFormData(formData, sourcePage);
-  if (!parsed.ok) {
-    return { success: false, error: parsed.error };
   }
 
   if (parsed.isSpam) {

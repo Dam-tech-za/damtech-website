@@ -1,8 +1,14 @@
 "use server";
 
+import { headers } from "next/headers";
 import { sendLeadEmail, leadEmailChannel } from "@/lib/email";
 import { insertLead, isSupabaseConfigured } from "@/lib/supabase/server";
-import { RATE_LIMITS, rateLimit } from "@/lib/security/rate-limit";
+import {
+  RATE_LIMITS,
+  publicSubmissionLimitError,
+  rateLimit,
+} from "@/lib/security/rate-limit";
+import { clientIpFromHeaders } from "@/lib/rate-limit/types";
 import { createRfqFromPublicSubmission } from "@/lib/rfq/create-from-public";
 import { parsePublicRfqFormData } from "@/lib/rfq/schema";
 
@@ -14,21 +20,23 @@ export async function submitLead(
   formData: FormData,
   sourcePage: string,
 ): Promise<SubmitLeadResult> {
+  const parsed = parsePublicRfqFormData(formData, sourcePage);
+  if (!parsed.ok) {
+    return { success: false, error: parsed.error };
+  }
+
+  const headerList = await headers();
+  const ip = clientIpFromHeaders(headerList);
   const limit = await rateLimit({
-    key: `public-rfq:${sourcePage}`,
+    key: `public-rfq:${ip}`,
     ...RATE_LIMITS.publicRfqSubmission,
   });
 
   if (!limit.success) {
     return {
       success: false,
-      error: "Too many submissions. Please wait a minute and try again.",
+      error: publicSubmissionLimitError(limit),
     };
-  }
-
-  const parsed = parsePublicRfqFormData(formData, sourcePage);
-  if (!parsed.ok) {
-    return { success: false, error: parsed.error };
   }
 
   // Honeypot: accept silently without creating operational work

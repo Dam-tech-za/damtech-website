@@ -15,6 +15,8 @@ export type RateLimitResult = {
   resetAt: number;
   degraded: boolean;
   limit?: number;
+  /** Why a request was denied — distinguishes config/outage from a real limit hit. */
+  reason?: "rate_limited" | "provider_unavailable";
 };
 
 export type RateLimitOptions = {
@@ -74,6 +76,7 @@ function memoryLimit(options: RateLimitOptions): RateLimitResult {
       resetAt: existing.resetAt,
       degraded: true,
       limit: options.limit,
+      reason: "rate_limited",
     };
   }
   existing.count += 1;
@@ -114,6 +117,7 @@ export async function rateLimit(
         resetAt: result.reset,
         degraded: false,
         limit: options.limit,
+        reason: result.success ? undefined : "rate_limited",
       };
     } catch (error) {
       console.error(
@@ -127,6 +131,7 @@ export async function rateLimit(
           resetAt: Date.now() + options.windowMs,
           degraded: false,
           limit: options.limit,
+          reason: "provider_unavailable",
         };
       }
       return memoryLimit(options);
@@ -141,10 +146,26 @@ export async function rateLimit(
       resetAt: Date.now() + options.windowMs,
       degraded: false,
       limit: options.limit,
+      reason: "provider_unavailable",
     };
   }
 
   return memoryLimit(options);
+}
+
+/** User-facing denial copy for public RFQ / quote submissions. */
+export function publicSubmissionLimitError(result: RateLimitResult): string {
+  if (result.reason === "provider_unavailable") {
+    return "Unable to submit right now. Please try again shortly, or email info@dam-tech.co.za.";
+  }
+  const minutes = Math.max(
+    1,
+    Math.ceil((result.resetAt - Date.now()) / 60_000),
+  );
+  if (minutes <= 2) {
+    return "Too many submissions. Please wait a minute and try again.";
+  }
+  return `Too many submissions. Please wait about ${minutes} minutes and try again.`;
 }
 
 export const RATE_LIMITS = {
@@ -161,7 +182,8 @@ export const RATE_LIMITS = {
     onProviderError: "fail_closed" as const,
   },
   publicRfqSubmission: {
-    limit: 5,
+    // Allow retries after validation/network issues without locking farms out for an hour.
+    limit: 15,
     windowMs: 60 * 60 * 1000,
     name: "public-rfq-submit",
     onProviderError: "fail_closed" as const,
@@ -170,6 +192,12 @@ export const RATE_LIMITS = {
     limit: 20,
     windowMs: 60 * 60 * 1000,
     name: "public-rfq-upload",
+    onProviderError: "fail_closed" as const,
+  },
+  calculatorDraftCreate: {
+    limit: 30,
+    windowMs: 60 * 60 * 1000,
+    name: "calculator-draft-create",
     onProviderError: "fail_closed" as const,
   },
   publicQuoteView: {

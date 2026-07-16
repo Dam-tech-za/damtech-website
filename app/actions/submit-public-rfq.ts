@@ -1,7 +1,12 @@
 "use server";
 
 import { headers } from "next/headers";
-import { RATE_LIMITS, rateLimit } from "@/lib/security/rate-limit";
+import {
+  RATE_LIMITS,
+  publicSubmissionLimitError,
+  rateLimit,
+} from "@/lib/security/rate-limit";
+import { clientIpFromHeaders } from "@/lib/rate-limit/types";
 import { createMultiAssetRfqFromPublic } from "@/lib/rfq/create-multi-asset";
 import { publicMultiRfqSchema } from "@/lib/rfq/public-schema";
 import {
@@ -16,23 +21,6 @@ export type SubmitPublicRfqResult =
 export async function submitPublicRfqAction(
   payload: unknown,
 ): Promise<SubmitPublicRfqResult> {
-  const headerList = await headers();
-  const ip =
-    headerList.get("x-forwarded-for")?.split(",")[0]?.trim() ||
-    headerList.get("x-real-ip") ||
-    "unknown";
-
-  const limited = await rateLimit({
-    key: `public-rfq-multi:${ip}`,
-    ...RATE_LIMITS.publicRfqSubmission,
-  });
-  if (!limited.success) {
-    return {
-      ok: false,
-      error: "Too many submissions. Please wait a minute and try again.",
-    };
-  }
-
   const parsed = publicMultiRfqSchema.safeParse(payload);
   if (!parsed.success) {
     return {
@@ -56,6 +44,20 @@ export async function submitPublicRfqAction(
   // Timing check — reject instant bots (< 4s)
   if (data.formStartedAt && Date.now() - data.formStartedAt < 4000) {
     return { ok: false, error: "Please take a moment to review your details." };
+  }
+
+  const headerList = await headers();
+  const ip = clientIpFromHeaders(headerList);
+
+  const limited = await rateLimit({
+    key: `public-rfq-multi:${ip}`,
+    ...RATE_LIMITS.publicRfqSubmission,
+  });
+  if (!limited.success) {
+    return {
+      ok: false,
+      error: publicSubmissionLimitError(limited),
+    };
   }
 
   // Honeypot
