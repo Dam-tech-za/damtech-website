@@ -67,6 +67,7 @@ export default async function AdminLayout({
       navItems={getNavItemsForRole(admin.profile.role)}
       title={title}
       breadcrumbs={breadcrumbs}
+      showHeaderTitle={pathname === "/admin" || pathname === "/admin/"}
     >
       {children}
     </AdminShell>
@@ -77,6 +78,15 @@ function titleFromPath(pathname: string): string {
   if (pathname === "/admin" || pathname === "/admin/") return "Dashboard";
   const segment = pathname.replace(/^\/admin\/?/, "").split("/")[0];
   if (!segment) return "Dashboard";
+  const labels: Record<string, string> = {
+    rfqs: "RFQs",
+    quotes: "Quotes",
+    customers: "Customers",
+    pricing: "Pricing",
+    settings: "Settings",
+    audit: "Audit Log",
+  };
+  if (labels[segment]) return labels[segment];
   return segment
     .split("-")
     .map((part) => part.charAt(0).toUpperCase() + part.slice(1))

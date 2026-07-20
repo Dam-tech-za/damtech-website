@@ -2,12 +2,14 @@ export const RFQ_SORT_FIELDS = [
   "submitted_at",
   "updated_at",
   "rfq_number",
+  "contact_name",
+  "project_location",
 ] as const;
 
 export type RFQSortField = (typeof RFQ_SORT_FIELDS)[number];
 export type RFQSortDirection = "asc" | "desc";
 
-const DEFAULT_PAGE_SIZE = 20;
+const DEFAULT_PAGE_SIZE = 25;
 const MAX_PAGE_SIZE = 100;
 
 export function validateRfqSortField(value: string): RFQSortField {
@@ -41,6 +43,12 @@ export function parseRfqSort(input: {
   }
   if (input.sort === "rfq_number_asc") {
     return { field: "rfq_number", direction: "asc" };
+  }
+  if (input.sortField === "contact_name") {
+    return { field: "contact_name", direction: "asc" };
+  }
+  if (input.sortField === "project_location") {
+    return { field: "project_location", direction: "asc" };
   }
   const field = validateRfqSortField(input.sortField || "submitted_at");
   const direction: RFQSortDirection =

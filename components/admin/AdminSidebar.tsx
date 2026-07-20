@@ -5,6 +5,7 @@ type AdminSidebarProps = {
   items: AdminNavItem[];
   pathname: string;
   collapsed?: boolean;
+  onToggleCollapse?: () => void;
 };
 
 type NavGroup = {
@@ -111,7 +112,12 @@ function isActive(pathname: string, href: string): boolean {
   );
 }
 
-export function AdminSidebar({ items, pathname, collapsed }: AdminSidebarProps) {
+export function AdminSidebar({
+  items,
+  pathname,
+  collapsed,
+  onToggleCollapse,
+}: AdminSidebarProps) {
   const byId = new Map(items.map((item) => [item.id, item]));
 
   return (
@@ -129,6 +135,18 @@ export function AdminSidebar({ items, pathname, collapsed }: AdminSidebarProps) 
         ) : (
           <span className="sr-only">Damtech Administration</span>
         )}
+        {onToggleCollapse ? (
+          <button
+            type="button"
+            className="admin-sidebar__collapse-btn"
+            onClick={onToggleCollapse}
+            aria-pressed={Boolean(collapsed)}
+            aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+            title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+          >
+            {collapsed ? "»" : "«"}
+          </button>
+        ) : null}
       </div>
       <nav className="admin-sidebar__nav">
         {NAV_GROUPS.map((group) => {

@@ -43,6 +43,7 @@ export type RFQListFilters = {
   materialPreference?: string;
   measurementMethod?: string;
   measurementRequired?: string;
+  source?: string;
   sourcePage?: string;
   minMaterialArea?: string;
   maxMaterialArea?: string;
@@ -69,6 +70,7 @@ export type RFQListItem = {
   email: string | null;
   phone: string | null;
   service_required: string | null;
+  project_description?: string | null;
   province: string | null;
   project_location: string | null;
   approximate_project_size: string | null;
@@ -82,6 +84,7 @@ export type RFQListItem = {
   measurement_status?: string | null;
   site_measurement_required?: boolean | null;
   assignee_email?: string | null;
+  assignee_name?: string | null;
   attachment_count?: number;
   asset_count?: number;
   asset_types?: string[];
@@ -176,7 +179,7 @@ export async function listRfqs(
   let query = supabase
     .from("rfqs")
     .select(
-      "id, rfq_number, status, submitted_at, updated_at, contact_name, company_name, email, phone, service_required, province, project_location, approximate_project_size, approximate_project_size_text, calculator_type, calculator_result, assigned_to, source_page, enquiry_channel, has_calculator_data, measurement_status, site_measurement_required",
+      "id, rfq_number, status, submitted_at, updated_at, contact_name, company_name, email, phone, service_required, project_description, province, project_location, approximate_project_size, approximate_project_size_text, calculator_type, calculator_result, assigned_to, source_page, enquiry_channel, has_calculator_data, measurement_status, site_measurement_required",
       { count: "exact" },
     );
 
@@ -190,6 +193,9 @@ export async function listRfqs(
   if (filters.from) query = query.gte("submitted_at", filters.from);
   if (filters.to) query = query.lte("submitted_at", `${filters.to}T23:59:59.999Z`);
   if (filters.hasCalculator === "0") query = query.is("calculator_type", null);
+  if (filters.source) {
+    query = query.eq("enquiry_channel", filters.source);
+  }
   if (filters.sourcePage) {
     const source = sanitiseRfqSearch(filters.sourcePage);
     if (source) query = query.ilike("source_page", `%${source}%`);
@@ -258,8 +264,8 @@ export async function listRfqs(
   }
 
   const ids = (data ?? []).map((r) => r.id as string);
-  const [emailById, attachmentCounts, assetsByRfq] = await Promise.all([
-    loadAssigneeEmails(supabase, data as RFQListItem[]),
+  const [profileById, attachmentCounts, assetsByRfq] = await Promise.all([
+    loadAssigneeProfiles(supabase, data as RFQListItem[]),
     loadAttachmentCounts(supabase, ids),
     loadAssetsByRfq(supabase, ids),
   ]);
@@ -279,7 +285,12 @@ export async function listRfqs(
     return {
       ...r,
       enquiry_channel: channel,
-      assignee_email: r.assigned_to ? emailById[r.assigned_to] ?? null : null,
+      assignee_email: r.assigned_to
+        ? profileById[r.assigned_to]?.email ?? null
+        : null,
+      assignee_name: r.assigned_to
+        ? profileById[r.assigned_to]?.name ?? null
+        : null,
       attachment_count: attachmentCounts[r.id] ?? 0,
       asset_count: summary.assetCount,
       asset_types: summary.assetTypes,
@@ -484,19 +495,24 @@ async function resolveAssetMatchedRfqIds(
   return [...new Set(rows.map((r) => r.rfq_id))];
 }
 
-async function loadAssigneeEmails(
+async function loadAssigneeProfiles(
   supabase: Awaited<ReturnType<typeof createClient>>,
   rows: RFQListItem[],
 ) {
   const assigneeIds = [
     ...new Set(rows.map((r) => r.assigned_to).filter(Boolean)),
   ] as string[];
-  if (!assigneeIds.length) return {} as Record<string, string>;
+  if (!assigneeIds.length) return {} as Record<string, { email: string; name: string | null }>;
   const { data: profiles } = await supabase
     .from("admin_profiles")
-    .select("id, email")
+    .select("id, email, full_name")
     .in("id", assigneeIds);
-  return Object.fromEntries((profiles ?? []).map((p) => [p.id, p.email]));
+  return Object.fromEntries(
+    (profiles ?? []).map((p) => [
+      p.id,
+      { email: p.email, name: p.full_name ?? null },
+    ]),
+  );
 }
 
 async function loadAttachmentCounts(

@@ -1,0 +1,238 @@
+"use client";
+
+import { useRouter } from "next/navigation";
+import {
+  RFQ_STATUS_LABELS,
+  type RfqInboxRow,
+  type RfqOptionalColumnId,
+} from "@/lib/admin/rfqs/rfq-inbox-types";
+import {
+  approximateSizeSourceLabel,
+} from "@/lib/admin/rfqs/rfq-size-summary";
+import { formatSubmittedDate } from "@/lib/admin/rfqs/rfq-inbox-utils";
+import { enquiryChannelBadgeClass } from "@/lib/rfq/enquiry-channel";
+import { AdminStatusBadge } from "@/components/admin/ui";
+import { RfqRowActions } from "./RfqRowActions";
+
+type RfqInboxRowProps = {
+  row: RfqInboxRow;
+  selected: boolean;
+  onToggle: (id: string) => void;
+  showContact: boolean;
+  optionalColumns: RfqOptionalColumnId[];
+  canManage: boolean;
+};
+
+export function RfqInboxTableRow({
+  row,
+  selected,
+  onToggle,
+  showContact,
+  optionalColumns,
+  canManage,
+}: RfqInboxRowProps) {
+  const router = useRouter();
+  const submitted = formatSubmittedDate(row.submittedAt);
+  const detailHref = `/admin/rfqs/${row.id}/`;
+
+  function handleRowClick(event: React.MouseEvent<HTMLTableRowElement>) {
+    const target = event.target as HTMLElement;
+    if (
+      target.closest("a, button, input, select, [role='menu'], [role='menuitem']")
+    ) {
+      return;
+    }
+    router.push(detailHref);
+  }
+
+  function handleRowKeyDown(event: React.KeyboardEvent<HTMLTableRowElement>) {
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      router.push(detailHref);
+    }
+  }
+
+  return (
+    <tr
+      className="rfq-inbox-row"
+      onClick={handleRowClick}
+      onKeyDown={handleRowKeyDown}
+      tabIndex={0}
+      aria-label={`RFQ for ${row.customerName}`}
+    >
+      <td className="rfq-inbox-row__checkbox">
+        <label className="sr-only" htmlFor={`select-${row.id}`}>
+          Select {row.customerName}
+        </label>
+        <input
+          id={`select-${row.id}`}
+          type="checkbox"
+          checked={selected}
+          onChange={() => onToggle(row.id)}
+          onClick={(event) => event.stopPropagation()}
+        />
+      </td>
+
+      {optionalColumns.includes("rfqNumber") ? (
+        <td>
+          <span className="rfq-inbox-row__mono">{row.rfqNumber}</span>
+        </td>
+      ) : null}
+
+      <td className="rfq-inbox-row__customer">
+        <span className="rfq-inbox-row__primary">{row.customerName}</span>
+        {row.companyName ? (
+          <span className="rfq-inbox-row__secondary">{row.companyName}</span>
+        ) : null}
+        {optionalColumns.includes("source") ? (
+          <span className={enquiryChannelBadgeClass(row.source)}>
+            {row.sourceBadgeLabel}
+          </span>
+        ) : (
+          <span
+            className={`rfq-inbox-row__source ${enquiryChannelBadgeClass(row.source)}`}
+          >
+            {row.sourceBadgeLabel}
+          </span>
+        )}
+      </td>
+
+      <td className="rfq-inbox-row__contact">
+        {showContact ? (
+          <>
+            {row.phone ? (
+              <a
+                href={`tel:${row.phone.replace(/\s/g, "")}`}
+                className="rfq-inbox-row__contact-line"
+                aria-label={`Phone ${row.customerName}`}
+                onClick={(event) => event.stopPropagation()}
+              >
+                <PhoneIcon />
+                {row.phone}
+              </a>
+            ) : null}
+            {row.email ? (
+              <a
+                href={`mailto:${row.email}`}
+                className="rfq-inbox-row__contact-line"
+                aria-label={`Email ${row.customerName}`}
+                onClick={(event) => event.stopPropagation()}
+              >
+                <EmailIcon />
+                {row.email}
+              </a>
+            ) : null}
+            {!row.phone && !row.email ? (
+              <span className="rfq-inbox-row__muted">Not provided</span>
+            ) : null}
+          </>
+        ) : (
+          <span className="rfq-inbox-row__muted">Restricted</span>
+        )}
+      </td>
+
+      <td className="rfq-inbox-row__location">
+        {row.projectLocation || row.province ? (
+          <>
+            <span className="rfq-inbox-row__primary">
+              {row.projectLocation ?? "Not provided"}
+            </span>
+            {row.province ? (
+              <span className="rfq-inbox-row__secondary">{row.province}</span>
+            ) : null}
+          </>
+        ) : (
+          <span className="rfq-inbox-row__muted">Not provided</span>
+        )}
+      </td>
+
+      <td className="rfq-inbox-row__service">
+        <span className="rfq-inbox-row__primary">{row.serviceLabel}</span>
+        {row.projectSummary ? (
+          <span
+            className="rfq-inbox-row__secondary rfq-inbox-row__truncate"
+            title={row.projectSummary}
+          >
+            {row.projectSummary}
+          </span>
+        ) : null}
+      </td>
+
+      <td className="rfq-inbox-row__size">
+        {row.approximateSize.displayValue ? (
+          <>
+            <span className="rfq-inbox-row__primary">
+              {row.approximateSize.displayValue}
+            </span>
+            {approximateSizeSourceLabel(row.approximateSize.source) ? (
+              <span className="rfq-inbox-row__secondary">
+                {approximateSizeSourceLabel(row.approximateSize.source)}
+              </span>
+            ) : null}
+          </>
+        ) : (
+          <span className="rfq-inbox-row__muted">Not provided</span>
+        )}
+      </td>
+
+      <td className="rfq-inbox-row__status">
+        <AdminStatusBadge
+          status={row.status}
+          label={RFQ_STATUS_LABELS[row.status]}
+          domain="rfq"
+        />
+        {row.assignedUserName ? (
+          <span className="rfq-inbox-row__secondary">
+            Assigned to {row.assignedUserName}
+          </span>
+        ) : optionalColumns.includes("assigned") ? (
+          <span className="rfq-inbox-row__muted">Unassigned</span>
+        ) : null}
+      </td>
+
+      <td className="rfq-inbox-row__submitted">
+        <span className="rfq-inbox-row__primary" title={submitted.tooltip}>
+          {submitted.dateLine}
+        </span>
+        <span className="rfq-inbox-row__secondary">{submitted.timeLine}</span>
+        {submitted.relative ? (
+          <span className="rfq-inbox-row__relative">{submitted.relative}</span>
+        ) : null}
+      </td>
+
+      {optionalColumns.includes("lastUpdated") ? (
+        <td className="rfq-inbox-row__muted">
+          {formatSubmittedDate(row.updatedAt).dateLine}
+        </td>
+      ) : null}
+
+      <td className="rfq-inbox-row__actions">
+        <RfqRowActions rowId={row.id} canManage={canManage} />
+      </td>
+    </tr>
+  );
+}
+
+function PhoneIcon() {
+  return (
+    <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden>
+      <path
+        d="M6.5 3h3l1.2 4.5-2 1.2a13 13 0 006.8 6.8l1.2-2L21 14.5V17.5a2 2 0 01-2 2C10.8 19.5 4.5 13.2 4.5 5.5a2 2 0 012-2.5Z"
+        fill="currentColor"
+      />
+    </svg>
+  );
+}
+
+function EmailIcon() {
+  return (
+    <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden>
+      <path
+        d="M4 6h16a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V8a2 2 0 012-2Zm0 2 8 5 8-5"
+        stroke="currentColor"
+        strokeWidth="1.6"
+        fill="none"
+      />
+    </svg>
+  );
+}

@@ -13,6 +13,7 @@ type AdminShellProps = {
   title: string;
   breadcrumbs: { label: string; href?: string }[];
   children: ReactNode;
+  showHeaderTitle?: boolean;
 };
 
 export function AdminShell({
@@ -21,13 +22,19 @@ export function AdminShell({
   title,
   breadcrumbs,
   children,
+  showHeaderTitle = false,
 }: AdminShellProps) {
   const pathname = usePathname() || "/admin/";
   const [collapsed, setCollapsed] = useState(false);
 
   return (
     <div className={`admin-shell${collapsed ? " admin-shell--collapsed" : ""}`}>
-      <AdminSidebar items={navItems} pathname={pathname} collapsed={collapsed} />
+      <AdminSidebar
+        items={navItems}
+        pathname={pathname}
+        collapsed={collapsed}
+        onToggleCollapse={() => setCollapsed((prev) => !prev)}
+      />
       <AdminMobileNav items={navItems} pathname={pathname} />
       <div className="admin-shell__main">
         <AdminHeader
@@ -37,17 +44,8 @@ export function AdminShell({
           fullName={profile.full_name}
           role={profile.role}
           avatarUrl={profile.avatar_url}
+          showTitle={showHeaderTitle}
         />
-        <div className="admin-shell__toolbar">
-          <button
-            type="button"
-            className="admin-shell__collapse-btn"
-            onClick={() => setCollapsed((prev) => !prev)}
-            aria-pressed={collapsed}
-          >
-            {collapsed ? "Expand sidebar" : "Collapse sidebar"}
-          </button>
-        </div>
         <div className="admin-shell__content">{children}</div>
       </div>
     </div>

@@ -9,6 +9,7 @@ type AdminHeaderProps = {
   role: string;
   avatarUrl: string | null;
   onMenuToggleId?: string;
+  showTitle?: boolean;
 };
 
 export function AdminHeader({
@@ -19,6 +20,7 @@ export function AdminHeader({
   role,
   avatarUrl,
   onMenuToggleId = "admin-mobile-nav-toggle",
+  showTitle = false,
 }: AdminHeaderProps) {
   return (
     <header className="admin-header">
@@ -34,7 +36,9 @@ export function AdminHeader({
         </label>
         <div>
           <AdminBreadcrumbs items={breadcrumbs} />
-          <h1 className="admin-header__title">{title}</h1>
+          {showTitle ? (
+            <p className="admin-header__context">{title}</p>
+          ) : null}
         </div>
       </div>
       <div className="admin-header__right">

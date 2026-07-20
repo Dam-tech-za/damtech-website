@@ -9,7 +9,7 @@ export function SignOutButton() {
   return (
     <button
       type="button"
-      className="btn btn--md btn--ghost-dark admin-sign-out"
+      className="btn btn--md btn--secondary admin-sign-out"
       disabled={pending}
       onClick={() => startTransition(() => signOutAction())}
     >

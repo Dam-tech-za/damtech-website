@@ -10,7 +10,8 @@ import {
 describe("rfq list allowlists", () => {
   it("only allows known sort fields", () => {
     assert.equal(validateRfqSortField("submitted_at"), "submitted_at");
-    assert.equal(validateRfqSortField("rfq_number"), "rfq_number");
+    assert.equal(validateRfqSortField("contact_name"), "contact_name");
+    assert.equal(validateRfqSortField("project_location"), "project_location");
     assert.equal(validateRfqSortField("evil;drop"), "submitted_at");
     assert.ok((RFQ_SORT_FIELDS as readonly string[]).includes("updated_at"));
   });
@@ -19,7 +20,7 @@ describe("rfq list allowlists", () => {
     assert.equal(validateRfqPage(0), 1);
     assert.equal(validateRfqPage(-3), 1);
     assert.equal(validateRfqPage("2"), 2);
-    assert.equal(validateRfqPageSize(0), 20);
+    assert.equal(validateRfqPageSize(0), 25);
     assert.equal(validateRfqPageSize(500), 100);
     assert.equal(validateRfqPageSize(10), 10);
   });

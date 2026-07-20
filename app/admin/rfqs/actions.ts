@@ -183,6 +183,45 @@ export async function bulkUpdateRfqStatusAction(formData: FormData): Promise<{
   return { ok: true };
 }
 
+export async function bulkAssignRfqAction(formData: FormData): Promise<{
+  ok: boolean;
+  error?: string;
+}> {
+  const assignedTo = String(formData.get("assignedTo") ?? "") || null;
+  const ids = formData.getAll("rfqIds").map(String).filter(Boolean);
+  if (!ids.length) {
+    return { ok: false, error: "Select RFQs to assign." };
+  }
+
+  const admin = await assertAdmin({ permission: "manageRfqs" });
+  const supabase = await createClient();
+  const { error } = await supabase
+    .from("rfqs")
+    .update({ assigned_to: assignedTo })
+    .in("id", ids);
+  if (error) return { ok: false, error: error.message };
+
+  for (const id of ids) {
+    await touchRfqEvent(
+      id,
+      "bulk_assigned",
+      assignedTo ? "Bulk assigned" : "Bulk assignment cleared",
+      { assigned_to: assignedTo },
+    );
+  }
+
+  await writeAuditLog({
+    actorUserId: admin.user.id,
+    actorEmail: admin.user.email,
+    action: "rfq_bulk_assigned",
+    entityType: "rfq",
+    metadata: { ids, assigned_to: assignedTo },
+  });
+
+  revalidatePath("/admin/rfqs/");
+  return { ok: true };
+}
+
 export async function convertRfqAction(formData: FormData): Promise<void> {
   const rfqId = String(formData.get("rfqId") ?? "");
   const force = String(formData.get("forceSecond") ?? "") === "1";
