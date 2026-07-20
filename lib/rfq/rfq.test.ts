@@ -6,7 +6,9 @@ describe("rfq permission gates", () => {
   it("allows estimators to manage RFQs but not allowlist", () => {
     assert.equal(canPerform("estimator", "manageRfqs"), true);
     assert.equal(canPerform("estimator", "manageAllowlist"), false);
+    assert.equal(canPerform("estimator", "deleteRfqs"), false);
     assert.equal(canPerform("viewer", "manageRfqs"), false);
     assert.equal(canPerform("sales", "exportRfqs"), true);
+    assert.equal(canPerform("sales", "deleteRfqs"), false);
   });
 });

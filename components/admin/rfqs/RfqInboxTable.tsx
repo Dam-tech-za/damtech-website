@@ -26,6 +26,7 @@ type RfqInboxTableProps = {
   totalPages: number;
   showContact: boolean;
   canManage: boolean;
+  canDelete: boolean;
   staff: StaffMember[];
   bulkStatusAction: (formData: FormData) => Promise<{ ok: boolean; error?: string }>;
   bulkAssignAction: (formData: FormData) => Promise<{ ok: boolean; error?: string }>;
@@ -42,18 +43,33 @@ export function RfqInboxTable({
   totalPages,
   showContact,
   canManage,
+  canDelete,
   staff,
   bulkStatusAction,
   bulkAssignAction,
   refreshedAt,
 }: RfqInboxTableProps) {
   const [selected, setSelected] = useState<string[]>([]);
+  const [removedIds, setRemovedIds] = useState<string[]>([]);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [optionalColumns, setOptionalColumns] = useState<RfqOptionalColumnId[]>(
     () => (typeof window !== "undefined" ? loadOptionalColumns() : []),
   );
 
-  const rowIds = useMemo(() => new Set(rows.map((row) => row.id)), [rows]);
+  const visibleRows = useMemo(
+    () => rows.filter((row) => !removedIds.includes(row.id)),
+    [rows, removedIds],
+  );
+
+  const rowIds = useMemo(() => new Set(visibleRows.map((row) => row.id)), [visibleRows]);
   const effectiveSelected = selected.filter((id) => rowIds.has(id));
+
+  function handleRowDeleted(id: string) {
+    setRemovedIds((prev) => (prev.includes(id) ? prev : [...prev, id]));
+    setSelected((prev) => prev.filter((rowId) => rowId !== id));
+    setToastMessage("RFQ deleted successfully.");
+    window.setTimeout(() => setToastMessage(null), 5000);
+  }
 
   function toggle(id: string) {
     setSelected((prev) =>
@@ -63,14 +79,15 @@ export function RfqInboxTable({
 
   function toggleAll() {
     setSelected((prev) =>
-      prev.length === rows.length ? [] : rows.map((row) => row.id),
+      prev.length === visibleRows.length ? [] : visibleRows.map((row) => row.id),
     );
   }
 
   const hasFilters = total !== totalUnfiltered;
+  const visibleTotal = Math.max(0, total - removedIds.length);
   const countLabel = hasFilters
-    ? `${total} of ${totalUnfiltered} RFQs`
-    : `${total} RFQ${total === 1 ? "" : "s"}`;
+    ? `${visibleTotal} of ${totalUnfiltered} RFQs`
+    : `${visibleTotal} RFQ${visibleTotal === 1 ? "" : "s"}`;
 
   return (
     <section className="rfq-inbox-panel">
@@ -84,11 +101,11 @@ export function RfqInboxTable({
 
       <RfqBulkActions
         selectedCount={effectiveSelected.length}
-        totalOnPage={rows.length}
+        totalOnPage={visibleRows.length}
         staff={staff}
         selectedIds={effectiveSelected}
         allSelected={
-          effectiveSelected.length === rows.length && rows.length > 0
+          effectiveSelected.length === visibleRows.length && visibleRows.length > 0
         }
         onClear={() => setSelected([])}
         onToggleAll={toggleAll}
@@ -108,33 +125,74 @@ export function RfqInboxTable({
         }}
       />
 
+      {toastMessage ? (
+        <div className="rfq-delete-toast" role="status" aria-live="polite">
+          {toastMessage}
+        </div>
+      ) : null}
+
       <div className="rfq-inbox-table-wrap">
         <table className="admin-table rfq-inbox-table">
+          <colgroup>
+            <col className="rfq-col-check" />
+            {optionalColumns.includes("rfqNumber") ? (
+              <col className="rfq-col-rfq" />
+            ) : null}
+            <col className="rfq-col-customer" />
+            <col className="rfq-col-contact" />
+            <col className="rfq-col-location" />
+            <col className="rfq-col-service" />
+            <col className="rfq-col-size" />
+            <col className="rfq-col-status" />
+            <col className="rfq-col-submitted" />
+            {optionalColumns.includes("lastUpdated") ? (
+              <col className="rfq-col-updated" />
+            ) : null}
+            <col className="rfq-col-actions" />
+          </colgroup>
           <thead>
             <tr>
-              <th scope="col">
+              <th scope="col" className="rfq-col-check">
                 <span className="sr-only">Select</span>
               </th>
               {optionalColumns.includes("rfqNumber") ? (
-                <th scope="col">RFQ</th>
+                <th scope="col" className="rfq-col-rfq">
+                  RFQ
+                </th>
               ) : null}
-              <th scope="col">Customer</th>
-              <th scope="col">Contact</th>
-              <th scope="col">Location</th>
-              <th scope="col">Service / project</th>
-              <th scope="col">Approximate size</th>
-              <th scope="col">Status</th>
-              <th scope="col">Submitted</th>
+              <th scope="col" className="rfq-col-customer">
+                Customer
+              </th>
+              <th scope="col" className="rfq-col-contact">
+                Contact
+              </th>
+              <th scope="col" className="rfq-col-location">
+                Location
+              </th>
+              <th scope="col" className="rfq-col-service">
+                Service / project
+              </th>
+              <th scope="col" className="rfq-col-size">
+                Approx. size
+              </th>
+              <th scope="col" className="rfq-col-status">
+                Status
+              </th>
+              <th scope="col" className="rfq-col-submitted">
+                Submitted
+              </th>
               {optionalColumns.includes("lastUpdated") ? (
-                <th scope="col">Last updated</th>
+                <th scope="col" className="rfq-col-updated">
+                  Last updated
+                </th>
               ) : null}
-              <th scope="col">
+              <th scope="col" className="rfq-col-actions">
                 <span className="sr-only">Actions</span>
               </th>
             </tr>
           </thead>
           <tbody>
-            {rows.map((row) => (
+            {visibleRows.map((row) => (
               <RfqInboxTableRow
                 key={row.id}
                 row={row}
@@ -143,6 +201,8 @@ export function RfqInboxTable({
                 showContact={showContact}
                 optionalColumns={optionalColumns}
                 canManage={canManage}
+                canDelete={canDelete}
+                onDeleted={() => handleRowDeleted(row.id)}
               />
             ))}
           </tbody>
@@ -150,7 +210,7 @@ export function RfqInboxTable({
       </div>
 
       <div className="rfq-inbox-cards">
-        {rows.map((row) => (
+        {visibleRows.map((row) => (
           <RfqInboxCard
             key={row.id}
             row={row}
@@ -158,6 +218,8 @@ export function RfqInboxTable({
             onToggle={toggle}
             showContact={showContact}
             canManage={canManage}
+            canDelete={canDelete}
+            onDeleted={() => handleRowDeleted(row.id)}
           />
         ))}
       </div>

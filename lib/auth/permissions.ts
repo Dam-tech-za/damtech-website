@@ -105,6 +105,7 @@ export const PERMISSIONS = {
   manageQuoteNumbering: ["owner", "admin"] as const,
   exportQuotes: ["owner", "admin", "sales"] as const,
   manageRfqs: ["owner", "admin", "sales", "estimator"] as const,
+  deleteRfqs: ["owner", "admin"] as const,
   manageCustomers: ["owner", "admin", "sales"] as const,
   managePricing: ["owner", "admin", "estimator"] as const,
   viewCostPrices: ["owner", "admin", "estimator"] as const,

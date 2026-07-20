@@ -22,4 +22,5 @@ export { AdminDialog } from "./AdminDialog";
 export { AdminConfirmDialog } from "./AdminConfirmDialog";
 export { AdminDataList } from "./AdminDataList";
 export { AdminActionMenu, type AdminActionMenuItem } from "./AdminActionMenu";
+export { AdminPortalMenu, type AdminPortalMenuItem } from "./AdminPortalMenu";
 export { SettingsNavCard } from "./SettingsNavCard";

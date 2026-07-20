@@ -28,6 +28,7 @@ import {
   isSimpleEnquiryChannel,
 } from "@/lib/rfq/enquiry-channel";
 import { ResendRfqNotificationButton } from "@/components/admin/ResendRfqNotificationButton";
+import { RfqDetailActions } from "@/components/admin/rfqs/RfqDetailActions";
 
 type PageProps = {
   params: Promise<{ id: string }>;
@@ -48,6 +49,7 @@ export default async function AdminRfqDetailPage({
     redirect("/admin/unauthorised/");
   }
   const canManage = canPerform(admin.profile.role, "manageRfqs");
+  const canDelete = canPerform(admin.profile.role, "deleteRfqs");
   const canQuote = canPerform(admin.profile.role, "manageQuotes");
   const { id } = await params;
   const query = await searchParams;
@@ -223,6 +225,23 @@ export default async function AdminRfqDetailPage({
             <a className="btn btn--md btn--primary" href="#rfq-prepare-quote">
               Convert to Quote
             </a>
+          ) : null}
+          {canManage || canDelete ? (
+            <RfqDetailActions
+              summary={{
+                id: rfq.id,
+                rfqNumber: rfq.rfq_number,
+                customerName: rfq.contact_name,
+                companyName: rfq.company_name,
+                serviceLabel: rfq.service_required ?? "Not specified",
+                submittedAt: rfq.submitted_at,
+                status: rfq.status,
+              }}
+              canManage={canManage}
+              canDelete={canDelete}
+              hasQuote={Boolean(quote)}
+              canQuote={canQuote}
+            />
           ) : null}
         </div>
       </header>

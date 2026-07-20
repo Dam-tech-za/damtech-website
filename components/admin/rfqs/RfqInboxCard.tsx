@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import type { RfqDeleteSummary } from "@/lib/admin/rfqs/delete-rfq";
 import {
   RFQ_STATUS_LABELS,
   type RfqInboxRow,
@@ -16,7 +17,21 @@ type RfqInboxCardProps = {
   onToggle: (id: string) => void;
   showContact: boolean;
   canManage: boolean;
+  canDelete: boolean;
+  onDeleted?: () => void;
 };
+
+function toDeleteSummary(row: RfqInboxRow): RfqDeleteSummary {
+  return {
+    id: row.id,
+    rfqNumber: row.rfqNumber,
+    customerName: row.customerName,
+    companyName: row.companyName,
+    serviceLabel: row.serviceLabel,
+    submittedAt: row.submittedAt,
+    status: row.status,
+  };
+}
 
 export function RfqInboxCard({
   row,
@@ -24,6 +39,8 @@ export function RfqInboxCard({
   onToggle,
   showContact,
   canManage,
+  canDelete,
+  onDeleted,
 }: RfqInboxCardProps) {
   const submitted = formatSubmittedDate(row.submittedAt);
   const sizeLabel =
@@ -90,7 +107,13 @@ export function RfqInboxCard({
           >
             View RFQ
           </Link>
-          <RfqRowActions rowId={row.id} canManage={canManage} compact />
+          <RfqRowActions
+            summary={toDeleteSummary(row)}
+            canManage={canManage}
+            canDelete={canDelete}
+            compact
+            onDeleted={onDeleted}
+          />
         </div>
       </footer>
     </article>

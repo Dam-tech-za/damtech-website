@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { requireAdmin } from "@/lib/auth/require-admin";
 import { canPerform } from "@/lib/auth/permissions";
 import { createClient } from "@/lib/supabase/server";
@@ -17,6 +18,7 @@ import { RfqInboxTable } from "@/components/admin/rfqs/RfqInboxTable";
 import { RfqEmptyState } from "@/components/admin/rfqs/RfqEmptyState";
 import { RfqOnboardingNote } from "@/components/admin/rfqs/RfqOnboardingNote";
 import { RfqRefreshButton } from "@/components/admin/rfqs/RfqRefreshButton";
+import { RfqDeleteToast } from "@/components/admin/rfqs/RfqDeleteToast";
 import { AdminErrorState } from "@/components/admin/ui";
 
 type PageProps = {
@@ -40,6 +42,7 @@ export default async function AdminRfqsPage({ searchParams }: PageProps) {
 
   const canExport = canPerform(admin.profile.role, "exportRfqs");
   const canManage = canPerform(admin.profile.role, "manageRfqs");
+  const canDelete = canPerform(admin.profile.role, "deleteRfqs");
   const showContact = canViewRfqContact(admin.profile.role);
   const exportHref = `/admin/rfqs/export/?${buildFilterParams(filters).toString()}`;
   const refreshedAt = new Date().toLocaleTimeString("en-ZA", {
@@ -60,6 +63,10 @@ export default async function AdminRfqsPage({ searchParams }: PageProps) {
       />
 
       <RfqOnboardingNote />
+
+      <Suspense fallback={null}>
+        <RfqDeleteToast />
+      </Suspense>
 
       <RfqStatusStrip counts={statusCounts} filters={filters} />
 
@@ -89,6 +96,7 @@ export default async function AdminRfqsPage({ searchParams }: PageProps) {
           totalPages={result.totalPages}
           showContact={showContact}
           canManage={canManage}
+          canDelete={canDelete}
           staff={staff ?? []}
           bulkStatusAction={bulkUpdateRfqStatusAction}
           bulkAssignAction={bulkAssignRfqAction}

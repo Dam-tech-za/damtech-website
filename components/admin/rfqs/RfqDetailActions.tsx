@@ -1,0 +1,111 @@
+"use client";
+
+import { useRef, useState } from "react";
+import {
+  AdminPortalMenu,
+  type AdminPortalMenuItem,
+} from "@/components/admin/ui/AdminPortalMenu";
+import { DeleteRfqDialog } from "./DeleteRfqDialog";
+import type { RfqDeleteSummary } from "@/lib/admin/rfqs/delete-rfq";
+
+type RfqDetailActionsProps = {
+  summary: RfqDeleteSummary;
+  canManage: boolean;
+  canDelete: boolean;
+  hasQuote: boolean;
+  canQuote: boolean;
+};
+
+function TrashIcon() {
+  return (
+    <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden>
+      <path
+        d="M9 3h6l1 2h4v2H4V5h4l1-2Zm1 6h2v9h-2V9Zm4 0h2v9h-2V9ZM7 9h2v9H7V9Z"
+        fill="currentColor"
+      />
+    </svg>
+  );
+}
+
+export function RfqDetailActions({
+  summary,
+  canManage,
+  canDelete,
+  hasQuote,
+  canQuote,
+}: RfqDetailActionsProps) {
+  const [deleteOpen, setDeleteOpen] = useState(false);
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const detailHref = `/admin/rfqs/${summary.id}/`;
+
+  const items: AdminPortalMenuItem[] = [
+    { id: "edit", label: "Edit", href: detailHref },
+    ...(canManage
+      ? ([
+          { id: "sep-workflow", label: "", separator: true },
+          { id: "assign", label: "Assign", href: `${detailHref}#assign` },
+          {
+            id: "status",
+            label: "Update status",
+            href: `${detailHref}#status`,
+          },
+          {
+            id: "info",
+            label: "Request information",
+            href: `${detailHref}#information`,
+          },
+          ...(canQuote && !hasQuote
+            ? [
+                {
+                  id: "convert",
+                  label: "Convert to quote",
+                  href: `${detailHref}#rfq-prepare-quote`,
+                },
+              ]
+            : []),
+          { id: "sep-close", label: "", separator: true },
+          {
+            id: "close",
+            label: "Close RFQ",
+            href: `${detailHref}#status`,
+            tone: "danger",
+          },
+        ] satisfies AdminPortalMenuItem[])
+      : []),
+    ...(canDelete
+      ? ([
+          { id: "sep-delete", label: "", separator: true },
+          {
+            id: "delete",
+            label: "Delete RFQ",
+            tone: "danger",
+            icon: <TrashIcon />,
+            onSelect: () => setDeleteOpen(true),
+          },
+        ] satisfies AdminPortalMenuItem[])
+      : []),
+  ];
+
+  return (
+    <>
+      <AdminPortalMenu
+        items={items}
+        triggerLabel="More actions"
+        triggerClassName="btn btn--md btn--secondary"
+        menuClassName="admin-portal-menu__list rfq-action-menu__list"
+        align="end"
+        triggerRef={triggerRef}
+      >
+        More actions
+      </AdminPortalMenu>
+
+      <DeleteRfqDialog
+        open={deleteOpen}
+        summary={summary}
+        fromDetailPage
+        returnFocusRef={triggerRef}
+        onClose={() => setDeleteOpen(false)}
+      />
+    </>
+  );
+}
