@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import { AdminButton } from "@/components/admin/ui";
 
 type Props = {
   kind: "company_logo" | "pdf_logo" | "signature" | "header_image";
@@ -105,14 +106,14 @@ export function BrandAssetUploader({
         onChange={(e) => onFileChange(e.target.files)}
       />
       <div className="admin-panel__actions" style={{ marginTop: "0.75rem" }}>
-        <button
+        <AdminButton
           type="button"
-          className="btn btn--md btn--secondary"
+          variant="secondary"
           disabled={pending || !path}
           onClick={onRemove}
         >
           Remove
-        </button>
+        </AdminButton>
       </div>
       {progress ? <p className="admin-empty__hint">{progress}</p> : null}
       {error ? <p className="form-error">{error}</p> : null}

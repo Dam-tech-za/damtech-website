@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 
 type AdminPanelProps = {
+  id?: string;
   title?: string;
   description?: string;
   actions?: ReactNode;
@@ -10,6 +11,7 @@ type AdminPanelProps = {
 };
 
 export function AdminPanel({
+  id,
   title,
   description,
   actions,
@@ -19,6 +21,7 @@ export function AdminPanel({
 }: AdminPanelProps) {
   return (
     <section
+      id={id}
       className={[
         "admin-panel",
         compact ? "admin-panel--compact" : "",

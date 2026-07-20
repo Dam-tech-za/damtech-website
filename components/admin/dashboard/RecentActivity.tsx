@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { DashboardActivityItem } from "@/lib/admin/dashboard/types";
+import { AdminPanel } from "@/components/admin/ui";
 import { DashboardEmptyState } from "./DashboardEmptyState";
 
 type RecentActivityProps = {
@@ -19,10 +20,7 @@ function relativeTime(iso: string): string {
 
 export function RecentActivity({ items }: RecentActivityProps) {
   return (
-    <section className="dash-panel" aria-labelledby="recent-activity-heading">
-      <header className="dash-panel__header">
-        <h2 id="recent-activity-heading">Recent Activity</h2>
-      </header>
+    <AdminPanel title="Recent Activity">
       {items.length === 0 ? (
         <DashboardEmptyState
           title="No recent activity yet."
@@ -51,6 +49,6 @@ export function RecentActivity({ items }: RecentActivityProps) {
           ))}
         </ul>
       )}
-    </section>
+    </AdminPanel>
   );
 }

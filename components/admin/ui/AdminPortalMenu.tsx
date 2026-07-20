@@ -40,7 +40,7 @@ const SIDE_OFFSET = 6;
 export function AdminPortalMenu({
   items,
   triggerLabel,
-  triggerClassName = "btn btn--sm btn--secondary",
+  triggerClassName = "admin-btn admin-btn--secondary admin-btn--sm",
   menuClassName = "admin-portal-menu__list",
   align = "end",
   children,

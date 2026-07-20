@@ -3,6 +3,11 @@
 import { useMemo, useState, useTransition } from "react";
 import { searchCustomersAction } from "@/app/admin/customers/actions";
 import {
+  AdminButton,
+  AdminInput,
+  AdminSelect,
+} from "@/components/admin/ui";
+import {
   CustomerSummaryCard,
   type CustomerRecord,
 } from "./CustomerSummaryCard";
@@ -56,8 +61,7 @@ export function CustomerSelector({
       <div className="admin-form-grid">
         <label className="admin-field admin-field--full">
           <span>Customer</span>
-          <select
-            className="form-input"
+          <AdminSelect
             value={value}
             onChange={(event) => selectCustomer(customers.find((item) => item.id === event.target.value) ?? null)}
             required
@@ -68,24 +72,24 @@ export function CustomerSelector({
                 {customer.company_name || customer.name}
               </option>
             ))}
-          </select>
+          </AdminSelect>
         </label>
         <div className="admin-panel__actions" style={{ gridColumn: "1 / -1" }}>
-          <button
+          <AdminButton
             type="button"
-            className="btn btn--md btn--secondary"
+            variant="secondary"
             onClick={() => setSearchOpen((prev) => !prev)}
           >
             {searchOpen ? "Hide search" : "Search customers"}
-          </button>
+          </AdminButton>
           {canCreateCustomer ? (
-            <button
+            <AdminButton
               type="button"
-              className="btn btn--md btn--secondary"
+              variant="secondary"
               onClick={() => setCreateOpen(true)}
             >
               New customer
-            </button>
+            </AdminButton>
           ) : null}
         </div>
       </div>
@@ -97,19 +101,18 @@ export function CustomerSelector({
           <header className="admin-panel__header admin-panel__header--row">
             <h3>Search customers</h3>
             <div className="admin-panel__actions">
-              <button
+              <AdminButton
                 type="button"
-                className="btn btn--md btn--secondary"
+                variant="secondary"
                 onClick={() => runSearch()}
                 disabled={searching}
               >
                 {searching ? "Searching…" : "Search"}
-              </button>
+              </AdminButton>
             </div>
           </header>
           <div className="admin-inline-form">
-            <input
-              className="form-input"
+            <AdminInput
               value={query}
               onChange={(event) => setQuery(event.target.value)}
               placeholder="Search name, company, email, phone, VAT…"
@@ -120,14 +123,14 @@ export function CustomerSelector({
                 }
               }}
             />
-            <button
+            <AdminButton
               type="button"
-              className="btn btn--md btn--primary"
+              variant="primary"
               onClick={() => runSearch()}
               disabled={searching}
             >
               Search
-            </button>
+            </AdminButton>
           </div>
           {searchError ? <p className="admin-flash admin-flash--error">{searchError}</p> : null}
           {results.length === 0 ? (
@@ -154,13 +157,14 @@ export function CustomerSelector({
                       <td>{customer.phone ?? "—"}</td>
                       <td>{customer.province ?? "—"}</td>
                       <td>
-                        <button
+                        <AdminButton
                           type="button"
-                          className="btn btn--sm btn--secondary"
+                          size="sm"
+                          variant="secondary"
                           onClick={() => selectCustomer(customer)}
                         >
                           Select
-                        </button>
+                        </AdminButton>
                       </td>
                     </tr>
                   ))}

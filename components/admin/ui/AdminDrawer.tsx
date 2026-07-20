@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useId, useRef, type ReactNode } from "react";
+import { AdminButton } from "./AdminButton";
 
 type AdminDrawerProps = {
   open: boolean;
@@ -43,13 +44,9 @@ export function AdminDrawer({ open, title, onClose, children }: AdminDrawerProps
       >
         <header className="admin-drawer__header">
           <h2 id={titleId}>{title}</h2>
-          <button
-            type="button"
-            className="btn btn--sm btn--secondary"
-            onClick={onClose}
-          >
+          <AdminButton type="button" size="sm" variant="secondary" onClick={onClose}>
             Close
-          </button>
+          </AdminButton>
         </header>
         <div className="admin-drawer__body">{children}</div>
       </div>

@@ -1,6 +1,4 @@
 @import "tailwindcss";
-@import "../styles/admin-theme.css";
-@import "../styles/admin-layout.css";
 
 @layer base {
   :root {
@@ -5244,47 +5242,6 @@
     align-items: start;
   }
 
-  .dash-panel {
-    background: #fff;
-    border: 1px solid #d7e2ec;
-    border-radius: 1rem;
-    padding: 1.2rem 1.25rem;
-    box-shadow: 0 8px 20px rgba(3, 25, 38, 0.03);
-  }
-
-  .dash-panel--empty {
-    min-height: 0;
-  }
-
-  .dash-panel__header {
-    display: flex;
-    justify-content: space-between;
-    gap: 0.75rem;
-    align-items: flex-start;
-    margin-bottom: 1rem;
-  }
-
-  .dash-panel__header h2 {
-    margin: 0;
-    font-size: 1.2rem;
-    font-weight: 700;
-    letter-spacing: -0.02em;
-  }
-
-  .dash-panel__subtitle {
-    margin: 0.25rem 0 0;
-    font-size: 0.82rem;
-    color: var(--color-body-gray-dark);
-  }
-
-  .dash-panel__link {
-    font-size: 0.85rem;
-    font-weight: 600;
-    color: var(--color-accent-blue);
-    text-decoration: none;
-    white-space: nowrap;
-  }
-
   .dash-note {
     margin: 0.85rem 0 0;
     font-size: 0.78rem;
@@ -6833,10 +6790,6 @@ a.admin-metric-compact:focus-visible {
   background: rgba(2, 107, 198, 0.22);
 }
 
-.admin-sidebar {
-  width: 16rem;
-}
-
 .rfq-status-strip__list {
   display: flex;
   flex-wrap: wrap;
@@ -6897,126 +6850,7 @@ a.admin-metric-compact:focus-visible {
   }
 }
 
-.rfq-toolbar {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.65rem;
-  align-items: flex-end;
-}
-
-.rfq-toolbar__form {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.55rem;
-  flex: 1 1 20rem;
-  align-items: flex-end;
-}
-
-.rfq-toolbar__search {
-  position: relative;
-  flex: 1 1 14rem;
-  min-width: min(100%, 14rem);
-}
-
-.rfq-toolbar__search-icon {
-  position: absolute;
-  left: 0.75rem;
-  top: 50%;
-  transform: translateY(-50%);
-  color: #5b6b7c;
-  pointer-events: none;
-}
-
-.rfq-toolbar__search .form-input {
-  padding-left: 2.35rem;
-}
-
-.rfq-toolbar__field {
-  flex: 0 1 10rem;
-  min-width: 9rem;
-}
-
-.rfq-toolbar__input {
-  min-height: 2.75rem;
-  height: 2.75rem;
-  font-size: 0.875rem;
-}
-
-.rfq-advanced-filters__form {
-  display: grid;
-  gap: 1rem;
-  overflow: auto;
-  max-height: calc(100vh - 5rem);
-}
-
-.rfq-advanced-filters__group {
-  border: 0;
-  margin: 0;
-  padding: 0;
-  display: grid;
-  gap: 0.65rem;
-}
-
-.rfq-advanced-filters__group legend {
-  font-size: 0.8rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  color: #5b6b7c;
-  margin-bottom: 0.15rem;
-}
-
-.rfq-advanced-filters__group label {
-  display: grid;
-  gap: 0.25rem;
-  font-size: 0.8125rem;
-  color: #334155;
-}
-
-.rfq-advanced-filters__row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0.55rem;
-}
-
-.rfq-advanced-filters__footer {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  padding-top: 0.5rem;
-  border-top: 1px solid #e8eef4;
-}
-
-.rfq-active-filters__list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.45rem;
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.rfq-active-filters__chip,
-.rfq-active-filters__clear {
-  display: inline-flex;
-  align-items: center;
-  min-height: 2rem;
-  padding: 0.25rem 0.65rem;
-  border-radius: 999px;
-  font-size: 0.8125rem;
-  text-decoration: none;
-}
-
-.rfq-active-filters__chip {
-  background: #e8f4fc;
-  color: #0b1f33;
-  border: 1px solid #b9d9f0;
-}
-
-.rfq-active-filters__clear {
-  color: #1a6fa8;
-  font-weight: 600;
-}
+/* Legacy RFQ filter styles removed — see styles/admin-theme.css */
 
 .rfq-inbox-panel {
   background: #fff;
@@ -7100,7 +6934,7 @@ a.admin-metric-compact:focus-visible {
 .rfq-inbox-table col.rfq-col-size { width: 10%; }
 .rfq-inbox-table col.rfq-col-status { width: 8%; }
 .rfq-inbox-table col.rfq-col-submitted { width: 8%; }
-.rfq-inbox-table col.rfq-col-actions { width: 8%; min-width: 6.5rem; }
+.rfq-inbox-table col.rfq-col-actions { width: 9%; min-width: 7.5rem; }
 
 .rfq-inbox-table thead th {
   background: #f4f8fb;
@@ -7700,3 +7534,6 @@ a.admin-metric-compact:focus-visible {
   box-shadow: 0 8px 24px rgba(15, 39, 68, 0.12);
   font-size: 0.875rem;
 }
+
+@import "../styles/admin-theme.css";
+@import "../styles/admin-layout.css";

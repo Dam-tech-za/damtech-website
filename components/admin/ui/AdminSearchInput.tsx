@@ -1,3 +1,5 @@
+import { AdminSearchField } from "./AdminSearchField";
+
 type AdminSearchInputProps = {
   name?: string;
   defaultValue?: string;
@@ -14,16 +16,13 @@ export function AdminSearchInput({
   id = "admin-search",
 }: AdminSearchInputProps) {
   return (
-    <label className="admin-search" htmlFor={id}>
-      <span className="admin-search__label">{label}</span>
-      <input
-        id={id}
-        name={name}
-        type="search"
-        className="form-input"
-        defaultValue={defaultValue}
-        placeholder={placeholder}
-      />
-    </label>
+    <AdminSearchField
+      id={id}
+      name={name}
+      defaultValue={defaultValue}
+      placeholder={placeholder}
+      label={label}
+      showIcon={false}
+    />
   );
 }

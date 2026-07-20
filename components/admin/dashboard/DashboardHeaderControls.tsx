@@ -6,7 +6,7 @@ import {
   DASHBOARD_RANGE_OPTIONS,
   type DashboardRangeId,
 } from "@/lib/admin/dashboard/types";
-import { AdminButton } from "@/components/admin/ui";
+import { AdminButton, AdminSelect } from "@/components/admin/ui";
 
 type DashboardHeaderControlsProps = {
   rangeId: DashboardRangeId;
@@ -22,8 +22,8 @@ export function DashboardHeaderControls({
     <>
       <label className="dash-header__range">
         <span className="dash-header__range-label">Date range</span>
-        <select
-          className="form-input dash-header__select"
+        <AdminSelect
+          className="dash-header__select"
           value={rangeId}
           aria-label="Dashboard date range"
           disabled={pending}
@@ -40,7 +40,7 @@ export function DashboardHeaderControls({
               {option.label}
             </option>
           ))}
-        </select>
+        </AdminSelect>
       </label>
       <AdminButton
         variant="secondary"

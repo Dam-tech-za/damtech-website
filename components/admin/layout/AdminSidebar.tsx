@@ -147,6 +147,32 @@ function SidebarLink({
   );
 }
 
+function CollapseIcon({ expanded }: { expanded: boolean }) {
+  return expanded ? (
+    <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden>
+      <path
+        d="M8 6h11M8 12h11M8 18h7M5 6l-2 2 2 2M5 12l-2 2 2 2"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        fill="none"
+      />
+    </svg>
+  ) : (
+    <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden>
+      <path
+        d="M4 6h11M4 12h11M4 18h7M17 6l3 2-3 2M17 12l3 2-3 2"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        fill="none"
+      />
+    </svg>
+  );
+}
+
 export function AdminSidebar({
   items,
   pathname,
@@ -176,10 +202,11 @@ export function AdminSidebar({
             className="admin-sidebar__collapse-btn"
             onClick={onToggleCollapse}
             aria-pressed={collapsed}
-            aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+            aria-label={collapsed ? "Expand sidebar navigation" : "Collapse sidebar navigation"}
             title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
           >
-            {collapsed ? "»" : "«"}
+            <CollapseIcon expanded={!collapsed} />
+            {collapsed ? <span className="sr-only">Expand sidebar</span> : null}
           </button>
         ) : null}
       </div>

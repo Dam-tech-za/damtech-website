@@ -1,4 +1,5 @@
 import type { DashboardBreakdownRow } from "@/lib/admin/dashboard/types";
+import { AdminPanel } from "@/components/admin/ui";
 import { DashboardEmptyState } from "./DashboardEmptyState";
 
 type BreakdownPanelProps = {
@@ -15,13 +16,7 @@ export function BreakdownPanel({
   const max = Math.max(...rows.map((row) => row.count), 1);
 
   return (
-    <section
-      className={`dash-panel${rows.length === 0 ? " dash-panel--empty" : ""}`}
-      aria-label={title}
-    >
-      <header className="dash-panel__header">
-        <h2>{title}</h2>
-      </header>
+    <AdminPanel title={title}>
       {rows.length === 0 ? (
         <DashboardEmptyState title={emptyTitle} />
       ) : (
@@ -44,6 +39,6 @@ export function BreakdownPanel({
           ))}
         </ul>
       )}
-    </section>
+    </AdminPanel>
   );
 }

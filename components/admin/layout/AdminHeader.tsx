@@ -1,5 +1,6 @@
 import { AdminBreadcrumbs, type AdminBreadcrumb } from "./AdminBreadcrumbs";
 import { AdminUserMenu } from "./AdminUserMenu";
+import { AdminIconButton } from "@/components/admin/ui/AdminIconButton";
 
 type AdminHeaderProps = {
   title: string;
@@ -10,6 +11,8 @@ type AdminHeaderProps = {
   avatarUrl: string | null;
   onMenuToggleId?: string;
   showTitle?: boolean;
+  sidebarCollapsed?: boolean;
+  onExpandSidebar?: () => void;
 };
 
 export function AdminHeader({
@@ -21,6 +24,8 @@ export function AdminHeader({
   avatarUrl,
   onMenuToggleId = "admin-mobile-nav-toggle",
   showTitle = false,
+  sidebarCollapsed = false,
+  onExpandSidebar,
 }: AdminHeaderProps) {
   return (
     <header className="admin-header">
@@ -34,6 +39,24 @@ export function AdminHeader({
           <span />
           <span />
         </label>
+        {sidebarCollapsed && onExpandSidebar ? (
+          <AdminIconButton
+            className="admin-header__sidebar-expand"
+            label="Expand sidebar navigation"
+            onClick={onExpandSidebar}
+          >
+            <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden>
+              <path
+                d="M4 6h11M4 12h11M4 18h7M17 6l3 2-3 2M17 12l3 2-3 2"
+                stroke="currentColor"
+                strokeWidth="1.8"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                fill="none"
+              />
+            </svg>
+          </AdminIconButton>
+        ) : null}
         <div>
           <AdminBreadcrumbs items={breadcrumbs} />
           {showTitle ? (

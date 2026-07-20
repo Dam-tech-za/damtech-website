@@ -8,6 +8,7 @@ import type { RfqInboxFilters } from "@/lib/admin/rfqs/rfq-inbox-types";
 import { RfqBulkActions } from "./RfqBulkActions";
 import { RfqColumnChooser, loadOptionalColumns } from "./RfqColumnChooser";
 import { RfqInboxCard } from "./RfqInboxCard";
+import { AdminSelect } from "@/components/admin/ui";
 import { RfqInboxTableRow } from "./RfqInboxRow";
 
 type StaffMember = {
@@ -309,10 +310,9 @@ function RfqInboxPagination({
             <input key={key} type="hidden" name={key} value={value} />
           ))}
         <label htmlFor="rfq-page-size">Page size</label>
-        <select
+        <AdminSelect
           id="rfq-page-size"
           name="pageSize"
-          className="form-input"
           defaultValue={String(pageSize)}
           onChange={(event) => event.currentTarget.form?.requestSubmit()}
         >
@@ -321,7 +321,7 @@ function RfqInboxPagination({
               {size}
             </option>
           ))}
-        </select>
+        </AdminSelect>
       </form>
     </nav>
   );

@@ -29,6 +29,30 @@ import {
 } from "@/lib/rfq/enquiry-channel";
 import { ResendRfqNotificationButton } from "@/components/admin/ResendRfqNotificationButton";
 import { RfqDetailActions } from "@/components/admin/rfqs/RfqDetailActions";
+import {
+  AdminButton,
+  AdminCheckbox,
+  AdminDateInput,
+  AdminEmptyState,
+  AdminFieldError,
+  AdminHelpText,
+  AdminInput,
+  AdminPageHeader,
+  AdminPanel,
+  AdminSelect,
+  AdminStatusBadge,
+  AdminTable,
+  AdminTabs,
+  AdminTextarea,
+} from "@/components/admin/ui";
+
+const RFQ_SECTION_TABS = [
+  { id: "overview", label: "Overview", href: "#rfq-overview" },
+  { id: "assets", label: "Assets & Measurements", href: "#rfq-assets" },
+  { id: "attachments", label: "Attachments", href: "#rfq-attachments" },
+  { id: "communication", label: "Communication", href: "#rfq-communication" },
+  { id: "activity", label: "Activity", href: "#rfq-activity" },
+] as const;
 
 type PageProps = {
   params: Promise<{ id: string }>;
@@ -168,91 +192,98 @@ export default async function AdminRfqDetailPage({
         ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(rfq.project_location)}`
         : null;
 
+  const headerDescription = `Submitted ${new Date(rfq.submitted_at).toLocaleString("en-ZA")}${
+    assignee
+      ? ` · Estimator: ${assignee.full_name || assignee.email}`
+      : " · Unassigned"
+  }`;
+
   return (
     <div className="admin-rfq-detail admin-stack--page">
-      <header className="admin-page-header">
-        <div className="admin-page-header__copy">
-          <h1 className="admin-page-header__title">{rfq.rfq_number}</h1>
-          <p className="admin-page-header__description">
-            Submitted {new Date(rfq.submitted_at).toLocaleString("en-ZA")} ·{" "}
+      <AdminPageHeader
+        title={rfq.rfq_number}
+        description={headerDescription}
+        toolbar={
+          <>
             <span className={enquiryChannelBadgeClass(enquiryChannel)}>
               {enquiryChannelLabel(enquiryChannel)}
             </span>
             {" · "}
-            <span className={`admin-status admin-status--${rfq.status}`}>
-              {rfq.status.replaceAll("_", " ")}
-            </span>
-            {assignee
-              ? ` · Estimator: ${assignee.full_name || assignee.email}`
-              : " · Unassigned"}
-          </p>
-          {quantityLines.length ? (
-            <ul className="admin-qty-list">
-              {quantityLines.map((line) => (
-                <li key={line}>{line} (estimate)</li>
-              ))}
-            </ul>
-          ) : rfq.approximate_project_size_text ||
-            rfq.approximate_project_size ? (
-            <p className="admin-empty__hint">
-              Customer size note:{" "}
-              {rfq.approximate_project_size_text ||
-                rfq.approximate_project_size}
-            </p>
-          ) : null}
-        </div>
-        <div className="admin-page-header__actions">
-          {canManage ? <ResendRfqNotificationButton rfqId={rfq.id} /> : null}
-          {rfq.email ? (
-            <a className="btn btn--md btn--secondary" href={`mailto:${rfq.email}`}>
-              Email customer
-            </a>
-          ) : null}
-          {rfq.phone ? (
-            <a className="btn btn--md btn--secondary" href={`tel:${rfq.phone}`}>
-              Call
-            </a>
-          ) : null}
-          {quote ? (
-            <Link
-              className="btn btn--md btn--secondary"
-              href={`/admin/quotes/${quote.id}/edit/`}
-            >
-              Open quote {quote.quote_number}
-            </Link>
-          ) : null}
-          {canQuote && !quote ? (
-            <a className="btn btn--md btn--primary" href="#rfq-prepare-quote">
-              Convert to Quote
-            </a>
-          ) : null}
-          {canManage || canDelete ? (
-            <RfqDetailActions
-              summary={{
-                id: rfq.id,
-                rfqNumber: rfq.rfq_number,
-                customerName: rfq.contact_name,
-                companyName: rfq.company_name,
-                serviceLabel: rfq.service_required ?? "Not specified",
-                submittedAt: rfq.submitted_at,
-                status: rfq.status,
-              }}
-              canManage={canManage}
-              canDelete={canDelete}
-              hasQuote={Boolean(quote)}
-              canQuote={canQuote}
-            />
-          ) : null}
-        </div>
-      </header>
+            <AdminStatusBadge status={rfq.status} domain="rfq" />
+            {quantityLines.length ? (
+              <ul className="admin-qty-list">
+                {quantityLines.map((line) => (
+                  <li key={line}>{line} (estimate)</li>
+                ))}
+              </ul>
+            ) : rfq.approximate_project_size_text ||
+              rfq.approximate_project_size ? (
+              <AdminHelpText>
+                Customer size note:{" "}
+                {rfq.approximate_project_size_text ||
+                  rfq.approximate_project_size}
+              </AdminHelpText>
+            ) : null}
+          </>
+        }
+        secondaryActions={
+          <>
+            {canManage ? <ResendRfqNotificationButton rfqId={rfq.id} /> : null}
+            {rfq.email ? (
+              <AdminButton href={`mailto:${rfq.email}`} variant="secondary">
+                Email customer
+              </AdminButton>
+            ) : null}
+            {rfq.phone ? (
+              <AdminButton href={`tel:${rfq.phone}`} variant="secondary">
+                Call
+              </AdminButton>
+            ) : null}
+            {quote ? (
+              <AdminButton
+                href={`/admin/quotes/${quote.id}/edit/`}
+                variant="secondary"
+              >
+                Open quote {quote.quote_number}
+              </AdminButton>
+            ) : null}
+            {canQuote && !quote ? (
+              <AdminButton href="#rfq-prepare-quote" variant="primary">
+                Convert to Quote
+              </AdminButton>
+            ) : null}
+            {canManage || canDelete ? (
+              <RfqDetailActions
+                summary={{
+                  id: rfq.id,
+                  rfqNumber: rfq.rfq_number,
+                  customerName: rfq.contact_name,
+                  companyName: rfq.company_name,
+                  serviceLabel: rfq.service_required ?? "Not specified",
+                  submittedAt: rfq.submitted_at,
+                  status: rfq.status,
+                }}
+                canManage={canManage}
+                canDelete={canDelete}
+                hasQuote={Boolean(quote)}
+                canQuote={canQuote}
+              />
+            ) : null}
+          </>
+        }
+      />
 
       {query.convertError ? (
-        <p className="form-error">{query.convertError}</p>
+        <AdminFieldError>{query.convertError}</AdminFieldError>
       ) : null}
-      {query.assetError ? <p className="form-error">{query.assetError}</p> : null}
-      {query.infoError ? <p className="form-error">{query.infoError}</p> : null}
+      {query.assetError ? (
+        <AdminFieldError>{query.assetError}</AdminFieldError>
+      ) : null}
+      {query.infoError ? (
+        <AdminFieldError>{query.infoError}</AdminFieldError>
+      ) : null}
       {query.infoLink ? (
-        <p className="admin-empty__hint">
+        <AdminHelpText>
           Customer information link (copy now — token is not stored in plain
           text):{" "}
           <code>
@@ -261,48 +292,15 @@ export default async function AdminRfqDetailPage({
               : ""}
             {query.infoLink}
           </code>
-        </p>
+        </AdminHelpText>
       ) : null}
 
-      <div className="admin-tabs">
-        <nav className="admin-tabs__nav" aria-label="RFQ sections">
-          <ul>
-            <li>
-              <a className="admin-tabs__link" href="#rfq-overview">
-                Overview
-              </a>
-            </li>
-            <li>
-              <a className="admin-tabs__link" href="#rfq-assets">
-                Assets &amp; Measurements
-              </a>
-            </li>
-            <li>
-              <a className="admin-tabs__link" href="#rfq-attachments">
-                Attachments
-              </a>
-            </li>
-            <li>
-              <a className="admin-tabs__link" href="#rfq-communication">
-                Communication
-              </a>
-            </li>
-            <li>
-              <a className="admin-tabs__link" href="#rfq-activity">
-                Activity
-              </a>
-            </li>
-          </ul>
-        </nav>
-      </div>
+      <AdminTabs items={[...RFQ_SECTION_TABS]} activeId="" />
 
       <div className="admin-detail-layout admin-detail-layout--with-aside">
         <div className="admin-rfq-detail__main">
       <div className="admin-rfq-detail__grid" id="rfq-overview">
-        <section className="admin-panel">
-          <header className="admin-panel__header">
-            <h2>Customer</h2>
-          </header>
+        <AdminPanel title="Customer">
           <dl className="admin-dl">
             <div>
               <dt>Contact</dt>
@@ -342,12 +340,12 @@ export default async function AdminRfqDetailPage({
             </div>
           </dl>
           {customer ? (
-            <p className="admin-empty__hint">
+            <AdminHelpText>
               Linked customer:{" "}
               <Link href={`/admin/customers/${customer.id}/`}>
                 {customer.name}
               </Link>
-            </p>
+            </AdminHelpText>
           ) : null}
           <h3 className="admin-subheading">Contact history</h3>
           <ol className="admin-timeline">
@@ -372,12 +370,9 @@ export default async function AdminRfqDetailPage({
                 </li>
               ))}
           </ol>
-        </section>
+        </AdminPanel>
 
-        <section className="admin-panel">
-          <header className="admin-panel__header">
-            <h2>Project</h2>
-          </header>
+        <AdminPanel title="Project">
           <dl className="admin-dl">
             <div>
               <dt>Location</dt>
@@ -414,27 +409,22 @@ export default async function AdminRfqDetailPage({
           </dl>
           <h3 className="admin-subheading">General description</h3>
           <p className="admin-prose">{rfq.project_description}</p>
-        </section>
+        </AdminPanel>
 
-        <section className="admin-panel" id="rfq-assets">
-          <header className="admin-panel__header">
-            <h2>Assets &amp; measurements</h2>
-            <p className="admin-empty__hint">
-              {isSimpleLead
-                ? "Simple public quotes start without assets. Enrich when more detail arrives."
-                : "Public calculations are provisional. Confirm before quoting."}
-            </p>
-          </header>
+        <AdminPanel
+          id="rfq-assets"
+          title="Assets & measurements"
+          description={
+            isSimpleLead
+              ? "Simple public quotes start without assets. Enrich when more detail arrives."
+              : "Public calculations are provisional. Confirm before quoting."
+          }
+        >
           {isSimpleLead ? (
-            <div className="admin-empty">
-              <p>No structured assets yet — this is a valid simple enquiry.</p>
-              <p className="admin-empty__hint">
-                Soft estimates (not confirmed): area{" "}
-                {rfq.estimated_area_m2 ?? "—"} m² · capacity{" "}
-                {rfq.estimated_capacity_kl ?? "—"} kL · diameter{" "}
-                {rfq.estimated_diameter_m ?? "—"} m · height{" "}
-                {rfq.estimated_height_m ?? "—"} m
-              </p>
+            <AdminEmptyState
+              title="No structured assets yet — this is a valid simple enquiry."
+              description={`Soft estimates (not confirmed): area ${rfq.estimated_area_m2 ?? "—"} m² · capacity ${rfq.estimated_capacity_kl ?? "—"} kL · diameter ${rfq.estimated_diameter_m ?? "—"} m · height ${rfq.estimated_height_m ?? "—"} m`}
+            >
               {rfq.simple_service_fields &&
               Object.keys(rfq.simple_service_fields as object).length ? (
                 <pre className="admin-prose" style={{ whiteSpace: "pre-wrap" }}>
@@ -442,19 +432,16 @@ export default async function AdminRfqDetailPage({
                 </pre>
               ) : null}
               {canManage ? (
-                <div className="admin-panel__actions" style={{ marginTop: 12 }}>
-                  <a className="btn btn--md btn--secondary" href="#rfq-info-request">
+                <>
+                  <AdminButton href="#rfq-info-request" variant="secondary">
                     Request more information
-                  </a>
-                  <a
-                    className="btn btn--md btn--secondary"
-                    href="#rfq-site-measurement"
-                  >
+                  </AdminButton>
+                  <AdminButton href="#rfq-site-measurement" variant="secondary">
                     Schedule / mark site measurement
-                  </a>
-                </div>
+                  </AdminButton>
+                </>
               ) : null}
-            </div>
+            </AdminEmptyState>
           ) : (
             <RfqAssetReviewPanels
               assets={assetRows}
@@ -462,7 +449,7 @@ export default async function AdminRfqDetailPage({
               canManage={canManage}
             />
           )}
-        </section>
+        </AdminPanel>
 
         <CalculatorResultsPanel
           calculatorType={rfq.calculator_type}
@@ -470,14 +457,9 @@ export default async function AdminRfqDetailPage({
           results={rfq.calculator_result as Record<string, unknown> | null}
         />
 
-        <section className="admin-panel" id="rfq-attachments">
-          <header className="admin-panel__header">
-            <h2>Attachments</h2>
-          </header>
+        <AdminPanel id="rfq-attachments" title="Attachments">
           {signedAttachments.length === 0 ? (
-            <div className="admin-empty">
-              <p>No attachments.</p>
-            </div>
+            <AdminEmptyState title="No attachments." />
           ) : (
             <ul className="admin-list">
               {signedAttachments.map((file) => (
@@ -508,31 +490,27 @@ export default async function AdminRfqDetailPage({
               ))}
             </ul>
           )}
-        </section>
+        </AdminPanel>
 
         {canManage ? (
-          <section className="admin-panel">
-            <header className="admin-panel__header">
-              <h2>Status, assignment & close</h2>
-            </header>
+          <AdminPanel title="Status, assignment & close">
             <form action={updateRfqStatusAction} className="admin-inline-form">
               <input type="hidden" name="rfqId" value={rfq.id} />
-              <select name="status" className="form-input" defaultValue={rfq.status}>
+              <AdminSelect name="status" defaultValue={rfq.status}>
                 {RFQ_STATUSES.map((status) => (
                   <option key={status} value={status}>
                     {status}
                   </option>
                 ))}
-              </select>
-              <button type="submit" className="btn btn--md btn--primary">
+              </AdminSelect>
+              <AdminButton type="submit" variant="primary">
                 Update status
-              </button>
+              </AdminButton>
             </form>
             <form action={assignRfqAction} className="admin-inline-form">
               <input type="hidden" name="rfqId" value={rfq.id} />
-              <select
+              <AdminSelect
                 name="assignedTo"
-                className="form-input"
                 defaultValue={rfq.assigned_to ?? ""}
               >
                 <option value="">Unassigned</option>
@@ -541,62 +519,60 @@ export default async function AdminRfqDetailPage({
                     {person.full_name || person.email}
                   </option>
                 ))}
-              </select>
-              <button type="submit" className="btn btn--md btn--secondary">
+              </AdminSelect>
+              <AdminButton type="submit" variant="secondary">
                 Assign estimator
-              </button>
+              </AdminButton>
             </form>
             <div className="admin-panel__actions">
               <form action={updateRfqStatusAction}>
                 <input type="hidden" name="rfqId" value={rfq.id} />
                 <input type="hidden" name="status" value="spam" />
-                <button type="submit" className="btn btn--md btn--secondary">
+                <AdminButton type="submit" variant="secondary">
                   Mark spam
-                </button>
+                </AdminButton>
               </form>
               <form action={updateRfqStatusAction}>
                 <input type="hidden" name="rfqId" value={rfq.id} />
                 <input type="hidden" name="status" value="closed" />
-                <button type="submit" className="btn btn--md btn--secondary">
+                <AdminButton type="submit" variant="secondary">
                   Close RFQ
-                </button>
+                </AdminButton>
               </form>
             </div>
-          </section>
+          </AdminPanel>
         ) : null}
 
         {canManage ? (
-          <section id="rfq-info-request" className="admin-panel">
-            <header className="admin-panel__header">
-              <h2>Request more information</h2>
-            </header>
+          <AdminPanel id="rfq-info-request" title="Request more information">
             <form action={createInfoRequestAction} className="admin-stack-form">
               <input type="hidden" name="rfqId" value={rfq.id} />
-              <select name="assetId" className="form-input" defaultValue="">
+              <AdminSelect name="assetId" defaultValue="">
                 <option value="">All assets</option>
                 {assetRows.map((asset) => (
                   <option key={asset.id} value={asset.id}>
                     {asset.asset_name}
                   </option>
                 ))}
-              </select>
+              </AdminSelect>
               <div className="admin-checkbox-grid">
                 {INFO_REQUEST_FIELDS.map((field) => (
-                  <label key={field.id} className="admin-checkbox">
-                    <input type="checkbox" name="fields" value={field.id} />
-                    {field.label}
-                  </label>
+                  <AdminCheckbox
+                    key={field.id}
+                    name="fields"
+                    value={field.id}
+                    label={field.label}
+                  />
                 ))}
               </div>
-              <textarea
+              <AdminTextarea
                 name="message"
-                className="form-input"
                 rows={3}
                 placeholder="Message shown to the customer"
               />
-              <button type="submit" className="btn btn--md btn--primary">
+              <AdminButton type="submit" variant="primary">
                 Generate secure customer link
-              </button>
+              </AdminButton>
             </form>
             {(infoRequests ?? []).length ? (
               <ul className="admin-list">
@@ -609,50 +585,39 @@ export default async function AdminRfqDetailPage({
                 ))}
               </ul>
             ) : null}
-          </section>
+          </AdminPanel>
         ) : null}
 
         {canManage ? (
-          <section id="rfq-site-measurement" className="admin-panel">
-            <header className="admin-panel__header">
-              <h2>Schedule site measurement</h2>
-            </header>
+          <AdminPanel id="rfq-site-measurement" title="Schedule site measurement">
             <form
               action={updateMeasurementScheduleAction}
               className="admin-stack-form"
             >
               <input type="hidden" name="rfqId" value={rfq.id} />
-              <label className="admin-checkbox">
-                <input
-                  type="checkbox"
-                  name="siteMeasurementRequired"
-                  defaultChecked={Boolean(rfq.site_measurement_required)}
-                />
-                Site measurement required
-              </label>
+              <AdminCheckbox
+                name="siteMeasurementRequired"
+                defaultChecked={Boolean(rfq.site_measurement_required)}
+                label="Site measurement required"
+              />
               <label>
                 Proposed date
-                <input
-                  type="date"
+                <AdminDateInput
                   name="proposedDate"
-                  className="form-input"
                   defaultValue={rfq.measurement_proposed_date ?? ""}
                 />
               </label>
               <label>
                 Confirmed date
-                <input
-                  type="date"
+                <AdminDateInput
                   name="confirmedDate"
-                  className="form-input"
                   defaultValue={rfq.measurement_confirmed_date ?? ""}
                 />
               </label>
               <label>
                 Assigned employee
-                <select
+                <AdminSelect
                   name="assignedEmployeeId"
-                  className="form-input"
                   defaultValue={rfq.measurement_assigned_to ?? ""}
                 >
                   <option value="">Unassigned</option>
@@ -661,53 +626,43 @@ export default async function AdminRfqDetailPage({
                       {person.full_name || person.email}
                     </option>
                   ))}
-                </select>
+                </AdminSelect>
               </label>
               <label>
                 Travel distance (km)
-                <input
+                <AdminInput
                   type="number"
                   step="any"
                   name="travelKm"
-                  className="form-input"
                   defaultValue={rfq.measurement_travel_km ?? ""}
                 />
               </label>
-              <label className="admin-checkbox">
-                <input
-                  type="checkbox"
-                  name="customerConfirmed"
-                  defaultChecked={Boolean(rfq.measurement_customer_confirmed)}
-                />
-                Customer confirmation received
-              </label>
-              <textarea
+              <AdminCheckbox
+                name="customerConfirmed"
+                defaultChecked={Boolean(rfq.measurement_customer_confirmed)}
+                label="Customer confirmation received"
+              />
+              <AdminTextarea
                 name="notes"
-                className="form-input"
                 rows={3}
                 placeholder="Measurement notes"
                 defaultValue={rfq.measurement_notes ?? ""}
               />
-              <button type="submit" className="btn btn--md btn--secondary">
+              <AdminButton type="submit" variant="secondary">
                 Save measurement schedule
-              </button>
+              </AdminButton>
             </form>
-          </section>
+          </AdminPanel>
         ) : null}
 
         {canQuote ? (
-        <section className="admin-panel" id="rfq-prepare-quote">
-          <header className="admin-panel__header">
-              <h2>Prepare quote</h2>
-            </header>
-            <p className="admin-empty__hint">
-              Generates editable draft line suggestions. Does not send a quote.
-              Lines without catalogue prices are flagged PRICE REQUIRED —
-              approval is blocked until resolved.
-            </p>
+        <AdminPanel
+          id="rfq-prepare-quote"
+          title="Prepare quote"
+          description="Generates editable draft line suggestions. Does not send a quote. Lines without catalogue prices are flagged PRICE REQUIRED — approval is blocked until resolved."
+        >
             {previewSuggestions.length ? (
-              <div className="admin-table-wrap">
-                <table className="admin-table">
+              <AdminTable caption="Quote line suggestions">
                   <thead>
                     <tr>
                       <th>Suggestion</th>
@@ -724,7 +679,7 @@ export default async function AdminRfqDetailPage({
                         <td>{line.unit}</td>
                         <td>
                           {line.priceRequired ? (
-                            <span className="form-error">PRICE REQUIRED</span>
+                            <AdminFieldError>PRICE REQUIRED</AdminFieldError>
                           ) : (
                             line.sellUnitPrice
                           )}
@@ -732,28 +687,25 @@ export default async function AdminRfqDetailPage({
                       </tr>
                     ))}
                   </tbody>
-                </table>
-              </div>
+              </AdminTable>
             ) : (
-              <p className="admin-empty__hint">No asset-based suggestions yet.</p>
+              <AdminHelpText>No asset-based suggestions yet.</AdminHelpText>
             )}
             <form action={convertRfqAction} className="admin-stack-form">
               <input type="hidden" name="rfqId" value={rfq.id} />
-              <label className="admin-checkbox">
-                <input type="checkbox" name="allowUnconfirmed" value="1" />
-                Explicitly allow unconfirmed assets
-              </label>
-              <label className="admin-checkbox">
-                <input
-                  type="checkbox"
-                  name="acknowledgeSiteMeasurement"
-                  value="1"
-                />
-                Acknowledge unresolved site-measurement requirements
-              </label>
-              <button type="submit" className="btn btn--md btn--primary">
+              <AdminCheckbox
+                name="allowUnconfirmed"
+                value="1"
+                label="Explicitly allow unconfirmed assets"
+              />
+              <AdminCheckbox
+                name="acknowledgeSiteMeasurement"
+                value="1"
+                label="Acknowledge unresolved site-measurement requirements"
+              />
+              <AdminButton type="submit" variant="primary">
                 Prepare quote / convert to draft
-              </button>
+              </AdminButton>
             </form>
             {rfq.status === "converted" ? (
               <form action={convertRfqAction} className="admin-inline-form">
@@ -761,21 +713,21 @@ export default async function AdminRfqDetailPage({
                 <input type="hidden" name="forceSecond" value="1" />
                 <input type="hidden" name="allowUnconfirmed" value="1" />
                 <input type="hidden" name="acknowledgeSiteMeasurement" value="1" />
-                <button type="submit" className="btn btn--md btn--secondary">
+                <AdminButton type="submit" variant="secondary">
                   Create additional quotation deliberately
-                </button>
+                </AdminButton>
               </form>
             ) : null}
-            <p className="admin-empty__hint">{HDPE_DISCLAIMER}</p>
-          </section>
+            <p className="admin-disclaimer">{HDPE_DISCLAIMER}</p>
+          </AdminPanel>
         ) : null}
 
-        <section className="admin-panel" id="rfq-communication">
-          <header className="admin-panel__header">
-            <h2>Notifications</h2>
-          </header>
+        <AdminPanel id="rfq-communication" title="Notifications">
           {(communications ?? []).length === 0 ? (
-            <p className="admin-empty__hint">No notification attempts recorded yet.</p>
+            <AdminEmptyState
+              title="No notification attempts recorded yet."
+              compact
+            />
           ) : (
             <ul className="admin-list">
               {(communications ?? []).map((row) => (
@@ -788,32 +740,24 @@ export default async function AdminRfqDetailPage({
               ))}
             </ul>
           )}
-        </section>
+        </AdminPanel>
 
-        <section className="admin-panel">
-          <header className="admin-panel__header">
-            <h2>Internal notes</h2>
-          </header>
+        <AdminPanel title="Internal notes">
           <pre className="admin-notes">{rfq.internal_notes || "No notes yet."}</pre>
           {canManage ? (
             <form action={addRfqNoteAction} className="admin-stack-form">
               <input type="hidden" name="rfqId" value={rfq.id} />
-              <textarea name="note" className="form-input" rows={3} required />
-              <button type="submit" className="btn btn--md btn--primary">
+              <AdminTextarea name="note" rows={3} required />
+              <AdminButton type="submit" variant="primary">
                 Add note
-              </button>
+              </AdminButton>
             </form>
           ) : null}
-        </section>
+        </AdminPanel>
 
-        <section className="admin-panel" id="rfq-activity">
-          <header className="admin-panel__header">
-            <h2>Timeline</h2>
-          </header>
+        <AdminPanel id="rfq-activity" title="Timeline">
           {(events ?? []).length === 0 ? (
-            <div className="admin-empty">
-              <p>No events yet.</p>
-            </div>
+            <AdminEmptyState title="No events yet." />
           ) : (
             <ol className="admin-timeline">
               {(events ?? []).map((event) => (
@@ -842,20 +786,17 @@ export default async function AdminRfqDetailPage({
               </ul>
             </>
           ) : null}
-        </section>
+        </AdminPanel>
       </div>
         </div>
 
         <aside className="admin-detail-aside" aria-label="RFQ actions">
-          <section className="admin-ui-card">
-            <h2 className="admin-section__title">Quick status</h2>
+          <AdminPanel title="Workflow" compact>
             <dl className="admin-dl">
               <div>
                 <dt>Status</dt>
                 <dd>
-                  <span className={`admin-status admin-status--${rfq.status}`}>
-                    {rfq.status.replaceAll("_", " ")}
-                  </span>
+                  <AdminStatusBadge status={rfq.status} domain="rfq" />
                 </dd>
               </div>
               <div>
@@ -886,27 +827,28 @@ export default async function AdminRfqDetailPage({
                 </dd>
               </div>
             </dl>
-            <div className="admin-page-header__actions" style={{ marginTop: "0.85rem" }}>
+            <div className="admin-panel__actions" style={{ marginTop: "0.85rem" }}>
               {canManage ? (
-                <a className="btn btn--sm btn--secondary" href="#rfq-info-request">
+                <AdminButton href="#rfq-info-request" size="sm" variant="secondary">
                   Request information
-                </a>
+                </AdminButton>
               ) : null}
               {canManage ? (
-                <a
-                  className="btn btn--sm btn--secondary"
+                <AdminButton
                   href="#rfq-site-measurement"
+                  size="sm"
+                  variant="secondary"
                 >
                   Schedule measurement
-                </a>
+                </AdminButton>
               ) : null}
               {canQuote && !quote ? (
-                <a className="btn btn--sm btn--primary" href="#rfq-prepare-quote">
+                <AdminButton href="#rfq-prepare-quote" size="sm" variant="primary">
                   Convert to quote
-                </a>
+                </AdminButton>
               ) : null}
             </div>
-          </section>
+          </AdminPanel>
         </aside>
       </div>
     </div>

@@ -71,6 +71,12 @@ export function AdminShell({
     window.dispatchEvent(new Event(SIDEBAR_STORE_KEY));
   }
 
+  function expandSidebar() {
+    if (!collapsed) return;
+    writeSidebarCollapsedPreference(false);
+    window.dispatchEvent(new Event(SIDEBAR_STORE_KEY));
+  }
+
   return (
     <div className={`admin-shell${collapsed ? " admin-shell--collapsed" : ""}`}>
       <AdminSidebar
@@ -89,6 +95,8 @@ export function AdminShell({
           role={profile.role}
           avatarUrl={profile.avatar_url}
           showTitle={showHeaderTitle}
+          sidebarCollapsed={collapsed}
+          onExpandSidebar={expandSidebar}
         />
         <AdminMainContent>{children}</AdminMainContent>
       </AdminMain>

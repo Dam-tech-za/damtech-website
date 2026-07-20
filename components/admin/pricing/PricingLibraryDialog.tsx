@@ -4,6 +4,7 @@ import { useState } from "react";
 import type { EditableLine } from "@/components/admin/QuoteBuilder";
 import { MaterialPicker } from "./MaterialPicker";
 import { LabourPicker } from "./LabourPicker";
+import { AdminButton } from "@/components/admin/ui";
 
 type Props = {
   open: boolean;
@@ -44,23 +45,23 @@ export function PricingLibraryDialog({ open, onClose, onAddLine, showCost }: Pro
             <p className="admin-empty__hint">Pick a material or labour source, then snapshot it into the quote line.</p>
           </div>
           <div className="admin-panel__actions">
-            <button
+            <AdminButton
               type="button"
-              className={tab === "material" ? "btn btn--md btn--primary" : "btn btn--md btn--secondary"}
+              variant={tab === "material" ? "primary" : "secondary"}
               onClick={() => setTab("material")}
             >
               Material
-            </button>
-            <button
+            </AdminButton>
+            <AdminButton
               type="button"
-              className={tab === "labour" ? "btn btn--md btn--primary" : "btn btn--md btn--secondary"}
+              variant={tab === "labour" ? "primary" : "secondary"}
               onClick={() => setTab("labour")}
             >
               Labour
-            </button>
-            <button type="button" className="btn btn--md btn--secondary" onClick={onClose}>
+            </AdminButton>
+            <AdminButton type="button" variant="secondary" onClick={onClose}>
               Close
-            </button>
+            </AdminButton>
           </div>
         </header>
 

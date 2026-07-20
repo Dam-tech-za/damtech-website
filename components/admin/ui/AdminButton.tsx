@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { forwardRef } from "react";
 import type {
   AnchorHTMLAttributes,
   ButtonHTMLAttributes,
@@ -49,19 +50,25 @@ function buttonClassName(
     .join(" ");
 }
 
-export function AdminButton({
-  variant = "secondary",
-  size = "md",
-  className,
-  children,
-  ...props
-}: AdminButtonProps) {
+export const AdminButton = forwardRef<
+  HTMLButtonElement | HTMLAnchorElement,
+  AdminButtonProps
+>(function AdminButton(
+  {
+    variant = "secondary",
+    size = "md",
+    className,
+    children,
+    ...props
+  },
+  ref,
+) {
   const classes = buttonClassName(variant, size, className);
 
   if ("href" in props && props.href) {
     const { href, ...linkProps } = props;
     return (
-      <Link href={href} className={classes} {...linkProps}>
+      <Link href={href} className={classes} ref={ref as never} {...linkProps}>
         {children}
       </Link>
     );
@@ -69,8 +76,13 @@ export function AdminButton({
 
   const buttonProps = props as ButtonHTMLAttributes<HTMLButtonElement>;
   return (
-    <button type="button" className={classes} {...buttonProps}>
+    <button
+      type="button"
+      className={classes}
+      ref={ref as never}
+      {...buttonProps}
+    >
       {children}
     </button>
   );
-}
+});

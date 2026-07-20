@@ -1,4 +1,5 @@
 import type { DashboardMetrics } from "@/lib/admin/dashboard/types";
+import { AdminPanel } from "@/components/admin/ui";
 
 type ProvisionalPipelineProps = {
   provisional: DashboardMetrics["provisional"];
@@ -33,15 +34,10 @@ export function ProvisionalPipeline({ provisional }: ProvisionalPipelineProps) {
   ];
 
   return (
-    <section className="dash-panel" aria-labelledby="provisional-heading">
-      <header className="dash-panel__header">
-        <div>
-          <h2 id="provisional-heading">Provisional Project Pipeline</h2>
-          <p className="dash-panel__subtitle">
-            Planning estimates from RFQ assets
-          </p>
-        </div>
-      </header>
+    <AdminPanel
+      title="Provisional Project Pipeline"
+      description="Planning estimates from RFQ assets"
+    >
       <div className="dash-info-banner dash-info-banner--muted" role="note">
         These quantities are planning estimates and not confirmed orders.
       </div>
@@ -62,6 +58,6 @@ export function ProvisionalPipeline({ provisional }: ProvisionalPipelineProps) {
           </article>
         ))}
       </div>
-    </section>
+    </AdminPanel>
   );
 }

@@ -1,5 +1,10 @@
 import { requireAdmin } from "@/lib/auth/require-admin";
-import { AdminPageHeader } from "@/components/admin/ui";
+import {
+  AdminButton,
+  AdminInput,
+  AdminPageHeader,
+  AdminPanel,
+} from "@/components/admin/ui";
 import { getQuotePdfSettings } from "@/lib/quotes/settings";
 import { updatePdfSettingsAction } from "@/app/admin/quotes/actions";
 import { SettingsFormClient } from "@/components/admin/SettingsFormClient";
@@ -36,10 +41,7 @@ export default async function AdminPdfSettingsPage() {
         secondaryAction={{ href: "/admin/settings/", label: "All settings" }}
       />
 
-      <div className="admin-panel">
-      <header className="admin-panel__header">
-        <h2>PDF settings</h2>
-      </header>
+      <AdminPanel title="PDF settings">
       <SettingsFormClient
         action={updatePdfSettingsAction}
         successMessage="PDF settings saved."
@@ -47,40 +49,35 @@ export default async function AdminPdfSettingsPage() {
         <div className="admin-form-grid">
           <label className="admin-field">
             <span>Brand primary</span>
-            <input
-              className="form-input"
+            <AdminInput
               name="brandPrimaryHex"
               defaultValue={settings?.brand_primary_hex ?? "#1B4D3E"}
             />
           </label>
           <label className="admin-field">
             <span>Brand accent</span>
-            <input
-              className="form-input"
+            <AdminInput
               name="brandAccentHex"
               defaultValue={settings?.brand_accent_hex ?? "#C4A35A"}
             />
           </label>
           <label className="admin-field">
             <span>Header style</span>
-            <input
-              className="form-input"
+            <AdminInput
               name="headerStyle"
               defaultValue={settings?.header_style ?? "classic"}
             />
           </label>
           <label className="admin-field">
             <span>Footer style</span>
-            <input
-              className="form-input"
+            <AdminInput
               name="footerStyle"
               defaultValue={settings?.footer_style ?? "classic"}
             />
           </label>
           <label className="admin-field">
             <span>Terms location</span>
-            <input
-              className="form-input"
+            <AdminInput
               name="termsLocation"
               defaultValue={settings?.terms_location ?? "end"}
             />
@@ -116,9 +113,9 @@ export default async function AdminPdfSettingsPage() {
             </span>
           </label>
         </div>
-        <button className="btn btn--md btn--primary" type="submit">
+        <AdminButton type="submit" variant="primary">
           Save PDF settings
-        </button>
+        </AdminButton>
       </SettingsFormClient>
 
       {canUpload ? (
@@ -139,7 +136,7 @@ export default async function AdminPdfSettingsPage() {
           />
         </>
       ) : null}
-      </div>
+      </AdminPanel>
     </div>
   );
 }

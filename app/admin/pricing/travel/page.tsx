@@ -1,5 +1,10 @@
 import { requireAdmin } from "@/lib/auth/require-admin";
-import { AdminPageHeader } from "@/components/admin/ui";
+import {
+  AdminButton,
+  AdminInput,
+  AdminPageHeader,
+  AdminPanel,
+} from "@/components/admin/ui";
 import { createClient } from "@/lib/supabase/server";
 import { calculateDeliveryCost, calculateTravelCost } from "@/lib/estimating/travel";
 import { formatZar } from "@/lib/estimating/money";
@@ -46,38 +51,33 @@ export default async function AdminTravelPricingPage() {
       />
 
       <div className="admin-stack">
-      <section className="admin-panel">
-        <header className="admin-panel__header">
-          <h2>Travel & delivery rates</h2>
-        </header>
+      <AdminPanel title="Travel & delivery rates">
         <div className="admin-form-grid">
           <form action={updateEstimatingSettingAction} className="admin-inline-form">
             <input type="hidden" name="setting_key" value="travel_rate_per_km" />
             <label>
               Travel R/km
-              <input
+              <AdminInput
                 name="setting_value"
-                className="form-input"
                 defaultValue={String(travelRate)}
               />
             </label>
-            <button type="submit" className="btn btn--md btn--primary">
+            <AdminButton type="submit" variant="primary">
               Save travel rate
-            </button>
+            </AdminButton>
           </form>
           <form action={updateEstimatingSettingAction} className="admin-inline-form">
             <input type="hidden" name="setting_key" value="delivery_rate_per_km" />
             <label>
               Delivery R/km
-              <input
+              <AdminInput
                 name="setting_value"
-                className="form-input"
                 defaultValue={String(deliveryRate)}
               />
             </label>
-            <button type="submit" className="btn btn--md btn--primary">
+            <AdminButton type="submit" variant="primary">
               Save delivery rate
-            </button>
+            </AdminButton>
           </form>
         </div>
         <p className="admin-empty__hint">
@@ -85,7 +85,7 @@ export default async function AdminTravelPricingPage() {
           trips = {formatZar(sampleTravel.total)}. Sample delivery 150 km × 1 ={" "}
           {formatZar(sampleDelivery.total)}.
         </p>
-      </section>
+      </AdminPanel>
       </div>
     </div>
   );

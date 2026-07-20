@@ -2,6 +2,7 @@
 
 import { formatZar } from "@/lib/estimating/money";
 import type { SupplierPriceRecord } from "./SelectedPricingSource";
+import { AdminButton } from "@/components/admin/ui";
 
 type Props = {
   supplierPrices: SupplierPriceRecord[];
@@ -52,13 +53,14 @@ export function SupplierPriceComparison({ supplierPrices, selectedId, onSelect }
                   {price.minimum_quantity ? ` · Min ${price.minimum_quantity}` : ""}
                 </td>
                 <td>
-                  <button
+                  <AdminButton
                     type="button"
-                    className={active ? "btn btn--sm btn--primary" : "btn btn--sm btn--secondary"}
+                    size="sm"
+                    variant={active ? "primary" : "secondary"}
                     onClick={() => onSelect(price)}
                   >
                     {active ? "Selected" : "Select"}
-                  </button>
+                  </AdminButton>
                 </td>
               </tr>
             );

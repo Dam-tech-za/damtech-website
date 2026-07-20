@@ -1,6 +1,6 @@
-import Link from "next/link";
 import { DamtechLogo } from "@/components/DamtechLogo";
 import { SignOutButton } from "@/components/admin/SignOutButton";
+import { AdminButton } from "@/components/admin/ui";
 import { getCurrentUser } from "@/lib/auth/get-current-user";
 import { writeAuditLog } from "@/lib/auth/audit";
 
@@ -48,12 +48,12 @@ export default async function AdminUnauthorisedPage({ searchParams }: PageProps)
         )}
         <div className="admin-login__actions admin-login__actions--row">
           {user ? <SignOutButton /> : null}
-          <Link href="/admin/login/" className="btn btn--md btn--primary">
+          <AdminButton href="/admin/login/" variant="primary">
             Try another account
-          </Link>
-          <Link href="/" className="btn btn--md btn--secondary">
+          </AdminButton>
+          <AdminButton href="/" variant="secondary">
             Back to website
-          </Link>
+          </AdminButton>
         </div>
       </div>
     </main>

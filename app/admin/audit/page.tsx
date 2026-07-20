@@ -6,6 +6,7 @@ import {
   AdminMetricCard,
   AdminMetricStrip,
   AdminPageHeader,
+  AdminPanel,
   AdminStatusBadge,
   AdminTable,
 } from "@/components/admin/ui";
@@ -117,14 +118,10 @@ export default async function AdminAuditPage() {
         />
       </AdminMetricStrip>
 
-      <section className="admin-panel">
-        <header className="admin-panel__header">
-          <h2>Recent events</h2>
-          <p className="admin-empty__hint">
-            Showing the latest {rows.length || 0} entries
-          </p>
-        </header>
-
+      <AdminPanel
+        title="Recent events"
+        description={`Showing the latest ${rows.length || 0} entries`}
+      >
         {loadError ? (
           <AdminErrorState title="Unable to load audit entries" message={loadError} />
         ) : rows.length === 0 ? (
@@ -188,7 +185,7 @@ export default async function AdminAuditPage() {
             </tbody>
           </AdminTable>
         )}
-      </section>
+      </AdminPanel>
     </div>
   );
 }

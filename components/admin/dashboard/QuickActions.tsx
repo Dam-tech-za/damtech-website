@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { AdminPanel } from "@/components/admin/ui";
 
 type QuickActionsProps = {
   expiringQuotesCount: number;
@@ -34,10 +35,7 @@ const ACTIONS = [
 
 export function QuickActions({ expiringQuotesCount }: QuickActionsProps) {
   return (
-    <section className="dash-panel" aria-labelledby="quick-actions-heading">
-      <header className="dash-panel__header">
-        <h2 id="quick-actions-heading">Quick Actions</h2>
-      </header>
+    <AdminPanel title="Quick Actions">
       <ul className="dash-quick">
         {ACTIONS.map((action) => (
           <li key={action.href}>
@@ -64,6 +62,6 @@ export function QuickActions({ expiringQuotesCount }: QuickActionsProps) {
           </Link>
         </li>
       </ul>
-    </section>
+    </AdminPanel>
   );
 }

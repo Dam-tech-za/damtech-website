@@ -8,6 +8,7 @@ import {
   SelectedPricingSource,
   type LabourSearchItem,
 } from "./SelectedPricingSource";
+import { AdminButton, AdminInput } from "@/components/admin/ui";
 
 type Props = {
   showCost: boolean;
@@ -108,8 +109,7 @@ export function LabourPicker({ showCost, onAddLine, onCancel }: Props) {
   return (
     <div className="admin-stack">
       <div className="admin-inline-form">
-        <input
-          className="form-input"
+        <AdminInput
           value={query}
           onChange={(event) => setQuery(event.target.value)}
           placeholder="Search labour by code, category, name…"
@@ -120,9 +120,9 @@ export function LabourPicker({ showCost, onAddLine, onCancel }: Props) {
             }
           }}
         />
-        <button type="button" className="btn btn--md btn--primary" onClick={() => search()} disabled={searching}>
+        <AdminButton type="button" variant="primary" onClick={() => search()} disabled={searching}>
           {searching ? "Searching…" : "Search"}
-        </button>
+        </AdminButton>
       </div>
 
       {error ? <p className="admin-flash admin-flash--error">{error}</p> : null}
@@ -161,17 +161,14 @@ export function LabourPicker({ showCost, onAddLine, onCancel }: Props) {
                   </td>
                 ) : null}
                 <td>
-                  <button
+                  <AdminButton
                     type="button"
-                    className={
-                      selectedItem?.id === item.id
-                        ? "btn btn--sm btn--primary"
-                        : "btn btn--sm btn--secondary"
-                    }
+                    size="sm"
+                    variant={selectedItem?.id === item.id ? "primary" : "secondary"}
                     onClick={() => pickItem(item)}
                   >
                     Pick
-                  </button>
+                  </AdminButton>
                 </td>
               </tr>
             ))}
@@ -209,8 +206,7 @@ export function LabourPicker({ showCost, onAddLine, onCancel }: Props) {
           <div className="admin-form-grid" style={{ marginTop: "1rem" }}>
             <label className="admin-field">
               <span>Quantity</span>
-              <input
-                className="form-input"
+              <AdminInput
                 type="number"
                 step="0.0001"
                 value={quantity}
@@ -219,12 +215,11 @@ export function LabourPicker({ showCost, onAddLine, onCancel }: Props) {
             </label>
             <label className="admin-field">
               <span>Estimated hours</span>
-              <input className="form-input" value={estimatedHours == null ? "—" : estimatedHours.toFixed(2)} readOnly />
+              <AdminInput value={estimatedHours == null ? "—" : estimatedHours.toFixed(2)} readOnly />
             </label>
             <label className="admin-field">
               <span>Override hours</span>
-              <input
-                className="form-input"
+              <AdminInput
                 type="number"
                 step="0.01"
                 value={hoursOverride}
@@ -234,8 +229,7 @@ export function LabourPicker({ showCost, onAddLine, onCancel }: Props) {
             </label>
             <label className="admin-field admin-field--full">
               <span>Override reason</span>
-              <input
-                className="form-input"
+              <AdminInput
                 value={hoursOverrideReason}
                 onChange={(event) => setHoursOverrideReason(event.target.value)}
                 placeholder="Explain why the productivity rate is overridden"
@@ -248,12 +242,12 @@ export function LabourPicker({ showCost, onAddLine, onCancel }: Props) {
             </p>
           ) : null}
           <div className="admin-panel__actions" style={{ marginTop: "1rem" }}>
-            <button type="button" className="btn btn--md btn--secondary" onClick={onCancel}>
+            <AdminButton type="button" variant="secondary" onClick={onCancel}>
               Cancel
-            </button>
-            <button type="button" className="btn btn--md btn--primary" onClick={addToQuote}>
+            </AdminButton>
+            <AdminButton type="button" variant="primary" onClick={addToQuote}>
               Add to quote
-            </button>
+            </AdminButton>
           </div>
         </section>
       ) : (

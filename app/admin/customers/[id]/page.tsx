@@ -5,9 +5,14 @@ import { canPerform } from "@/lib/auth/permissions";
 import { createClient } from "@/lib/supabase/server";
 import { upsertCustomerAction } from "../actions";
 import {
+  AdminButton,
   AdminEmptyState,
+  AdminInput,
   AdminPageHeader,
+  AdminPanel,
+  AdminSelect,
   AdminStatusBadge,
+  AdminTextarea,
 } from "@/components/admin/ui";
 
 type PageProps = {
@@ -86,81 +91,67 @@ export default async function AdminCustomerDetailPage({ params }: PageProps) {
         </nav>
       </div>
 
-      <section className="admin-panel" id="customer-overview">
-        <header className="admin-panel__header">
-          <h2>Contact &amp; company</h2>
-        </header>
+      <AdminPanel id="customer-overview" title="Contact &amp; company">
         <form action={upsertCustomerAction} className="admin-form-grid">
           <input type="hidden" name="id" value={customer.id} />
-          <input
+          <AdminInput
             name="name"
-            className="form-input"
             defaultValue={customer.name}
             required
             aria-label="Contact name"
           />
-          <input
+          <AdminInput
             name="company_name"
-            className="form-input"
             defaultValue={customer.company_name ?? ""}
             placeholder="Company"
             aria-label="Company"
           />
-          <input
+          <AdminInput
             name="email"
-            className="form-input"
             defaultValue={customer.email ?? ""}
             placeholder="Email"
             aria-label="Email"
           />
-          <input
+          <AdminInput
             name="phone"
-            className="form-input"
             defaultValue={customer.phone ?? ""}
             placeholder="Phone"
             aria-label="Phone"
           />
-          <input
+          <AdminInput
             name="province"
-            className="form-input"
             defaultValue={customer.province ?? ""}
             placeholder="Province"
             aria-label="Province"
           />
-          <input
+          <AdminInput
             name="vat_number"
-            className="form-input"
             defaultValue={customer.vat_number ?? ""}
             placeholder="VAT number"
             aria-label="VAT number"
           />
-          <select
+          <AdminSelect
             name="customer_type"
-            className="form-input"
             defaultValue={customer.customer_type}
             aria-label="Customer type"
           >
             <option value="individual">Individual</option>
             <option value="company">Company</option>
-          </select>
-          <textarea
+          </AdminSelect>
+          <AdminTextarea
             name="notes"
-            className="form-input"
             rows={4}
             defaultValue={customer.notes ?? ""}
             placeholder="Internal notes"
             aria-label="Internal notes"
           />
-          <button type="submit" className="btn btn--md btn--primary">
+          <AdminButton type="submit" variant="primary">
             Save customer
-          </button>
+          </AdminButton>
         </form>
-      </section>
+      </AdminPanel>
 
-      <section className="admin-panel" id="customer-rfqs">
-        <header className="admin-panel__header">
-          <h2>RFQs</h2>
-        </header>
+      <AdminPanel id="customer-rfqs" title="RFQs">
         {(rfqs ?? []).length === 0 ? (
           <AdminEmptyState
             title="No RFQs linked."
@@ -179,12 +170,9 @@ export default async function AdminCustomerDetailPage({ params }: PageProps) {
             ))}
           </ul>
         )}
-      </section>
+      </AdminPanel>
 
-      <section className="admin-panel" id="customer-quotes">
-        <header className="admin-panel__header">
-          <h2>Quotes</h2>
-        </header>
+      <AdminPanel id="customer-quotes" title="Quotes">
         {(quotes ?? []).length === 0 ? (
           <AdminEmptyState
             title="No quotations yet."
@@ -209,7 +197,7 @@ export default async function AdminCustomerDetailPage({ params }: PageProps) {
             ))}
           </ul>
         )}
-      </section>
+      </AdminPanel>
     </div>
   );
 }

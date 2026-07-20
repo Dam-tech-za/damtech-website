@@ -2,18 +2,19 @@
 
 import { useTransition } from "react";
 import { signOutAction } from "@/app/admin/actions";
+import { AdminButton } from "@/components/admin/ui";
 
 export function SignOutButton() {
   const [pending, startTransition] = useTransition();
 
   return (
-    <button
-      type="button"
-      className="btn btn--md btn--secondary admin-sign-out"
+    <AdminButton
+      variant="secondary"
+      className="admin-sign-out"
       disabled={pending}
       onClick={() => startTransition(() => signOutAction())}
     >
       {pending ? "Signing out…" : "Sign out"}
-    </button>
+    </AdminButton>
   );
 }

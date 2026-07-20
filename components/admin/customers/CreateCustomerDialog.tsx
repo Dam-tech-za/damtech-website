@@ -2,6 +2,12 @@
 
 import { useRef, useState, useTransition } from "react";
 import { createCustomerInlineAction } from "@/app/admin/customers/actions";
+import {
+  AdminButton,
+  AdminInput,
+  AdminSelect,
+  AdminTextarea,
+} from "@/components/admin/ui";
 import type { CustomerRecord } from "./CustomerSummaryCard";
 
 type Props = {
@@ -103,9 +109,9 @@ export function CreateCustomerDialog({ open, onClose, onCreated }: Props) {
             <p className="admin-empty__hint">Create the record without leaving the quote builder.</p>
           </div>
           <div className="admin-panel__actions">
-            <button type="button" className="btn btn--md btn--secondary" onClick={onClose}>
+            <AdminButton type="button" variant="secondary" onClick={onClose}>
               Close
-            </button>
+            </AdminButton>
           </div>
         </header>
 
@@ -116,53 +122,53 @@ export function CreateCustomerDialog({ open, onClose, onCreated }: Props) {
           event.preventDefault();
           submit(false);
         }}>
-          <select name="customer_type" className="form-input" defaultValue="individual">
+          <AdminSelect name="customer_type" defaultValue="individual">
             <option value="individual">Individual</option>
             <option value="company">Company</option>
-          </select>
-          <input name="name" className="form-input" placeholder="Name *" required />
-          <input name="company_name" className="form-input" placeholder="Company" />
-          <input name="email" className="form-input" type="email" placeholder="Email" />
-          <input name="phone" className="form-input" placeholder="Phone" />
-          <input name="vat_number" className="form-input" placeholder="VAT number" />
-          <input name="registration_number" className="form-input" placeholder="Registration number" />
-          <input name="province" className="form-input" placeholder="Province" />
-          <textarea name="notes" className="form-input" rows={3} placeholder="Notes" style={{ gridColumn: "1 / -1" }} />
+          </AdminSelect>
+          <AdminInput name="name" placeholder="Name *" required />
+          <AdminInput name="company_name" placeholder="Company" />
+          <AdminInput name="email" type="email" placeholder="Email" />
+          <AdminInput name="phone" placeholder="Phone" />
+          <AdminInput name="vat_number" placeholder="VAT number" />
+          <AdminInput name="registration_number" placeholder="Registration number" />
+          <AdminInput name="province" placeholder="Province" />
+          <AdminTextarea name="notes" rows={3} placeholder="Notes" style={{ gridColumn: "1 / -1" }} />
 
           <label className="admin-field admin-field--full">
             <span>Billing address</span>
           </label>
-          <input name="billingAddressLine1" className="form-input" placeholder="Billing address line 1" />
-          <input name="billingAddressLine2" className="form-input" placeholder="Billing address line 2" />
-          <input name="billingCity" className="form-input" placeholder="Billing city" />
-          <input name="billingProvince" className="form-input" placeholder="Billing province" />
-          <input name="billingPostalCode" className="form-input" placeholder="Billing postal code" />
-          <input name="billingCountry" className="form-input" placeholder="Billing country" defaultValue="South Africa" />
+          <AdminInput name="billingAddressLine1" placeholder="Billing address line 1" />
+          <AdminInput name="billingAddressLine2" placeholder="Billing address line 2" />
+          <AdminInput name="billingCity" placeholder="Billing city" />
+          <AdminInput name="billingProvince" placeholder="Billing province" />
+          <AdminInput name="billingPostalCode" placeholder="Billing postal code" />
+          <AdminInput name="billingCountry" placeholder="Billing country" defaultValue="South Africa" />
 
           <label className="admin-field admin-field--full">
             <span>Site address</span>
           </label>
-          <input name="siteAddressLine1" className="form-input" placeholder="Site address line 1" />
-          <input name="siteAddressLine2" className="form-input" placeholder="Site address line 2" />
-          <input name="siteCity" className="form-input" placeholder="Site city" />
-          <input name="siteProvince" className="form-input" placeholder="Site province" />
-          <input name="sitePostalCode" className="form-input" placeholder="Site postal code" />
-          <input name="siteCountry" className="form-input" placeholder="Site country" defaultValue="South Africa" />
+          <AdminInput name="siteAddressLine1" placeholder="Site address line 1" />
+          <AdminInput name="siteAddressLine2" placeholder="Site address line 2" />
+          <AdminInput name="siteCity" placeholder="Site city" />
+          <AdminInput name="siteProvince" placeholder="Site province" />
+          <AdminInput name="sitePostalCode" placeholder="Site postal code" />
+          <AdminInput name="siteCountry" placeholder="Site country" defaultValue="South Africa" />
 
           <div className="admin-panel__actions" style={{ gridColumn: "1 / -1" }}>
             {duplicates.length > 0 ? (
-              <button
+              <AdminButton
                 type="button"
-                className="btn btn--md btn--secondary"
+                variant="secondary"
                 disabled={pending}
                 onClick={() => submit(true)}
               >
                 {pending ? "Creating…" : "Create anyway"}
-              </button>
+              </AdminButton>
             ) : null}
-            <button type="submit" className="btn btn--md btn--primary" disabled={pending}>
+            <AdminButton type="submit" variant="primary" disabled={pending}>
               {pending ? "Creating…" : "Create customer"}
-            </button>
+            </AdminButton>
           </div>
         </form>
       </div>

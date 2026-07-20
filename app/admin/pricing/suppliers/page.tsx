@@ -1,5 +1,12 @@
 import { requireAdmin } from "@/lib/auth/require-admin";
-import { AdminPageHeader } from "@/components/admin/ui";
+import {
+  AdminButton,
+  AdminDateInput,
+  AdminInput,
+  AdminPageHeader,
+  AdminPanel,
+  AdminSelect,
+} from "@/components/admin/ui";
 import { canPerform } from "@/lib/auth/permissions";
 import { createClient } from "@/lib/supabase/server";
 import { formatZar } from "@/lib/estimating/money";
@@ -45,29 +52,23 @@ export default async function AdminSuppliersPricingPage() {
       <div className="admin-stack">
       {canManage ? (
         <>
-          <section className="admin-panel" id="add-supplier">
-            <header className="admin-panel__header">
-              <h2>Add supplier</h2>
-            </header>
+          <AdminPanel id="add-supplier" title="Add supplier">
             <form action={upsertSupplierAction} className="admin-form-grid">
-              <input name="name" className="form-input" placeholder="Supplier name *" required />
-              <input name="contact_name" className="form-input" placeholder="Contact" />
-              <input name="email" className="form-input" placeholder="Email" />
-              <input name="phone" className="form-input" placeholder="Phone" />
-              <input name="lead_time_days" className="form-input" placeholder="Lead time days" />
-              <button type="submit" className="btn btn--md btn--primary">
+              <AdminInput name="name" placeholder="Supplier name *" required />
+              <AdminInput name="contact_name" placeholder="Contact" />
+              <AdminInput name="email" placeholder="Email" />
+              <AdminInput name="phone" placeholder="Phone" />
+              <AdminInput name="lead_time_days" placeholder="Lead time days" />
+              <AdminButton type="submit" variant="primary">
                 Save supplier
-              </button>
+              </AdminButton>
             </form>
-          </section>
+          </AdminPanel>
 
           {canSeeCost ? (
-            <section className="admin-panel">
-              <header className="admin-panel__header">
-                <h2>Add supplier price</h2>
-              </header>
+            <AdminPanel title="Add supplier price">
               <form action={upsertSupplierPriceAction} className="admin-form-grid">
-                <select name="supplier_id" className="form-input" required defaultValue="">
+                <AdminSelect name="supplier_id" required defaultValue="">
                   <option value="" disabled>
                     Supplier *
                   </option>
@@ -76,8 +77,8 @@ export default async function AdminSuppliersPricingPage() {
                       {supplier.name}
                     </option>
                   ))}
-                </select>
-                <select name="material_item_id" className="form-input" required defaultValue="">
+                </AdminSelect>
+                <AdminSelect name="material_item_id" required defaultValue="">
                   <option value="" disabled>
                     Material *
                   </option>
@@ -86,27 +87,24 @@ export default async function AdminSuppliersPricingPage() {
                       {material.item_code} — {material.name}
                     </option>
                   ))}
-                </select>
-                <input name="unit_cost" className="form-input" placeholder="Unit cost *" required />
-                <input name="price_valid_from" type="date" className="form-input" />
-                <input name="price_valid_to" type="date" className="form-input" />
-                <input name="lead_time_days" className="form-input" placeholder="Lead time days" />
+                </AdminSelect>
+                <AdminInput name="unit_cost" placeholder="Unit cost *" required />
+                <AdminDateInput name="price_valid_from" />
+                <AdminDateInput name="price_valid_to" />
+                <AdminInput name="lead_time_days" placeholder="Lead time days" />
                 <label className="admin-checkbox">
                   <input type="checkbox" name="is_preferred" value="1" /> Preferred
                 </label>
-                <button type="submit" className="btn btn--md btn--primary">
+                <AdminButton type="submit" variant="primary">
                   Save price
-                </button>
+                </AdminButton>
               </form>
-            </section>
+            </AdminPanel>
           ) : null}
         </>
       ) : null}
 
-      <section className="admin-panel">
-        <header className="admin-panel__header">
-          <h2>Suppliers</h2>
-        </header>
+      <AdminPanel title="Suppliers">
         {(suppliers ?? []).length === 0 ? (
           <div className="admin-empty">
             <p>No suppliers yet.</p>
@@ -137,17 +135,13 @@ export default async function AdminSuppliersPricingPage() {
             </table>
           </div>
         )}
-      </section>
+      </AdminPanel>
 
       {canSeeCost ? (
-        <section className="admin-panel">
-          <header className="admin-panel__header">
-            <h2>Recent supplier prices</h2>
-            <p className="admin-empty__hint">
-              Estimators should compare lowest valid, preferred and most recent
-              prices — cheapest is not auto-selected.
-            </p>
-          </header>
+        <AdminPanel
+          title="Recent supplier prices"
+          description="Estimators should compare lowest valid, preferred and most recent prices — cheapest is not auto-selected."
+        >
           {(prices ?? []).length === 0 ? (
             <div className="admin-empty">
               <p>No supplier prices yet.</p>
@@ -197,9 +191,9 @@ export default async function AdminSuppliersPricingPage() {
               </table>
             </div>
           )}
-        </section>
+        </AdminPanel>
       ) : (
-        <section className="admin-panel">
+        <AdminPanel>
           <div className="admin-empty">
             <p>Supplier cost prices are hidden for your role.</p>
             <p className="admin-empty__hint">
@@ -207,7 +201,7 @@ export default async function AdminSuppliersPricingPage() {
               owner/admin/estimator.
             </p>
           </div>
-        </section>
+        </AdminPanel>
       )}
     </div>
     </div>

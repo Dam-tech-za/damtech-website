@@ -3,6 +3,7 @@
 import { useState, useTransition } from "react";
 import { checkLoginRateLimit } from "@/app/admin/login/actions";
 import { createClient } from "@/lib/supabase/client";
+import { AdminButton } from "@/components/admin/ui";
 
 type GoogleSignInButtonProps = {
   nextPath?: string;
@@ -54,15 +55,17 @@ export function GoogleSignInButton({ nextPath = "/admin/" }: GoogleSignInButtonP
 
   return (
     <div className="admin-login__actions">
-      <button
+      <AdminButton
         type="button"
-        className="btn btn--lg btn--primary admin-login__google"
+        variant="primary"
+        size="lg"
+        className="admin-login__google"
         onClick={handleClick}
         disabled={pending}
       >
         <GoogleGlyph />
         {pending ? "Redirecting…" : "Continue with Google"}
-      </button>
+      </AdminButton>
       {error ? (
         <p className="admin-login__error" role="alert">
           {error}

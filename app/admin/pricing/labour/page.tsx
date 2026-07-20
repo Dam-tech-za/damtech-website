@@ -1,5 +1,10 @@
 import { requireAdmin } from "@/lib/auth/require-admin";
-import { AdminPageHeader } from "@/components/admin/ui";
+import {
+  AdminButton,
+  AdminInput,
+  AdminPageHeader,
+  AdminPanel,
+} from "@/components/admin/ui";
 import { canPerform } from "@/lib/auth/permissions";
 import { createClient } from "@/lib/supabase/server";
 import { formatZar } from "@/lib/estimating/money";
@@ -26,39 +31,31 @@ export default async function AdminLabourPage() {
       />
 
       {canManage ? (
-        <section className="admin-panel">
-          <header className="admin-panel__header">
-            <h2>Add labour item</h2>
-          </header>
+        <AdminPanel title="Add labour item">
           <form action={upsertLabourAction} className="admin-form-grid">
-            <input name="item_code" className="form-input" placeholder="Code *" required />
-            <input name="category" className="form-input" placeholder="Category *" required />
-            <input name="name" className="form-input" placeholder="Name *" required />
-            <input name="unit" className="form-input" defaultValue="hour" />
+            <AdminInput name="item_code" placeholder="Code *" required />
+            <AdminInput name="category" placeholder="Category *" required />
+            <AdminInput name="name" placeholder="Name *" required />
+            <AdminInput name="unit" defaultValue="hour" />
             {canSeeCost ? (
-              <input name="hourly_cost" className="form-input" placeholder="Hourly cost" />
+              <AdminInput name="hourly_cost" placeholder="Hourly cost" />
             ) : null}
-            <input
+            <AdminInput
               name="productivity_rate"
-              className="form-input"
               placeholder="Productivity rate"
             />
-            <input
+            <AdminInput
               name="productivity_unit"
-              className="form-input"
               placeholder="Productivity unit (e.g. m2/hour)"
             />
-            <button type="submit" className="btn btn--md btn--primary">
+            <AdminButton type="submit" variant="primary">
               Save labour item
-            </button>
+            </AdminButton>
           </form>
-        </section>
+        </AdminPanel>
       ) : null}
 
-      <section className="admin-panel">
-        <header className="admin-panel__header">
-          <h2>Labour library</h2>
-        </header>
+      <AdminPanel title="Labour library">
         {error ? (
           <div className="admin-empty">
             <p>Unable to load labour items.</p>
@@ -105,7 +102,7 @@ export default async function AdminLabourPage() {
             </table>
           </div>
         )}
-      </section>
+      </AdminPanel>
     </div>
   );
 }

@@ -18,11 +18,16 @@ import { formatZar } from "@/lib/estimating/money";
 import { canViewCostMargin } from "@/lib/quotes/workflow";
 import {
   AdminButton,
+  AdminDateInput,
   AdminEmptyState,
+  AdminFilterToolbar,
   AdminInfoBanner,
   AdminMetricCard,
   AdminMetricStrip,
   AdminPageHeader,
+  AdminPanel,
+  AdminSearchField,
+  AdminSelect,
   AdminStatusBadge,
   AdminTable,
 } from "@/components/admin/ui";
@@ -145,96 +150,93 @@ export default async function AdminQuotesPage({ searchParams }: PageProps) {
         />
       </AdminMetricStrip>
 
-      <section className="admin-panel">
-        <header className="admin-panel__header admin-panel__header--row">
-          <div>
-            <h2>Quotations</h2>
-            <p className="admin-empty__hint">
-              {result.total} latest revision{result.total === 1 ? "" : "s"}
-            </p>
-          </div>
-        </header>
-
-        <form className="admin-filters" method="get">
-          <input
-            className="form-input"
-            name="q"
-            placeholder="Search quote, customer…"
-            defaultValue={filters.q ?? ""}
-            aria-label="Search quotes"
-          />
-          <select
-            name="status"
-            className="form-input"
-            defaultValue={filters.status ?? ""}
-            aria-label="Status"
-          >
-            <option value="">All statuses</option>
-            {QUOTE_STATUSES.map((status) => (
-              <option key={status} value={status}>
-                {status}
-              </option>
-            ))}
-          </select>
-          <select
-            name="customerId"
-            className="form-input"
-            defaultValue={filters.customerId ?? ""}
-            aria-label="Customer"
-          >
-            <option value="">All customers</option>
-            {(customers ?? []).map((customer) => (
-              <option key={customer.id} value={customer.id}>
-                {customer.company_name || customer.contact_name}
-              </option>
-            ))}
-          </select>
-          <select
-            name="assigned"
-            className="form-input"
-            defaultValue={filters.assigned ?? ""}
-            aria-label="Assigned owner"
-          >
-            <option value="">Anyone assigned</option>
-            <option value="unassigned">Unassigned</option>
-            {(staff ?? []).map((person) => (
-              <option key={person.id} value={person.id}>
-                {person.full_name || person.email}
-              </option>
-            ))}
-          </select>
-          <input
-            type="date"
-            name="from"
-            className="form-input"
-            defaultValue={filters.from ?? ""}
-            aria-label="Issue date from"
-          />
-          <input
-            type="date"
-            name="to"
-            className="form-input"
-            defaultValue={filters.to ?? ""}
-            aria-label="Issue date to"
-          />
-          <label className="admin-field">
-            <span>
-              <input
-                type="checkbox"
-                name="expiring"
-                value="1"
-                defaultChecked={filters.expiring === "1"}
-              />{" "}
-              Expiring soon
-            </span>
-          </label>
-          <AdminButton type="submit" variant="primary">
-            Apply filters
-          </AdminButton>
-          <AdminButton href="/admin/quotes/" variant="secondary">
-            Clear
-          </AdminButton>
-        </form>
+      <AdminPanel
+        title="Quotations"
+        description={`${result.total} latest revision${result.total === 1 ? "" : "s"}`}
+      >
+        <AdminFilterToolbar>
+          <form className="admin-filter-toolbar__form" method="get">
+            <AdminSearchField
+              name="q"
+              placeholder="Search quote, customer…"
+              defaultValue={filters.q ?? ""}
+              label="Search quotes"
+            />
+            <label className="admin-filter-field">
+              <span className="sr-only">Status</span>
+              <AdminSelect
+                name="status"
+                defaultValue={filters.status ?? ""}
+                aria-label="Status"
+              >
+                <option value="">All statuses</option>
+                {QUOTE_STATUSES.map((status) => (
+                  <option key={status} value={status}>
+                    {status}
+                  </option>
+                ))}
+              </AdminSelect>
+            </label>
+            <label className="admin-filter-field">
+              <span className="sr-only">Customer</span>
+              <AdminSelect
+                name="customerId"
+                defaultValue={filters.customerId ?? ""}
+                aria-label="Customer"
+              >
+                <option value="">All customers</option>
+                {(customers ?? []).map((customer) => (
+                  <option key={customer.id} value={customer.id}>
+                    {customer.company_name || customer.contact_name}
+                  </option>
+                ))}
+              </AdminSelect>
+            </label>
+            <label className="admin-filter-field">
+              <span className="sr-only">Assigned owner</span>
+              <AdminSelect
+                name="assigned"
+                defaultValue={filters.assigned ?? ""}
+                aria-label="Assigned owner"
+              >
+                <option value="">Anyone assigned</option>
+                <option value="unassigned">Unassigned</option>
+                {(staff ?? []).map((person) => (
+                  <option key={person.id} value={person.id}>
+                    {person.full_name || person.email}
+                  </option>
+                ))}
+              </AdminSelect>
+            </label>
+            <AdminDateInput
+              name="from"
+              defaultValue={filters.from ?? ""}
+              aria-label="Issue date from"
+            />
+            <AdminDateInput
+              name="to"
+              defaultValue={filters.to ?? ""}
+              aria-label="Issue date to"
+            />
+            <label className="admin-field">
+              <span>
+                <input
+                  type="checkbox"
+                  name="expiring"
+                  value="1"
+                  defaultChecked={filters.expiring === "1"}
+                />{" "}
+                Expiring soon
+              </span>
+            </label>
+            <AdminButton type="submit" variant="primary">
+              Apply filters
+            </AdminButton>
+            <AdminButton href="/admin/quotes/" variant="secondary">
+              Clear
+            </AdminButton>
+          </form>
+        </AdminFilterToolbar>
 
         {result.rows.length === 0 ? (
           <AdminEmptyState
@@ -320,6 +322,7 @@ export default async function AdminQuotesPage({ searchParams }: PageProps) {
                         href={`/admin/quotes/${row.id}/`}
                         size="sm"
                         variant="secondary"
+                        className="admin-btn--table"
                       >
                         Open
                       </AdminButton>
@@ -348,7 +351,7 @@ export default async function AdminQuotesPage({ searchParams }: PageProps) {
             })}
           </nav>
         ) : null}
-      </section>
+      </AdminPanel>
     </div>
   );
 }

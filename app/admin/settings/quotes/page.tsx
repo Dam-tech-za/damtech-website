@@ -1,5 +1,11 @@
 import { requireAdmin } from "@/lib/auth/require-admin";
-import { AdminPageHeader } from "@/components/admin/ui";
+import {
+  AdminButton,
+  AdminInput,
+  AdminPageHeader,
+  AdminPanel,
+  AdminTextarea,
+} from "@/components/admin/ui";
 import { getQuoteSettings } from "@/lib/quotes/settings";
 import { updateQuoteSettingsAction } from "@/app/admin/quotes/actions";
 import { SettingsFormClient } from "@/components/admin/SettingsFormClient";
@@ -16,14 +22,10 @@ export default async function AdminQuoteSettingsPage() {
         secondaryAction={{ href: "/admin/settings/", label: "All settings" }}
       />
 
-      <div className="admin-panel">
-      <header className="admin-panel__header">
-        <h2>Quote settings</h2>
-        <p className="admin-empty__hint">
-          Numbering prefix and validity defaults. Sequence allocation is always
-          server-side.
-        </p>
-      </header>
+      <AdminPanel
+        title="Quote settings"
+        description="Numbering prefix and validity defaults. Sequence allocation is always server-side."
+      >
       <SettingsFormClient
         action={updateQuoteSettingsAction}
         successMessage="Quote settings saved."
@@ -31,8 +33,7 @@ export default async function AdminQuoteSettingsPage() {
         <div className="admin-form-grid">
           <label className="admin-field">
             <span>Number prefix</span>
-            <input
-              className="form-input"
+            <AdminInput
               name="numberPrefix"
               defaultValue={settings?.number_prefix ?? "DT-Q"}
               required
@@ -50,8 +51,7 @@ export default async function AdminQuoteSettingsPage() {
           </label>
           <label className="admin-field">
             <span>Default validity (days)</span>
-            <input
-              className="form-input"
+            <AdminInput
               type="number"
               name="defaultValidityDays"
               defaultValue={settings?.default_validity_days ?? 30}
@@ -59,8 +59,7 @@ export default async function AdminQuoteSettingsPage() {
           </label>
           <label className="admin-field">
             <span>Default VAT %</span>
-            <input
-              className="form-input"
+            <AdminInput
               type="number"
               step="0.01"
               name="defaultVatRate"
@@ -69,8 +68,7 @@ export default async function AdminQuoteSettingsPage() {
           </label>
           <label className="admin-field">
             <span>Default deposit %</span>
-            <input
-              className="form-input"
+            <AdminInput
               type="number"
               step="0.1"
               name="defaultDepositPercent"
@@ -79,8 +77,7 @@ export default async function AdminQuoteSettingsPage() {
           </label>
           <label className="admin-field">
             <span>Minimum gross margin warning %</span>
-            <input
-              className="form-input"
+            <AdminInput
               type="number"
               step="0.1"
               name="minimumGrossMarginPercent"
@@ -89,8 +86,7 @@ export default async function AdminQuoteSettingsPage() {
           </label>
           <label className="admin-field">
             <span>Approval threshold (ZAR total, optional)</span>
-            <input
-              className="form-input"
+            <AdminInput
               type="number"
               step="0.01"
               name="approvalThresholdTotal"
@@ -99,8 +95,7 @@ export default async function AdminQuoteSettingsPage() {
           </label>
           <label className="admin-field">
             <span>Public token TTL (days)</span>
-            <input
-              className="form-input"
+            <AdminInput
               type="number"
               name="publicTokenTtlDays"
               defaultValue={settings?.public_token_ttl_days ?? 60}
@@ -108,8 +103,7 @@ export default async function AdminQuoteSettingsPage() {
           </label>
           <label className="admin-field admin-field--full">
             <span>Default payment terms</span>
-            <textarea
-              className="form-input"
+            <AdminTextarea
               name="defaultPaymentTerms"
               rows={3}
               defaultValue={settings?.default_payment_terms ?? ""}
@@ -117,8 +111,7 @@ export default async function AdminQuoteSettingsPage() {
           </label>
           <label className="admin-field admin-field--full">
             <span>Default terms</span>
-            <textarea
-              className="form-input"
+            <AdminTextarea
               name="defaultTerms"
               rows={4}
               defaultValue={settings?.default_terms ?? ""}
@@ -126,8 +119,7 @@ export default async function AdminQuoteSettingsPage() {
           </label>
           <label className="admin-field admin-field--full">
             <span>Default exclusions</span>
-            <textarea
-              className="form-input"
+            <AdminTextarea
               name="defaultExclusions"
               rows={3}
               defaultValue={settings?.default_exclusions ?? ""}
@@ -135,19 +127,18 @@ export default async function AdminQuoteSettingsPage() {
           </label>
           <label className="admin-field admin-field--full">
             <span>Default assumptions</span>
-            <textarea
-              className="form-input"
+            <AdminTextarea
               name="defaultAssumptions"
               rows={3}
               defaultValue={settings?.default_assumptions ?? ""}
             />
           </label>
         </div>
-        <button className="btn btn--md btn--primary" type="submit">
+        <AdminButton type="submit" variant="primary">
           Save quote settings
-        </button>
+        </AdminButton>
       </SettingsFormClient>
-      </div>
+      </AdminPanel>
     </div>
   );
 }

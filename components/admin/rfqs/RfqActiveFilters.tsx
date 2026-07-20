@@ -1,4 +1,3 @@
-import Link from "next/link";
 import {
   RFQ_STATUS_LABELS,
   type RfqInboxFilters,
@@ -8,6 +7,10 @@ import {
   countActiveAdvancedFilters,
 } from "@/lib/admin/rfqs/rfq-inbox-utils";
 import { enquiryChannelLabel } from "@/lib/rfq/enquiry-channel";
+import {
+  AdminActiveFilterChips,
+  type AdminFilterChip,
+} from "@/components/admin/ui";
 
 type Chip = { key: string; label: string; omit: string[] };
 
@@ -101,30 +104,17 @@ export function RfqActiveFilters({ filters }: RfqActiveFiltersProps) {
   if (!chips.length && !hasAdvanced) return null;
   if (!chips.length) return null;
 
+  const filterChips: AdminFilterChip[] = chips.map((chip) => ({
+    key: chip.key,
+    label: chip.label,
+    clearHref: `/admin/rfqs/?${buildFilterParams(filters, [...chip.omit, "page"]).toString()}`,
+  }));
+
   return (
-    <div className="rfq-active-filters" aria-label="Active filters">
-      <ul className="rfq-active-filters__list">
-        {chips.map((chip) => {
-          const params = buildFilterParams(filters, [...chip.omit, "page"]);
-          return (
-            <li key={chip.key}>
-              <Link
-                href={`/admin/rfqs/?${params.toString()}`}
-                className="rfq-active-filters__chip"
-                aria-label={`Remove filter ${chip.label}`}
-              >
-                {chip.label}
-                <span aria-hidden> ×</span>
-              </Link>
-            </li>
-          );
-        })}
-        <li>
-          <Link href="/admin/rfqs/" className="rfq-active-filters__clear">
-            Clear all
-          </Link>
-        </li>
-      </ul>
-    </div>
+    <AdminActiveFilterChips
+      chips={filterChips}
+      clearHref="/admin/rfqs/"
+      clearLabel="Clear all"
+    />
   );
 }

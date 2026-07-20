@@ -10,6 +10,7 @@ import {
   type SupplierPriceRecord,
 } from "./SelectedPricingSource";
 import { SupplierPriceComparison } from "./SupplierPriceComparison";
+import { AdminButton, AdminInput } from "@/components/admin/ui";
 
 type Props = {
   showCost: boolean;
@@ -131,8 +132,7 @@ export function MaterialPicker({ showCost, onAddLine, onCancel }: Props) {
   return (
     <div className="admin-stack">
       <div className="admin-inline-form">
-        <input
-          className="form-input"
+        <AdminInput
           value={query}
           onChange={(event) => setQuery(event.target.value)}
           placeholder="Search materials by code, name, category…"
@@ -143,9 +143,9 @@ export function MaterialPicker({ showCost, onAddLine, onCancel }: Props) {
             }
           }}
         />
-        <button type="button" className="btn btn--md btn--primary" onClick={() => search()} disabled={searching}>
+        <AdminButton type="button" variant="primary" onClick={() => search()} disabled={searching}>
           {searching ? "Searching…" : "Search"}
-        </button>
+        </AdminButton>
       </div>
 
       {error ? <p className="admin-flash admin-flash--error">{error}</p> : null}
@@ -177,17 +177,14 @@ export function MaterialPicker({ showCost, onAddLine, onCancel }: Props) {
                     : "—"}
                 </td>
                 <td>
-                  <button
+                  <AdminButton
                     type="button"
-                    className={
-                      selectedMaterial?.id === material.id
-                        ? "btn btn--sm btn--primary"
-                        : "btn btn--sm btn--secondary"
-                    }
+                    size="sm"
+                    variant={selectedMaterial?.id === material.id ? "primary" : "secondary"}
                     onClick={() => pickMaterial(material)}
                   >
                     Pick
-                  </button>
+                  </AdminButton>
                 </td>
               </tr>
             ))}
@@ -239,17 +236,17 @@ export function MaterialPicker({ showCost, onAddLine, onCancel }: Props) {
             />
           </div>
           <div className="admin-panel__actions" style={{ marginTop: "1rem" }}>
-            <button type="button" className="btn btn--md btn--secondary" onClick={onCancel}>
+            <AdminButton type="button" variant="secondary" onClick={onCancel}>
               Cancel
-            </button>
-            <button
+            </AdminButton>
+            <AdminButton
               type="button"
-              className="btn btn--md btn--primary"
+              variant="primary"
               onClick={addToQuote}
               disabled={supplierPrices.length > 0 && !selectedSupplierPrice}
             >
               Add to quote
-            </button>
+            </AdminButton>
           </div>
         </section>
       ) : (

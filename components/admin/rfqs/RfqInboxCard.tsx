@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import type { RfqDeleteSummary } from "@/lib/admin/rfqs/delete-rfq";
 import {
   RFQ_STATUS_LABELS,
@@ -8,7 +7,7 @@ import {
 } from "@/lib/admin/rfqs/rfq-inbox-types";
 import { approximateSizeSourceLabel } from "@/lib/admin/rfqs/rfq-size-summary";
 import { formatSubmittedDate } from "@/lib/admin/rfqs/rfq-inbox-utils";
-import { AdminStatusBadge } from "@/components/admin/ui";
+import { AdminButton, AdminStatusBadge } from "@/components/admin/ui";
 import { RfqRowActions } from "./RfqRowActions";
 
 type RfqInboxCardProps = {
@@ -101,12 +100,13 @@ export function RfqInboxCard({
           {submitted.relative ? ` · ${submitted.relative}` : ""}
         </span>
         <div className="rfq-inbox-card__actions">
-          <Link
+          <AdminButton
             href={`/admin/rfqs/${row.id}/`}
-            className="btn btn--sm btn--secondary"
+            size="sm"
+            variant="secondary"
           >
             View RFQ
-          </Link>
+          </AdminButton>
           <RfqRowActions
             summary={toDeleteSummary(row)}
             canManage={canManage}

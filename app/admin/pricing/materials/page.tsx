@@ -1,5 +1,13 @@
 import { requireAdmin } from "@/lib/auth/require-admin";
-import { AdminPageHeader } from "@/components/admin/ui";
+import {
+  AdminButton,
+  AdminFilterToolbar,
+  AdminInput,
+  AdminPageHeader,
+  AdminPanel,
+  AdminSearchField,
+  AdminSelect,
+} from "@/components/admin/ui";
 import { canPerform } from "@/lib/auth/permissions";
 import { createClient } from "@/lib/supabase/server";
 import { formatZar } from "@/lib/estimating/money";
@@ -57,39 +65,40 @@ export default async function AdminMaterialsPage({ searchParams }: PageProps) {
         }
       />
 
-      <section className="admin-panel">
-        <header className="admin-panel__header">
-          <h2>Materials library</h2>
-        </header>
-        <form method="get" className="admin-filters">
-          <input name="q" className="form-input" placeholder="Search" defaultValue={q ?? ""} />
-          <select name="category" className="form-input" defaultValue={category ?? ""}>
-            <option value="">All categories</option>
-            {MATERIAL_CATEGORIES.map((item) => (
-              <option key={item} value={item}>
-                {item}
-              </option>
-            ))}
-          </select>
-          <select name="active" className="form-input" defaultValue={active ?? "1"}>
-            <option value="1">Active</option>
-            <option value="0">Archived</option>
-            <option value="all">All</option>
-          </select>
-          <button className="btn btn--md btn--primary" type="submit">
-            Filter
-          </button>
-        </form>
-      </section>
+      <AdminPanel title="Materials library">
+        <AdminFilterToolbar>
+          <form method="get" className="admin-filter-toolbar__form">
+            <AdminSearchField
+              name="q"
+              placeholder="Search"
+              defaultValue={q ?? ""}
+              label="Search materials"
+            />
+            <AdminSelect name="category" defaultValue={category ?? ""} aria-label="Category">
+              <option value="">All categories</option>
+              {MATERIAL_CATEGORIES.map((item) => (
+                <option key={item} value={item}>
+                  {item}
+                </option>
+              ))}
+            </AdminSelect>
+            <AdminSelect name="active" defaultValue={active ?? "1"} aria-label="Status">
+              <option value="1">Active</option>
+              <option value="0">Archived</option>
+              <option value="all">All</option>
+            </AdminSelect>
+            <AdminButton type="submit" variant="primary">
+              Filter
+            </AdminButton>
+          </form>
+        </AdminFilterToolbar>
+      </AdminPanel>
 
       {canManage ? (
-        <section className="admin-panel" id="add-material">
-          <header className="admin-panel__header">
-            <h2>Add material</h2>
-          </header>
+        <AdminPanel id="add-material" title="Add material">
           <form action={upsertMaterialAction} className="admin-form-grid">
-            <input name="item_code" className="form-input" placeholder="Item code *" required />
-            <select name="category" className="form-input" required defaultValue="">
+            <AdminInput name="item_code" placeholder="Item code *" required />
+            <AdminSelect name="category" required defaultValue="">
               <option value="" disabled>
                 Category *
               </option>
@@ -98,22 +107,22 @@ export default async function AdminMaterialsPage({ searchParams }: PageProps) {
                   {item}
                 </option>
               ))}
-            </select>
-            <input name="name" className="form-input" placeholder="Name *" required />
-            <input name="unit" className="form-input" placeholder="Unit" defaultValue="m2" />
+            </AdminSelect>
+            <AdminInput name="name" placeholder="Name *" required />
+            <AdminInput name="unit" placeholder="Unit" defaultValue="m2" />
             {canSeeCost ? (
-              <input name="default_cost" className="form-input" placeholder="Default cost" />
+              <AdminInput name="default_cost" placeholder="Default cost" />
             ) : null}
-            <input name="default_sell_price" className="form-input" placeholder="Default sell" />
-            <input name="waste_percent" className="form-input" placeholder="Waste %" defaultValue="10" />
-            <button type="submit" className="btn btn--md btn--primary">
+            <AdminInput name="default_sell_price" placeholder="Default sell" />
+            <AdminInput name="waste_percent" placeholder="Waste %" defaultValue="10" />
+            <AdminButton type="submit" variant="primary">
               Save material
-            </button>
+            </AdminButton>
           </form>
-        </section>
+        </AdminPanel>
       ) : null}
 
-      <section className="admin-panel">
+      <AdminPanel>
         {error ? (
           <div className="admin-empty">
             <p>Unable to load materials.</p>
@@ -158,9 +167,9 @@ export default async function AdminMaterialsPage({ searchParams }: PageProps) {
                       <td>
                         <form action={archiveMaterialAction}>
                           <input type="hidden" name="id" value={item.id} />
-                          <button type="submit" className="btn btn--md btn--secondary">
+                          <AdminButton type="submit" variant="secondary" size="sm">
                             Archive
-                          </button>
+                          </AdminButton>
                         </form>
                       </td>
                     ) : canManage ? (
@@ -172,7 +181,7 @@ export default async function AdminMaterialsPage({ searchParams }: PageProps) {
             </table>
           </div>
         )}
-      </section>
+      </AdminPanel>
     </div>
   );
 }

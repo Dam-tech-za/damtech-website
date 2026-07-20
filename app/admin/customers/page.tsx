@@ -7,9 +7,14 @@ import {
   AdminButton,
   AdminEmptyState,
   AdminErrorState,
+  AdminFilterToolbar,
+  AdminInput,
   AdminMetricCard,
   AdminMetricStrip,
   AdminPageHeader,
+  AdminPanel,
+  AdminSearchField,
+  AdminSelect,
   AdminTable,
 } from "@/components/admin/ui";
 
@@ -113,84 +118,73 @@ export default async function AdminCustomersPage({ searchParams }: PageProps) {
         />
       </AdminMetricStrip>
 
-      <section className="admin-panel">
-        <header className="admin-panel__header">
-          <h2>Directory</h2>
-        </header>
-        <form method="get" className="admin-inline-form">
-          <input
-            name="q"
-            className="form-input"
-            placeholder="Search name, company, email, phone…"
-            defaultValue={q ?? ""}
-            aria-label="Search customers"
-          />
-          <AdminButton type="submit" variant="primary">
-            Search
-          </AdminButton>
-          {q ? (
-            <AdminButton href="/admin/customers/" variant="secondary">
-              Clear
+      <AdminPanel title="Directory">
+        <AdminFilterToolbar>
+          <form method="get" className="admin-filter-toolbar__form">
+            <AdminSearchField
+              name="q"
+              placeholder="Search name, company, email, phone…"
+              defaultValue={q ?? ""}
+              label="Search customers"
+            />
+            <AdminButton type="submit" variant="primary">
+              Search
             </AdminButton>
-          ) : null}
-        </form>
-      </section>
+            {q ? (
+              <AdminButton href="/admin/customers/" variant="secondary">
+                Clear
+              </AdminButton>
+            ) : null}
+          </form>
+        </AdminFilterToolbar>
+      </AdminPanel>
 
       {canManage ? (
-        <section className="admin-panel" id="add-customer">
-          <header className="admin-panel__header">
-            <h2>Add customer</h2>
-          </header>
+        <AdminPanel id="add-customer" title="Add customer">
           <form action={upsertCustomerAction} className="admin-form-grid">
-            <input
+            <AdminInput
               name="name"
-              className="form-input"
               placeholder="Name *"
               required
               aria-label="Contact name"
             />
-            <input
+            <AdminInput
               name="company_name"
-              className="form-input"
               placeholder="Company"
               aria-label="Company"
             />
-            <input
+            <AdminInput
               name="email"
-              className="form-input"
               placeholder="Email"
               type="email"
               aria-label="Email"
             />
-            <input
+            <AdminInput
               name="phone"
-              className="form-input"
               placeholder="Phone"
               aria-label="Phone"
             />
-            <input
+            <AdminInput
               name="province"
-              className="form-input"
               placeholder="Province"
               aria-label="Province"
             />
-            <select
+            <AdminSelect
               name="customer_type"
-              className="form-input"
               defaultValue="individual"
               aria-label="Customer type"
             >
               <option value="individual">Individual</option>
               <option value="company">Company</option>
-            </select>
+            </AdminSelect>
             <AdminButton type="submit" variant="primary">
               Create customer
             </AdminButton>
           </form>
-        </section>
+        </AdminPanel>
       ) : null}
 
-      <section className="admin-panel">
+      <AdminPanel>
         {error ? (
           <AdminErrorState
             title="Unable to load customers"
@@ -238,6 +232,7 @@ export default async function AdminCustomersPage({ searchParams }: PageProps) {
                       href={`/admin/customers/${customer.id}/`}
                       size="sm"
                       variant="secondary"
+                      className="admin-btn--table"
                     >
                       Open
                     </AdminButton>
@@ -247,7 +242,7 @@ export default async function AdminCustomersPage({ searchParams }: PageProps) {
             </tbody>
           </AdminTable>
         )}
-      </section>
+      </AdminPanel>
     </div>
   );
 }

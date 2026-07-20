@@ -5,6 +5,7 @@ import { createClient } from "@/lib/supabase/server";
 import { compareQuoteLines } from "@/lib/quotes/compare";
 import { formatQuoteNumber, normaliseQuoteStatus } from "@/lib/quotes/types";
 import { formatZar } from "@/lib/estimating/money";
+import { AdminButton, AdminPanel } from "@/components/admin/ui";
 
 type PageProps = {
   params: Promise<{ id: string }>;
@@ -70,19 +71,14 @@ export default async function AdminQuoteRevisionsPage({
   }
 
   return (
-    <div className="admin-panel">
-      <header className="admin-panel__header admin-panel__header--row">
-        <div>
-          <h2>
-            Revisions —{" "}
-            {formatQuoteNumber(quote.quote_number, quote.revision_number).label}
-          </h2>
-        </div>
-        <Link className="btn btn--md btn--secondary" href={`/admin/quotes/${id}/`}>
+    <AdminPanel
+      title={`Revisions — ${formatQuoteNumber(quote.quote_number, quote.revision_number).label}`}
+      actions={
+        <AdminButton href={`/admin/quotes/${id}/`} variant="secondary">
           Back
-        </Link>
-      </header>
-
+        </AdminButton>
+      }
+    >
       <ul className="admin-list">
         {(revisions ?? []).map((rev) => (
           <li key={rev.id}>
@@ -161,6 +157,6 @@ export default async function AdminQuoteRevisionsPage({
           </ul>
         </section>
       ) : null}
-    </div>
+    </AdminPanel>
   );
 }

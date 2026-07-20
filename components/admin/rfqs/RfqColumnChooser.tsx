@@ -5,6 +5,7 @@ import {
   RFQ_OPTIONAL_COLUMNS,
   type RfqOptionalColumnId,
 } from "@/lib/admin/rfqs/rfq-inbox-types";
+import { AdminButton } from "@/components/admin/ui";
 
 const STORAGE_KEY = "damtech-rfq-columns";
 
@@ -61,16 +62,17 @@ export function RfqColumnChooser({ visible, onChange }: RfqColumnChooserProps) {
 
   return (
     <div className="rfq-column-chooser" ref={rootRef}>
-      <button
+      <AdminButton
         type="button"
-        className="btn btn--sm btn--secondary"
+        size="sm"
+        variant="secondary"
         aria-haspopup="menu"
         aria-expanded={open}
         aria-controls={menuId}
         onClick={() => setOpen((value) => !value)}
       >
         Columns
-      </button>
+      </AdminButton>
       {open ? (
         <ul id={menuId} className="rfq-column-chooser__menu" role="menu">
           {RFQ_OPTIONAL_COLUMNS.map((column) => (

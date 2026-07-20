@@ -3,6 +3,17 @@ import {
   confirmRfqAssetAction,
   overrideRfqAssetAction,
 } from "@/app/admin/rfqs/actions";
+import {
+  AdminButton,
+  AdminCheckbox,
+  AdminEmptyState,
+  AdminFormActions,
+  AdminHelpText,
+  AdminInput,
+  AdminSelect,
+  AdminStatusBadge,
+  AdminTextarea,
+} from "@/components/admin/ui";
 
 type Asset = {
   id: string;
@@ -53,13 +64,10 @@ type Props = {
 export function RfqAssetReviewPanels({ assets, attachments, canManage }: Props) {
   if (!assets.length) {
     return (
-      <div className="admin-empty">
-        <p>No structured assets yet.</p>
-        <p className="admin-empty__hint">
-          Simple public quotes are valid without assets. Use the enrich actions
-          above or the information-request tools when more detail arrives.
-        </p>
-      </div>
+      <AdminEmptyState
+        title="No structured assets yet."
+        description="Simple public quotes are valid without assets. Use the enrich actions above or the information-request tools when more detail arrives."
+      />
     );
   }
 
@@ -73,9 +81,10 @@ export function RfqAssetReviewPanels({ assets, attachments, canManage }: Props) 
             <summary>
               #{asset.asset_sequence} {asset.asset_name} ·{" "}
               {asset.asset_type.replace(/_/g, " ")} · qty {asset.quantity} ·{" "}
-              <span className={`admin-status admin-status--${asset.measurement_status}`}>
-                {asset.measurement_status}
-              </span>
+              <AdminStatusBadge
+                status={asset.measurement_status}
+                domain="rfq"
+              />
               {asset.estimator_confirmed ? " · confirmed" : ""}
             </summary>
 
@@ -167,9 +176,9 @@ export function RfqAssetReviewPanels({ assets, attachments, canManage }: Props) 
               </pre>
 
               {asset.estimator_override_reason ? (
-                <p className="admin-empty__hint">
+                <AdminHelpText>
                   Last override reason: {asset.estimator_override_reason}
-                </p>
+                </AdminHelpText>
               ) : null}
 
               {assetFiles.length ? (
@@ -200,35 +209,32 @@ export function RfqAssetReviewPanels({ assets, attachments, canManage }: Props) 
                   <form action={confirmRfqAssetAction} className="admin-stack-form">
                     <input type="hidden" name="assetId" value={asset.id} />
                     <input type="hidden" name="rfqId" value={asset.rfq_id} />
-                    <textarea
+                    <AdminTextarea
                       name="notes"
-                      className="form-input"
                       rows={2}
                       placeholder="Confirmation notes"
                       defaultValue={asset.estimator_notes ?? ""}
                     />
-                    <button type="submit" className="btn btn--md btn--primary">
+                    <AdminButton type="submit" variant="primary">
                       Confirm for quotation
-                    </button>
+                    </AdminButton>
                   </form>
 
                   <form action={overrideRfqAssetAction} className="admin-stack-form">
                     <input type="hidden" name="assetId" value={asset.id} />
                     <input type="hidden" name="rfqId" value={asset.rfq_id} />
                     <h4 className="admin-subheading">Estimator override</h4>
-                    <p className="admin-empty__hint">
+                    <AdminHelpText>
                       Original customer submission is never overwritten — a new
                       calculation snapshot is stored.
-                    </p>
-                    <input
+                    </AdminHelpText>
+                    <AdminInput
                       name="reason"
-                      className="form-input"
                       required
                       placeholder="Override reason (required)"
                     />
-                    <select
+                    <AdminSelect
                       name="measurementStatus"
-                      className="form-input"
                       defaultValue={asset.measurement_status}
                     >
                       {ASSET_MEASUREMENT_STATUSES.map((status) => (
@@ -236,13 +242,12 @@ export function RfqAssetReviewPanels({ assets, attachments, canManage }: Props) 
                           {status}
                         </option>
                       ))}
-                    </select>
+                    </AdminSelect>
                     <div className="admin-inline-form">
                       <label>
                         Install m²
-                        <input
+                        <AdminInput
                           name="confirmedInstallationAreaM2"
-                          className="form-input"
                           type="number"
                           step="any"
                           defaultValue={
@@ -253,9 +258,8 @@ export function RfqAssetReviewPanels({ assets, attachments, canManage }: Props) 
                       </label>
                       <label>
                         Material m²
-                        <input
+                        <AdminInput
                           name="confirmedMaterialAreaM2"
-                          className="form-input"
                           type="number"
                           step="any"
                           defaultValue={
@@ -266,9 +270,8 @@ export function RfqAssetReviewPanels({ assets, attachments, canManage }: Props) 
                       </label>
                       <label>
                         Geotextile m²
-                        <input
+                        <AdminInput
                           name="confirmedGeotextileAreaM2"
-                          className="form-input"
                           type="number"
                           step="any"
                           defaultValue={asset.confirmed_geotextile_area_m2 ?? ""}
@@ -276,9 +279,8 @@ export function RfqAssetReviewPanels({ assets, attachments, canManage }: Props) 
                       </label>
                       <label>
                         Surface prep m²
-                        <input
+                        <AdminInput
                           name="confirmedSurfacePrepAreaM2"
-                          className="form-input"
                           type="number"
                           step="any"
                           defaultValue={asset.confirmed_surface_prep_area_m2 ?? ""}
@@ -286,9 +288,8 @@ export function RfqAssetReviewPanels({ assets, attachments, canManage }: Props) 
                       </label>
                       <label>
                         Capacity kL
-                        <input
+                        <AdminInput
                           name="confirmedCapacityKl"
-                          className="form-input"
                           type="number"
                           step="any"
                           defaultValue={asset.confirmed_capacity_kl ?? ""}
@@ -296,9 +297,8 @@ export function RfqAssetReviewPanels({ assets, attachments, canManage }: Props) 
                       </label>
                       <label>
                         Overlap %
-                        <input
+                        <AdminInput
                           name="confirmedOverlapPercent"
-                          className="form-input"
                           type="number"
                           step="any"
                           defaultValue={asset.confirmed_overlap_percent ?? ""}
@@ -306,30 +306,29 @@ export function RfqAssetReviewPanels({ assets, attachments, canManage }: Props) 
                       </label>
                       <label>
                         Waste %
-                        <input
+                        <AdminInput
                           name="confirmedWastePercent"
-                          className="form-input"
                           type="number"
                           step="any"
                           defaultValue={asset.confirmed_waste_percent ?? ""}
                         />
                       </label>
                     </div>
-                    <label className="admin-checkbox">
-                      <input type="checkbox" name="recalculate" value="1" />
-                      Recalculate from current raw inputs before applying overrides
-                    </label>
-                    <textarea
+                    <AdminCheckbox
+                      name="recalculate"
+                      value="1"
+                      label="Recalculate from current raw inputs before applying overrides"
+                    />
+                    <AdminTextarea
                       name="notes"
-                      className="form-input"
                       rows={2}
                       placeholder="Estimator notes"
                     />
-                    <div className="admin-panel__actions">
-                      <button type="submit" className="btn btn--md btn--secondary">
+                    <AdminFormActions>
+                      <AdminButton type="submit" variant="secondary">
                         Save override
-                      </button>
-                    </div>
+                      </AdminButton>
+                    </AdminFormActions>
                   </form>
                 </div>
               ) : null}

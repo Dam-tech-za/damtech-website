@@ -91,7 +91,7 @@ export function RfqDetailActions({
       <AdminPortalMenu
         items={items}
         triggerLabel="More actions"
-        triggerClassName="btn btn--md btn--secondary"
+        triggerClassName="admin-btn admin-btn--secondary"
         menuClassName="admin-portal-menu__list rfq-action-menu__list"
         align="end"
         triggerRef={triggerRef}

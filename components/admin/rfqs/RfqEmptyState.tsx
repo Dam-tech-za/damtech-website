@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { AdminButton } from "@/components/admin/ui";
 
 type RfqEmptyStateProps = {
   variant: "none" | "filtered";
@@ -11,12 +11,12 @@ export function RfqEmptyState({ variant }: RfqEmptyStateProps) {
         <h2>No RFQs have been received yet.</h2>
         <p>Public quote requests will appear here after submission.</p>
         <div className="rfq-empty-state__actions">
-          <Link href="/quote/" className="btn btn--md btn--secondary">
+          <AdminButton href="/quote/" variant="secondary">
             Open public quote form
-          </Link>
-          <Link href="/quote/" className="btn btn--md btn--primary">
+          </AdminButton>
+          <AdminButton href="/quote/" variant="primary">
             Create RFQ manually
-          </Link>
+          </AdminButton>
         </div>
       </div>
     );
@@ -27,9 +27,9 @@ export function RfqEmptyState({ variant }: RfqEmptyStateProps) {
       <h2>No RFQs match these filters.</h2>
       <p>Try changing or clearing the current filters.</p>
       <div className="rfq-empty-state__actions">
-        <Link href="/admin/rfqs/" className="btn btn--md btn--primary">
+        <AdminButton href="/admin/rfqs/" variant="primary">
           Clear filters
-        </Link>
+        </AdminButton>
       </div>
     </div>
   );

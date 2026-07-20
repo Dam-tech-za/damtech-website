@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { DashboardStageRow } from "@/lib/admin/dashboard/types";
+import { AdminButton, AdminPanel } from "@/components/admin/ui";
 import { DashboardEmptyState } from "./DashboardEmptyState";
 
 type RfqWorkflowProps = {
@@ -19,17 +20,15 @@ export function RfqWorkflow({ stages }: RfqWorkflowProps) {
   const total = stages.reduce((sum, stage) => sum + stage.count, 0);
 
   return (
-    <section className="dash-panel" aria-labelledby="rfq-workflow-heading">
-      <header className="dash-panel__header">
-        <div>
-          <h2 id="rfq-workflow-heading">RFQ Workflow</h2>
-          <p className="dash-panel__subtitle">Current pipeline by status</p>
-        </div>
-        <Link href="/admin/rfqs/" className="dash-panel__link">
+    <AdminPanel
+      title="RFQ Workflow"
+      description="Current pipeline by status"
+      actions={
+        <AdminButton href="/admin/rfqs/" variant="link" size="sm">
           View RFQs
-        </Link>
-      </header>
-
+        </AdminButton>
+      }
+    >
       {total === 0 ? (
         <DashboardEmptyState
           title="No RFQs have been submitted yet."
@@ -70,6 +69,6 @@ export function RfqWorkflow({ stages }: RfqWorkflowProps) {
           ))}
         </ul>
       )}
-    </section>
+    </AdminPanel>
   );
 }

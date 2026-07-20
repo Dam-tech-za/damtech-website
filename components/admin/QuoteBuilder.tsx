@@ -6,6 +6,18 @@ import type { CustomerRecord } from "@/components/admin/customers/CustomerSummar
 import { PricingLibraryDialog } from "@/components/admin/pricing/PricingLibraryDialog";
 import { SelectedPricingSource } from "@/components/admin/pricing/SelectedPricingSource";
 import {
+  AdminButton,
+  AdminCheckbox,
+  AdminDateInput,
+  AdminField,
+  AdminFormActions,
+  AdminIconButton,
+  AdminInput,
+  AdminPanel,
+  AdminSelect,
+  AdminTextarea,
+} from "@/components/admin/ui";
+import {
   lineMarginPercent,
   lineMarkupPercent,
   lineTotalExVat,
@@ -118,6 +130,12 @@ export function QuoteBuilder({
     [lines, discountAmount, vatRate],
   );
 
+  const submitLabel = pending
+    ? "Saving…"
+    : mode === "create"
+      ? "Create draft"
+      : "Save quote";
+
   function updateLine(index: number, patch: Partial<EditableLine>) {
     setLines((prev) =>
       prev.map((line, i) => (i === index ? { ...line, ...patch } : line)),
@@ -177,480 +195,404 @@ export function QuoteBuilder({
         });
       }}
     >
-      {error ? <p className="admin-flash admin-flash--error">{error}</p> : null}
+      {error ? (
+        <p className="admin-flash admin-flash--error admin-quote-builder__flash">{error}</p>
+      ) : null}
 
-      <section className="admin-panel">
-        <header className="admin-panel__header">
-          <h2>Customer</h2>
-        </header>
-        <CustomerSelector
-          customers={customerOptions}
-          value={customerId}
-          onSelectCustomer={onCustomerSelect}
-          canCreateCustomer={canCreateCustomer}
-        />
-        <div className="admin-form-grid" style={{ marginTop: "1rem" }}>
-          <label className="admin-field">
-            <span>Company</span>
-            <input className="form-input" name="companyName" defaultValue={defaults.companyName} />
-          </label>
-          <label className="admin-field">
-            <span>Contact</span>
-            <input className="form-input" name="contactName" defaultValue={defaults.contactName} />
-          </label>
-          <label className="admin-field">
-            <span>Email</span>
-            <input className="form-input" name="email" type="email" defaultValue={defaults.email} />
-          </label>
-          <label className="admin-field">
-            <span>Phone</span>
-            <input className="form-input" name="phone" defaultValue={defaults.phone} />
-          </label>
-          <label className="admin-field">
-            <span>Province / VAT context</span>
-            <input className="form-input" name="province" defaultValue={defaults.province} />
-          </label>
-        </div>
-      </section>
-
-      <section className="admin-panel">
-        <header className="admin-panel__header">
-          <h2>Project</h2>
-        </header>
-        <div className="admin-form-grid">
-          <label className="admin-field admin-field--full">
-            <span>Quote title</span>
-            <input className="form-input" name="title" required defaultValue={defaults.title} />
-          </label>
-          <label className="admin-field">
-            <span>RFQ id (optional)</span>
-            <input className="form-input" name="rfqId" defaultValue={defaults.rfqId} />
-          </label>
-          <label className="admin-field">
-            <span>Project reference</span>
-            <input
-              className="form-input"
-              name="projectReference"
-              defaultValue={defaults.projectReference}
-            />
-          </label>
-          <label className="admin-field">
-            <span>Project location</span>
-            <input
-              className="form-input"
-              name="projectLocation"
-              defaultValue={defaults.projectLocation}
-            />
-          </label>
-          <label className="admin-field">
-            <span>Service</span>
-            <input
-              className="form-input"
-              name="serviceRequired"
-              defaultValue={defaults.serviceRequired}
-            />
-          </label>
-          <label className="admin-field admin-field--full">
-            <span>Scope summary</span>
-            <textarea
-              className="form-input"
-              name="scopeSummary"
-              rows={3}
-              defaultValue={defaults.scopeSummary}
-            />
-          </label>
-        </div>
-      </section>
-
-      <section className="admin-panel">
-        <header className="admin-panel__header admin-panel__header--row">
-          <h2>Line items</h2>
-          <div className="admin-panel__actions">
-            <button
-              type="button"
-              className="btn btn--sm btn--secondary"
-              onClick={() => setPricingLibraryOpen(true)}
-            >
-              Add from pricing library
-            </button>
-            <button
-              type="button"
-              className="btn btn--sm btn--secondary"
-              onClick={() => setLines((prev) => [...prev, emptyLine(prev.length, "custom")])}
-            >
-              Add custom line
-            </button>
-            <button
-              type="button"
-              className="btn btn--sm btn--secondary"
-              onClick={() => setLines((prev) => [...prev, emptyLine(prev.length, "heading")])}
-            >
-              Add heading
-            </button>
-            <button
-              type="button"
-              className="btn btn--sm btn--secondary"
-              onClick={() => setLines((prev) => [...prev, emptyLine(prev.length, "note")])}
-            >
-              Add note
-            </button>
+      <div className="admin-quote-builder__main">
+        <AdminPanel title="Customer">
+          <CustomerSelector
+            customers={customerOptions}
+            value={customerId}
+            onSelectCustomer={onCustomerSelect}
+            canCreateCustomer={canCreateCustomer}
+          />
+          <div className="admin-form-grid" style={{ marginTop: "1rem" }}>
+            <AdminField label="Company">
+              <AdminInput name="companyName" defaultValue={defaults.companyName} />
+            </AdminField>
+            <AdminField label="Contact">
+              <AdminInput name="contactName" defaultValue={defaults.contactName} />
+            </AdminField>
+            <AdminField label="Email">
+              <AdminInput name="email" type="email" defaultValue={defaults.email} />
+            </AdminField>
+            <AdminField label="Phone">
+              <AdminInput name="phone" defaultValue={defaults.phone} />
+            </AdminField>
+            <AdminField label="Province / VAT context">
+              <AdminInput name="province" defaultValue={defaults.province} />
+            </AdminField>
           </div>
-        </header>
+        </AdminPanel>
 
-        <div className="admin-table-wrap">
-          <table className="admin-table">
-            <thead>
-              <tr>
-                <th>Type</th>
-                <th>Code</th>
-                <th>Description</th>
-                <th>Qty</th>
-                <th>Unit</th>
-                {showCost ? <th>Cost</th> : null}
-                <th>Sell</th>
-                {showCost ? <th>Mk%</th> : null}
-                {showCost ? <th>Mg%</th> : null}
-                <th>Disc%</th>
-                <th>VAT</th>
-                <th>Total</th>
-                <th />
-              </tr>
-            </thead>
-            <tbody>
-              {lines.map((line, index) => (
-                <tr key={`${line.id ?? "new"}-${index}`}>
-                  <td>
-                    <select
-                      className="form-input"
-                      value={line.lineType}
-                      onChange={(e) =>
-                        updateLine(index, {
-                          lineType: e.target.value as QuoteLineType,
-                        })
-                      }
-                    >
-                      <option value="material">material</option>
-                      <option value="labour">labour</option>
-                      <option value="travel">travel</option>
-                      <option value="delivery">delivery</option>
-                      <option value="subcontractor">subcontractor</option>
-                      <option value="custom">custom</option>
-                      <option value="item">item</option>
-                      <option value="heading">heading</option>
-                      <option value="note">note</option>
-                    </select>
-                  </td>
-                  <td>
-                    <input
-                      className="form-input"
-                      value={line.itemCode}
-                      onChange={(e) => updateLine(index, { itemCode: e.target.value })}
-                    />
-                  </td>
-                  <td>
-                    <input
-                      className="form-input"
-                      value={line.description}
-                      onChange={(e) =>
-                        updateLine(index, { description: e.target.value })
-                      }
-                      required={line.lineType !== "heading"}
-                    />
-                    <SelectedPricingSource metadata={line.metadata} compact />
-                  </td>
-                  <td>
-                    <input
-                      className="form-input"
-                      type="number"
-                      step="0.0001"
-                      value={line.quantity}
-                      onChange={(e) =>
-                        updateLine(index, { quantity: Number(e.target.value) })
-                      }
-                    />
-                  </td>
-                  <td>
-                    <input
-                      className="form-input"
-                      value={line.unit}
-                      onChange={(e) => updateLine(index, { unit: e.target.value })}
-                    />
-                  </td>
-                  {showCost ? (
+        <AdminPanel title="Project">
+          <div className="admin-form-grid">
+            <AdminField label="Quote title" required className="admin-field--full">
+              <AdminInput name="title" required defaultValue={defaults.title} />
+            </AdminField>
+            <AdminField label="RFQ id (optional)">
+              <AdminInput name="rfqId" defaultValue={defaults.rfqId} />
+            </AdminField>
+            <AdminField label="Project reference">
+              <AdminInput name="projectReference" defaultValue={defaults.projectReference} />
+            </AdminField>
+            <AdminField label="Project location">
+              <AdminInput name="projectLocation" defaultValue={defaults.projectLocation} />
+            </AdminField>
+            <AdminField label="Service">
+              <AdminInput name="serviceRequired" defaultValue={defaults.serviceRequired} />
+            </AdminField>
+            <AdminField label="Scope summary" className="admin-field--full">
+              <AdminTextarea name="scopeSummary" rows={3} defaultValue={defaults.scopeSummary} />
+            </AdminField>
+          </div>
+        </AdminPanel>
+
+        <AdminPanel
+          title="Line items"
+          actions={
+            <>
+              <AdminButton
+                size="sm"
+                variant="secondary"
+                onClick={() => setPricingLibraryOpen(true)}
+              >
+                Add from pricing library
+              </AdminButton>
+              <AdminButton
+                size="sm"
+                variant="secondary"
+                onClick={() => setLines((prev) => [...prev, emptyLine(prev.length, "custom")])}
+              >
+                Add custom line
+              </AdminButton>
+              <AdminButton
+                size="sm"
+                variant="secondary"
+                onClick={() => setLines((prev) => [...prev, emptyLine(prev.length, "heading")])}
+              >
+                Add heading
+              </AdminButton>
+              <AdminButton
+                size="sm"
+                variant="secondary"
+                onClick={() => setLines((prev) => [...prev, emptyLine(prev.length, "note")])}
+              >
+                Add note
+              </AdminButton>
+            </>
+          }
+        >
+          <div className="admin-table-wrap">
+            <table className="admin-table">
+              <thead>
+                <tr>
+                  <th>Type</th>
+                  <th>Code</th>
+                  <th>Description</th>
+                  <th>Qty</th>
+                  <th>Unit</th>
+                  {showCost ? <th>Cost</th> : null}
+                  <th>Sell</th>
+                  {showCost ? <th>Mk%</th> : null}
+                  {showCost ? <th>Mg%</th> : null}
+                  <th>Disc%</th>
+                  <th>VAT</th>
+                  <th>Total</th>
+                  <th />
+                </tr>
+              </thead>
+              <tbody>
+                {lines.map((line, index) => (
+                  <tr key={`${line.id ?? "new"}-${index}`}>
                     <td>
-                      <input
-                        className="form-input"
-                        type="number"
-                        step="0.01"
-                        value={line.costUnitPrice ?? ""}
+                      <AdminSelect
+                        value={line.lineType}
                         onChange={(e) =>
                           updateLine(index, {
-                            costUnitPrice:
-                              e.target.value === ""
-                                ? null
-                                : Number(e.target.value),
+                            lineType: e.target.value as QuoteLineType,
+                          })
+                        }
+                      >
+                        <option value="material">material</option>
+                        <option value="labour">labour</option>
+                        <option value="travel">travel</option>
+                        <option value="delivery">delivery</option>
+                        <option value="subcontractor">subcontractor</option>
+                        <option value="custom">custom</option>
+                        <option value="item">item</option>
+                        <option value="heading">heading</option>
+                        <option value="note">note</option>
+                      </AdminSelect>
+                    </td>
+                    <td>
+                      <AdminInput
+                        value={line.itemCode}
+                        onChange={(e) => updateLine(index, { itemCode: e.target.value })}
+                      />
+                    </td>
+                    <td>
+                      <AdminInput
+                        value={line.description}
+                        onChange={(e) =>
+                          updateLine(index, { description: e.target.value })
+                        }
+                        required={line.lineType !== "heading"}
+                      />
+                      <SelectedPricingSource metadata={line.metadata} compact />
+                    </td>
+                    <td>
+                      <AdminInput
+                        type="number"
+                        step="0.0001"
+                        value={line.quantity}
+                        onChange={(e) =>
+                          updateLine(index, { quantity: Number(e.target.value) })
+                        }
+                      />
+                    </td>
+                    <td>
+                      <AdminInput
+                        value={line.unit}
+                        onChange={(e) => updateLine(index, { unit: e.target.value })}
+                      />
+                    </td>
+                    {showCost ? (
+                      <td>
+                        <AdminInput
+                          type="number"
+                          step="0.01"
+                          value={line.costUnitPrice ?? ""}
+                          onChange={(e) =>
+                            updateLine(index, {
+                              costUnitPrice:
+                                e.target.value === ""
+                                  ? null
+                                  : Number(e.target.value),
+                            })
+                          }
+                        />
+                      </td>
+                    ) : null}
+                    <td>
+                      <AdminInput
+                        type="number"
+                        step="0.01"
+                        value={line.sellUnitPrice}
+                        onChange={(e) =>
+                          updateLine(index, {
+                            sellUnitPrice: Number(e.target.value),
                           })
                         }
                       />
                     </td>
-                  ) : null}
-                  <td>
-                    <input
-                      className="form-input"
-                      type="number"
-                      step="0.01"
-                      value={line.sellUnitPrice}
-                      onChange={(e) =>
-                        updateLine(index, {
-                          sellUnitPrice: Number(e.target.value),
-                        })
-                      }
-                    />
-                  </td>
-                  {showCost ? (
-                    <td>{lineMarkupPercent(line).toFixed(1)}</td>
-                  ) : null}
-                  {showCost ? (
-                    <td>{lineMarginPercent(line).toFixed(1)}</td>
-                  ) : null}
-                  <td>
-                    <input
-                      className="form-input"
-                      type="number"
-                      step="0.1"
-                      value={line.discountPercent}
-                      onChange={(e) =>
-                        updateLine(index, {
-                          discountPercent: Number(e.target.value),
-                        })
-                      }
-                    />
-                  </td>
-                  <td>
-                    <select
-                      className="form-input"
-                      value={line.taxCategory}
-                      onChange={(e) =>
-                        updateLine(index, {
-                          taxCategory: e.target.value as EditableLine["taxCategory"],
-                        })
-                      }
-                    >
-                      <option value="standard">standard</option>
-                      <option value="exempt">exempt</option>
-                      <option value="zero">zero</option>
-                    </select>
-                  </td>
-                  <td>{formatZar(lineTotalExVat(line))}</td>
-                  <td>
-                    <div className="admin-panel__actions">
-                      <button
-                        type="button"
-                        className="btn btn--sm btn--secondary"
-                        onClick={() => moveLine(index, -1)}
-                      >
-                        ↑
-                      </button>
-                      <button
-                        type="button"
-                        className="btn btn--sm btn--secondary"
-                        onClick={() => moveLine(index, 1)}
-                      >
-                        ↓
-                      </button>
-                      <button
-                        type="button"
-                        className="btn btn--sm btn--secondary"
-                        onClick={() =>
-                          setLines((prev) => [
-                            ...prev.slice(0, index + 1),
-                            { ...line, id: undefined, sortOrder: index + 1 },
-                            ...prev.slice(index + 1),
-                          ])
+                    {showCost ? (
+                      <td>{lineMarkupPercent(line).toFixed(1)}</td>
+                    ) : null}
+                    {showCost ? (
+                      <td>{lineMarginPercent(line).toFixed(1)}</td>
+                    ) : null}
+                    <td>
+                      <AdminInput
+                        type="number"
+                        step="0.1"
+                        value={line.discountPercent}
+                        onChange={(e) =>
+                          updateLine(index, {
+                            discountPercent: Number(e.target.value),
+                          })
+                        }
+                      />
+                    </td>
+                    <td>
+                      <AdminSelect
+                        value={line.taxCategory}
+                        onChange={(e) =>
+                          updateLine(index, {
+                            taxCategory: e.target.value as EditableLine["taxCategory"],
+                          })
                         }
                       >
-                        Dup
-                      </button>
-                      <button
-                        type="button"
-                        className="btn btn--sm btn--secondary"
-                        onClick={() =>
-                          setLines((prev) =>
-                            prev
-                              .filter((_, i) => i !== index)
-                              .map((l, i) => ({ ...l, sortOrder: i })),
-                          )
-                        }
-                      >
-                        ×
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-
-        <label className="admin-field" style={{ marginTop: "1rem" }}>
-          <span>
-            <input
-              type="checkbox"
-              name="estimatorConfirmedSuggestions"
-              defaultChecked={defaults.estimatorConfirmedSuggestions}
-            />{" "}
-            Estimator confirms suggested quantities (calculator output is not
-            final measured quantity)
-          </span>
-        </label>
-      </section>
-
-      <section className="admin-panel">
-        <header className="admin-panel__header">
-          <h2>Dates, terms and totals</h2>
-        </header>
-        <div className="admin-form-grid">
-          <label className="admin-field">
-            <span>Issue date</span>
-            <input
-              className="form-input"
-              type="date"
-              name="issueDate"
-              required
-              defaultValue={defaults.issueDate}
-            />
-          </label>
-          <label className="admin-field">
-            <span>Valid until</span>
-            <input
-              className="form-input"
-              type="date"
-              name="validUntil"
-              required
-              defaultValue={defaults.validUntil}
-            />
-          </label>
-          <label className="admin-field">
-            <span>Header discount (ZAR)</span>
-            <input
-              className="form-input"
-              type="number"
-              step="0.01"
-              value={discountAmount}
-              onChange={(e) => setDiscountAmount(Number(e.target.value))}
-            />
-          </label>
-          <label className="admin-field">
-            <span>VAT rate %</span>
-            <input
-              className="form-input"
-              type="number"
-              step="0.01"
-              value={vatRate}
-              onChange={(e) => setVatRate(Number(e.target.value))}
-            />
-          </label>
-          <label className="admin-field">
-            <span>Deposit %</span>
-            <input
-              className="form-input"
-              type="number"
-              step="0.1"
-              name="depositPercent"
-              defaultValue={defaults.depositPercent}
-            />
-          </label>
-          <label className="admin-field admin-field--full">
-            <span>Assumptions</span>
-            <textarea
-              className="form-input"
-              name="assumptions"
-              rows={3}
-              defaultValue={defaults.assumptions}
-            />
-          </label>
-          <label className="admin-field admin-field--full">
-            <span>Exclusions</span>
-            <textarea
-              className="form-input"
-              name="exclusions"
-              rows={3}
-              defaultValue={defaults.exclusions}
-            />
-          </label>
-          <label className="admin-field admin-field--full">
-            <span>Payment terms</span>
-            <textarea
-              className="form-input"
-              name="paymentTerms"
-              rows={2}
-              defaultValue={defaults.paymentTerms}
-            />
-          </label>
-          <label className="admin-field admin-field--full">
-            <span>Customer message (email)</span>
-            <textarea
-              className="form-input"
-              name="customerMessage"
-              rows={2}
-              defaultValue={defaults.customerMessage}
-            />
-          </label>
-          <label className="admin-field admin-field--full">
-            <span>Internal notes</span>
-            <textarea
-              className="form-input"
-              name="internalNotes"
-              rows={2}
-              defaultValue={defaults.internalNotes}
-            />
-          </label>
-          <input type="hidden" name="programmeNotes" defaultValue={defaults.programmeNotes} />
-          <input type="hidden" name="warrantyWording" defaultValue={defaults.warrantyWording} />
-          <input type="hidden" name="projectDescription" defaultValue={defaults.projectDescription} />
-        </div>
-
-        <dl className="admin-quote-totals">
-          {showCost ? (
-            <>
-              <div>
-                <dt>Direct cost</dt>
-                <dd>{formatZar(totals.directCost)}</dd>
-              </div>
-              <div>
-                <dt>Gross profit</dt>
-                <dd>{formatZar(totals.grossProfit)}</dd>
-              </div>
-              <div>
-                <dt>Gross margin</dt>
-                <dd>{totals.grossMarginPercent.toFixed(1)}%</dd>
-              </div>
-            </>
-          ) : null}
-          <div>
-            <dt>Subtotal ex VAT</dt>
-            <dd>{formatZar(totals.subtotalExVat)}</dd>
+                        <option value="standard">standard</option>
+                        <option value="exempt">exempt</option>
+                        <option value="zero">zero</option>
+                      </AdminSelect>
+                    </td>
+                    <td>{formatZar(lineTotalExVat(line))}</td>
+                    <td>
+                      <div className="admin-table-actions">
+                        <AdminIconButton label="Move up" onClick={() => moveLine(index, -1)}>
+                          ↑
+                        </AdminIconButton>
+                        <AdminIconButton label="Move down" onClick={() => moveLine(index, 1)}>
+                          ↓
+                        </AdminIconButton>
+                        <AdminButton
+                          size="sm"
+                          variant="secondary"
+                          onClick={() =>
+                            setLines((prev) => [
+                              ...prev.slice(0, index + 1),
+                              { ...line, id: undefined, sortOrder: index + 1 },
+                              ...prev.slice(index + 1),
+                            ])
+                          }
+                        >
+                          Dup
+                        </AdminButton>
+                        <AdminIconButton
+                          label="Remove line"
+                          onClick={() =>
+                            setLines((prev) =>
+                              prev
+                                .filter((_, i) => i !== index)
+                                .map((l, i) => ({ ...l, sortOrder: i })),
+                            )
+                          }
+                        >
+                          ×
+                        </AdminIconButton>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
-          <div>
-            <dt>Discount</dt>
-            <dd>{formatZar(totals.discountAmount)}</dd>
-          </div>
-          <div>
-            <dt>VAT</dt>
-            <dd>{formatZar(totals.vatAmount)}</dd>
-          </div>
-          <div>
-            <dt>Total inc VAT</dt>
-            <dd>{formatZar(totals.totalIncVat)}</dd>
-          </div>
-        </dl>
-      </section>
 
-      <div className="admin-panel__actions">
-        <button className="btn btn--md btn--primary" type="submit" disabled={pending}>
-          {pending ? "Saving…" : mode === "create" ? "Create draft" : "Save quote"}
-        </button>
+          <AdminCheckbox
+            name="estimatorConfirmedSuggestions"
+            defaultChecked={defaults.estimatorConfirmedSuggestions}
+            label="Estimator confirms suggested quantities (calculator output is not final measured quantity)"
+            style={{ marginTop: "1rem" }}
+          />
+        </AdminPanel>
+
+        <AdminPanel title="Dates & terms">
+          <div className="admin-form-grid">
+            <AdminField label="Issue date" required>
+              <AdminDateInput name="issueDate" required defaultValue={defaults.issueDate} />
+            </AdminField>
+            <AdminField label="Valid until" required>
+              <AdminDateInput name="validUntil" required defaultValue={defaults.validUntil} />
+            </AdminField>
+            <AdminField label="Deposit %">
+              <AdminInput
+                type="number"
+                step="0.1"
+                name="depositPercent"
+                defaultValue={defaults.depositPercent}
+              />
+            </AdminField>
+            <AdminField label="Assumptions" className="admin-field--full">
+              <AdminTextarea name="assumptions" rows={3} defaultValue={defaults.assumptions} />
+            </AdminField>
+            <AdminField label="Exclusions" className="admin-field--full">
+              <AdminTextarea name="exclusions" rows={3} defaultValue={defaults.exclusions} />
+            </AdminField>
+            <AdminField label="Payment terms" className="admin-field--full">
+              <AdminTextarea name="paymentTerms" rows={2} defaultValue={defaults.paymentTerms} />
+            </AdminField>
+            <AdminField label="Customer message (email)" className="admin-field--full">
+              <AdminTextarea
+                name="customerMessage"
+                rows={2}
+                defaultValue={defaults.customerMessage}
+              />
+            </AdminField>
+            <AdminField label="Internal notes" className="admin-field--full">
+              <AdminTextarea name="internalNotes" rows={2} defaultValue={defaults.internalNotes} />
+            </AdminField>
+            <input type="hidden" name="programmeNotes" defaultValue={defaults.programmeNotes} />
+            <input type="hidden" name="warrantyWording" defaultValue={defaults.warrantyWording} />
+            <input
+              type="hidden"
+              name="projectDescription"
+              defaultValue={defaults.projectDescription}
+            />
+          </div>
+        </AdminPanel>
       </div>
+
+      <aside className="admin-quote-builder__aside">
+        <AdminPanel title="Totals" className="admin-quote-builder__totals-panel">
+          <div className="admin-form-grid" style={{ marginTop: 0 }}>
+            <AdminField label="Header discount (ZAR)">
+              <AdminInput
+                type="number"
+                step="0.01"
+                value={discountAmount}
+                onChange={(e) => setDiscountAmount(Number(e.target.value))}
+              />
+            </AdminField>
+            <AdminField label="VAT rate %">
+              <AdminInput
+                type="number"
+                step="0.01"
+                value={vatRate}
+                onChange={(e) => setVatRate(Number(e.target.value))}
+              />
+            </AdminField>
+          </div>
+
+          <dl className="admin-quote-totals">
+            {showCost ? (
+              <>
+                <div>
+                  <dt>Direct cost</dt>
+                  <dd>{formatZar(totals.directCost)}</dd>
+                </div>
+                <div>
+                  <dt>Gross profit</dt>
+                  <dd>{formatZar(totals.grossProfit)}</dd>
+                </div>
+                <div>
+                  <dt>Gross margin</dt>
+                  <dd>{totals.grossMarginPercent.toFixed(1)}%</dd>
+                </div>
+              </>
+            ) : null}
+            <div>
+              <dt>Subtotal ex VAT</dt>
+              <dd>{formatZar(totals.subtotalExVat)}</dd>
+            </div>
+            <div>
+              <dt>Discount</dt>
+              <dd>{formatZar(totals.discountAmount)}</dd>
+            </div>
+            <div>
+              <dt>VAT</dt>
+              <dd>{formatZar(totals.vatAmount)}</dd>
+            </div>
+            <div>
+              <dt>Total inc VAT</dt>
+              <dd>{formatZar(totals.totalIncVat)}</dd>
+            </div>
+          </dl>
+
+          <AdminFormActions className="admin-quote-builder__aside-actions">
+            <AdminButton type="submit" variant="primary" disabled={pending}>
+              {submitLabel}
+            </AdminButton>
+          </AdminFormActions>
+        </AdminPanel>
+      </aside>
+
+      <AdminFormActions sticky className="admin-quote-builder__mobile-actions">
+        {mode === "create" ? (
+          <AdminButton variant="secondary" disabled>
+            Preview
+          </AdminButton>
+        ) : (
+          <AdminButton href="#" variant="secondary">
+            Preview
+          </AdminButton>
+        )}
+        <AdminButton type="submit" variant="primary" disabled={pending}>
+          {submitLabel}
+        </AdminButton>
+      </AdminFormActions>
 
       <PricingLibraryDialog
         open={pricingLibraryOpen}

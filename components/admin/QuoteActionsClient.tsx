@@ -10,6 +10,7 @@ import {
   sendQuoteAction,
   transitionQuoteAction,
 } from "@/app/admin/quotes/actions";
+import { AdminButton, AdminInput } from "@/components/admin/ui";
 
 type Props = {
   quoteId: string;
@@ -43,9 +44,8 @@ export function QuoteActionsClient(props: Props) {
       {message ? <p className="admin-flash">{message}</p> : null}
       <div className="admin-panel__actions">
         {props.status === "draft" ? (
-          <button
-            type="button"
-            className="btn btn--md btn--secondary"
+          <AdminButton
+            variant="secondary"
             disabled={pending}
             onClick={() =>
               run("Submit for review", () =>
@@ -54,34 +54,31 @@ export function QuoteActionsClient(props: Props) {
             }
           >
             Submit for review
-          </button>
+          </AdminButton>
         ) : null}
         {props.status === "internal_review" && props.canApprove ? (
-          <button
-            type="button"
-            className="btn btn--md btn--primary"
+          <AdminButton
+            variant="primary"
             disabled={pending}
             onClick={() =>
               run("Approve", () => transitionQuoteAction(props.quoteId, "approved"))
             }
           >
             Approve
-          </button>
+          </AdminButton>
         ) : null}
-        <button
-          type="button"
-          className="btn btn--md btn--secondary"
+        <AdminButton
+          variant="secondary"
           disabled={pending}
           onClick={() =>
             run("Generate PDF", () => generatePdfAction(props.quoteId))
           }
         >
           Generate PDF
-        </button>
+        </AdminButton>
         {props.hasPdf ? (
-          <button
-            type="button"
-            className="btn btn--md btn--secondary"
+          <AdminButton
+            variant="secondary"
             disabled={pending}
             onClick={() =>
               startTransition(async () => {
@@ -92,26 +89,24 @@ export function QuoteActionsClient(props: Props) {
             }
           >
             Download PDF
-          </button>
+          </AdminButton>
         ) : null}
-        <button
-          type="button"
-          className="btn btn--md btn--secondary"
+        <AdminButton
+          variant="secondary"
           disabled={pending}
           onClick={() => run("Duplicate", () => duplicateQuoteAction(props.quoteId))}
         >
           Duplicate
-        </button>
-        <button
-          type="button"
-          className="btn btn--md btn--secondary"
+        </AdminButton>
+        <AdminButton
+          variant="secondary"
           disabled={pending}
           onClick={() =>
             run("Revoke public link", () => revokePublicTokenAction(props.quoteId))
           }
         >
           Revoke link
-        </button>
+        </AdminButton>
       </div>
 
       {props.canSend ? (
@@ -124,8 +119,7 @@ export function QuoteActionsClient(props: Props) {
         >
           <label className="admin-field">
             <span>Recipient email</span>
-            <input
-              className="form-input"
+            <AdminInput
               name="recipientEmail"
               type="email"
               defaultValue={props.email}
@@ -147,9 +141,9 @@ export function QuoteActionsClient(props: Props) {
               </span>
             </label>
           ) : null}
-          <button className="btn btn--md btn--primary" type="submit" disabled={pending}>
+          <AdminButton type="submit" variant="primary" disabled={pending}>
             Send quotation email
-          </button>
+          </AdminButton>
         </form>
       ) : null}
 
@@ -163,11 +157,11 @@ export function QuoteActionsClient(props: Props) {
         >
           <label className="admin-field admin-field--full">
             <span>Revision reason</span>
-            <input className="form-input" name="reason" required placeholder="Why revise?" />
+            <AdminInput name="reason" required placeholder="Why revise?" />
           </label>
-          <button className="btn btn--md btn--secondary" type="submit" disabled={pending}>
+          <AdminButton type="submit" variant="secondary" disabled={pending}>
             Create revision
-          </button>
+          </AdminButton>
         </form>
       ) : null}
     </div>

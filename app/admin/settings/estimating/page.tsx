@@ -1,5 +1,10 @@
 import { requireAdmin } from "@/lib/auth/require-admin";
-import { AdminPageHeader } from "@/components/admin/ui";
+import {
+  AdminButton,
+  AdminInput,
+  AdminPageHeader,
+  AdminPanel,
+} from "@/components/admin/ui";
 import { createClient } from "@/lib/supabase/server";
 import { updateEstimatingSettingAction } from "@/app/admin/pricing/actions";
 import {
@@ -55,18 +60,10 @@ export default async function AdminEstimatingSettingsPage() {
         secondaryAction={{ href: "/admin/settings/", label: "All settings" }}
       />
 
-      <section className="admin-panel">
-        <header className="admin-panel__header">
-          <h2>Estimating settings</h2>
-          <p className="admin-empty__hint">
-            Markup and margin are different. On a R{sampleCost.toLocaleString("en-ZA")} cost:{" "}
-            {markup}% markup → {formatZar(sellMarkup)} (
-            {markupPercentFromPrices(sampleCost, sellMarkup)}% markup /{" "}
-            {grossMarginPercentFromPrices(sampleCost, sellMarkup)}% margin). {margin}% margin
-            target → {formatZar(sellMargin)}.
-          </p>
-        </header>
-
+      <AdminPanel
+        title="Estimating settings"
+        description={`Markup and margin are different. On a R${sampleCost.toLocaleString("en-ZA")} cost: ${markup}% markup → ${formatZar(sellMarkup)} (${markupPercentFromPrices(sampleCost, sellMarkup)}% markup / ${grossMarginPercentFromPrices(sampleCost, sellMarkup)}% margin). ${margin}% margin target → ${formatZar(sellMargin)}.`}
+      >
         {error ? (
           <div className="admin-empty">
             <p>Unable to load settings.</p>
@@ -83,20 +80,19 @@ export default async function AdminEstimatingSettingsPage() {
                 <input type="hidden" name="setting_key" value={key} />
                 <label>
                   {label}
-                  <input
+                  <AdminInput
                     name="setting_value"
-                    className="form-input"
                     defaultValue={readSetting(settings, key)}
                   />
                 </label>
-                <button type="submit" className="btn btn--md btn--primary">
+                <AdminButton type="submit" variant="primary">
                   Save
-                </button>
+                </AdminButton>
               </form>
             ))}
           </div>
         )}
-      </section>
+      </AdminPanel>
     </div>
   );
 }

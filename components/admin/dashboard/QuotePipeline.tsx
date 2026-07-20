@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { formatZar } from "@/lib/estimating/money";
 import type { DashboardQuotePipelineRow } from "@/lib/admin/dashboard/types";
+import { AdminButton, AdminPanel } from "@/components/admin/ui";
 import { DashboardEmptyState } from "./DashboardEmptyState";
 
 type QuotePipelineProps = {
@@ -12,17 +13,15 @@ export function QuotePipeline({ rows }: QuotePipelineProps) {
   const totalCount = rows.reduce((sum, row) => sum + row.count, 0);
 
   return (
-    <section className="dash-panel" aria-labelledby="quote-pipeline-heading">
-      <header className="dash-panel__header">
-        <div>
-          <h2 id="quote-pipeline-heading">Quote Pipeline</h2>
-          <p className="dash-panel__subtitle">
-            Latest revision counts and values ·{" "}
-            <Link href="/admin/quotes/">Open quotes</Link>
-          </p>
-        </div>
-      </header>
-
+    <AdminPanel
+      title="Quote Pipeline"
+      description="Latest revision counts and values"
+      actions={
+        <AdminButton href="/admin/quotes/" variant="link" size="sm">
+          Open quotes
+        </AdminButton>
+      }
+    >
       {totalCount === 0 ? (
         <DashboardEmptyState
           title="No quote data available for the selected period."
@@ -58,6 +57,6 @@ export function QuotePipeline({ rows }: QuotePipelineProps) {
           <p className="dash-note">Accepted value is not cash received.</p>
         </>
       )}
-    </section>
+    </AdminPanel>
   );
 }

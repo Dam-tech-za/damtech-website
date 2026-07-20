@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { RFQ_STATUSES } from "@/lib/rfq/statuses";
+import { AdminButton, AdminSelect } from "@/components/admin/ui";
 
 type StaffMember = {
   id: string;
@@ -74,10 +75,9 @@ export function RfqBulkActions({
         <label className="sr-only" htmlFor="bulk-status">
           Status
         </label>
-        <select
+        <AdminSelect
           id="bulk-status"
           name="status"
-          className="form-input"
           defaultValue=""
           required
         >
@@ -91,14 +91,14 @@ export function RfqBulkActions({
               </option>
             ),
           )}
-        </select>
-        <button
+        </AdminSelect>
+        <AdminButton
           type="submit"
-          className="btn btn--md btn--primary"
+          variant="primary"
           disabled={statusPending || assignPending}
         >
           {statusPending ? "Updating…" : "Update"}
-        </button>
+        </AdminButton>
       </form>
 
       <form
@@ -117,7 +117,7 @@ export function RfqBulkActions({
         <label className="sr-only" htmlFor="bulk-assign">
           Assign to
         </label>
-        <select id="bulk-assign" name="assignedTo" className="form-input" required defaultValue="">
+        <AdminSelect id="bulk-assign" name="assignedTo" required defaultValue="">
           <option value="" disabled>
             Assign to…
           </option>
@@ -127,23 +127,19 @@ export function RfqBulkActions({
               {person.full_name || person.email}
             </option>
           ))}
-        </select>
-        <button
+        </AdminSelect>
+        <AdminButton
           type="submit"
-          className="btn btn--md btn--secondary"
+          variant="secondary"
           disabled={statusPending || assignPending}
         >
           {assignPending ? "Assigning…" : "Assign"}
-        </button>
+        </AdminButton>
       </form>
 
-      <button
-        type="button"
-        className="btn btn--md btn--secondary"
-        onClick={onClear}
-      >
+      <AdminButton type="button" variant="secondary" onClick={onClear}>
         Clear selection
-      </button>
+      </AdminButton>
 
       {error ? <p className="form-error">{error}</p> : null}
     </div>

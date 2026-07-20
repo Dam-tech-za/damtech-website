@@ -2,6 +2,7 @@
 
 import type { ReactNode } from "react";
 import { AdminDialog } from "./AdminDialog";
+import { AdminButton } from "./AdminButton";
 
 type AdminConfirmDialogProps = {
   open: boolean;
@@ -33,20 +34,16 @@ export function AdminConfirmDialog({
       onClose={onClose}
       footer={
         <>
-          <button
-            type="button"
-            className="btn btn--md btn--secondary"
-            onClick={onClose}
-          >
+          <AdminButton type="button" variant="secondary" onClick={onClose}>
             {cancelLabel}
-          </button>
-          <button
+          </AdminButton>
+          <AdminButton
             type="button"
-            className={`btn btn--md ${tone === "danger" ? "btn--secondary" : "btn--primary"}`}
+            variant={tone === "danger" ? "danger" : "primary"}
             onClick={onConfirm}
           >
             {confirmLabel}
-          </button>
+          </AdminButton>
         </>
       }
     >

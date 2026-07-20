@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useId, useRef, useState } from "react";
+import { AdminButton } from "./AdminButton";
 
 export type AdminActionMenuItem = {
   id: string;
@@ -43,16 +44,17 @@ export function AdminActionMenu({
 
   return (
     <div className="admin-action-menu" ref={rootRef}>
-      <button
+      <AdminButton
         type="button"
-        className="btn btn--sm btn--secondary"
+        size="sm"
+        variant="secondary"
         aria-haspopup="menu"
         aria-expanded={open}
         aria-controls={menuId}
         onClick={() => setOpen((value) => !value)}
       >
         {label}
-      </button>
+      </AdminButton>
       {open ? (
         <ul id={menuId} className="admin-action-menu__list" role="menu">
           {items.map((item) => (

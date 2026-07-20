@@ -15,6 +15,12 @@ import {
   RFQ_DELETE_REASONS,
   type RfqDeleteSummary,
 } from "@/lib/admin/rfqs/delete-rfq";
+import {
+  AdminButton,
+  AdminInput,
+  AdminSelect,
+  AdminTextarea,
+} from "@/components/admin/ui";
 
 type DeleteRfqDialogProps = {
   open: boolean;
@@ -212,9 +218,8 @@ export function DeleteRfqDialog({
             <>
               <div className="form-field">
                 <label htmlFor="rfq-delete-reason">Reason for deletion</label>
-                <select
+                <AdminSelect
                   id="rfq-delete-reason"
-                  className="form-input"
                   value={reason}
                   disabled={deleting}
                   onChange={(event) => setReason(event.target.value)}
@@ -226,15 +231,14 @@ export function DeleteRfqDialog({
                       {option}
                     </option>
                   ))}
-                </select>
+                </AdminSelect>
               </div>
 
               {reason === "Other" ? (
                 <div className="form-field">
                   <label htmlFor="rfq-delete-reason-other">Explanation</label>
-                  <textarea
+                  <AdminTextarea
                     id="rfq-delete-reason-other"
-                    className="form-input"
                     rows={2}
                     value={reasonOther}
                     disabled={deleting}
@@ -249,10 +253,9 @@ export function DeleteRfqDialog({
                   Type the RFQ number to confirm:{" "}
                   <strong>{summary.rfqNumber}</strong>
                 </label>
-                <input
+                <AdminInput
                   id="rfq-delete-confirm"
                   type="text"
-                  className="form-input"
                   autoComplete="off"
                   spellCheck={false}
                   value={typedConfirmation}
@@ -273,14 +276,14 @@ export function DeleteRfqDialog({
         </div>
 
         <footer className="admin-dialog__footer rfq-delete-dialog__footer">
-          <button
+          <AdminButton
             type="button"
-            className="btn btn--md btn--secondary"
+            variant="secondary"
             disabled={deleting || closing}
             onClick={handleClose}
           >
             Cancel
-          </button>
+          </AdminButton>
 
           {blocked ? (
             <form
@@ -296,24 +299,24 @@ export function DeleteRfqDialog({
             >
               <input type="hidden" name="rfqId" value={summary.id} />
               <input type="hidden" name="status" value="closed" />
-              <button
+              <AdminButton
                 type="submit"
-                className="btn btn--md btn--primary"
+                variant="primary"
                 disabled={deleting || closing}
               >
                 {closing ? "Closing…" : "Close RFQ instead"}
-              </button>
+              </AdminButton>
             </form>
           ) : (
-            <button
+            <AdminButton
               ref={deleteButtonRef}
               type="button"
-              className="btn btn--md btn--danger"
+              variant="danger"
               disabled={!canDelete || deleting}
               onClick={handleDelete}
             >
               {deleting ? "Deleting…" : "Delete RFQ"}
-            </button>
+            </AdminButton>
           )}
         </footer>
       </div>

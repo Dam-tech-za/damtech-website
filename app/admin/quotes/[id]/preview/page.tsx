@@ -1,10 +1,10 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { requireAdmin } from "@/lib/auth/require-admin";
 import { buildQuotePdfPayload } from "@/lib/quotes/pdf-service";
 import { formatQuoteNumber } from "@/lib/quotes/types";
 import { formatZar } from "@/lib/estimating/money";
 import { GeneratePdfButton } from "@/components/admin/GeneratePdfButton";
+import { AdminButton, AdminPanel } from "@/components/admin/ui";
 
 type PageProps = { params: Promise<{ id: string }> };
 
@@ -18,23 +18,18 @@ export default async function AdminQuotePreviewPage({ params }: PageProps) {
   const display = formatQuoteNumber(payload.quoteNumber, payload.revisionNumber);
 
   return (
-    <div className="admin-panel">
-      <header className="admin-panel__header admin-panel__header--row">
-        <div>
-          <h2>PDF preview — {display.label}</h2>
-          <p className="admin-empty__hint">
-            Preview uses the same snapshot fields as the generated PDF. Cost and
-            margin are never included.
-          </p>
-        </div>
-        <div className="admin-panel__actions">
+    <AdminPanel
+      title={`PDF preview — ${display.label}`}
+      description="Preview uses the same snapshot fields as the generated PDF. Cost and margin are never included."
+      actions={
+        <>
           <GeneratePdfButton quoteId={id} />
-          <Link className="btn btn--md btn--secondary" href={`/admin/quotes/${id}/`}>
+          <AdminButton href={`/admin/quotes/${id}/`} variant="secondary">
             Back to quote
-          </Link>
-        </div>
-      </header>
-
+          </AdminButton>
+        </>
+      }
+    >
       <article className="admin-quote-preview">
         <h3>{payload.company.tradingName || payload.company.legalBusinessName}</h3>
         <p>QUOTATION · {display.label}</p>
@@ -82,6 +77,6 @@ export default async function AdminQuotePreviewPage({ params }: PageProps) {
           <strong>Total inc VAT: {formatZar(payload.totalIncVat)}</strong>
         </p>
       </article>
-    </div>
+    </AdminPanel>
   );
 }
