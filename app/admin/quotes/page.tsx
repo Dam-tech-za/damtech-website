@@ -17,12 +17,14 @@ import {
 import { formatZar } from "@/lib/estimating/money";
 import { canViewCostMargin } from "@/lib/quotes/workflow";
 import {
+  AdminButton,
   AdminEmptyState,
   AdminInfoBanner,
   AdminMetricCard,
   AdminMetricStrip,
   AdminPageHeader,
   AdminStatusBadge,
+  AdminTable,
 } from "@/components/admin/ui";
 
 type PageProps = { searchParams: Promise<QuoteListFilters> };
@@ -226,12 +228,12 @@ export default async function AdminQuotesPage({ searchParams }: PageProps) {
               Expiring soon
             </span>
           </label>
-          <button className="btn btn--md btn--primary" type="submit">
+          <AdminButton type="submit" variant="primary">
             Apply filters
-          </button>
-          <Link href="/admin/quotes/" className="btn btn--md btn--secondary">
+          </AdminButton>
+          <AdminButton href="/admin/quotes/" variant="secondary">
             Clear
-          </Link>
+          </AdminButton>
         </form>
 
         {result.rows.length === 0 ? (
@@ -242,92 +244,91 @@ export default async function AdminQuotesPage({ searchParams }: PageProps) {
             actionLabel={canManage ? "New Quote" : undefined}
           />
         ) : (
-          <div className="admin-table-wrap">
-            <table className="admin-table">
-              <thead>
-                <tr>
-                  <th>Quote</th>
-                  <th>Customer</th>
-                  <th>Project</th>
-                  <th>Issue</th>
-                  <th>Valid until</th>
-                  <th>Total</th>
-                  {showMargin ? <th>Margin</th> : null}
-                  <th>Status</th>
-                  <th>Updated</th>
-                  <th>
-                    <span className="sr-only">Actions</span>
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {result.rows.map((row) => {
-                  const status = normaliseQuoteStatus(row.status);
-                  const remaining = daysRemaining(row.valid_until);
-                  const display = formatQuoteNumber(
-                    row.quote_number,
-                    row.revision_number ?? 0,
-                  );
-                  const customerLabel =
-                    row.customers?.company_name ||
-                    row.company_name ||
-                    row.customers?.contact_name ||
-                    row.contact_name ||
-                    "—";
-                  return (
-                    <tr key={row.id}>
-                      <td>
-                        <Link href={`/admin/quotes/${row.id}/`}>
-                          {display.label}
-                        </Link>
-                      </td>
-                      <td>{customerLabel}</td>
-                      <td>{row.title}</td>
-                      <td>{row.issue_date}</td>
-                      <td>
-                        {row.valid_until}
-                        {remaining < 0 &&
+          <AdminTable>
+            <thead>
+              <tr>
+                <th>Quote</th>
+                <th>Customer</th>
+                <th>Project</th>
+                <th>Issue</th>
+                <th>Valid until</th>
+                <th>Total</th>
+                {showMargin ? <th>Margin</th> : null}
+                <th>Status</th>
+                <th>Updated</th>
+                <th>
+                  <span className="sr-only">Actions</span>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {result.rows.map((row) => {
+                const status = normaliseQuoteStatus(row.status);
+                const remaining = daysRemaining(row.valid_until);
+                const display = formatQuoteNumber(
+                  row.quote_number,
+                  row.revision_number ?? 0,
+                );
+                const customerLabel =
+                  row.customers?.company_name ||
+                  row.company_name ||
+                  row.customers?.contact_name ||
+                  row.contact_name ||
+                  "—";
+                return (
+                  <tr key={row.id}>
+                    <td>
+                      <Link href={`/admin/quotes/${row.id}/`}>
+                        {display.label}
+                      </Link>
+                    </td>
+                    <td>{customerLabel}</td>
+                    <td>{row.title}</td>
+                    <td>{row.issue_date}</td>
+                    <td>
+                      {row.valid_until}
+                      {remaining < 0 &&
+                      ["sent", "viewed"].includes(status) ? (
+                        <span className="admin-status admin-status--expired">
+                          {" "}
+                          Expired
+                        </span>
+                      ) : remaining <= 7 &&
                         ["sent", "viewed"].includes(status) ? (
-                          <span className="admin-status admin-status--expired">
-                            {" "}
-                            Expired
-                          </span>
-                        ) : remaining <= 7 &&
-                          ["sent", "viewed"].includes(status) ? (
-                          <span className="admin-status admin-status--reviewing">
-                            {" "}
-                            {remaining}d left
-                          </span>
-                        ) : null}
-                      </td>
-                      <td>{formatZar(Number(row.total_inc_vat))}</td>
-                      {showMargin ? (
-                        <td>
-                          {row.gross_margin_percent != null
-                            ? `${Number(row.gross_margin_percent).toFixed(1)}%`
-                            : "—"}
-                        </td>
+                        <span className="admin-status admin-status--reviewing">
+                          {" "}
+                          {remaining}d left
+                        </span>
                       ) : null}
+                    </td>
+                    <td>{formatZar(Number(row.total_inc_vat))}</td>
+                    {showMargin ? (
                       <td>
-                        <AdminStatusBadge status={status} domain="quote" />
+                        {row.gross_margin_percent != null
+                          ? `${Number(row.gross_margin_percent).toFixed(1)}%`
+                          : "—"}
                       </td>
-                      <td>
-                        {new Date(row.updated_at).toLocaleDateString("en-ZA")}
-                      </td>
-                      <td>
-                        <Link
-                          href={`/admin/quotes/${row.id}/`}
-                          className="btn btn--sm btn--secondary"
-                        >
-                          Open
-                        </Link>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
+                    ) : null}
+                    <td>
+                      <AdminStatusBadge status={status} domain="quote" />
+                    </td>
+                    <td>
+                      {new Date(row.updated_at).toLocaleDateString("en-ZA")}
+                    </td>
+                    <td>
+                      <AdminButton
+                        href={`/admin/quotes/${row.id}/`}
+                        size="sm"
+                        variant="secondary"
+                      >
+                        Open
+                      </AdminButton>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </AdminTable>
         )}
 
         {totalPages > 1 ? (

@@ -7,6 +7,7 @@ import {
   AdminMetricStrip,
   AdminPageHeader,
   AdminStatusBadge,
+  AdminTable,
 } from "@/components/admin/ui";
 
 type AuditRow = {
@@ -132,62 +133,60 @@ export default async function AdminAuditPage() {
             description="Successful logins, access-denied events and record changes will appear here."
           />
         ) : (
-          <div className="admin-table-wrap">
-            <table className="admin-table">
-              <thead>
-                <tr>
-                  <th>Timestamp</th>
-                  <th>User</th>
-                  <th>Action</th>
-                  <th>Entity</th>
-                  <th>Reference</th>
-                  <th>Result</th>
-                </tr>
-              </thead>
-              <tbody>
-                {rows.map((row) => {
-                  const failed = isFailedAction(row.action);
-                  const security = isSecurityAction(row.action);
-                  return (
-                    <tr key={row.id}>
-                      <td>
-                        {new Date(row.created_at).toLocaleString("en-ZA")}
-                      </td>
-                      <td>{row.actor_email ?? "—"}</td>
-                      <td>{row.action.replaceAll("_", " ")}</td>
-                      <td>{row.entity_type.replaceAll("_", " ")}</td>
-                      <td>
-                        <code className="admin-code">
-                          {row.entity_id
-                            ? `${row.entity_id.slice(0, 8)}…`
-                            : "—"}
-                        </code>
-                      </td>
-                      <td>
-                        <AdminStatusBadge
-                          status={
-                            failed
-                              ? "error"
-                              : security
-                                ? "warning"
-                                : "operational"
-                          }
-                          label={
-                            failed
-                              ? "Failed / denied"
-                              : security
-                                ? "Security"
-                                : "Recorded"
-                          }
-                          domain="system"
-                        />
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
+          <AdminTable>
+            <thead>
+              <tr>
+                <th>Timestamp</th>
+                <th>User</th>
+                <th>Action</th>
+                <th>Entity</th>
+                <th>Reference</th>
+                <th>Result</th>
+              </tr>
+            </thead>
+            <tbody>
+              {rows.map((row) => {
+                const failed = isFailedAction(row.action);
+                const security = isSecurityAction(row.action);
+                return (
+                  <tr key={row.id}>
+                    <td>
+                      {new Date(row.created_at).toLocaleString("en-ZA")}
+                    </td>
+                    <td>{row.actor_email ?? "—"}</td>
+                    <td>{row.action.replaceAll("_", " ")}</td>
+                    <td>{row.entity_type.replaceAll("_", " ")}</td>
+                    <td>
+                      <code className="admin-code">
+                        {row.entity_id
+                          ? `${row.entity_id.slice(0, 8)}…`
+                          : "—"}
+                      </code>
+                    </td>
+                    <td>
+                      <AdminStatusBadge
+                        status={
+                          failed
+                            ? "error"
+                            : security
+                              ? "warning"
+                              : "operational"
+                        }
+                        label={
+                          failed
+                            ? "Failed / denied"
+                            : security
+                              ? "Security"
+                              : "Recorded"
+                        }
+                        domain="system"
+                      />
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </AdminTable>
         )}
       </section>
     </div>

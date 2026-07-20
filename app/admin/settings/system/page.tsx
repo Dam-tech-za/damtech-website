@@ -1,5 +1,5 @@
-import Link from "next/link";
 import { requireAdmin } from "@/lib/auth/require-admin";
+import { AdminPageHeader } from "@/components/admin/ui";
 import { hasUpstashConfiguration } from "@/lib/rate-limit/types";
 import {
   isSupabaseConfigured,
@@ -25,17 +25,11 @@ export default async function AdminSystemSettingsPage() {
 
   return (
     <div className="admin-stack--page">
-      <header className="admin-page-header">
-        <div className="admin-page-header__copy">
-          <h1 className="admin-page-header__title">System health</h1>
-          <p className="admin-page-header__description">
-            Supabase, Resend, Upstash, storage and cron status checks.
-          </p>
-        </div>
-        <div className="admin-page-header__actions">
-          <Link href="/admin/settings/" className="btn btn--md btn--secondary">All settings</Link>
-        </div>
-      </header>
+      <AdminPageHeader
+        title="System health"
+        description="Supabase, Resend, Upstash, storage and cron status checks."
+        secondaryAction={{ href: "/admin/settings/", label: "All settings" }}
+      />
 
       <div className="admin-panel">
         <header className="admin-panel__header">

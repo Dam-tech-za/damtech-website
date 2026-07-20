@@ -1,5 +1,5 @@
-import Link from "next/link";
 import { requireAdmin } from "@/lib/auth/require-admin";
+import { AdminPageHeader } from "@/components/admin/ui";
 import { canPerform } from "@/lib/auth/permissions";
 import { createClient } from "@/lib/supabase/server";
 import { formatZar } from "@/lib/estimating/money";
@@ -48,22 +48,14 @@ export default async function AdminMaterialsPage({ searchParams }: PageProps) {
 
   return (
     <div className="admin-stack--page">
-      <header className="admin-page-header">
-        <div className="admin-page-header__copy">
-          <h1 className="admin-page-header__title">Material Pricing</h1>
-          <p className="admin-page-header__description">
-            Manage material costs, selling prices and supplier-linked pricing.
-          </p>
-        </div>
-        <div className="admin-page-header__actions">
-          <Link href="/admin/pricing/" className="btn btn--md btn--secondary">Pricing hub</Link>
-          {canManage ? (
-            <a href="#add-material" className="btn btn--md btn--primary">
-              Add Material
-            </a>
-          ) : null}
-        </div>
-      </header>
+      <AdminPageHeader
+        title="Material Pricing"
+        description="Manage material costs, selling prices and supplier-linked pricing."
+        secondaryAction={{ href: "/admin/pricing/", label: "Pricing hub" }}
+        primaryAction={
+          canManage ? { href: "#add-material", label: "Add Material" } : undefined
+        }
+      />
 
       <section className="admin-panel">
         <header className="admin-panel__header">

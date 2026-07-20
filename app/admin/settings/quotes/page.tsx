@@ -1,5 +1,5 @@
-import Link from "next/link";
 import { requireAdmin } from "@/lib/auth/require-admin";
+import { AdminPageHeader } from "@/components/admin/ui";
 import { getQuoteSettings } from "@/lib/quotes/settings";
 import { updateQuoteSettingsAction } from "@/app/admin/quotes/actions";
 import { SettingsFormClient } from "@/components/admin/SettingsFormClient";
@@ -10,17 +10,11 @@ export default async function AdminQuoteSettingsPage() {
 
   return (
     <div className="admin-stack--page">
-      <header className="admin-page-header">
-        <div className="admin-page-header__copy">
-          <h1 className="admin-page-header__title">Quote defaults</h1>
-          <p className="admin-page-header__description">
-            Numbering, validity, payment terms, deposits and approval rules.
-          </p>
-        </div>
-        <div className="admin-page-header__actions">
-          <Link href="/admin/settings/" className="btn btn--md btn--secondary">All settings</Link>
-        </div>
-      </header>
+      <AdminPageHeader
+        title="Quote defaults"
+        description="Numbering, validity, payment terms, deposits and approval rules."
+        secondaryAction={{ href: "/admin/settings/", label: "All settings" }}
+      />
 
       <div className="admin-panel">
       <header className="admin-panel__header">

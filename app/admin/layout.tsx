@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import type { ReactNode } from "react";
-import { AdminShell } from "@/components/admin/AdminShell";
+import { AdminShell } from "@/components/admin/layout";
 import { getNavItemsForRole } from "@/lib/auth/permissions";
 import { getCurrentAdmin, getCurrentUser } from "@/lib/auth/get-current-user";
 

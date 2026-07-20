@@ -1,5 +1,5 @@
-import Link from "next/link";
 import { requireAdmin } from "@/lib/auth/require-admin";
+import { AdminPageHeader } from "@/components/admin/ui";
 import { canPerform } from "@/lib/auth/permissions";
 import { createClient } from "@/lib/supabase/server";
 import { formatZar } from "@/lib/estimating/money";
@@ -33,22 +33,14 @@ export default async function AdminSuppliersPricingPage() {
 
   return (
     <div className="admin-stack--page">
-      <header className="admin-page-header">
-        <div className="admin-page-header__copy">
-          <h1 className="admin-page-header__title">Suppliers</h1>
-          <p className="admin-page-header__description">
-            Manage supplier contacts, pricing and lead times.
-          </p>
-        </div>
-        <div className="admin-page-header__actions">
-          <Link href="/admin/pricing/" className="btn btn--md btn--secondary">Pricing hub</Link>
-          {canManage ? (
-            <a href="#add-supplier" className="btn btn--md btn--primary">
-              Add Supplier
-            </a>
-          ) : null}
-        </div>
-      </header>
+      <AdminPageHeader
+        title="Suppliers"
+        description="Manage supplier contacts, pricing and lead times."
+        secondaryAction={{ href: "/admin/pricing/", label: "Pricing hub" }}
+        primaryAction={
+          canManage ? { href: "#add-supplier", label: "Add Supplier" } : undefined
+        }
+      />
 
       <div className="admin-stack">
       {canManage ? (

@@ -1,5 +1,5 @@
-import Link from "next/link";
 import { requireAdmin } from "@/lib/auth/require-admin";
+import { AdminPageHeader } from "@/components/admin/ui";
 import { canPerform } from "@/lib/auth/permissions";
 import { createClient } from "@/lib/supabase/server";
 import { formatZar } from "@/lib/estimating/money";
@@ -19,17 +19,11 @@ export default async function AdminLabourPage() {
 
   return (
     <div className="admin-stack--page">
-      <header className="admin-page-header">
-        <div className="admin-page-header__copy">
-          <h1 className="admin-page-header__title">Labour Pricing</h1>
-          <p className="admin-page-header__description">
-            Manage labour rates, productivity and installation costing.
-          </p>
-        </div>
-        <div className="admin-page-header__actions">
-          <Link href="/admin/pricing/" className="btn btn--md btn--secondary">Pricing hub</Link>
-        </div>
-      </header>
+      <AdminPageHeader
+        title="Labour Pricing"
+        description="Manage labour rates, productivity and installation costing."
+        secondaryAction={{ href: "/admin/pricing/", label: "Pricing hub" }}
+      />
 
       {canManage ? (
         <section className="admin-panel">

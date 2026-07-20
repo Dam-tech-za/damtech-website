@@ -1,5 +1,5 @@
-import Link from "next/link";
 import { requireAdmin } from "@/lib/auth/require-admin";
+import { AdminPageHeader } from "@/components/admin/ui";
 import { createClient } from "@/lib/supabase/server";
 import { canPerform } from "@/lib/auth/permissions";
 
@@ -15,19 +15,11 @@ export default async function AdminTankModelsPage() {
 
   return (
     <div className="admin-stack--page">
-      <header className="admin-page-header">
-        <div className="admin-page-header__copy">
-          <h1 className="admin-page-header__title">Tank Models</h1>
-          <p className="admin-page-header__description">
-            Catalogue capacities and dimensions used for RFQ matching. Do not invent sizes.
-          </p>
-        </div>
-        <div className="admin-page-header__actions">
-          <Link className="btn btn--md btn--secondary" href="/admin/pricing/">
-            Pricing hub
-          </Link>
-        </div>
-      </header>
+      <AdminPageHeader
+        title="Tank Models"
+        description="Catalogue capacities and dimensions used for RFQ matching. Do not invent sizes."
+        secondaryAction={{ href: "/admin/pricing/", label: "Pricing hub" }}
+      />
 
       <div className="admin-panel">
       <header className="admin-panel__header">

@@ -1,4 +1,6 @@
 @import "tailwindcss";
+@import "../styles/admin-theme.css";
+@import "../styles/admin-layout.css";
 
 @layer base {
   :root {
@@ -5250,6 +5252,10 @@
     box-shadow: 0 8px 20px rgba(3, 25, 38, 0.03);
   }
 
+  .dash-panel--empty {
+    min-height: 0;
+  }
+
   .dash-panel__header {
     display: flex;
     justify-content: space-between;
@@ -6393,6 +6399,26 @@ a.admin-metric-compact:focus-visible {
   color: #5b6b7c;
 }
 
+.admin-ui-empty--compact {
+  text-align: left;
+  padding: 0.35rem 0 0.15rem;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+}
+
+.admin-ui-empty--compact .admin-ui-empty__title {
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: #475569;
+}
+
+.admin-ui-empty--compact .admin-ui-empty__description {
+  margin: 0.35rem 0 0;
+  max-width: none;
+  font-size: 0.82rem;
+}
+
 .admin-ui-error {
   border-color: #e8b4b4;
   background: #fdf6f6;
@@ -7067,14 +7093,14 @@ a.admin-metric-compact:focus-visible {
 }
 
 .rfq-inbox-table col.rfq-col-check { width: 2%; }
-.rfq-inbox-table col.rfq-col-customer { width: 18%; }
-.rfq-inbox-table col.rfq-col-contact { width: 17%; }
-.rfq-inbox-table col.rfq-col-location { width: 12%; }
-.rfq-inbox-table col.rfq-col-service { width: 22%; }
-.rfq-inbox-table col.rfq-col-size { width: 11%; }
+.rfq-inbox-table col.rfq-col-customer { width: 17%; }
+.rfq-inbox-table col.rfq-col-contact { width: 16%; }
+.rfq-inbox-table col.rfq-col-location { width: 11%; }
+.rfq-inbox-table col.rfq-col-service { width: 20%; }
+.rfq-inbox-table col.rfq-col-size { width: 10%; }
 .rfq-inbox-table col.rfq-col-status { width: 8%; }
 .rfq-inbox-table col.rfq-col-submitted { width: 8%; }
-.rfq-inbox-table col.rfq-col-actions { width: 3%; }
+.rfq-inbox-table col.rfq-col-actions { width: 8%; min-width: 6.5rem; }
 
 .rfq-inbox-table thead th {
   background: #f4f8fb;
@@ -7093,6 +7119,7 @@ a.admin-metric-compact:focus-visible {
   white-space: normal;
   overflow-wrap: anywhere;
   word-break: break-word;
+  min-width: 0;
 }
 
 .rfq-inbox-table td.rfq-col-check,

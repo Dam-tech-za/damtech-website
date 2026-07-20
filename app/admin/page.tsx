@@ -1,7 +1,7 @@
 import { requireAdmin } from "@/lib/auth/require-admin";
 import { getDashboardMetrics } from "@/lib/admin/dashboard/get-dashboard-metrics";
 import { parseDashboardRange } from "@/lib/admin/dashboard/types";
-import { DashboardHeader } from "@/components/admin/dashboard/DashboardHeader";
+import { DashboardHeaderControls } from "@/components/admin/dashboard/DashboardHeaderControls";
 import { PrimaryKpiGrid } from "@/components/admin/dashboard/PrimaryKpiGrid";
 import { RfqWorkflow } from "@/components/admin/dashboard/RfqWorkflow";
 import { QuotePipeline } from "@/components/admin/dashboard/QuotePipeline";
@@ -10,6 +10,7 @@ import { BreakdownPanel } from "@/components/admin/dashboard/BreakdownPanel";
 import { RecentActivity } from "@/components/admin/dashboard/RecentActivity";
 import { RecentRfqs } from "@/components/admin/dashboard/RecentRfqs";
 import { QuickActions } from "@/components/admin/dashboard/QuickActions";
+import { AdminInfoBanner, AdminPageHeader } from "@/components/admin/ui";
 
 type PageProps = {
   searchParams: Promise<{ range?: string | string[] }>;
@@ -22,18 +23,19 @@ export default async function AdminDashboardPage({ searchParams }: PageProps) {
   const metrics = await getDashboardMetrics(rangeId);
 
   return (
-    <div className="dash">
-      <DashboardHeader rangeId={rangeId} />
+    <div className="admin-stack--page dash">
+      <AdminPageHeader
+        title="Dashboard"
+        description="Operational overview of RFQs, quotes and estimating activity."
+        secondaryAction={{ href: "/admin/rfqs/", label: "View RFQs" }}
+        primaryAction={{ href: "/admin/quotes/new/", label: "New Quote" }}
+        secondaryActions={<DashboardHeaderControls rangeId={rangeId} />}
+      />
 
-      <div className="dash-info-banner" role="note">
-        <span className="dash-info-banner__icon" aria-hidden>
-          i
-        </span>
-        <p>
-          Accepted quote value is not cash received. RFQ pipeline quantities are
-          provisional estimates.
-        </p>
-      </div>
+      <AdminInfoBanner tone="muted">
+        Accepted quote value is not cash received. RFQ pipeline quantities are
+        provisional estimates.
+      </AdminInfoBanner>
 
       <PrimaryKpiGrid metrics={metrics} />
 

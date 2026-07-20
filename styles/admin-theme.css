@@ -1,0 +1,387 @@
+/* Damtech admin design system tokens and shared primitives */
+
+:root {
+  --admin-sidebar-width-expanded: 16rem;
+  --admin-sidebar-width-collapsed: 4.75rem;
+  --admin-sidebar-width: var(--admin-sidebar-width-expanded);
+  --admin-header-height: 4.25rem;
+
+  --admin-sidebar-bg: #031926;
+  --admin-sidebar-active-bg: rgba(43, 159, 243, 0.18);
+  --admin-sidebar-active-border: #2b9ff3;
+  --admin-sidebar-text: #cbd5e1;
+  --admin-sidebar-muted: rgba(203, 213, 225, 0.72);
+
+  --admin-page-bg: #f2f6fb;
+  --admin-card-bg: #ffffff;
+  --admin-border: #d9e2ec;
+  --admin-text: #031926;
+  --admin-text-muted: #5b6b7c;
+
+  --admin-primary: #026bc6;
+  --admin-primary-hover: #025aa8;
+  --admin-primary-active: #014a8a;
+  --admin-secondary: #ffffff;
+  --admin-danger: #9b1c1c;
+  --admin-danger-hover: #7f1d1d;
+  --admin-success: #166534;
+  --admin-warning: #92400e;
+  --admin-info: #1a6fa8;
+
+  --admin-focus-ring: #2b9ff3;
+  --admin-shadow-sm: 0 1px 2px rgba(11, 31, 51, 0.06);
+  --admin-shadow-md: 0 8px 24px rgba(11, 31, 51, 0.12);
+
+  --admin-radius-sm: 8px;
+  --admin-radius-md: 10px;
+  --admin-radius-lg: 14px;
+  --admin-radius-xl: 16px;
+
+  --admin-space-1: 4px;
+  --admin-space-2: 8px;
+  --admin-space-3: 12px;
+  --admin-space-4: 16px;
+  --admin-space-5: 20px;
+  --admin-space-6: 24px;
+  --admin-space-8: 32px;
+  --admin-space-10: 40px;
+
+  --admin-control-height: 2.75rem;
+  --admin-control-height-sm: 2.25rem;
+  --admin-icon-button-size: 2.5rem;
+  --admin-table-actions-width: 7rem;
+}
+
+.admin-shell--collapsed {
+  --admin-sidebar-width: var(--admin-sidebar-width-collapsed);
+}
+
+/* Shared admin buttons */
+.admin-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  min-height: var(--admin-control-height);
+  padding: 0 1rem;
+  border-radius: var(--admin-radius-md);
+  border: 1px solid transparent;
+  font-size: 0.875rem;
+  font-weight: 600;
+  line-height: 1.2;
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease,
+    color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.admin-btn:focus-visible {
+  outline: 2px solid var(--admin-focus-ring);
+  outline-offset: 2px;
+}
+
+.admin-btn:disabled,
+.admin-btn[aria-disabled="true"] {
+  opacity: 0.55;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.admin-btn--sm {
+  min-height: var(--admin-control-height-sm);
+  padding: 0 0.75rem;
+  font-size: 0.8125rem;
+}
+
+.admin-btn--lg {
+  min-height: 3rem;
+  padding: 0 1.15rem;
+}
+
+.admin-btn--primary {
+  background: var(--admin-primary);
+  color: #fff;
+  border-color: var(--admin-primary);
+  box-shadow: var(--admin-shadow-sm);
+}
+
+.admin-btn--primary:hover:not(:disabled) {
+  background: var(--admin-primary-hover);
+  border-color: var(--admin-primary-hover);
+}
+
+.admin-btn--primary:active:not(:disabled) {
+  background: var(--admin-primary-active);
+  border-color: var(--admin-primary-active);
+}
+
+.admin-btn--secondary {
+  background: var(--admin-secondary);
+  color: var(--admin-text);
+  border-color: var(--admin-border);
+}
+
+.admin-btn--secondary:hover:not(:disabled) {
+  background: #f0f7fc;
+  border-color: #7eb8e0;
+}
+
+.admin-btn--outline {
+  background: #fff;
+  color: var(--admin-text);
+  border-color: var(--admin-border);
+}
+
+.admin-btn--outline:hover:not(:disabled) {
+  background: #f8fbfd;
+  border-color: #7eb8e0;
+}
+
+.admin-btn--ghost {
+  background: transparent;
+  color: var(--admin-text);
+  border-color: transparent;
+}
+
+.admin-btn--ghost:hover:not(:disabled) {
+  background: #f0f7fc;
+}
+
+.admin-btn--danger {
+  background: #fef2f2;
+  color: var(--admin-danger);
+  border-color: #fecaca;
+}
+
+.admin-btn--danger:hover:not(:disabled) {
+  background: #fee2e2;
+  color: var(--admin-danger-hover);
+  border-color: #fca5a5;
+}
+
+.admin-btn--link {
+  min-height: auto;
+  padding: 0;
+  background: transparent;
+  border-color: transparent;
+  color: var(--admin-primary);
+  font-weight: 600;
+}
+
+.admin-btn--link:hover:not(:disabled) {
+  color: var(--admin-primary-hover);
+  text-decoration: underline;
+}
+
+.admin-icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--admin-icon-button-size);
+  height: var(--admin-icon-button-size);
+  padding: 0;
+  border-radius: var(--admin-radius-sm);
+  border: 1px solid var(--admin-border);
+  background: #fff;
+  color: var(--admin-text);
+  cursor: pointer;
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease,
+    color 0.15s ease;
+}
+
+.admin-icon-btn:hover:not(:disabled),
+.admin-icon-btn.is-open {
+  background: #f0f7fc;
+  border-color: #7eb8e0;
+  color: var(--admin-primary);
+}
+
+.admin-icon-btn:focus-visible {
+  outline: 2px solid var(--admin-focus-ring);
+  outline-offset: 2px;
+}
+
+.admin-icon-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+/* Admin panel/card */
+.admin-panel {
+  background: var(--admin-card-bg);
+  border: 1px solid var(--admin-border);
+  border-radius: var(--admin-radius-lg);
+  box-shadow: var(--admin-shadow-sm);
+  padding: var(--admin-space-5) var(--admin-space-6);
+}
+
+.admin-panel--compact {
+  padding: var(--admin-space-4) var(--admin-space-5);
+}
+
+.admin-panel__header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--admin-space-3) var(--admin-space-4);
+  margin-bottom: var(--admin-space-4);
+}
+
+.admin-panel__title {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--admin-text);
+}
+
+.admin-panel__description {
+  margin: 0.2rem 0 0;
+  font-size: 0.85rem;
+  color: var(--admin-text-muted);
+}
+
+.admin-panel__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--admin-space-2);
+}
+
+/* Admin table system */
+.admin-table-shell {
+  width: 100%;
+  min-width: 0;
+}
+
+.admin-table {
+  width: 100%;
+  table-layout: fixed;
+  border-collapse: collapse;
+}
+
+.admin-table th,
+.admin-table td {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.admin-table__actions-col {
+  width: var(--admin-table-actions-width);
+  text-align: right;
+  padding-right: var(--admin-space-4);
+}
+
+.admin-table-actions {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--admin-space-2);
+  width: 100%;
+}
+
+.admin-table-actions .admin-btn--sm,
+.admin-table-actions .admin-icon-btn {
+  flex-shrink: 0;
+}
+
+/* Pagination */
+.admin-pagination {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--admin-space-3);
+  margin-top: var(--admin-space-4);
+}
+
+.admin-pagination__summary {
+  margin: 0;
+  font-size: 0.8125rem;
+  color: var(--admin-text-muted);
+}
+
+.admin-pagination__controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--admin-space-2);
+}
+
+.admin-pagination__link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 2.25rem;
+  min-height: 2.25rem;
+  padding: 0 0.5rem;
+  border-radius: var(--admin-radius-sm);
+  border: 1px solid var(--admin-border);
+  background: #fff;
+  color: var(--admin-text);
+  text-decoration: none;
+  font-size: 0.8125rem;
+}
+
+.admin-pagination__link:hover {
+  background: #f0f7fc;
+  border-color: #7eb8e0;
+}
+
+.admin-pagination__link.is-active {
+  background: var(--admin-primary);
+  border-color: var(--admin-primary);
+  color: #fff;
+}
+
+.admin-pagination__disabled {
+  font-size: 0.8125rem;
+  color: var(--admin-text-muted);
+}
+
+.admin-page-header__toolbar {
+  margin-top: var(--admin-space-3);
+  width: 100%;
+}
+
+.admin-header__right {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .admin-header__right {
+    display: block;
+  }
+}
+
+.admin-header__menu-btn {
+  display: inline-flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 4px;
+  width: var(--admin-icon-button-size);
+  height: var(--admin-icon-button-size);
+  border-radius: var(--admin-radius-sm);
+  border: 1px solid var(--admin-border);
+  background: #fff;
+  padding: 0.55rem;
+  cursor: pointer;
+}
+
+.admin-header__menu-btn span {
+  display: block;
+  height: 2px;
+  background: var(--admin-text);
+  border-radius: 999px;
+}
+
+@media (min-width: 1024px) {
+  .admin-header__menu-btn {
+    display: none;
+  }
+}

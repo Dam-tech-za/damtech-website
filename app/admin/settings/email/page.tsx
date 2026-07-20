@@ -1,5 +1,5 @@
-import Link from "next/link";
 import { requireAdmin } from "@/lib/auth/require-admin";
+import { AdminPageHeader } from "@/components/admin/ui";
 import { isResendConfigured } from "@/lib/email";
 
 export default async function AdminEmailSettingsPage() {
@@ -8,17 +8,11 @@ export default async function AdminEmailSettingsPage() {
 
   return (
     <div className="admin-stack--page">
-      <header className="admin-page-header">
-        <div className="admin-page-header__copy">
-          <h1 className="admin-page-header__title">Email delivery</h1>
-          <p className="admin-page-header__description">
-            Sender address, reply-to, notifications and test delivery.
-          </p>
-        </div>
-        <div className="admin-page-header__actions">
-          <Link href="/admin/settings/" className="btn btn--md btn--secondary">All settings</Link>
-        </div>
-      </header>
+      <AdminPageHeader
+        title="Email delivery"
+        description="Sender address, reply-to, notifications and test delivery."
+        secondaryAction={{ href: "/admin/settings/", label: "All settings" }}
+      />
 
       <div className="admin-panel">
         <header className="admin-panel__header">

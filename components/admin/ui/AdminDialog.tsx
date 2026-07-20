@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useId, useRef, type ReactNode } from "react";
+import { createPortal } from "react-dom";
+import { AdminButton } from "./AdminButton";
 
 type AdminDialogProps = {
   open: boolean;
@@ -8,6 +10,7 @@ type AdminDialogProps = {
   onClose: () => void;
   children: ReactNode;
   footer?: ReactNode;
+  role?: "dialog" | "alertdialog";
 };
 
 export function AdminDialog({
@@ -16,6 +19,7 @@ export function AdminDialog({
   onClose,
   children,
   footer,
+  role = "dialog",
 }: AdminDialogProps) {
   const titleId = useId();
   const panelRef = useRef<HTMLDivElement>(null);
@@ -30,10 +34,10 @@ export function AdminDialog({
     return () => window.removeEventListener("keydown", onKey);
   }, [open, onClose]);
 
-  if (!open) return null;
+  if (!open || typeof document === "undefined") return null;
 
-  return (
-    <div className="admin-dialog" role="presentation">
+  return createPortal(
+    <div className="admin-dialog admin-dialog--portal" role="presentation">
       <button
         type="button"
         className="admin-dialog__backdrop"
@@ -43,24 +47,21 @@ export function AdminDialog({
       <div
         ref={panelRef}
         className="admin-dialog__panel"
-        role="dialog"
+        role={role}
         aria-modal="true"
         aria-labelledby={titleId}
         tabIndex={-1}
       >
         <header className="admin-dialog__header">
           <h2 id={titleId}>{title}</h2>
-          <button
-            type="button"
-            className="btn btn--sm btn--secondary"
-            onClick={onClose}
-          >
+          <AdminButton size="sm" variant="secondary" onClick={onClose}>
             Close
-          </button>
+          </AdminButton>
         </header>
         <div className="admin-dialog__body">{children}</div>
         {footer ? <footer className="admin-dialog__footer">{footer}</footer> : null}
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }

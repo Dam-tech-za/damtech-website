@@ -1,5 +1,5 @@
-import Link from "next/link";
 import { requireAdmin } from "@/lib/auth/require-admin";
+import { AdminPageHeader } from "@/components/admin/ui";
 import { createClient } from "@/lib/supabase/server";
 import { updateEstimatingSettingAction } from "@/app/admin/pricing/actions";
 import {
@@ -49,17 +49,11 @@ export default async function AdminEstimatingSettingsPage() {
 
   return (
     <div className="admin-stack--page">
-      <header className="admin-page-header">
-        <div className="admin-page-header__copy">
-          <h1 className="admin-page-header__title">Estimating inputs</h1>
-          <p className="admin-page-header__description">
-            VAT, markup versus margin, allowances, labour burden and travel.
-          </p>
-        </div>
-        <div className="admin-page-header__actions">
-          <Link href="/admin/settings/" className="btn btn--md btn--secondary">All settings</Link>
-        </div>
-      </header>
+      <AdminPageHeader
+        title="Estimating inputs"
+        description="VAT, markup versus margin, allowances, labour burden and travel."
+        secondaryAction={{ href: "/admin/settings/", label: "All settings" }}
+      />
 
       <section className="admin-panel">
         <header className="admin-panel__header">

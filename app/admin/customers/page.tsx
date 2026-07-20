@@ -1,15 +1,16 @@
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import { requireAdmin } from "@/lib/auth/require-admin";
 import { canAccessNavItem, canPerform } from "@/lib/auth/permissions";
 import { createClient } from "@/lib/supabase/server";
 import { upsertCustomerAction } from "./actions";
 import {
+  AdminButton,
   AdminEmptyState,
   AdminErrorState,
   AdminMetricCard,
   AdminMetricStrip,
   AdminPageHeader,
+  AdminTable,
 } from "@/components/admin/ui";
 
 type PageProps = {
@@ -124,13 +125,13 @@ export default async function AdminCustomersPage({ searchParams }: PageProps) {
             defaultValue={q ?? ""}
             aria-label="Search customers"
           />
-          <button type="submit" className="btn btn--md btn--primary">
+          <AdminButton type="submit" variant="primary">
             Search
-          </button>
+          </AdminButton>
           {q ? (
-            <Link href="/admin/customers/" className="btn btn--md btn--secondary">
+            <AdminButton href="/admin/customers/" variant="secondary">
               Clear
-            </Link>
+            </AdminButton>
           ) : null}
         </form>
       </section>
@@ -182,9 +183,9 @@ export default async function AdminCustomersPage({ searchParams }: PageProps) {
               <option value="individual">Individual</option>
               <option value="company">Company</option>
             </select>
-            <button type="submit" className="btn btn--md btn--primary">
+            <AdminButton type="submit" variant="primary">
               Create customer
-            </button>
+            </AdminButton>
           </form>
         </section>
       ) : null}
@@ -203,51 +204,48 @@ export default async function AdminCustomersPage({ searchParams }: PageProps) {
             actionLabel={canManage ? "Add Customer" : undefined}
           />
         ) : (
-          <div className="admin-table-wrap">
-            <table className="admin-table">
-              <thead>
-                <tr>
-                  <th>Customer / company</th>
-                  <th>Contact</th>
-                  <th>Email</th>
-                  <th>Phone</th>
-                  <th>Province</th>
-                  <th>Last activity</th>
-                  <th>
-                    <span className="sr-only">Actions</span>
-                  </th>
+          <AdminTable>
+            <thead>
+              <tr>
+                <th>Customer / company</th>
+                <th>Contact</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Province</th>
+                <th>Last activity</th>
+                <th>
+                  <span className="sr-only">Actions</span>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {(data ?? []).map((customer) => (
+                <tr key={customer.id}>
+                  <td>{customer.company_name || customer.name}</td>
+                  <td>{customer.name}</td>
+                  <td>{customer.email ?? "—"}</td>
+                  <td>{customer.phone ?? "—"}</td>
+                  <td>{customer.province ?? "—"}</td>
+                  <td>
+                    {customer.updated_at
+                      ? new Date(customer.updated_at).toLocaleDateString(
+                          "en-ZA",
+                        )
+                      : "—"}
+                  </td>
+                  <td>
+                    <AdminButton
+                      href={`/admin/customers/${customer.id}/`}
+                      size="sm"
+                      variant="secondary"
+                    >
+                      Open
+                    </AdminButton>
+                  </td>
                 </tr>
-              </thead>
-              <tbody>
-                {(data ?? []).map((customer) => (
-                  <tr key={customer.id}>
-                    <td>
-                      {customer.company_name || customer.name}
-                    </td>
-                    <td>{customer.name}</td>
-                    <td>{customer.email ?? "—"}</td>
-                    <td>{customer.phone ?? "—"}</td>
-                    <td>{customer.province ?? "—"}</td>
-                    <td>
-                      {customer.updated_at
-                        ? new Date(customer.updated_at).toLocaleDateString(
-                            "en-ZA",
-                          )
-                        : "—"}
-                    </td>
-                    <td>
-                      <Link
-                        href={`/admin/customers/${customer.id}/`}
-                        className="btn btn--sm btn--secondary"
-                      >
-                        Open
-                      </Link>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+              ))}
+            </tbody>
+          </AdminTable>
         )}
       </section>
     </div>

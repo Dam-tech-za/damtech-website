@@ -1,5 +1,5 @@
-import Link from "next/link";
 import { requireAdmin } from "@/lib/auth/require-admin";
+import { AdminPageHeader } from "@/components/admin/ui";
 import { createClient } from "@/lib/supabase/server";
 import { calculateDeliveryCost, calculateTravelCost } from "@/lib/estimating/travel";
 import { formatZar } from "@/lib/estimating/money";
@@ -39,17 +39,11 @@ export default async function AdminTravelPricingPage() {
 
   return (
     <div className="admin-stack--page">
-      <header className="admin-page-header">
-        <div className="admin-page-header__copy">
-          <h1 className="admin-page-header__title">Travel &amp; Delivery</h1>
-          <p className="admin-page-header__description">
-            Manage vehicle, distance and delivery costing assumptions.
-          </p>
-        </div>
-        <div className="admin-page-header__actions">
-          <Link href="/admin/pricing/" className="btn btn--md btn--secondary">Pricing hub</Link>
-        </div>
-      </header>
+      <AdminPageHeader
+        title="Travel & Delivery"
+        description="Manage vehicle, distance and delivery costing assumptions."
+        secondaryAction={{ href: "/admin/pricing/", label: "Pricing hub" }}
+      />
 
       <div className="admin-stack">
       <section className="admin-panel">
