@@ -21,9 +21,24 @@ export default async function AdminPricingHubPage() {
         title="Pricing & Inventory"
         description="Inventory, rates and estimating — materials, services, labour, travel and commercial rules used directly in quotations."
         secondaryActions={
-          <AdminButton href="/admin/suppliers/" variant="secondary" size="sm">
-            Open Suppliers
-          </AdminButton>
+          <>
+            <AdminButton href="/admin/pricing/import/" variant="primary" size="sm">
+              Import CSV
+            </AdminButton>
+            <AdminButton
+              href="/admin/pricing/import/templates/damtech-inventory-import-template.csv"
+              variant="secondary"
+              size="sm"
+            >
+              Download Template
+            </AdminButton>
+            <AdminButton href="/admin/pricing/import/" variant="outline" size="sm">
+              Export Inventory
+            </AdminButton>
+            <AdminButton href="/admin/suppliers/" variant="secondary" size="sm">
+              Open Suppliers
+            </AdminButton>
+          </>
         }
       />
 

@@ -66,6 +66,11 @@ export function MaterialsPageClient({
         title="Materials"
         description="Manage waterproofing materials, packaging units, allowances and sell prices used in quotations."
         secondaryAction={{ href: "/admin/pricing/", label: "Pricing & Inventory" }}
+        secondaryActions={
+          <AdminButton href="/admin/pricing/import/" variant="secondary" size="sm">
+            Import CSV
+          </AdminButton>
+        }
         primaryActionNode={
           canManage ? (
             <AdminButton type="button" variant="primary" onClick={onAddMaterial}>

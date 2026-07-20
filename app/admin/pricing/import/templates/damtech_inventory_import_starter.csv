@@ -1,0 +1,4 @@
+﻿item_code,category,name,purchase_unit,quote_unit,conversion_factor,cost,sell_price,tax_category,waste_percent,overlap_percent
+HDPE-10-SMOOTH,HDPE geomembrane,1.0 mm smooth HDPE geomembrane,roll,m²,1050,45,72,standard,10,8
+HDPE-15-SMOOTH,HDPE geomembrane,1.5 mm smooth HDPE geomembrane,roll,m²,1050,58,92,standard,10,8
+HDPE-20-SMOOTH,HDPE geomembrane,2.0 mm smooth HDPE geomembrane,roll,m²,770,78,118,standard,10,8

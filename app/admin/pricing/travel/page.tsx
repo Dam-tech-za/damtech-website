@@ -101,6 +101,11 @@ export default async function AdminTravelPricingPage() {
         title="Travel & Delivery"
         description="Vehicle rates, saved origins, delivery rules and travel assumptions used in quotations."
         secondaryAction={{ href: "/admin/pricing/", label: "Pricing & Inventory" }}
+        secondaryActions={
+          <AdminButton href="/admin/pricing/import/" variant="secondary" size="sm">
+            Import CSV
+          </AdminButton>
+        }
       />
 
       <AdminPanel title="Default kilometre rates">

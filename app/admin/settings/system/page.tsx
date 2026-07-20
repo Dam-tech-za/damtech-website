@@ -358,8 +358,8 @@ async function collectPricingReadiness(): Promise<Check[]> {
       },
       {
         label: "CSV importer",
-        status: "Partial",
-        hint: "/admin/pricing/import/ — materials & labour import/export ready; supplier/travel commit scaffolded",
+        status: "Operational",
+        hint: "/admin/pricing/import/ — staged inventory import with mapping, preview and history",
       },
       {
         label: "Legacy fallback",

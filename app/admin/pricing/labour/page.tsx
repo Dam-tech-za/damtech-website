@@ -68,6 +68,11 @@ export default async function AdminLabourPage() {
         title="Labour & Crews"
         description="Roles, burdened rates, productivity and crew templates for installation costing."
         secondaryAction={{ href: "/admin/pricing/", label: "Pricing & Inventory" }}
+        secondaryActions={
+          <AdminButton href="/admin/pricing/import/" variant="secondary" size="sm">
+            Import CSV
+          </AdminButton>
+        }
         primaryActionNode={
           canSync ? <LabourSyncButton action={synchroniseLabourCatalogueAction} /> : undefined
         }

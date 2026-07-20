@@ -1,5 +1,5 @@
 import { requireAdmin } from "@/lib/auth/require-admin";
-import { AdminEmptyState, AdminPageHeader, AdminPanel } from "@/components/admin/ui";
+import { AdminButton, AdminEmptyState, AdminPageHeader, AdminPanel } from "@/components/admin/ui";
 import { searchPricingItems } from "@/lib/pricing/get-pricing-items";
 
 export default async function AdminPricingServicesPage() {
@@ -16,6 +16,11 @@ export default async function AdminPricingServicesPage() {
         title="Services & Installation"
         description="Installation and application services quoted to customers by area, item or fixed price."
         secondaryAction={{ href: "/admin/pricing/", label: "Pricing & Inventory" }}
+        secondaryActions={
+          <AdminButton href="/admin/pricing/import/" variant="secondary" size="sm">
+            Import CSV
+          </AdminButton>
+        }
       />
       <AdminPanel title="Active services">
         {!result.ok || result.items.length === 0 ? (

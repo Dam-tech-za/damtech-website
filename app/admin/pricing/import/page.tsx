@@ -1,12 +1,7 @@
 import { requireAdmin } from "@/lib/auth/require-admin";
 import { canPerform } from "@/lib/auth/permissions";
-import {
-  AdminButton,
-  AdminEmptyState,
-  AdminPageHeader,
-  AdminPanel,
-} from "@/components/admin/ui";
-import { CsvImportClient } from "@/components/admin/pricing/CsvImportClient";
+import { AdminButton, AdminPageHeader, AdminPanel } from "@/components/admin/ui";
+import { InventoryImportWizard } from "@/components/admin/pricing/InventoryImportWizard";
 
 export default async function AdminPricingImportPage() {
   const admin = await requireAdmin({ permission: "viewPricing" });
@@ -16,43 +11,49 @@ export default async function AdminPricingImportPage() {
   return (
     <div className="admin-stack--page">
       <AdminPageHeader
-        title="CSV Import & Export"
-        description="Import materials, labour, supplier prices and travel rates. Cost columns are only included for authorised roles."
+        title="Import inventory CSV"
+        description="Upload Damtech inventory into the unified pricing catalogue used by Add from Inventory in the quote builder."
         secondaryAction={{ href: "/admin/pricing/", label: "Pricing & Inventory" }}
+        secondaryActions={
+          <>
+            <AdminButton
+              href="/admin/pricing/import/templates/damtech-inventory-import-template.csv"
+              variant="secondary"
+              size="sm"
+            >
+              Download template
+            </AdminButton>
+            <AdminButton
+              href="/admin/pricing/import/templates/damtech_inventory_import_starter.csv"
+              variant="outline"
+              size="sm"
+            >
+              Starter CSV
+            </AdminButton>
+            <AdminButton href="/admin/pricing/import/history/" variant="outline" size="sm">
+              History
+            </AdminButton>
+          </>
+        }
       />
 
-      <AdminPanel title="Templates">
-        <div className="admin-panel__actions">
-          <AdminButton href="/admin/pricing/import/templates/materials.csv" variant="secondary" size="sm">
-            Materials template
-          </AdminButton>
-          <AdminButton href="/admin/pricing/import/templates/labour.csv" variant="secondary" size="sm">
-            Labour template
-          </AdminButton>
-          <AdminButton href="/admin/pricing/import/templates/supplier-prices.csv" variant="secondary" size="sm">
-            Supplier prices template
-          </AdminButton>
-          <AdminButton href="/admin/pricing/import/templates/travel-vehicles.csv" variant="secondary" size="sm">
-            Travel vehicles template
-          </AdminButton>
-        </div>
+      <AdminPanel title="Instructions">
+        <ol className="admin-list">
+          <li>Download the template or use your Damtech starter CSV format.</li>
+          <li>Upload the file, confirm column mapping, then preview validation.</li>
+          <li>Choose how duplicates and invalid rows are handled.</li>
+          <li>Confirm import — items appear in Pricing and Add from Inventory.</li>
+        </ol>
         <p className="admin-help-text" style={{ marginTop: "0.75rem" }}>
-          Download a template, complete rows offline, then upload for validation and preview before
-          import. Imports are transactional — invalid files are rejected without partial writes.
+          Guide:{" "}
+          <a href="/admin/pricing/import/templates/damtech-inventory-import-guide.md">
+            damtech-inventory-import-guide.md
+          </a>
+          . Costs and sell prices are ex VAT. Price changes create history versions.
         </p>
       </AdminPanel>
 
-      {canImport ? (
-        <CsvImportClient canExportCosts={canExportCosts} canImport />
-      ) : (
-        <>
-          <CsvImportClient canExportCosts={canExportCosts} canImport={false} />
-          <AdminEmptyState
-            title="Import requires pricing management permission."
-            description="You can still export sell-price catalogues. Cost columns remain masked."
-          />
-        </>
-      )}
+      <InventoryImportWizard canImport={canImport} canExportCosts={canExportCosts} />
     </div>
   );
 }

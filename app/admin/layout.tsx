@@ -34,6 +34,7 @@ function breadcrumbsFromPath(pathname: string): { label: string; href?: string }
     customers: "Customers",
     pricing: "Pricing",
     import: "CSV Import",
+    history: "Import History",
     materials: "Materials",
     labour: "Labour",
     travel: "Travel & Delivery",
