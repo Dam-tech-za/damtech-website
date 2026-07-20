@@ -22,6 +22,45 @@ export const metadata: Metadata = {
 
 const PUBLIC_ADMIN_PREFIXES = ["/admin/login", "/admin/unauthorised"];
 
+function breadcrumbsFromPath(pathname: string): { label: string; href?: string }[] {
+  const crumbs: { label: string; href?: string }[] = [{ label: "Admin", href: "/admin/" }];
+  const rest = pathname.replace(/^\/admin\/?/, "").replace(/\/$/, "");
+  if (!rest) return crumbs;
+
+  const segments = rest.split("/").filter(Boolean);
+  const labels: Record<string, string> = {
+    rfqs: "RFQs",
+    quotes: "Quotes",
+    customers: "Customers",
+    pricing: "Pricing",
+    settings: "Settings",
+    audit: "Audit Log",
+    suppliers: "Suppliers",
+    materials: "Materials",
+    labour: "Labour",
+    travel: "Travel & Delivery",
+    services: "Services & Installation",
+    equipment: "Equipment & Site Costs",
+    "tank-models": "Tank Models",
+    review: "Price Review",
+    new: "New Quote",
+    edit: "Edit Quote",
+    preview: "Preview",
+    estimating: "Estimating Rules",
+  };
+
+  let path = "/admin";
+  segments.forEach((segment, index) => {
+    path += `/${segment}`;
+    const label = labels[segment] ?? segment.replace(/-/g, " ");
+    const entry: { label: string; href?: string } = { label };
+    if (index < segments.length - 1) entry.href = `${path}/`;
+    crumbs.push(entry);
+  });
+
+  return crumbs;
+}
+
 export default async function AdminLayout({
   children,
 }: {
@@ -54,12 +93,7 @@ export default async function AdminLayout({
   }
 
   const title = titleFromPath(pathname);
-  const breadcrumbs = [
-    { label: "Admin", href: "/admin/" },
-    ...(pathname === "/admin" || pathname === "/admin/"
-      ? []
-      : [{ label: title }]),
-  ];
+  const breadcrumbs = breadcrumbsFromPath(pathname);
 
   return (
     <AdminShell

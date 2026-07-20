@@ -10,6 +10,10 @@ import {
 } from "@/lib/quotes/lifecycle";
 import { sendQuoteToCustomer } from "@/lib/quotes/send";
 import { generateAndStoreQuotePdf, getAdminPdfSignedUrl } from "@/lib/quotes/pdf-service";
+import {
+  buildRfqImportPreview,
+  searchRfqsForImport,
+} from "@/lib/quotes/import-rfq";
 import { assertAdmin } from "@/lib/auth/require-admin";
 import { writeAuditLog } from "@/lib/auth/audit";
 import { createClient } from "@/lib/supabase/server";
@@ -40,6 +44,7 @@ function formLines(formData: FormData) {
       sourceMaterialItemId: (line.sourceMaterialItemId as string) || null,
       sourceLabourItemId: (line.sourceLabourItemId as string) || null,
       sourceSupplierPriceId: (line.sourceSupplierPriceId as string) || null,
+      sourcePricingItemId: (line.sourcePricingItemId as string) || null,
       metadata: (line.metadata as Record<string, unknown>) || null,
     }));
   } catch {
@@ -67,7 +72,11 @@ function quotePayloadFromForm(formData: FormData) {
     issueDate: String(formData.get("issueDate") || ""),
     validUntil: String(formData.get("validUntil") || ""),
     discountAmount: Number(formData.get("discountAmount") || 0),
+    discountType: String(formData.get("discountType") || "amount"),
+    discountPercent: Number(formData.get("discountPercent") || 0),
+    discountReason: String(formData.get("discountReason") || "") || null,
     vatRate: Number(formData.get("vatRate") || 15),
+    vatPricingMode: String(formData.get("vatPricingMode") || "exclusive"),
     depositPercent: Number(formData.get("depositPercent") || 0),
     contactName: String(formData.get("contactName") || "") || null,
     companyName: String(formData.get("companyName") || "") || null,
@@ -88,6 +97,54 @@ export async function createQuoteAction(formData: FormData) {
   }
   revalidatePath("/admin/quotes/");
   redirect(`/admin/quotes/${result.quoteId}/`);
+}
+
+export async function saveNewQuoteDraftAction(formData: FormData) {
+  const result = await createDraftQuote(quotePayloadFromForm(formData));
+  if (!result.ok) return result;
+  revalidatePath("/admin/quotes/");
+  return { ok: true as const, quoteId: result.quoteId, quoteNumber: result.quoteNumber };
+}
+
+export async function saveQuoteDraftAction(quoteId: string, formData: FormData) {
+  const result = await updateDraftQuote(quoteId, quotePayloadFromForm(formData));
+  if (!result.ok) return result;
+  revalidatePath("/admin/quotes/");
+  revalidatePath(`/admin/quotes/${quoteId}/`);
+  revalidatePath(`/admin/quotes/${quoteId}/edit/`);
+  return { ok: true as const, quoteId: result.quoteId, quoteNumber: result.quoteNumber };
+}
+
+export async function sendQuoteFromBuilderAction(
+  quoteId: string,
+  formData: FormData,
+) {
+  const recipientEmail = String(formData.get("to") || "") || undefined;
+  const cc = String(formData.get("cc") || "") || undefined;
+  const bcc = String(formData.get("bcc") || "") || undefined;
+  const subject = String(formData.get("subject") || "") || undefined;
+  const message = String(formData.get("message") || "") || undefined;
+  const ownerOverride = formData.get("ownerOverride") === "true";
+  const testOnly = formData.get("testOnly") === "true";
+  const ccAdmin = formData.get("ccAdmin") !== "false";
+  const attachPdf = formData.get("attachPdf") !== "false";
+  const includeSecureLink = formData.get("includeSecureLink") !== "false";
+
+  const result = await sendQuoteToCustomer(quoteId, {
+    recipientEmail,
+    cc,
+    bcc,
+    subject,
+    message,
+    ownerOverride,
+    testOnly,
+    ccAdmin,
+    attachPdf,
+    includeSecureLink,
+  });
+  revalidatePath(`/admin/quotes/${quoteId}/`);
+  revalidatePath("/admin/quotes/");
+  return result;
 }
 
 export async function updateQuoteAction(quoteId: string, formData: FormData) {
@@ -175,6 +232,17 @@ export async function revokePublicTokenAction(quoteId: string) {
       error: error instanceof Error ? error.message : "Unable to revoke token.",
     };
   }
+}
+
+export async function searchRfqsForImportAction(query: string) {
+  return searchRfqsForImport(query);
+}
+
+export async function fetchRfqImportPreviewAction(
+  rfqId: string,
+  currentCustomerId?: string,
+) {
+  return buildRfqImportPreview(rfqId, { currentCustomerId });
 }
 
 export async function updateCompanySettingsAction(formData: FormData) {

@@ -4,6 +4,9 @@ import { revalidatePath } from "next/cache";
 import { assertAdmin } from "@/lib/auth/require-admin";
 import { writeAuditLog } from "@/lib/auth/audit";
 import { createClient } from "@/lib/supabase/server";
+import { searchPricingItems } from "@/lib/pricing/get-pricing-items";
+import { syncPricingItemFromMaterial } from "@/lib/pricing/sync";
+import type { PricingItemType } from "@/lib/pricing/types";
 
 function escapeLike(term: string) {
   return term.replace(/[%_]/g, "\\$&");
@@ -15,6 +18,89 @@ function selectMaterialSearchFields() {
 
 function selectLabourSearchFields() {
   return "id, item_code, category, name, unit, hourly_cost, unit_cost, productivity_rate, productivity_unit, is_active, notes, created_at, updated_at";
+}
+
+export async function searchPricingItemsAction(q: string, itemType?: string) {
+  const admin = await assertAdmin({ permission: "manageQuotes" });
+  const result = await searchPricingItems({
+    q,
+    itemType: itemType ? (itemType as PricingItemType) : undefined,
+    active: true,
+    limit: 40,
+  });
+
+  if (!result.ok) {
+    const [materials, labour] = await Promise.all([
+      searchMaterialItemsAction(q),
+      searchLabourItemsAction(q),
+    ]);
+    const legacyItems = [
+      ...(materials.ok ? materials.materials : []),
+      ...(labour.ok ? labour.labour : []),
+    ].map((row) => legacyRowToPricingItem(row));
+    return { ok: true as const, items: legacyItems };
+  }
+
+  const canSeeCost =
+    admin.profile.role === "owner" ||
+    admin.profile.role === "admin" ||
+    admin.profile.role === "estimator";
+
+  return {
+    ok: true as const,
+    items: result.items.map((item) => ({
+      ...item,
+      defaultCost: canSeeCost ? item.defaultCost : null,
+    })),
+  };
+}
+
+function legacyRowToPricingItem(row: Record<string, unknown>) {
+  const isLabour = row.hourly_cost != null || row.unit_cost != null;
+  return {
+    id: String(row.id),
+    itemCode: String(row.item_code),
+    itemType: isLabour ? ("labour" as const) : ("material" as const),
+    category: String(row.category),
+    name: String(row.name),
+    shortDescription: null,
+    quoteDescription: String(row.description ?? row.name),
+    purchaseUnit: String(row.unit),
+    quoteUnit: String(row.unit === "m2" ? "m²" : row.unit),
+    conversionFactor: 1,
+    defaultCost:
+      row.default_cost != null
+        ? Number(row.default_cost)
+        : row.unit_cost != null
+          ? Number(row.unit_cost)
+          : row.hourly_cost != null
+            ? Number(row.hourly_cost)
+            : null,
+    defaultSellPrice:
+      row.default_sell_price != null ? Number(row.default_sell_price) : null,
+    pricingMethod: "unit_rate" as const,
+    defaultMarkupPercent: null,
+    targetMarginPercent: null,
+    minimumSellPrice: null,
+    taxCategory: "standard" as const,
+    wastePercent: Number(row.waste_percent ?? 0),
+    overlapPercent: 0,
+    coverageRate: null,
+    coverageUnit: null,
+    productivityRate:
+      row.productivity_rate != null ? Number(row.productivity_rate) : null,
+    productivityUnit: (row.productivity_unit as string | null) ?? null,
+    priceValidFrom: null,
+    priceValidTo: null,
+    isActive: Boolean(row.is_active ?? true),
+    requiresManualQuantityConfirmation: false,
+    metadata: {},
+    legacyMaterialItemId: isLabour ? null : String(row.id),
+    legacyLabourItemId: isLabour ? String(row.id) : null,
+    legacyTankModelId: null,
+    supplierName: null,
+    priceStatus: "current" as const,
+  };
 }
 
 export async function searchMaterialItemsAction(q: string) {
@@ -127,13 +213,18 @@ export async function upsertMaterialAction(formData: FormData): Promise<void> {
     category: String(formData.get("category") ?? "").trim(),
     name: String(formData.get("name") ?? "").trim(),
     description: String(formData.get("description") ?? "").trim() || null,
-    unit: String(formData.get("unit") ?? "m2").trim(),
+    unit: String(formData.get("unit") ?? "m²").trim(),
     default_cost: Number(formData.get("default_cost") ?? 0) || 0,
     default_sell_price: formData.get("default_sell_price")
       ? Number(formData.get("default_sell_price"))
       : null,
     waste_percent: Number(formData.get("waste_percent") ?? 0) || 0,
     is_active: String(formData.get("is_active") ?? "1") === "1",
+    metadata: {
+      purchase_unit: String(formData.get("purchase_unit") ?? "").trim() || null,
+      overlap_percent: Number(formData.get("overlap_percent") ?? 0) || 0,
+      conversion_factor: Number(formData.get("conversion_factor") ?? 1) || 1,
+    },
   };
 
   if (!payload.item_code || !payload.name || !payload.category) return;
@@ -155,6 +246,21 @@ export async function upsertMaterialAction(formData: FormData): Promise<void> {
       return;
     }
     id = data.id;
+  }
+
+  const { data: savedMaterial } = await supabase
+    .from("material_items")
+    .select("*")
+    .eq("id", id!)
+    .single();
+
+  if (savedMaterial) {
+    await syncPricingItemFromMaterial(supabase, savedMaterial as Parameters<typeof syncPricingItemFromMaterial>[1], {
+      purchaseUnit: String(formData.get("purchase_unit") ?? "").trim() || undefined,
+      quoteUnit: payload.unit,
+      overlapPercent: Number(formData.get("overlap_percent") ?? 0) || 0,
+      conversionFactor: Number(formData.get("conversion_factor") ?? 1) || 1,
+    });
   }
 
   await writeAuditLog({

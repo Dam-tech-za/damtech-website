@@ -17,6 +17,7 @@ export const quoteLineSchema = z.object({
   sourceMaterialItemId: z.string().uuid().nullable().optional(),
   sourceLabourItemId: z.string().uuid().nullable().optional(),
   sourceSupplierPriceId: z.string().uuid().nullable().optional(),
+  sourcePricingItemId: z.string().uuid().nullable().optional(),
   metadata: z.record(z.string(), z.unknown()).nullable().optional(),
 });
 
@@ -39,7 +40,11 @@ export const quoteSaveSchema = z.object({
   issueDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
   validUntil: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
   discountAmount: z.number().min(0).max(100_000_000).default(0),
+  discountType: z.enum(["none", "amount", "percent"]).default("amount"),
+  discountPercent: z.number().min(0).max(100).default(0),
+  discountReason: z.string().max(500).nullable().optional(),
   vatRate: z.number().min(0).max(100).default(15),
+  vatPricingMode: z.enum(["exclusive", "inclusive"]).default("exclusive"),
   depositPercent: z.number().min(0).max(100).nullable().optional(),
   contactName: z.string().max(200).nullable().optional(),
   companyName: z.string().max(200).nullable().optional(),

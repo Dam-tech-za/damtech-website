@@ -46,6 +46,7 @@ export type QuoteLineInput = {
   sourceMaterialItemId?: string | null;
   sourceLabourItemId?: string | null;
   sourceSupplierPriceId?: string | null;
+  sourcePricingItemId?: string | null;
   metadata?: Record<string, unknown> | null;
 };
 

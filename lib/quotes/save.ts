@@ -5,11 +5,8 @@ import { createServiceRoleClient } from "@/lib/supabase/admin";
 import { writeQuoteEvent } from "./events";
 import { quoteSaveSchema, type QuoteSaveInput } from "./schema";
 import { getQuoteSettings } from "./settings";
-import {
-  addDaysToIsoDate,
-  recalculateQuoteTotals,
-  todayIsoDateJohannesburg,
-} from "./totals";
+import { calculateQuote } from "./calculate-quote";
+import { addDaysToIsoDate, todayIsoDateJohannesburg } from "./totals";
 import { canEditQuote } from "./workflow";
 import type { QuoteLineInput } from "./types";
 
@@ -34,11 +31,12 @@ function mapLines(input: QuoteSaveInput["lines"]): QuoteLineInput[] {
     sourceMaterialItemId: line.sourceMaterialItemId ?? null,
     sourceLabourItemId: line.sourceLabourItemId ?? null,
     sourceSupplierPriceId: line.sourceSupplierPriceId ?? null,
+    sourcePricingItemId: line.sourcePricingItemId ?? null,
     metadata: line.metadata ?? null,
   }));
 }
 
-function lineRows(quoteId: string, lines: ReturnType<typeof recalculateQuoteTotals>["lines"]) {
+function lineRows(quoteId: string, lines: ReturnType<typeof calculateQuote>["lines"]) {
   return lines.map((line) => ({
     quote_id: quoteId,
     sort_order: line.sortOrder,
@@ -57,6 +55,7 @@ function lineRows(quoteId: string, lines: ReturnType<typeof recalculateQuoteTota
     source_material_item_id: line.sourceMaterialItemId ?? null,
     source_labour_item_id: line.sourceLabourItemId ?? null,
     source_supplier_price_id: line.sourceSupplierPriceId ?? null,
+    source_pricing_item_id: line.sourcePricingItemId ?? null,
   }));
 }
 
@@ -77,9 +76,12 @@ export async function createDraftQuote(
       parsed.data.validUntil || addDaysToIsoDate(issueDate, validityDays);
     const vatRate = parsed.data.vatRate || Number(settings?.default_vat_rate ?? 15);
 
-    const totals = recalculateQuoteTotals(mapLines(parsed.data.lines), {
+    const totals = calculateQuote(mapLines(parsed.data.lines), {
       discountAmount: parsed.data.discountAmount,
+      discountType: parsed.data.discountType,
+      discountPercent: parsed.data.discountPercent,
       vatRatePercent: vatRate,
+      vatPricingMode: parsed.data.vatPricingMode,
     });
 
     const service = createServiceRoleClient();
@@ -145,6 +147,12 @@ export async function createDraftQuote(
           at: new Date().toISOString(),
           estimatorConfirmedSuggestions:
             parsed.data.estimatorConfirmedSuggestions ?? false,
+        },
+        metadata: {
+          discountType: parsed.data.discountType,
+          discountPercent: parsed.data.discountPercent,
+          discountReason: parsed.data.discountReason ?? null,
+          vatPricingMode: parsed.data.vatPricingMode,
         },
       })
       .select("id, quote_number")
@@ -220,9 +228,12 @@ export async function updateDraftQuote(
     }
 
     const vatRate = parsed.data.vatRate;
-    const totals = recalculateQuoteTotals(mapLines(parsed.data.lines), {
+    const totals = calculateQuote(mapLines(parsed.data.lines), {
       discountAmount: parsed.data.discountAmount,
+      discountType: parsed.data.discountType,
+      discountPercent: parsed.data.discountPercent,
       vatRatePercent: vatRate,
+      vatPricingMode: parsed.data.vatPricingMode,
     });
 
     const { error: updateError } = await supabase
@@ -266,6 +277,12 @@ export async function updateDraftQuote(
           at: new Date().toISOString(),
           estimatorConfirmedSuggestions:
             parsed.data.estimatorConfirmedSuggestions ?? false,
+        },
+        metadata: {
+          discountType: parsed.data.discountType,
+          discountPercent: parsed.data.discountPercent,
+          discountReason: parsed.data.discountReason ?? null,
+          vatPricingMode: parsed.data.vatPricingMode,
         },
       })
       .eq("id", quoteId);

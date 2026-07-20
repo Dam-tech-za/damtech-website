@@ -1,16 +1,14 @@
 import { Resend } from "resend";
 import { formatZar } from "@/lib/estimating/money";
 
-const QUOTE_FROM_EMAIL =
-  process.env.QUOTE_FROM_EMAIL?.trim() || "quote@dam-tech.co.za";
-const QUOTE_REPLY_TO_EMAIL =
-  process.env.QUOTE_REPLY_TO_EMAIL?.trim() ||
-  process.env.LEAD_INBOX_EMAIL?.trim() ||
-  "info@dam-tech.co.za";
-const INTERNAL_QUOTE_EMAIL =
-  process.env.QUOTE_INTERNAL_NOTIFY_EMAIL?.trim() ||
-  process.env.LEAD_INBOX_EMAIL?.trim() ||
-  "info@dam-tech.co.za";
+import {
+  getQuoteAdminCcEmail,
+  getQuoteFromEmail,
+  getQuoteReplyToEmail,
+} from "@/lib/email/config";
+
+const QUOTE_FROM_EMAIL = getQuoteFromEmail();
+const QUOTE_REPLY_TO_EMAIL = getQuoteReplyToEmail();
 
 let resendClient: Resend | null = null;
 
@@ -31,6 +29,8 @@ function escapeHtml(value: string): string {
 
 export type SendCustomerQuoteEmailInput = {
   to: string;
+  cc?: string[];
+  bcc?: string[];
   customerName: string;
   quoteNumber: string;
   revisionNumber: number;
@@ -38,8 +38,11 @@ export type SendCustomerQuoteEmailInput = {
   totalIncVat: number;
   validUntil: string;
   message?: string | null;
+  subject?: string;
   secureUrl: string;
   pdf?: { fileName: string; content: Buffer } | null;
+  attachPdf?: boolean;
+  includeSecureLink?: boolean;
 };
 
 export async function sendCustomerQuoteEmail(
@@ -54,12 +57,19 @@ export async function sendCustomerQuoteEmail(
   }
 
   const label = `${input.quoteNumber} Rev ${input.revisionNumber}`;
-  const subject = `Damtech Quotation ${input.quoteNumber} — ${input.projectTitle}`;
+  const subject =
+    input.subject?.trim() ||
+    `Damtech Quotation ${input.quoteNumber} — ${input.projectTitle}`;
   const safeName = escapeHtml(input.customerName);
   const safeMessage = escapeHtml(
     input.message?.trim() ||
       "Please review the Damtech quotation linked below.",
   );
+
+  const linkBlock =
+    input.includeSecureLink !== false
+      ? `<p><a href="${escapeHtml(input.secureUrl)}" style="display:inline-block;background:#1B4D3E;color:#fff;padding:10px 16px;text-decoration:none;border-radius:4px">View quotation securely</a></p>`
+      : "";
 
   const html = `
     <div style="font-family:Georgia,serif;color:#1a1a1a;line-height:1.5;max-width:560px">
@@ -68,7 +78,7 @@ export async function sendCustomerQuoteEmail(
       <p><strong>Quote:</strong> ${escapeHtml(label)}<br/>
       <strong>Total (inc VAT):</strong> ${escapeHtml(formatZar(input.totalIncVat))}<br/>
       <strong>Valid until:</strong> ${escapeHtml(input.validUntil)}</p>
-      <p><a href="${escapeHtml(input.secureUrl)}" style="display:inline-block;background:#1B4D3E;color:#fff;padding:10px 16px;text-decoration:none;border-radius:4px">View quotation securely</a></p>
+      ${linkBlock}
       <p>Damtech · ${escapeHtml(QUOTE_REPLY_TO_EMAIL)}</p>
     </div>
   `;
@@ -88,7 +98,9 @@ export async function sendCustomerQuoteEmail(
   ].join("\n");
 
   const attachments =
-    input.pdf && input.pdf.content.byteLength < 8_000_000
+    input.attachPdf !== false &&
+    input.pdf &&
+    input.pdf.content.byteLength < 8_000_000
       ? [
           {
             filename: input.pdf.fileName,
@@ -97,10 +109,13 @@ export async function sendCustomerQuoteEmail(
         ]
       : undefined;
 
+  const ccList = [...(input.cc ?? [])];
   try {
     const { data, error } = await resend.emails.send({
       from: `Damtech Quotes <${QUOTE_FROM_EMAIL}>`,
       to: [input.to],
+      cc: ccList.length ? ccList : undefined,
+      bcc: input.bcc?.length ? input.bcc : undefined,
       replyTo: QUOTE_REPLY_TO_EMAIL,
       subject,
       html,
@@ -130,7 +145,7 @@ export async function sendInternalQuoteNotification(input: {
   try {
     const { error } = await resend.emails.send({
       from: `Damtech Quotes <${QUOTE_FROM_EMAIL}>`,
-      to: [INTERNAL_QUOTE_EMAIL],
+      to: [getQuoteAdminCcEmail()],
       subject: input.subject,
       text: input.body,
     });
@@ -144,6 +159,3 @@ export async function sendInternalQuoteNotification(input: {
   }
 }
 
-export function getQuoteReplyToEmail(): string {
-  return QUOTE_REPLY_TO_EMAIL;
-}

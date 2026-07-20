@@ -8,6 +8,7 @@ import {
 } from "./settings";
 import { generateAndStoreQuotePdf } from "./pdf-service";
 import { sendCustomerQuoteEmail } from "./email";
+import { getQuoteAdminCcEmail } from "@/lib/email/config";
 import { generatePublicQuoteToken, hashPublicQuoteToken } from "./token";
 import { writeQuoteEvent } from "./events";
 import { canSendQuote } from "./workflow";
@@ -24,8 +25,16 @@ export async function sendQuoteToCustomer(
   quoteId: string,
   options: {
     recipientEmail?: string;
+    cc?: string;
+    bcc?: string;
+    subject?: string;
+    message?: string;
     ownerOverride?: boolean;
     resend?: boolean;
+    testOnly?: boolean;
+    ccAdmin?: boolean;
+    attachPdf?: boolean;
+    includeSecureLink?: boolean;
   } = {},
 ): Promise<{ ok: true; secureUrl: string } | { ok: false; error: string }> {
   try {
@@ -58,6 +67,15 @@ export async function sendQuoteToCustomer(
     if (!recipient || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(recipient)) {
       return { ok: false, error: "A valid recipient email is required." };
     }
+
+    const testOnly = Boolean(options.testOnly);
+    const deliveryEmail = testOnly ? admin.user.email ?? recipient : recipient;
+    const ccList = [
+      ...(options.cc
+        ? options.cc.split(",").map((value) => value.trim()).filter(Boolean)
+        : []),
+      ...(options.ccAdmin !== false ? [getQuoteAdminCcEmail()] : []),
+    ];
 
     const company = await getCompanySettings();
     const quoteSettings = await getQuoteSettings();
@@ -119,36 +137,55 @@ export async function sendQuoteToCustomer(
     );
 
     const emailResult = await sendCustomerQuoteEmail({
-      to: recipient,
+      to: deliveryEmail,
+      cc: ccList,
+      bcc: options.bcc
+        ? options.bcc.split(",").map((value) => value.trim()).filter(Boolean)
+        : undefined,
       customerName: quote.contact_name || quote.company_name || "Customer",
       quoteNumber: quote.quote_number,
       revisionNumber: quote.revision_number ?? 0,
       projectTitle: quote.title,
       totalIncVat: Number(quote.total_inc_vat),
       validUntil: quote.valid_until,
-      message: quote.customer_message,
+      message: options.message ?? quote.customer_message,
+      subject: options.subject,
       secureUrl,
       pdf: { fileName: pdf.fileName, content: pdf.buffer },
+      attachPdf: options.attachPdf,
+      includeSecureLink: options.includeSecureLink,
     });
 
     if (!emailResult.ok) {
-      // Do not mark as sent on provider failure; revoke freshly issued token.
-      await supabase
-        .from("quotes")
-        .update({
-          public_token_revoked_at: new Date().toISOString(),
-        })
-        .eq("id", quoteId);
+      if (!testOnly) {
+        await supabase
+          .from("quotes")
+          .update({
+            public_token_revoked_at: new Date().toISOString(),
+          })
+          .eq("id", quoteId);
+      }
 
       await writeQuoteEvent(supabase, {
         quoteId,
-        eventType: "send_failed",
+        eventType: testOnly ? "email_test_failed" : "send_failed",
         actorType: "admin",
         actorUserId: admin.user.id,
         metadata: { error: emailResult.error },
       });
 
       return { ok: false, error: emailResult.error };
+    }
+
+    if (testOnly) {
+      await writeQuoteEvent(supabase, {
+        quoteId,
+        eventType: "email_test_sent",
+        actorType: "admin",
+        actorUserId: admin.user.id,
+        metadata: { recipient: deliveryEmail, messageId: emailResult.messageId },
+      });
+      return { ok: true, secureUrl };
     }
 
     const { error: sentError } = await supabase
@@ -170,7 +207,9 @@ export async function sendQuoteToCustomer(
       quote_id: quoteId,
       communication_type: options.resend ? "quote_email_resend" : "quote_email",
       recipient_email: recipient,
-      subject: `Damtech Quotation ${quote.quote_number} — ${quote.title}`,
+      subject:
+        options.subject ??
+        `Damtech Quotation ${quote.quote_number} — ${quote.title}`,
       provider_message_id: emailResult.messageId,
       status: "sent",
       sent_by: admin.user.id,

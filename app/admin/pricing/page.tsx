@@ -1,74 +1,99 @@
+import Link from "next/link";
 import { requireAdmin } from "@/lib/auth/require-admin";
-import {
-  AdminPageHeader,
-  SettingsNavCard,
-} from "@/components/admin/ui";
+import { AdminButton, AdminPageHeader } from "@/components/admin/ui";
+import { getPricingHubMetrics } from "@/lib/pricing/get-pricing-items";
+import { PricingSummaryCard } from "@/components/admin/pricing/PricingSummaryCard";
 
 export default async function AdminPricingHubPage() {
   await requireAdmin({ permission: "viewPricing" });
-
-  const categories = [
-    {
-      href: "/admin/pricing/materials/",
-      title: "Materials",
-      description:
-        "Geomembrane, geotextile, fittings and consumables with cost and sell prices.",
-      meta: "Material library",
-    },
-    {
-      href: "/admin/pricing/labour/",
-      title: "Labour",
-      description:
-        "Crew rates, productivity and installation labour items for estimating.",
-      meta: "Labour rates",
-    },
-    {
-      href: "/admin/pricing/travel/",
-      title: "Travel & delivery",
-      description:
-        "Kilometre rates, delivery defaults and travel labour assumptions.",
-      meta: "Travel inputs",
-    },
-    {
-      href: "/admin/pricing/tank-models/",
-      title: "Tank models",
-      description:
-        "Corrugated steel tank catalogue used for RFQ matching and quoting.",
-      meta: "Catalogue",
-    },
-    {
-      href: "/admin/pricing/suppliers/",
-      title: "Suppliers",
-      description:
-        "Supplier contacts, preferred vendors and price-list validity.",
-      meta: "Vendor pricing",
-    },
-    {
-      href: "/admin/settings/estimating/",
-      title: "Estimating settings",
-      description:
-        "VAT, markup, allowances and default estimating preferences.",
-      meta: "Defaults",
-    },
-  ];
+  const metrics = await getPricingHubMetrics().catch(() => ({
+    materialsActive: 0,
+    materialsMissingCost: 0,
+    servicesActive: 0,
+    labourActive: 0,
+    expiredPrices: 0,
+    expiringPrices: 0,
+  }));
 
   return (
     <div className="admin-stack--page">
       <AdminPageHeader
-        title="Pricing"
-        description="Manage materials, labour, travel and estimating inputs."
+        title="Pricing & Inventory"
+        description="Inventory, rates and estimating — materials, services, labour, travel and commercial rules used directly in quotations."
+        secondaryActions={
+          <AdminButton href="/admin/suppliers/" variant="secondary" size="sm">
+            Open Suppliers
+          </AdminButton>
+        }
       />
 
-      <div className="admin-settings-grid">
-        {categories.map((item) => (
-          <SettingsNavCard
-            key={item.href}
-            href={item.href}
-            title={item.title}
-            description={item.description}
-            meta={item.meta}
-          />
-        ))}
+      <p className="admin-help-text">
+        Supplier prices are managed from supplier records.{" "}
+        <Link href="/admin/suppliers/">Open Suppliers</Link>
+      </p>
+
+      <div className="admin-pricing-hub-grid">
+        <PricingSummaryCard
+          title="Materials"
+          description="Membranes, liners, coatings, geotextile and accessories."
+          href="/admin/pricing/materials/"
+          actionLabel="Open materials"
+          metrics={[
+            { label: "Active items", value: metrics.materialsActive },
+            { label: "Missing costs", value: metrics.materialsMissingCost },
+            { label: "Expired prices", value: metrics.expiredPrices },
+          ]}
+        />
+        <PricingSummaryCard
+          title="Services & Installation"
+          description="Customer-facing installation and application services."
+          href="/admin/pricing/services/"
+          metrics={[
+            { label: "Active services", value: metrics.servicesActive },
+            { label: "Price review", value: metrics.expiringPrices },
+          ]}
+        />
+        <PricingSummaryCard
+          title="Labour"
+          description="Roles, crew templates, productivity and burdened rates."
+          href="/admin/pricing/labour/"
+          metrics={[
+            { label: "Labour items", value: metrics.labourActive },
+          ]}
+        />
+        <PricingSummaryCard
+          title="Travel & Delivery"
+          description="Vehicle rates, delivery rules and travel assumptions."
+          href="/admin/pricing/travel/"
+          metrics={[{ label: "Configure rates", value: "Settings-linked" }]}
+        />
+        <PricingSummaryCard
+          title="Equipment & Site Costs"
+          description="Plant, access equipment and site-establishment items."
+          href="/admin/pricing/equipment/"
+          metrics={[{ label: "Catalogue", value: "Manage items" }]}
+        />
+        <PricingSummaryCard
+          title="Tank Models"
+          description="Steel tank catalogue for RFQ matching and quoting."
+          href="/admin/pricing/tank-models/"
+          metrics={[{ label: "Catalogue", value: "View models" }]}
+        />
+        <PricingSummaryCard
+          title="Estimating Rules"
+          description="VAT, markup, allowances and global estimating defaults."
+          href="/admin/settings/estimating/"
+          metrics={[{ label: "Defaults", value: "Configure" }]}
+        />
+        <PricingSummaryCard
+          title="Price Review"
+          description="Expired, expiring and missing prices requiring attention."
+          href="/admin/pricing/review/"
+          metrics={[
+            { label: "Expired", value: metrics.expiredPrices },
+            { label: "Expiring (30d)", value: metrics.expiringPrices },
+          ]}
+        />
       </div>
     </div>
   );

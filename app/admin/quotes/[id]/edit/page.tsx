@@ -1,11 +1,18 @@
 import { notFound, redirect } from "next/navigation";
 import { requireAdmin } from "@/lib/auth/require-admin";
 import { createClient } from "@/lib/supabase/server";
-import { QuoteBuilder } from "@/components/admin/QuoteBuilder";
-import { updateQuoteAction } from "../../actions";
-import { canEditQuote, canViewCostMargin } from "@/lib/quotes/workflow";
+import { QuoteBuilder } from "@/components/admin/quotes/QuoteBuilder";
+import { canEditQuote, canSendQuote, canViewCostMargin } from "@/lib/quotes/workflow";
 import { canPerform } from "@/lib/auth/permissions";
-import type { QuoteLineType } from "@/lib/quotes/types";
+import type { QuoteLineType, QuoteStatus } from "@/lib/quotes/types";
+import {
+  fetchRfqImportPreviewAction,
+  saveQuoteDraftAction,
+  searchRfqsForImportAction,
+  sendQuoteFromBuilderAction,
+} from "../../actions";
+import { quoteDefaultsFromMetadata } from "@/lib/quotes/quote-validation";
+import type { SendQuotePayload } from "@/components/admin/quotes/SendQuoteDialog";
 
 type PageProps = { params: Promise<{ id: string }> };
 
@@ -39,19 +46,59 @@ export default async function AdminQuoteEditPage({ params }: PageProps) {
     .order("company_name")
     .limit(500);
 
-  const boundUpdate = updateQuoteAction.bind(null, id);
+  const metaDefaults = quoteDefaultsFromMetadata(quote as Record<string, unknown>);
+  const calcSnapshot = quote.calculation_snapshot as {
+    estimatorConfirmedSuggestions?: boolean;
+  } | null;
+
+  const { data: rfq } = quote.rfq_id
+    ? await supabase.from("rfqs").select("rfq_number").eq("id", quote.rfq_id).maybeSingle()
+    : { data: null };
+
+  async function handleSave(formData: FormData) {
+    "use server";
+    return saveQuoteDraftAction(id, formData);
+  }
+
+  async function handleSend(_quoteId: string, payload: SendQuotePayload) {
+    "use server";
+    const formData = new FormData();
+    formData.set("to", payload.to);
+    formData.set("cc", payload.cc);
+    formData.set("bcc", payload.bcc);
+    formData.set("subject", payload.subject);
+    formData.set("message", payload.message);
+    formData.set("ownerOverride", payload.ownerOverride ? "true" : "false");
+    formData.set("testOnly", payload.testOnly ? "true" : "false");
+    formData.set("ccAdmin", payload.ccAdmin ? "true" : "false");
+    formData.set("attachPdf", payload.attachPdf ? "true" : "false");
+    formData.set("includeSecureLink", payload.includeSecureLink ? "true" : "false");
+    return sendQuoteFromBuilderAction(id, formData);
+  }
 
   return (
     <QuoteBuilder
       mode="edit"
-      action={boundUpdate}
-      customers={customers ?? []}
-      canCreateCustomer={canPerform(admin.profile.role, "manageCustomers")}
       showCost={canViewCostMargin(admin.profile.role)}
+      canCreateCustomer={canPerform(admin.profile.role, "manageCustomers")}
+      canSend={canSendQuote(quote.status, admin.profile.role, {
+        ownerOverrideUnapproved: admin.profile.role === "owner",
+      })}
+      customers={customers ?? []}
+      onSave={handleSave}
+      onSend={handleSend}
+      onSearchRfqs={searchRfqsForImportAction}
+      onLoadRfqPreview={fetchRfqImportPreviewAction}
+      cancelHref={`/admin/quotes/${id}/`}
       defaults={{
+        quoteId: quote.id,
+        quoteNumber: quote.quote_number,
+        revisionNumber: quote.revision_number ?? 0,
+        status: quote.status as QuoteStatus,
         title: quote.title ?? "",
         customerId: quote.customer_id ?? "",
         rfqId: quote.rfq_id ?? "",
+        rfqReference: rfq?.rfq_number ?? "",
         projectReference: quote.project_reference ?? "",
         projectLocation: quote.project_location ?? "",
         serviceRequired: quote.service_required ?? "",
@@ -67,7 +114,11 @@ export default async function AdminQuoteEditPage({ params }: PageProps) {
         issueDate: quote.issue_date,
         validUntil: quote.valid_until,
         discountAmount: Number(quote.discount_amount ?? 0),
+        discountType: metaDefaults.discountType,
+        discountPercent: metaDefaults.discountPercent,
+        discountReason: metaDefaults.discountReason,
         vatRate: Number(quote.vat_rate ?? 15),
+        vatPricingMode: metaDefaults.vatPricingMode,
         depositPercent: Number(quote.deposit_percent ?? 0),
         contactName: quote.contact_name ?? "",
         companyName: quote.company_name ?? "",
@@ -75,9 +126,9 @@ export default async function AdminQuoteEditPage({ params }: PageProps) {
         phone: quote.phone ?? "",
         province: quote.province ?? "",
         estimatorConfirmedSuggestions: Boolean(
-          (quote.calculation_snapshot as { estimatorConfirmedSuggestions?: boolean } | null)
-            ?.estimatorConfirmedSuggestions,
+          calcSnapshot?.estimatorConfirmedSuggestions,
         ),
+        hasCalculatorSuggestions: Boolean(quote.rfq_id),
         lines: (lines ?? []).map((line) => ({
           id: line.id,
           sortOrder: line.sort_order,
@@ -92,6 +143,11 @@ export default async function AdminQuoteEditPage({ params }: PageProps) {
           sellUnitPrice: Number(line.sell_unit_price),
           discountPercent: Number(line.discount_percent ?? 0),
           taxCategory: (line.tax_category as "standard" | "exempt" | "zero") || "standard",
+          sourceMaterialItemId: line.source_material_item_id ?? null,
+          sourceLabourItemId: line.source_labour_item_id ?? null,
+          sourceSupplierPriceId: line.source_supplier_price_id ?? null,
+          sourcePricingItemId: line.source_pricing_item_id ?? null,
+          metadata: (line.metadata as Record<string, unknown>) ?? null,
         })),
       }}
     />
