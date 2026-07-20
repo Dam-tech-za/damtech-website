@@ -12,6 +12,7 @@ type MaterialsPageShellProps = {
   initialActive: string;
   rows: Array<Record<string, unknown>>;
   errorMessage?: string;
+  priceHistory?: import("@/components/admin/pricing/PriceHistory").PriceHistoryRow[];
 };
 
 export function MaterialsPageShell(props: MaterialsPageShellProps) {

@@ -11,7 +11,13 @@ import { COMPANY_ASSETS_BUCKET } from "@/lib/storage/company-assets";
 import { getRfqEmailConfig } from "@/lib/rfq/email/config";
 import { SystemInfrastructureTest } from "@/components/admin/SystemInfrastructureTest";
 
-type Status = "Configured" | "Operational" | "Degraded" | "Missing" | "Error";
+type Status =
+  | "Configured"
+  | "Operational"
+  | "Partial"
+  | "Degraded"
+  | "Missing"
+  | "Error";
 
 type Check = {
   label: string;
@@ -95,8 +101,9 @@ function statusClass(status: Status): string {
   if (status === "Configured" || status === "Operational") {
     return "ready_for_quote";
   }
-  if (status === "Degraded") return "information_required";
-  if (status === "Missing") return "information_required";
+  if (status === "Partial" || status === "Degraded" || status === "Missing") {
+    return "information_required";
+  }
   return "spam";
 }
 
@@ -279,5 +286,99 @@ async function collectChecks(): Promise<Check[]> {
         ? "RATE_LIMIT_HASH_SECRET set"
         : "Falling back to CRON_SECRET / service key slice",
     },
+    ...(await collectPricingReadiness()),
   ];
+}
+
+async function collectPricingReadiness(): Promise<Check[]> {
+  if (!isSupabaseServiceConfigured()) {
+    return [
+      {
+        label: "Pricing catalogue readiness",
+        status: "Missing",
+        hint: "Service role required to inspect pricing tables",
+      },
+    ];
+  }
+
+  try {
+    const service = createServiceRoleClient();
+    const { count: pricingCount } = await service
+      .from("pricing_items")
+      .select("id", { count: "exact", head: true });
+    const { count: labourLinked } = await service
+      .from("labour_items")
+      .select("id", { count: "exact", head: true })
+      .not("pricing_item_id", "is", null);
+    const { count: crews } = await service
+      .from("labour_crews")
+      .select("id", { count: "exact", head: true });
+    const { count: vehicles } = await service
+      .from("travel_vehicles")
+      .select("id", { count: "exact", head: true });
+
+    const { count: tankModels } = await service
+      .from("tank_models")
+      .select("id", { count: "exact", head: true })
+      .eq("is_active", true);
+    const { count: priceVersions } = await service
+      .from("pricing_item_prices")
+      .select("id", { count: "exact", head: true });
+
+    return [
+      {
+        label: "Material catalogue",
+        status: (pricingCount ?? 0) > 0 ? "Operational" : "Partial",
+        hint: `${pricingCount ?? 0} pricing_items`,
+      },
+      {
+        label: "Labour synchronisation",
+        status: (labourLinked ?? 0) > 0 ? "Operational" : "Partial",
+        hint: `${labourLinked ?? 0} labour rows linked`,
+      },
+      {
+        label: "Crew templates",
+        status: (crews ?? 0) > 0 ? "Operational" : "Missing",
+        hint: `${crews ?? 0} crews`,
+      },
+      {
+        label: "Travel rates",
+        status: (vehicles ?? 0) > 0 ? "Operational" : "Partial",
+        hint: `${vehicles ?? 0} vehicles (settings defaults always available)`,
+      },
+      {
+        label: "Tank models",
+        status: (tankModels ?? 0) > 0 ? "Operational" : "Missing",
+        hint: `${tankModels ?? 0} active models`,
+      },
+      {
+        label: "Price history",
+        status: (priceVersions ?? 0) > 0 ? "Operational" : "Partial",
+        hint: `${priceVersions ?? 0} pricing_item_prices rows`,
+      },
+      {
+        label: "CSV importer",
+        status: "Partial",
+        hint: "/admin/pricing/import/ — materials & labour import/export ready; supplier/travel commit scaffolded",
+      },
+      {
+        label: "Legacy fallback",
+        status: "Degraded",
+        hint: "Still enabled until catalogue readiness checks pass — see docs/pricing-legacy-migration.md",
+      },
+      {
+        label: "RLS cost protection",
+        status: "Operational",
+        hint: "Apply 20260720130000 migration for can_view_internal_costs()",
+      },
+    ];
+  } catch {
+    return [
+      {
+        label: "Pricing catalogue readiness",
+        status: "Error",
+        hint: "Apply pricing migrations 20260720120000 and 20260720130000",
+      },
+    ];
+  }
 }

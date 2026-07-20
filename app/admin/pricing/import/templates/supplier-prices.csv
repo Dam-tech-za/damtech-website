@@ -1,0 +1,2 @@
+material_item_code,supplier_name,supplier_sku,unit_cost,valid_from,valid_to,minimum_quantity,is_preferred
+HDPE-15-SMOOTH,Example Supplier,SKU-001,95,2026-01-01,2026-12-31,1,true

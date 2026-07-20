@@ -1,31 +1,40 @@
 -- Unified pricing & inventory catalogue (extends existing material/labour tables)
+-- Idempotent: safe to re-run after a partial apply.
 
-create type public.pricing_item_type as enum (
-  'material',
-  'installation_service',
-  'labour',
-  'travel',
-  'delivery',
-  'equipment',
-  'site_establishment',
-  'tank_model',
-  'subcontractor',
-  'allowance',
-  'fixed_price',
-  'other'
-);
+do $$ begin
+  create type public.pricing_item_type as enum (
+    'material',
+    'installation_service',
+    'labour',
+    'travel',
+    'delivery',
+    'equipment',
+    'site_establishment',
+    'tank_model',
+    'subcontractor',
+    'allowance',
+    'fixed_price',
+    'other'
+  );
+exception
+  when duplicate_object then null;
+end $$;
 
-create type public.pricing_method as enum (
-  'unit_rate',
-  'fixed_price',
-  'calculated_consumption',
-  'labour_productivity',
-  'travel_calculation',
-  'supplier_price',
-  'manual'
-);
+do $$ begin
+  create type public.pricing_method as enum (
+    'unit_rate',
+    'fixed_price',
+    'calculated_consumption',
+    'labour_productivity',
+    'travel_calculation',
+    'supplier_price',
+    'manual'
+  );
+exception
+  when duplicate_object then null;
+end $$;
 
-create table public.pricing_items (
+create table if not exists public.pricing_items (
   id uuid primary key default gen_random_uuid(),
   item_code text not null unique,
   item_type public.pricing_item_type not null,
@@ -74,17 +83,18 @@ create table public.pricing_items (
   updated_at timestamptz not null default now()
 );
 
-create index pricing_items_type_idx on public.pricing_items (item_type);
-create index pricing_items_category_idx on public.pricing_items (category);
-create index pricing_items_active_idx on public.pricing_items (is_active);
-create index pricing_items_legacy_material_idx on public.pricing_items (legacy_material_item_id);
-create index pricing_items_legacy_labour_idx on public.pricing_items (legacy_labour_item_id);
+create index if not exists pricing_items_type_idx on public.pricing_items (item_type);
+create index if not exists pricing_items_category_idx on public.pricing_items (category);
+create index if not exists pricing_items_active_idx on public.pricing_items (is_active);
+create index if not exists pricing_items_legacy_material_idx on public.pricing_items (legacy_material_item_id);
+create index if not exists pricing_items_legacy_labour_idx on public.pricing_items (legacy_labour_item_id);
 
+drop trigger if exists pricing_items_set_updated_at on public.pricing_items;
 create trigger pricing_items_set_updated_at
 before update on public.pricing_items
 for each row execute function public.set_updated_at();
 
-create table public.pricing_item_prices (
+create table if not exists public.pricing_item_prices (
   id uuid primary key default gen_random_uuid(),
   pricing_item_id uuid not null references public.pricing_items (id) on delete cascade,
   supplier_id uuid references public.suppliers (id),
@@ -103,8 +113,8 @@ create table public.pricing_item_prices (
   created_at timestamptz not null default now()
 );
 
-create index pricing_item_prices_item_idx on public.pricing_item_prices (pricing_item_id);
-create index pricing_item_prices_valid_idx on public.pricing_item_prices (valid_from, valid_to);
+create index if not exists pricing_item_prices_item_idx on public.pricing_item_prices (pricing_item_id);
+create index if not exists pricing_item_prices_valid_idx on public.pricing_item_prices (valid_from, valid_to);
 
 alter table public.quote_line_items
   add column if not exists source_pricing_item_id uuid references public.pricing_items (id);
@@ -196,11 +206,13 @@ where pi.legacy_material_item_id = sp.material_item_id
 alter table public.pricing_items enable row level security;
 alter table public.pricing_item_prices enable row level security;
 
+drop policy if exists pricing_items_select_authenticated on public.pricing_items;
 create policy pricing_items_select_authenticated
   on public.pricing_items for select
   to authenticated
   using (true);
 
+drop policy if exists pricing_item_prices_select_authenticated on public.pricing_item_prices;
 create policy pricing_item_prices_select_authenticated
   on public.pricing_item_prices for select
   to authenticated

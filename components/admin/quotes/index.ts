@@ -12,4 +12,6 @@ export { QuoteBuilder, type QuoteBuilderProps } from "./QuoteBuilder";
 export { SendQuoteDialog, type SendQuotePayload } from "./SendQuoteDialog";
 export { RfqImportDialog } from "./RfqImportDialog";
 export { VatModeChangeDialog } from "./VatModeChangeDialog";
+export { TankModelPickerDialog, type TankModelRecord } from "./TankModelPickerDialog";
+export { StalePriceWarning } from "./StalePriceWarning";
 export type { EditableLine } from "@/lib/quotes/quote-builder-types";

@@ -11,12 +11,17 @@ import type { EditableLine } from "@/lib/quotes/quote-builder-types";
 import type { QuoteLineType } from "@/lib/quotes/types";
 import { QuoteItemRow } from "./QuoteItemRow";
 import { InventoryPickerDialog } from "./InventoryPickerDialog";
+import {
+  TankModelPickerDialog,
+  type TankModelRecord,
+} from "./TankModelPickerDialog";
 
 type QuoteItemsPanelProps = {
   lines: EditableLine[];
   showCost: boolean;
   hasCalculatorSuggestions: boolean;
   estimatorConfirmedSuggestions: boolean;
+  tankModels?: TankModelRecord[];
   onLinesChange: (lines: EditableLine[]) => void;
   onEstimatorConfirmChange: (confirmed: boolean) => void;
 };
@@ -46,10 +51,12 @@ export function QuoteItemsPanel({
   showCost,
   hasCalculatorSuggestions,
   estimatorConfirmedSuggestions,
+  tankModels = [],
   onLinesChange,
   onEstimatorConfirmChange,
 }: QuoteItemsPanelProps) {
   const [inventoryOpen, setInventoryOpen] = useState(false);
+  const [tankOpen, setTankOpen] = useState(false);
 
   function updateLine(index: number, patch: Partial<EditableLine>) {
     onLinesChange(lines.map((line, i) => (i === index ? { ...line, ...patch } : line)));
@@ -96,6 +103,11 @@ export function QuoteItemsPanel({
           <AdminButton size="sm" variant="secondary" onClick={() => setInventoryOpen(true)}>
             Add from Inventory
           </AdminButton>
+          {tankModels.length > 0 ? (
+            <AdminButton size="sm" variant="secondary" onClick={() => setTankOpen(true)}>
+              Add Tank Model
+            </AdminButton>
+          ) : null}
           <AdminButton size="sm" variant="secondary" onClick={() => appendLine("custom")}>
             Add Custom Item
           </AdminButton>
@@ -180,6 +192,23 @@ export function QuoteItemsPanel({
         onAddLine={addFromInventory}
         showCost={showCost}
       />
+      {tankModels.length > 0 ? (
+        <TankModelPickerDialog
+          open={tankOpen}
+          onClose={() => setTankOpen(false)}
+          models={tankModels}
+          showCost={showCost}
+          onAddLines={(newLines) => {
+            onLinesChange([
+              ...lines,
+              ...newLines.map((line, i) => ({
+                ...line,
+                sortOrder: lines.length + i,
+              })),
+            ]);
+          }}
+        />
+      ) : null}
     </AdminPanel>
   );
 }

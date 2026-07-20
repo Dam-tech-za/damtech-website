@@ -1,0 +1,2 @@
+item_code,category,name,purchase_unit,quote_unit,conversion_factor,cost,sell_price,tax_category,waste_percent,overlap_percent
+HDPE-15-SMOOTH,HDPE geomembrane,1.5 mm smooth HDPE geomembrane,roll,m²,770,0,0,standard,10,10

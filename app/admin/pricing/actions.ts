@@ -6,7 +6,17 @@ import { writeAuditLog } from "@/lib/auth/audit";
 import { createClient } from "@/lib/supabase/server";
 import { searchPricingItems } from "@/lib/pricing/get-pricing-items";
 import { syncPricingItemFromMaterial } from "@/lib/pricing/sync";
+import {
+  reconcileLabourCatalogue,
+  syncPricingItemFromLabour,
+  type LabourRow,
+} from "@/lib/pricing/sync-labour-item";
+import { maskPricingItemsForRole } from "@/lib/pricing/security";
 import type { PricingItemType } from "@/lib/pricing/types";
+import {
+  detectMaterialCategoryKind,
+  validateMaterialTechnical,
+} from "@/lib/pricing/material-schemas";
 
 function escapeLike(term: string) {
   return term.replace(/[%_]/g, "\\$&");
@@ -27,6 +37,7 @@ export async function searchPricingItemsAction(q: string, itemType?: string) {
     itemType: itemType ? (itemType as PricingItemType) : undefined,
     active: true,
     limit: 40,
+    role: admin.profile.role,
   });
 
   if (!result.ok) {
@@ -38,20 +49,15 @@ export async function searchPricingItemsAction(q: string, itemType?: string) {
       ...(materials.ok ? materials.materials : []),
       ...(labour.ok ? labour.labour : []),
     ].map((row) => legacyRowToPricingItem(row));
-    return { ok: true as const, items: legacyItems };
+    return {
+      ok: true as const,
+      items: maskPricingItemsForRole(legacyItems, admin.profile.role),
+    };
   }
-
-  const canSeeCost =
-    admin.profile.role === "owner" ||
-    admin.profile.role === "admin" ||
-    admin.profile.role === "estimator";
 
   return {
     ok: true as const,
-    items: result.items.map((item) => ({
-      ...item,
-      defaultCost: canSeeCost ? item.defaultCost : null,
-    })),
+    items: maskPricingItemsForRole(result.items, admin.profile.role),
   };
 }
 
@@ -208,9 +214,37 @@ export async function upsertMaterialAction(formData: FormData): Promise<void> {
   const supabase = await createClient();
   let id = String(formData.get("id") ?? "") || null;
 
+  const category = String(formData.get("category") ?? "").trim();
+  const technicalRaw: Record<string, unknown> = {};
+  for (const [key, value] of formData.entries()) {
+    if (!key.startsWith("tech_")) continue;
+    const field = key.slice(5);
+    const asNumber = Number(value);
+    technicalRaw[field] =
+      typeof value === "string" && value.trim() !== "" && Number.isFinite(asNumber) && !Number.isNaN(asNumber)
+        ? asNumber
+        : String(value);
+  }
+
+  const kind = detectMaterialCategoryKind(category);
+  if (Object.keys(technicalRaw).length) {
+    const validated = validateMaterialTechnical(kind, technicalRaw);
+    if (!validated.ok) {
+      console.error("[pricing] material technical validation failed:", validated.error);
+      return;
+    }
+    Object.assign(technicalRaw, validated.data);
+  }
+
+  const rollWidth = Number(technicalRaw.rollWidthM ?? 0);
+  const rollLength = Number(technicalRaw.rollLengthM ?? 0);
+  if (rollWidth > 0 && rollLength > 0 && technicalRaw.grossRollAreaM2 == null) {
+    technicalRaw.grossRollAreaM2 = Math.round(rollWidth * rollLength * 100) / 100;
+  }
+
   const payload = {
     item_code: String(formData.get("item_code") ?? "").trim().toUpperCase(),
-    category: String(formData.get("category") ?? "").trim(),
+    category,
     name: String(formData.get("name") ?? "").trim(),
     description: String(formData.get("description") ?? "").trim() || null,
     unit: String(formData.get("unit") ?? "m²").trim(),
@@ -224,6 +258,8 @@ export async function upsertMaterialAction(formData: FormData): Promise<void> {
       purchase_unit: String(formData.get("purchase_unit") ?? "").trim() || null,
       overlap_percent: Number(formData.get("overlap_percent") ?? 0) || 0,
       conversion_factor: Number(formData.get("conversion_factor") ?? 1) || 1,
+      technical: technicalRaw,
+      categoryKind: kind,
     },
   };
 
@@ -260,6 +296,7 @@ export async function upsertMaterialAction(formData: FormData): Promise<void> {
       quoteUnit: payload.unit,
       overlapPercent: Number(formData.get("overlap_percent") ?? 0) || 0,
       conversionFactor: Number(formData.get("conversion_factor") ?? 1) || 1,
+      actorUserId: admin.user.id,
     });
   }
 
@@ -311,6 +348,10 @@ export async function upsertLabourAction(formData: FormData): Promise<void> {
       ? Number(formData.get("hourly_cost"))
       : null,
     unit_cost: formData.get("unit_cost") ? Number(formData.get("unit_cost")) : null,
+    daily_cost: formData.get("daily_cost") ? Number(formData.get("daily_cost")) : null,
+    sell_rate: formData.get("sell_rate") ? Number(formData.get("sell_rate")) : null,
+    burden_percent: Number(formData.get("burden_percent") ?? 0) || 0,
+    overtime_multiplier: Number(formData.get("overtime_multiplier") ?? 1.5) || 1.5,
     productivity_rate: formData.get("productivity_rate")
       ? Number(formData.get("productivity_rate"))
       : null,
@@ -340,6 +381,18 @@ export async function upsertLabourAction(formData: FormData): Promise<void> {
     entityId = data.id;
   }
 
+  const { data: savedLabour } = await supabase
+    .from("labour_items")
+    .select("*")
+    .eq("id", entityId!)
+    .single();
+
+  if (savedLabour) {
+    await syncPricingItemFromLabour(supabase, savedLabour as LabourRow, {
+      actorUserId: admin.user.id,
+    });
+  }
+
   await writeAuditLog({
     actorUserId: admin.user.id,
     actorEmail: admin.user.email,
@@ -349,6 +402,37 @@ export async function upsertLabourAction(formData: FormData): Promise<void> {
     afterData: payload,
   });
   revalidatePath("/admin/pricing/labour/");
+  revalidatePath("/admin/pricing/");
+}
+
+export async function synchroniseLabourCatalogueAction(): Promise<{
+  ok: boolean;
+  result?: Awaited<ReturnType<typeof reconcileLabourCatalogue>>;
+  error?: string;
+}> {
+  try {
+    const admin = await assertAdmin({ permission: "managePricing" });
+    if (admin.profile.role !== "owner" && admin.profile.role !== "admin") {
+      return { ok: false, error: "Only owner or admin may run catalogue synchronisation." };
+    }
+    const supabase = await createClient();
+    const result = await reconcileLabourCatalogue(supabase);
+    await writeAuditLog({
+      actorUserId: admin.user.id,
+      actorEmail: admin.user.email,
+      action: "labour_catalogue_synchronised",
+      entityType: "pricing_items",
+      afterData: result,
+    });
+    revalidatePath("/admin/pricing/labour/");
+    revalidatePath("/admin/pricing/");
+    return { ok: true, result };
+  } catch (error) {
+    return {
+      ok: false,
+      error: error instanceof Error ? error.message : "Synchronisation failed.",
+    };
+  }
 }
 
 export async function upsertSupplierAction(formData: FormData): Promise<void> {

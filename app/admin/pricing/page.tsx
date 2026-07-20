@@ -94,6 +94,12 @@ export default async function AdminPricingHubPage() {
             { label: "Expiring (30d)", value: metrics.expiringPrices },
           ]}
         />
+        <PricingSummaryCard
+          title="CSV Import"
+          description="Import materials, labour and supplier prices from templates."
+          href="/admin/pricing/import/"
+          metrics={[{ label: "Templates", value: "Ready" }]}
+        />
       </div>
     </div>
   );

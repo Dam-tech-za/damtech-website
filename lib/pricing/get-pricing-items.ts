@@ -1,4 +1,11 @@
 import { createClient } from "@/lib/supabase/server";
+import type { AdminRole } from "@/lib/auth/types";
+import {
+  PRICING_COST_COLUMNS,
+  PRICING_SELL_COLUMNS,
+  canViewInternalCosts,
+  maskPricingItemsForRole,
+} from "./security";
 import type { PricingItemRecord, PriceStatus, PricingItemType } from "./types";
 import { normaliseUnitCode } from "./units";
 
@@ -65,6 +72,8 @@ export type PricingSearchFilters = {
   category?: string;
   active?: boolean;
   limit?: number;
+  /** When set, selects sell-only columns for unauthorised roles. */
+  role?: AdminRole;
 };
 
 export async function searchPricingItems(
@@ -72,10 +81,15 @@ export async function searchPricingItems(
 ): Promise<{ ok: true; items: PricingItemRecord[] } | { ok: false; error: string }> {
   const supabase = await createClient();
   const limit = filters.limit ?? 40;
+  const columns =
+    filters.role && !canViewInternalCosts(filters.role)
+      ? PRICING_SELL_COLUMNS
+      : PRICING_COST_COLUMNS;
 
   let query = supabase
     .from("pricing_items")
-    .select("*")
+    // Dynamic column projection for role-based cost masking (types lag migrations).
+    .select(columns as "*")
     .order("category")
     .order("name")
     .limit(limit);
@@ -100,17 +114,23 @@ export async function searchPricingItems(
 
   return {
     ok: true,
-    items: (data ?? []).map((row) => mapRow(row as Record<string, unknown>)),
+    items: maskPricingItemsForRole(
+      (data ?? []).map((row) => mapRow(row as Record<string, unknown>)),
+      filters.role ?? "estimator",
+    ),
   };
 }
 
 export async function getPricingItemById(
   id: string,
+  role?: AdminRole,
 ): Promise<{ ok: true; item: PricingItemRecord } | { ok: false; error: string }> {
   const supabase = await createClient();
+  const columns =
+    role && !canViewInternalCosts(role) ? PRICING_SELL_COLUMNS : PRICING_COST_COLUMNS;
   const { data, error } = await supabase
     .from("pricing_items")
-    .select("*")
+    .select(columns as "*")
     .eq("id", id)
     .maybeSingle();
 
@@ -118,7 +138,11 @@ export async function getPricingItemById(
     return { ok: false, error: error?.message ?? "Pricing item not found." };
   }
 
-  return { ok: true, item: mapRow(data as Record<string, unknown>) };
+  const item = mapRow(data as Record<string, unknown>);
+  return {
+    ok: true,
+    item: role ? maskPricingItemsForRole([item], role)[0] : item,
+  };
 }
 
 export type PricingHubMetrics = {

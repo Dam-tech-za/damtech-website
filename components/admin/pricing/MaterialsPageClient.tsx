@@ -13,6 +13,7 @@ import { formatZar } from "@/lib/estimating/money";
 import { formatUnitLabel } from "@/lib/pricing/units";
 import { archiveMaterialAction } from "@/app/admin/pricing/actions";
 import { PriceStatusBadge } from "./PriceStatusBadge";
+import { PriceHistory, type PriceHistoryRow } from "./PriceHistory";
 import type { PriceStatus } from "@/lib/pricing/types";
 
 type MaterialsPageClientProps = {
@@ -24,6 +25,7 @@ type MaterialsPageClientProps = {
   rows: Array<Record<string, unknown>>;
   errorMessage?: string;
   onAddMaterial: () => void;
+  priceHistory?: PriceHistoryRow[];
 };
 
 const MATERIAL_CATEGORIES = [
@@ -56,6 +58,7 @@ export function MaterialsPageClient({
   rows,
   errorMessage,
   onAddMaterial,
+  priceHistory = [],
 }: MaterialsPageClientProps) {
   return (
     <div className="admin-stack--page">
@@ -186,6 +189,10 @@ export function MaterialsPageClient({
           </div>
         )}
       </AdminPanel>
+
+      {canSeeCost ? (
+        <PriceHistory rows={priceHistory} showCost={canSeeCost} canManage={canManage} />
+      ) : null}
     </div>
   );
 }

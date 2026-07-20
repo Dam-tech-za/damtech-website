@@ -1,4 +1,5 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
+import { recordPriceVersion } from "./record-price-version";
 
 type MaterialRow = {
   id: string;
@@ -22,6 +23,8 @@ export async function syncPricingItemFromMaterial(
     quoteUnit?: string;
     conversionFactor?: number;
     overlapPercent?: number;
+    recordPrice?: boolean;
+    actorUserId?: string | null;
   } = {},
 ) {
   const quoteUnit = extras.quoteUnit ?? (material.unit === "m2" ? "m²" : material.unit);
@@ -46,20 +49,50 @@ export async function syncPricingItemFromMaterial(
 
   const { data: existing } = await supabase
     .from("pricing_items")
-    .select("id")
+    .select("id, default_cost, default_sell_price")
     .eq("legacy_material_item_id", material.id)
     .maybeSingle();
 
+  let pricingItemId = existing?.id ?? null;
+
   if (existing?.id) {
     await supabase.from("pricing_items").update(payload).eq("id", existing.id);
-    return existing.id;
+  } else {
+    const { data: created } = await supabase
+      .from("pricing_items")
+      .insert(payload)
+      .select("id")
+      .single();
+    pricingItemId = created?.id ?? null;
   }
 
-  const { data: created } = await supabase
-    .from("pricing_items")
-    .insert(payload)
-    .select("id")
-    .single();
+  if (
+    pricingItemId &&
+    extras.recordPrice !== false &&
+    (material.default_cost != null || material.default_sell_price != null)
+  ) {
+    const costChanged =
+      Number(existing?.default_cost ?? NaN) !== Number(material.default_cost ?? NaN);
+    const sellChanged =
+      Number(existing?.default_sell_price ?? NaN) !== Number(material.default_sell_price ?? NaN);
+    if (!existing || costChanged || sellChanged) {
+      await recordPriceVersion(supabase, {
+        pricingItemId,
+        costPrice: material.default_cost,
+        sellPrice: material.default_sell_price,
+        sourceType: "material_sync",
+        sourceReference: material.item_code,
+        createdBy: extras.actorUserId ?? null,
+      });
+    }
+  }
 
-  return created?.id ?? null;
+  if (pricingItemId) {
+    await supabase
+      .from("material_items")
+      .update({ pricing_item_id: pricingItemId })
+      .eq("id", material.id);
+  }
+
+  return pricingItemId;
 }

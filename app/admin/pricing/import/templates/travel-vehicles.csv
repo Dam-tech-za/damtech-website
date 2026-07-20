@@ -1,0 +1,3 @@
+vehicle_code,vehicle_name,vehicle_type,sell_rate_per_km,base_call_out,minimum_charge,trailer_surcharge
+LV-01,Light bakkie,Bakkie,8.5,350,450,0
+TR-01,Delivery truck,Delivery truck,14,650,900,250

@@ -21,6 +21,7 @@ import {
   RfqImportDialog,
   SendQuoteDialog,
   VatModeChangeDialog,
+  StalePriceWarning,
   type SendQuotePayload,
 } from "@/components/admin/quotes";
 import { calculateQuote, convertLinesForVatModeChange } from "@/lib/quotes/calculate-quote";
@@ -68,6 +69,8 @@ export type QuoteBuilderProps = {
   >;
   cancelHref?: string;
   duplicateHref?: string;
+  tankModels?: import("./TankModelPickerDialog").TankModelRecord[];
+  staleAssessments?: import("@/lib/pricing/stale-prices").StaleLineAssessment[];
 };
 
 function emptyLine(sortOrder: number, lineType: QuoteLineType = "custom"): EditableLine {
@@ -103,6 +106,8 @@ export function QuoteBuilder({
   onLoadRfqPreview,
   cancelHref = "/admin/quotes/",
   duplicateHref,
+  tankModels = [],
+  staleAssessments = [],
 }: QuoteBuilderProps) {
   const router = useRouter();
   const formRef = useRef<HTMLFormElement>(null);
@@ -115,6 +120,7 @@ export function QuoteBuilder({
   const [rfqImportOpen, setRfqImportOpen] = useState(false);
   const [vatModeDialogOpen, setVatModeDialogOpen] = useState(false);
   const [pendingVatMode, setPendingVatMode] = useState<VatPricingMode | null>(null);
+  const [staleDismissed, setStaleDismissed] = useState(false);
 
   const [quoteId, setQuoteId] = useState(defaults.quoteId ?? "");
   const [quoteNumber, setQuoteNumber] = useState(defaults.quoteNumber ?? "");
@@ -567,6 +573,44 @@ export function QuoteBuilder({
 
       <QuoteProgressStrip sections={readiness} />
 
+      {!staleDismissed && staleAssessments.length > 0 ? (
+        <StalePriceWarning
+          assessments={staleAssessments}
+          onKeepCurrent={() => setStaleDismissed(true)}
+          onUpdateSelected={(lineIds) => {
+            markDirty();
+            setLines((current) =>
+              current.map((line, index) => {
+                const key = line.id ?? String(index);
+                if (!lineIds.includes(key)) return line;
+                const assessment = staleAssessments.find(
+                  (row) => (row.lineId ?? String(row.sortOrder)) === key,
+                );
+                if (!assessment?.newSellPrice) return line;
+                return { ...line, sellUnitPrice: assessment.newSellPrice };
+              }),
+            );
+            setStaleDismissed(true);
+          }}
+          onUpdateAll={() => {
+            markDirty();
+            setLines((current) =>
+              current.map((line, index) => {
+                const key = line.id ?? String(index);
+                const assessment = staleAssessments.find(
+                  (row) =>
+                    (row.lineId ?? String(row.sortOrder)) === key &&
+                    row.newSellPrice != null,
+                );
+                if (!assessment?.newSellPrice) return line;
+                return { ...line, sellUnitPrice: assessment.newSellPrice };
+              }),
+            );
+            setStaleDismissed(true);
+          }}
+        />
+      ) : null}
+
       {error ? <p className="admin-flash admin-flash--error">{error}</p> : null}
 
       <form
@@ -620,6 +664,7 @@ export function QuoteBuilder({
             showCost={showCost}
             hasCalculatorSuggestions={hasCalculatorSuggestions}
             estimatorConfirmedSuggestions={estimatorConfirmed}
+            tankModels={tankModels}
             onLinesChange={(next) => {
               markDirty();
               setLines(next);

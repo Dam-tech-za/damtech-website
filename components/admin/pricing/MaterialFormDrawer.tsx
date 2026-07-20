@@ -10,6 +10,7 @@ import {
   AdminTextarea,
 } from "@/components/admin/ui";
 import { upsertMaterialAction } from "@/app/admin/pricing/actions";
+import { MaterialTechnicalFields } from "./materials/MaterialTechnicalFields";
 
 const MATERIAL_CATEGORIES = [
   "HDPE geomembrane",
@@ -32,6 +33,7 @@ type MaterialFormDrawerProps = {
 
 export function MaterialFormDrawer({ open, onClose, canSeeCost }: MaterialFormDrawerProps) {
   const [pending, setPending] = useState(false);
+  const [category, setCategory] = useState("");
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -64,7 +66,12 @@ export function MaterialFormDrawer({ open, onClose, canSeeCost }: MaterialFormDr
             <AdminInput name="item_code" required />
           </AdminField>
           <AdminField label="Category" required>
-            <AdminSelect name="category" required defaultValue="">
+            <AdminSelect
+              name="category"
+              required
+              value={category}
+              onChange={(e) => setCategory(e.target.value)}
+            >
               <option value="" disabled>
                 Select category
               </option>
@@ -78,7 +85,7 @@ export function MaterialFormDrawer({ open, onClose, canSeeCost }: MaterialFormDr
           <AdminField label="Name" required className="admin-field--full">
             <AdminInput name="name" required />
           </AdminField>
-          <AdminField label="Quote description" className="admin-field--full">
+          <AdminField label="Customer-facing description" className="admin-field--full">
             <AdminTextarea name="description" rows={2} />
           </AdminField>
           <AdminField label="Purchase unit">
@@ -86,7 +93,9 @@ export function MaterialFormDrawer({ open, onClose, canSeeCost }: MaterialFormDr
               <option value="roll">roll</option>
               <option value="pail">pail</option>
               <option value="bag">bag</option>
+              <option value="box">box</option>
               <option value="m²">m²</option>
+              <option value="each">each</option>
             </AdminSelect>
           </AdminField>
           <AdminField label="Quote unit">
@@ -96,6 +105,7 @@ export function MaterialFormDrawer({ open, onClose, canSeeCost }: MaterialFormDr
               <option value="each">each</option>
               <option value="kg">kg</option>
               <option value="litre">litre</option>
+              <option value="m">m</option>
             </AdminSelect>
           </AdminField>
           {canSeeCost ? (
@@ -106,13 +116,14 @@ export function MaterialFormDrawer({ open, onClose, canSeeCost }: MaterialFormDr
           <AdminField label="Default sell price">
             <AdminInput name="default_sell_price" type="number" step="0.01" />
           </AdminField>
-          <AdminField label="Overlap %">
-            <AdminInput name="overlap_percent" type="number" step="0.01" defaultValue="0" />
-          </AdminField>
-          <AdminField label="Waste %">
-            <AdminInput name="waste_percent" type="number" step="0.01" defaultValue="10" />
-          </AdminField>
         </div>
+
+        {category ? (
+          <>
+            <h3 className="admin-subheading">Technical properties — {category}</h3>
+            <MaterialTechnicalFields category={category} />
+          </>
+        ) : null}
       </form>
     </AdminDialog>
   );
