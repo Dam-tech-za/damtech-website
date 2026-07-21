@@ -16,7 +16,8 @@ type Props = {
   appliedTemplateId: string;
   appliedTemplateName: string;
   pending: boolean;
-  onApply: (templateId: string) => void;
+  onSelectTemplate: (templateId: string) => void;
+  onReset: () => void;
 };
 
 export function QuoteTemplatePanel({
@@ -24,10 +25,11 @@ export function QuoteTemplatePanel({
   appliedTemplateId,
   appliedTemplateName,
   pending,
-  onApply,
+  onSelectTemplate,
+  onReset,
 }: Props) {
-  const [selectedId, setSelectedId] = useState(appliedTemplateId);
-  const selected = templates.find((t) => t.id === selectedId) ?? null;
+  const [changing, setChanging] = useState(false);
+  const applied = templates.find((t) => t.id === appliedTemplateId) ?? null;
 
   const groups = Array.from(
     new Set(templates.map((t) => t.projectCategory || "Other")),
@@ -35,49 +37,91 @@ export function QuoteTemplatePanel({
 
   if (!templates.length) return null;
 
+  const showSelector = !appliedTemplateId || changing;
+
   return (
     <AdminPanel id="quote-section-template" title="Project type" compact>
-      {appliedTemplateId ? (
-        <p className="quote-template-applied">
-          Applied template: <strong>{appliedTemplateName}</strong>
-        </p>
-      ) : null}
-      <div className="quote-template-selector">
-        <AdminSelect
-          aria-label="Select project template"
-          value={selectedId}
-          onChange={(e) => setSelectedId(e.target.value)}
-        >
-          <option value="">Search or select project template…</option>
-          {groups.map((group) => (
-            <optgroup key={group} label={group}>
-              {templates
-                .filter((t) => (t.projectCategory || "Other") === group)
-                .map((t) => (
-                  <option key={t.id} value={t.id}>
-                    {t.name} ({t.code})
-                  </option>
-                ))}
-            </optgroup>
-          ))}
-        </AdminSelect>
-        <AdminButton
-          type="button"
-          variant="primary"
-          size="sm"
-          disabled={!selectedId || pending}
-          onClick={() => selectedId && onApply(selectedId)}
-        >
-          {pending ? "Applying…" : "Apply template"}
-        </AdminButton>
-      </div>
-      {selected ? (
+      {appliedTemplateId && !changing ? (
         <div className="quote-template-summary">
-          <p className="quote-template-summary__name">{selected.name}</p>
-          {selected.shortDescription ? (
+          <p className="quote-template-summary__name">
+            {applied?.name ?? appliedTemplateName}
+            <span className="quote-template-status">Template applied</span>
+          </p>
+          {applied?.shortDescription ? (
             <p className="quote-template-summary__desc">
-              {selected.shortDescription}
+              {applied.shortDescription}
             </p>
+          ) : null}
+          <div className="quote-template-actions">
+            <AdminButton
+              type="button"
+              variant="secondary"
+              size="sm"
+              onClick={() => setChanging(true)}
+            >
+              Change
+            </AdminButton>
+            {applied ? (
+              <AdminButton
+                variant="ghost"
+                size="sm"
+                href={`/admin/pricing/project-templates/${applied.id}/`}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Preview template
+              </AdminButton>
+            ) : null}
+            <AdminButton
+              type="button"
+              variant="ghost"
+              size="sm"
+              onClick={onReset}
+              disabled={pending}
+            >
+              Reset from template
+            </AdminButton>
+          </div>
+        </div>
+      ) : null}
+
+      {showSelector ? (
+        <div className="quote-template-selector">
+          <AdminSelect
+            aria-label="Select project template"
+            value={changing ? "" : appliedTemplateId}
+            disabled={pending}
+            onChange={(e) => {
+              const value = e.target.value;
+              if (!value) return;
+              setChanging(false);
+              onSelectTemplate(value);
+            }}
+          >
+            <option value="">
+              {pending ? "Applying…" : "Search or select project template…"}
+            </option>
+            {groups.map((group) => (
+              <optgroup key={group} label={group}>
+                {templates
+                  .filter((t) => (t.projectCategory || "Other") === group)
+                  .map((t) => (
+                    <option key={t.id} value={t.id}>
+                      {t.name} ({t.code})
+                    </option>
+                  ))}
+              </optgroup>
+            ))}
+          </AdminSelect>
+          {changing ? (
+            <AdminButton
+              type="button"
+              variant="ghost"
+              size="sm"
+              onClick={() => setChanging(false)}
+            >
+              Cancel
+            </AdminButton>
           ) : null}
         </div>
       ) : null}

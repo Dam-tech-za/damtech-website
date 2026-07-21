@@ -8,6 +8,7 @@ import { hashIpForAcceptance, summariseUserAgent } from "./token";
 import { acceptQuoteSchema, rejectQuoteSchema } from "./schema";
 import { formatZar } from "@/lib/estimating/money";
 import { formatQuoteNumber } from "./types";
+import { pickCustomerContent } from "./content-sections";
 
 export type PublicQuoteView = {
   quoteNumber: string;
@@ -93,6 +94,8 @@ function toPublicView(
     unknown
   >;
   const termsSnapshot = (quote.terms_snapshot ?? {}) as Record<string, unknown>;
+  // Enforced mapping — customer-facing sections only, never internal_notes.
+  const content = pickCustomerContent(quote);
 
   return {
     quoteNumber: String(quote.quote_number),
@@ -107,9 +110,9 @@ function toPublicView(
     daysRemaining: daysRemaining(validUntil),
     expired,
     status,
-    scopeSummary: (quote.scope_summary as string | null) ?? null,
-    assumptions: (quote.assumptions as string | null) ?? null,
-    exclusions: (quote.exclusions as string | null) ?? null,
+    scopeSummary: content.scopeSummary,
+    assumptions: content.assumptions,
+    exclusions: content.exclusions,
     paymentTerms: (quote.payment_terms as string | null) ?? null,
     terms:
       (termsSnapshot.companyTerms as string | null) ||

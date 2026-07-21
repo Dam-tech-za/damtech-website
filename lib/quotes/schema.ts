@@ -56,6 +56,10 @@ export const quoteSaveSchema = z.object({
   projectTemplateId: z.string().uuid().nullable().optional(),
   projectTemplateVersionId: z.string().uuid().nullable().optional(),
   projectTemplateSnapshot: z.record(z.string(), z.unknown()).nullable().optional(),
+  manualRfqReference: z.string().max(200).nullable().optional(),
+  rfqReferenceSnapshot: z.string().max(200).nullable().optional(),
+  projectFieldValues: z.record(z.string(), z.string()).nullable().optional(),
+  contentReviewed: z.boolean().optional(),
 });
 
 export const acceptQuoteSchema = z.object({

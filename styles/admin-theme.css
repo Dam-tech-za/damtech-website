@@ -484,6 +484,12 @@
 }
 
 /* Quote builder layout */
+.admin-quote-builder-page {
+  width: 100%;
+  max-width: 1640px;
+  margin-inline: auto;
+}
+
 .admin-quote-builder {
   display: grid;
   gap: var(--admin-space-5);

@@ -1,13 +1,14 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { AdminPanel, AdminTextarea } from "@/components/admin/ui";
+import { AdminCheckbox, AdminPanel, AdminTextarea } from "@/components/admin/ui";
 import { ClauseEditor } from "@/components/admin/project-templates/ClauseEditor";
 import {
   clausesToText,
   parseClauses,
   type Clause,
 } from "@/lib/project-templates/clauses";
+import { hasCustomerFacingContent } from "@/lib/quotes/content-sections";
 
 type QuoteScopePanelProps = {
   scopeSummary: string;
@@ -16,6 +17,8 @@ type QuoteScopePanelProps = {
   customerMessage: string;
   internalNotes: string;
   templateName?: string | null;
+  reviewed?: boolean;
+  onReviewedChange?: (reviewed: boolean) => void;
   onChange: (field: string, value: string) => void;
 };
 
@@ -42,9 +45,20 @@ export function QuoteScopePanel({
   customerMessage,
   internalNotes,
   templateName,
+  reviewed = false,
+  onReviewedChange,
   onChange,
 }: QuoteScopePanelProps) {
   const [activeTab, setActiveTab] = useState<TabId>("scope");
+
+  const showReview =
+    Boolean(onReviewedChange) &&
+    hasCustomerFacingContent({
+      scopeSummary,
+      assumptions,
+      exclusions,
+      customerMessage,
+    });
 
   const [scopeClauses, setScopeClauses] = useState<Clause[]>(() =>
     parseClauses(scopeSummary),
@@ -99,8 +113,28 @@ export function QuoteScopePanel({
     <AdminPanel id="quote-section-scope" title="Scope & Notes">
       {templateName ? (
         <p className="quote-template-applied">
-          Content populated from: <strong>{templateName}</strong>
+          Content source: <strong>{templateName}</strong>
         </p>
+      ) : null}
+
+      {showReview ? (
+        <div className="quote-scope-review">
+          <span
+            className={`quote-scope-review__status quote-scope-review__status--${
+              reviewed ? "reviewed" : "unreviewed"
+            }`}
+          >
+            {reviewed ? "Reviewed" : "Needs review"}
+          </span>
+          <AdminCheckbox
+            label="Customer-facing scope, assumptions, exclusions and message reviewed"
+            checked={reviewed}
+            onChange={(e) => onReviewedChange?.(e.target.checked)}
+          />
+          <p className="quote-scope-review__hint">
+            Required before sending. Editing customer-facing content clears this.
+          </p>
+        </div>
       ) : null}
 
       <nav className="admin-tabs__nav" aria-label="Scope tabs">

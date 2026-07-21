@@ -1,4 +1,5 @@
 import type { QuoteLineType, QuoteStatus } from "./types";
+import type { TemplateProjectFieldDef } from "./project-autofill";
 
 export type VatPricingMode = "exclusive" | "inclusive";
 export type DiscountType = "none" | "amount" | "percent";
@@ -65,6 +66,11 @@ export type QuoteBuilderDefaults = {
   projectTemplateId?: string;
   projectTemplateVersionId?: string;
   projectTemplateName?: string;
+  projectTemplateCategory?: string | null;
+  manualRfqReference?: string;
+  projectFieldValues?: Record<string, string>;
+  templateFields?: TemplateProjectFieldDef[];
+  contentReviewed?: boolean;
 };
 
 export type SaveStatus =

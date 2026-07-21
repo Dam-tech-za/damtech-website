@@ -90,8 +90,32 @@ function quotePayloadFromForm(formData: FormData) {
     projectTemplateVersionId:
       String(formData.get("projectTemplateVersionId") || "") || null,
     projectTemplateSnapshot: parseJsonRecord(formData.get("projectTemplateSnapshot")),
+    manualRfqReference: String(formData.get("manualRfqReference") || "") || null,
+    rfqReferenceSnapshot: String(formData.get("rfqReferenceSnapshot") || "") || null,
+    projectFieldValues: parseStringRecord(formData.get("projectFieldValues")),
+    contentReviewed:
+      formData.get("contentReviewed") === "on" ||
+      formData.get("contentReviewed") === "true",
     lines: formLines(formData),
   };
+}
+
+function parseStringRecord(
+  raw: FormDataEntryValue | null,
+): Record<string, string> | null {
+  if (typeof raw !== "string" || !raw.trim()) return null;
+  try {
+    const parsed = JSON.parse(raw);
+    if (!parsed || typeof parsed !== "object") return null;
+    const out: Record<string, string> = {};
+    for (const [key, value] of Object.entries(parsed as Record<string, unknown>)) {
+      if (typeof value === "string") out[key] = value;
+      else if (value != null) out[key] = String(value);
+    }
+    return out;
+  } catch {
+    return null;
+  }
 }
 
 function parseJsonRecord(raw: FormDataEntryValue | null): Record<string, unknown> | null {

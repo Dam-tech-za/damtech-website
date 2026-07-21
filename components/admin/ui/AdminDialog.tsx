@@ -7,21 +7,26 @@ import { AdminButton } from "./AdminButton";
 type AdminDialogProps = {
   open: boolean;
   title: string;
+  description?: string;
   onClose: () => void;
   children: ReactNode;
   footer?: ReactNode;
   role?: "dialog" | "alertdialog";
+  size?: "default" | "wide";
 };
 
 export function AdminDialog({
   open,
   title,
+  description,
   onClose,
   children,
   footer,
   role = "dialog",
+  size = "default",
 }: AdminDialogProps) {
   const titleId = useId();
+  const descId = useId();
   const panelRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -46,14 +51,22 @@ export function AdminDialog({
       />
       <div
         ref={panelRef}
-        className="admin-dialog__panel"
+        className={`admin-dialog__panel${size === "wide" ? " admin-dialog__panel--wide" : ""}`}
         role={role}
         aria-modal="true"
         aria-labelledby={titleId}
+        aria-describedby={description ? descId : undefined}
         tabIndex={-1}
       >
         <header className="admin-dialog__header">
-          <h2 id={titleId}>{title}</h2>
+          <div className="admin-dialog__heading">
+            <h2 id={titleId}>{title}</h2>
+            {description ? (
+              <p id={descId} className="admin-dialog__description">
+                {description}
+              </p>
+            ) : null}
+          </div>
           <AdminButton size="sm" variant="secondary" onClick={onClose}>
             Close
           </AdminButton>

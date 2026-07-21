@@ -17,6 +17,7 @@ import {
   QuoteProjectPanel,
   QuoteScopePanel,
   QuoteSummaryPanel,
+  QuoteTechnicalFieldsPanel,
   QuoteTermsPanel,
   RfqImportDialog,
   SendQuoteDialog,
@@ -31,6 +32,14 @@ import {
 import { ApplyTemplateDialog } from "./ApplyTemplateDialog";
 import { getTemplateApplyContentAction } from "@/app/admin/pricing/project-templates/actions";
 import type { TemplateApplyContent } from "@/lib/project-templates/apply";
+import {
+  computeFieldCompletion,
+  isEmptyDraft,
+  mergeField,
+  type ApplyStrategy,
+  type FieldSource,
+  type TemplateProjectFieldDef,
+} from "@/lib/quotes/project-autofill";
 import { calculateQuote, convertLinesForVatModeChange } from "@/lib/quotes/calculate-quote";
 import type { RfqImportPreview } from "@/lib/quotes/import-rfq";
 import type {
@@ -144,6 +153,9 @@ export function QuoteBuilder({
   const [title, setTitle] = useState(defaults.title);
   const [rfqId, setRfqId] = useState(defaults.rfqId);
   const [rfqReference, setRfqReference] = useState(defaults.rfqReference ?? "");
+  const [manualRfqReference, setManualRfqReference] = useState(
+    defaults.manualRfqReference ?? "",
+  );
   const [projectReference, setProjectReference] = useState(defaults.projectReference);
   const [projectLocation, setProjectLocation] = useState(defaults.projectLocation);
   const [serviceRequired, setServiceRequired] = useState(defaults.serviceRequired);
@@ -156,6 +168,9 @@ export function QuoteBuilder({
   const [warrantyWording, setWarrantyWording] = useState(defaults.warrantyWording);
   const [customerMessage, setCustomerMessage] = useState(defaults.customerMessage);
   const [internalNotes, setInternalNotes] = useState(defaults.internalNotes);
+  const [contentReviewed, setContentReviewed] = useState(
+    defaults.contentReviewed ?? false,
+  );
   const [issueDate, setIssueDate] = useState(defaults.issueDate);
   const [validUntil, setValidUntil] = useState(defaults.validUntil);
   const [depositPercent, setDepositPercent] = useState(defaults.depositPercent);
@@ -196,6 +211,16 @@ export function QuoteBuilder({
   const [applyContent, setApplyContent] = useState<TemplateApplyContent | null>(null);
   const [applyDialogOpen, setApplyDialogOpen] = useState(false);
   const [pendingTemplateName, setPendingTemplateName] = useState("");
+  const [templateFlash, setTemplateFlash] = useState<string | null>(null);
+  const [templateFields, setTemplateFields] = useState<TemplateProjectFieldDef[]>(
+    defaults.templateFields ?? [],
+  );
+  const [projectFieldValues, setProjectFieldValues] = useState<
+    Record<string, string>
+  >(defaults.projectFieldValues ?? {});
+  const [fieldSources, setFieldSources] = useState<
+    Partial<Record<string, FieldSource>>
+  >({});
 
   const dirtyRef = useRef(false);
   const savingRef = useRef(false);
@@ -216,6 +241,17 @@ export function QuoteBuilder({
     return () => window.removeEventListener("beforeunload", onBeforeUnload);
   }, []);
 
+  useEffect(() => {
+    if (!templateFlash) return;
+    const timer = setTimeout(() => setTemplateFlash(null), 4000);
+    return () => clearTimeout(timer);
+  }, [templateFlash]);
+
+  function handleProjectFieldChange(key: string, value: string) {
+    markDirty();
+    setProjectFieldValues((prev) => ({ ...prev, [key]: value }));
+  }
+
   const totals = useMemo(
     () =>
       calculateQuote(lines, {
@@ -226,6 +262,11 @@ export function QuoteBuilder({
         vatPricingMode,
       }),
     [lines, discountType, discountValue, vatRate, vatPricingMode],
+  );
+
+  const requiredFieldsMissing = useMemo(
+    () => computeFieldCompletion(templateFields, projectFieldValues).missingRequired.length,
+    [templateFields, projectFieldValues],
   );
 
   const readiness = useMemo(
@@ -240,6 +281,7 @@ export function QuoteBuilder({
         paymentTerms,
         hasCalculatorSuggestions: hasCalculatorSuggestions,
         estimatorConfirmedSuggestions: estimatorConfirmed,
+        requiredProjectFieldsMissing: requiredFieldsMissing,
       }),
     [
       customerId,
@@ -251,6 +293,7 @@ export function QuoteBuilder({
       paymentTerms,
       hasCalculatorSuggestions,
       estimatorConfirmed,
+      requiredFieldsMissing,
     ],
   );
 
@@ -272,6 +315,15 @@ export function QuoteBuilder({
         hasCalculatorSuggestions: hasCalculatorSuggestions,
         estimatorConfirmedSuggestions: estimatorConfirmed,
         status,
+        serviceRequired,
+        projectDescription,
+        requiredProjectFieldsMissing: requiredFieldsMissing,
+        contentReviewed,
+        scopeSummary,
+        assumptions,
+        exclusions,
+        customerMessage,
+        warrantyWording,
       }),
     [
       customerId,
@@ -284,6 +336,15 @@ export function QuoteBuilder({
       hasCalculatorSuggestions,
       estimatorConfirmed,
       status,
+      serviceRequired,
+      projectDescription,
+      requiredFieldsMissing,
+      contentReviewed,
+      scopeSummary,
+      assumptions,
+      exclusions,
+      customerMessage,
+      warrantyWording,
     ],
   );
 
@@ -301,14 +362,31 @@ export function QuoteBuilder({
     markDirty();
   }
 
+  function markManualSource(field: string) {
+    setFieldSources((prev) =>
+      prev[field] === "manual" ? prev : { ...prev, [field]: "manual" },
+    );
+  }
+
   function handleFieldChange(field: string, value: string | number) {
     markDirty();
+    if (
+      field === "title" ||
+      field === "projectLocation" ||
+      field === "serviceRequired" ||
+      field === "projectDescription"
+    ) {
+      markManualSource(field);
+    }
     switch (field) {
       case "title":
         setTitle(String(value));
         break;
       case "rfqId":
         setRfqId(String(value));
+        break;
+      case "manualRfqReference":
+        setManualRfqReference(String(value));
         break;
       case "projectReference":
         setProjectReference(String(value));
@@ -324,15 +402,19 @@ export function QuoteBuilder({
         break;
       case "scopeSummary":
         setScopeSummary(String(value));
+        setContentReviewed(false);
         break;
       case "assumptions":
         setAssumptions(String(value));
+        setContentReviewed(false);
         break;
       case "exclusions":
         setExclusions(String(value));
+        setContentReviewed(false);
         break;
       case "customerMessage":
         setCustomerMessage(String(value));
+        setContentReviewed(false);
         break;
       case "internalNotes":
         setInternalNotes(String(value));
@@ -348,6 +430,7 @@ export function QuoteBuilder({
         break;
       case "warrantyWording":
         setWarrantyWording(String(value));
+        setContentReviewed(false);
         break;
       case "programmeNotes":
         setProgrammeNotes(String(value));
@@ -377,6 +460,7 @@ export function QuoteBuilder({
     formData.set("warrantyWording", warrantyWording);
     formData.set("customerMessage", customerMessage);
     formData.set("internalNotes", internalNotes);
+    formData.set("contentReviewed", contentReviewed ? "true" : "false");
     formData.set("issueDate", issueDate);
     formData.set("validUntil", validUntil);
     formData.set("depositPercent", String(depositPercent));
@@ -403,80 +487,125 @@ export function QuoteBuilder({
         "projectTemplateSnapshot",
         JSON.stringify(projectTemplateSnapshot),
       );
+    formData.set("manualRfqReference", manualRfqReference);
+    formData.set("rfqReferenceSnapshot", rfqReference);
+    formData.set("projectFieldValues", JSON.stringify(projectFieldValues));
     formData.set("linesJson", JSON.stringify(lines));
     return formData;
   }
 
-  function requestApplyTemplate(templateId: string) {
+  function hasExistingQuoteContent(): boolean {
+    return !isEmptyDraft({ title, projectDescription, scopeSummary, lines });
+  }
+
+  // Selecting a project type: auto-apply on an empty draft, otherwise confirm.
+  function handleSelectTemplate(templateId: string) {
     const option = templates.find((t) => t.id === templateId);
-    setPendingTemplateName(option?.name ?? "template");
+    const name = option?.name ?? "template";
+    setPendingTemplateName(name);
     startTemplateTransition(async () => {
       const result = await getTemplateApplyContentAction(templateId);
       if (!result.ok) {
         setError(result.error);
         return;
       }
-      setApplyContent(result.content);
-      setApplyDialogOpen(true);
+      if (isEmptyDraft({ title, projectDescription, scopeSummary, lines })) {
+        applyContentWithStrategy(result.content, "fill_blank", name);
+        setTemplateFlash("Project template applied");
+      } else {
+        setApplyContent(result.content);
+        setApplyDialogOpen(true);
+      }
     });
   }
 
-  function hasExistingQuoteContent(): boolean {
-    const hasLines = lines.some(
+  function handleResetTemplate() {
+    if (!projectTemplateId) return;
+    startTemplateTransition(async () => {
+      const result = await getTemplateApplyContentAction(projectTemplateId);
+      if (!result.ok) {
+        setError(result.error);
+        return;
+      }
+      applyContentWithStrategy(
+        result.content,
+        "replace",
+        projectTemplateName || result.content.templateName,
+      );
+      setTemplateFlash("Template content reset");
+    });
+  }
+
+  function applyTemplateContent(strategy: ApplyStrategy) {
+    const content = applyContent;
+    if (!content) return;
+    applyContentWithStrategy(content, strategy, pendingTemplateName);
+    setApplyDialogOpen(false);
+    setApplyContent(null);
+  }
+
+  function applyContentWithStrategy(
+    content: TemplateApplyContent,
+    strategy: ApplyStrategy,
+    templateName: string,
+  ) {
+    markDirty();
+    const merge = (existing: string, incoming: string) =>
+      mergeField(existing, incoming, strategy);
+
+    const hadContentLines = lines.some(
       (line) =>
         line.lineType !== "heading" &&
         line.lineType !== "note" &&
-        (line.description.trim() || line.sellUnitPrice > 0),
+        (line.description.trim() || line.sellUnitPrice > 0 || Boolean(line.itemCode)),
     );
-    return Boolean(
-      hasLines || scopeSummary.trim() || assumptions.trim() || exclusions.trim(),
-    );
-  }
 
-  function applyTemplateContent(strategy: "append" | "replace") {
-    const content = applyContent;
-    if (!content) return;
-    markDirty();
+    setTitle((prev) => merge(prev, content.title));
+    setServiceRequired((prev) => merge(prev, content.serviceRequired));
+    setProjectDescription((prev) => merge(prev, content.projectDescription));
+    setScopeSummary((prev) => merge(prev, content.scope));
+    setAssumptions((prev) => merge(prev, content.assumptions));
+    setExclusions((prev) => merge(prev, content.exclusions));
+    setCustomerMessage((prev) => merge(prev, content.customerMessage));
+    setInternalNotes((prev) => merge(prev, content.internalNotes));
+    setWarrantyWording((prev) => merge(prev, content.warrantyWording));
+    // Freshly applied template content must be reviewed before sending.
+    setContentReviewed(false);
 
-    const joinText = (existing: string, incoming: string) => {
-      if (strategy === "replace") return incoming;
-      if (!existing.trim()) return incoming;
-      if (!incoming.trim()) return existing;
-      return `${existing.trim()}\n${incoming.trim()}`;
-    };
+    setFieldSources((prev) => {
+      const next = { ...prev };
+      const mark = (key: string, existingVal: string, incoming: string) => {
+        if (!incoming.trim()) return;
+        if (strategy === "replace" || strategy === "append") next[key] = "template";
+        else if (!existingVal.trim()) next[key] = "template";
+      };
+      mark("title", title, content.title);
+      mark("serviceRequired", serviceRequired, content.serviceRequired);
+      mark("projectDescription", projectDescription, content.projectDescription);
+      return next;
+    });
 
-    if (content.title && (strategy === "replace" || !title.trim())) {
-      setTitle(content.title);
-    }
-    if (content.projectDescription) {
-      setProjectDescription((prev) => joinText(prev, content.projectDescription));
-    }
-    if (content.serviceRequired && (strategy === "replace" || !serviceRequired)) {
-      setServiceRequired(content.serviceRequired);
-    }
-    setScopeSummary((prev) => joinText(prev, content.scope));
-    setAssumptions((prev) => joinText(prev, content.assumptions));
-    setExclusions((prev) => joinText(prev, content.exclusions));
-    setCustomerMessage((prev) => joinText(prev, content.customerMessage));
-    setInternalNotes((prev) => joinText(prev, content.internalNotes));
-    if (content.warrantyWording) {
-      setWarrantyWording((prev) => joinText(prev, content.warrantyWording));
-    }
-
+    let linesAdded = false;
     if (content.lines.length) {
-      setLines((current) => {
-        const kept =
-          strategy === "replace"
-            ? []
-            : current.filter(
-                (line) =>
-                  line.description.trim() ||
-                  line.sellUnitPrice > 0 ||
-                  line.itemCode,
-              );
-        const merged = [...kept, ...content.lines];
-        return merged.map((line, index) => ({ ...line, sortOrder: index }));
-      });
+      if (strategy === "replace") {
+        linesAdded = true;
+        setLines(content.lines.map((line, index) => ({ ...line, sortOrder: index })));
+      } else if (strategy === "append") {
+        linesAdded = true;
+        setLines((current) => {
+          const kept = current.filter(
+            (line) =>
+              line.description.trim() || line.sellUnitPrice > 0 || line.itemCode,
+          );
+          return [...kept, ...content.lines].map((line, index) => ({
+            ...line,
+            sortOrder: index,
+          }));
+        });
+      } else if (!hadContentLines) {
+        linesAdded = true;
+        setLines(content.lines.map((line, index) => ({ ...line, sortOrder: index })));
+      }
     }
 
     const hasSuggested = content.lines.some(
@@ -484,33 +613,50 @@ export function QuoteBuilder({
         line.metadata &&
         (line.metadata as Record<string, unknown>).quantitySuggested === true,
     );
-    if (hasSuggested) {
+    if (hasSuggested && linesAdded) {
       setHasCalculatorSuggestions(true);
       setEstimatorConfirmed(false);
     }
 
-    setProjectTemplateId(content.snapshot.templateId as string);
+    setTemplateFields(content.fields);
+    setProjectFieldValues((prev) => {
+      const next = { ...prev };
+      for (const field of content.fields) {
+        if (!(field.fieldKey in next)) next[field.fieldKey] = "";
+      }
+      return next;
+    });
+
+    setProjectTemplateId(content.templateId);
     setProjectTemplateVersionId(content.versionId ?? "");
-    setProjectTemplateName(pendingTemplateName);
+    setProjectTemplateName(templateName);
     setProjectTemplateSnapshot(content.snapshot);
-    setApplyDialogOpen(false);
-    setApplyContent(null);
   }
 
   function applyRfqImport(preview: RfqImportPreview) {
     setRfqId(preview.rfqId);
     setRfqReference(preview.rfqNumber);
+    setManualRfqReference("");
     setCustomerId(preview.customerId);
     setContactName(preview.contactName);
     setCompanyName(preview.companyName);
     setEmail(preview.email);
     setPhone(preview.phone);
     setProvince(preview.province);
-    setTitle(preview.title);
+    if (preview.title) setTitle(preview.title);
     setProjectReference(preview.projectReference);
     setProjectLocation(preview.projectLocation);
-    setServiceRequired(preview.serviceRequired);
-    setProjectDescription(preview.projectDescription);
+    if (preview.serviceRequired) setServiceRequired(preview.serviceRequired);
+    if (preview.projectDescription) setProjectDescription(preview.projectDescription);
+    setFieldSources((prev) => ({
+      ...prev,
+      title: preview.title ? "rfq" : prev.title,
+      projectLocation: preview.projectLocation ? "rfq" : prev.projectLocation,
+      serviceRequired: preview.serviceRequired ? "rfq" : prev.serviceRequired,
+      projectDescription: preview.projectDescription
+        ? "rfq"
+        : prev.projectDescription,
+    }));
     if (preview.suggestedLines.length) {
       setLines(preview.suggestedLines);
       setHasCalculatorSuggestions(true);
@@ -792,22 +938,39 @@ export function QuoteBuilder({
             appliedTemplateId={projectTemplateId}
             appliedTemplateName={projectTemplateName}
             pending={templatePending}
-            onApply={requestApplyTemplate}
+            onSelectTemplate={handleSelectTemplate}
+            onReset={handleResetTemplate}
           />
+
+          {templateFlash ? (
+            <p className="admin-flash admin-flash--success" role="status">
+              {templateFlash}
+            </p>
+          ) : null}
 
           <QuoteProjectPanel
             title={title}
+            rfqId={rfqId}
             rfqReference={rfqReference}
+            manualRfqReference={manualRfqReference}
             projectReference={projectReference}
             projectLocation={projectLocation}
             serviceRequired={serviceRequired}
             projectDescription={projectDescription}
+            templateName={projectTemplateName || null}
+            sources={fieldSources}
             onChange={handleFieldChange}
             onImportRfq={
               onSearchRfqs && onLoadRfqPreview
                 ? () => setRfqImportOpen(true)
                 : undefined
             }
+          />
+
+          <QuoteTechnicalFieldsPanel
+            fields={templateFields}
+            values={projectFieldValues}
+            onChange={handleProjectFieldChange}
           />
 
           <QuoteItemsPanel
@@ -833,6 +996,11 @@ export function QuoteBuilder({
             customerMessage={customerMessage}
             internalNotes={internalNotes}
             templateName={projectTemplateName}
+            reviewed={contentReviewed}
+            onReviewedChange={(reviewed) => {
+              markDirty();
+              setContentReviewed(reviewed);
+            }}
             onChange={handleFieldChange}
           />
 

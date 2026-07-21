@@ -117,6 +117,7 @@ export async function createDraftQuote(
         warranty_wording: parsed.data.warrantyWording ?? null,
         customer_message: parsed.data.customerMessage ?? null,
         internal_notes: parsed.data.internalNotes ?? null,
+        scope_reviewed: parsed.data.contentReviewed ?? false,
         contact_name: parsed.data.contactName ?? null,
         company_name: parsed.data.companyName ?? null,
         email: parsed.data.email || null,
@@ -141,6 +142,13 @@ export async function createDraftQuote(
         project_template_id: parsed.data.projectTemplateId ?? null,
         project_template_version_id: parsed.data.projectTemplateVersionId ?? null,
         project_template_snapshot: parsed.data.projectTemplateSnapshot ?? null,
+        template_applied_at: parsed.data.projectTemplateId
+          ? new Date().toISOString()
+          : null,
+        template_applied_by: parsed.data.projectTemplateId ? admin.user.id : null,
+        manual_rfq_reference: parsed.data.manualRfqReference ?? null,
+        rfq_reference_snapshot: parsed.data.rfqReferenceSnapshot ?? null,
+        project_field_values: parsed.data.projectFieldValues ?? {},
         line_items: [],
         created_by: admin.user.id,
         assigned_to: admin.user.id,
@@ -257,6 +265,7 @@ export async function updateDraftQuote(
         warranty_wording: parsed.data.warrantyWording ?? null,
         customer_message: parsed.data.customerMessage ?? null,
         internal_notes: parsed.data.internalNotes ?? null,
+        scope_reviewed: parsed.data.contentReviewed ?? false,
         contact_name: parsed.data.contactName ?? null,
         company_name: parsed.data.companyName ?? null,
         email: parsed.data.email || null,
@@ -285,6 +294,24 @@ export async function updateDraftQuote(
           parsed.data.projectTemplateSnapshot ??
           existing.project_template_snapshot ??
           null,
+        template_applied_at:
+          parsed.data.projectTemplateId &&
+          parsed.data.projectTemplateId !== existing.project_template_id
+            ? new Date().toISOString()
+            : (existing.template_applied_at ?? null),
+        template_applied_by:
+          parsed.data.projectTemplateId &&
+          parsed.data.projectTemplateId !== existing.project_template_id
+            ? admin.user.id
+            : (existing.template_applied_by ?? null),
+        manual_rfq_reference:
+          parsed.data.manualRfqReference ?? existing.manual_rfq_reference ?? null,
+        rfq_reference_snapshot:
+          parsed.data.rfqReferenceSnapshot ??
+          existing.rfq_reference_snapshot ??
+          null,
+        project_field_values:
+          parsed.data.projectFieldValues ?? existing.project_field_values ?? {},
         calculation_snapshot: {
           serverRecalculated: true,
           at: new Date().toISOString(),

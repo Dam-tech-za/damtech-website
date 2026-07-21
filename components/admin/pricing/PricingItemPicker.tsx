@@ -15,11 +15,7 @@ import { PriceStatusBadge } from "./PriceStatusBadge";
 import { QuantityCalculatorDialog } from "./QuantityCalculatorDialog";
 import { SupplierPriceComparison } from "./SupplierPriceComparison";
 import type { SupplierPriceRecord } from "./SelectedPricingSource";
-import {
-  AdminButton,
-  AdminInput,
-  AdminSelect,
-} from "@/components/admin/ui";
+import { AdminButton, AdminInput } from "@/components/admin/ui";
 
 const TYPE_FILTERS = [
   { value: "", label: "All types" },
@@ -98,10 +94,10 @@ export function PricingItemPicker({ showCost, onAddLine, onCancel }: PricingItem
     });
   }, [selected, selectedSupplierPrice]);
 
-  function search(term = query) {
+  function search(term = query, type = typeFilter) {
     startSearch(async () => {
       setError(null);
-      const result = await searchPricingItemsAction(term, typeFilter || undefined);
+      const result = await searchPricingItemsAction(term, type || undefined);
       if (!result.ok) {
         setItems([]);
         setError(String("error" in result ? result.error : "Unable to search inventory."));
@@ -178,88 +174,143 @@ export function PricingItemPicker({ showCost, onAddLine, onCancel }: PricingItem
       selected.itemType === "travel");
 
   return (
-    <div className="admin-stack">
-      <div className="admin-filter-toolbar__form">
-        <AdminInput
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          placeholder="Search code, name, category…"
-          onKeyDown={(e) => {
-            if (e.key === "Enter") {
-              e.preventDefault();
-              search();
-            }
-          }}
-        />
-        <AdminSelect
-          value={typeFilter}
-          onChange={(e) => setTypeFilter(e.target.value)}
-          aria-label="Item type"
-        >
+    <div className="admin-stack inv-picker">
+      <div className="inv-picker__toolbar">
+        <div className="inv-picker__search">
+          <AdminInput
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Search item code, name or category…"
+            aria-label="Search inventory"
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault();
+                search();
+              }
+            }}
+          />
+          <AdminButton
+            type="button"
+            variant="primary"
+            onClick={() => search()}
+            disabled={searching}
+          >
+            {searching ? "Searching…" : "Search"}
+          </AdminButton>
+        </div>
+        <div className="inv-picker__chips" role="group" aria-label="Filter by type">
           {TYPE_FILTERS.map((filter) => (
-            <option key={filter.value || "all"} value={filter.value}>
+            <button
+              key={filter.value || "all"}
+              type="button"
+              className={`inv-picker__chip${
+                typeFilter === filter.value ? " is-active" : ""
+              }`}
+              aria-pressed={typeFilter === filter.value}
+              onClick={() => {
+                setTypeFilter(filter.value);
+                search(query, filter.value);
+              }}
+            >
               {filter.label}
-            </option>
+            </button>
           ))}
-        </AdminSelect>
-        <AdminButton type="button" variant="primary" onClick={() => search()} disabled={searching}>
-          {searching ? "Searching…" : "Search"}
-        </AdminButton>
+        </div>
       </div>
 
       {error ? <p className="admin-flash admin-flash--error">{error}</p> : null}
 
-      <div className="admin-table-wrap admin-pricing-item-table">
-        <table className="admin-table">
-          <thead>
-            <tr>
-              <th>Item</th>
-              <th>Category</th>
-              <th>Unit</th>
-              <th>Sell price</th>
-              {showCost ? <th>Cost</th> : null}
-              <th>Status</th>
-              <th />
-            </tr>
-          </thead>
-          <tbody>
-            {items.map((item) => (
-              <tr key={item.id}>
-                <td>
-                  <strong>{item.name}</strong>
-                  <div className="admin-help-text">{item.itemCode}</div>
-                </td>
-                <td>{item.category}</td>
-                <td>{formatUnitLabel(item.quoteUnit)}</td>
-                <td>
-                  {item.defaultSellPrice != null
-                    ? formatZar(item.defaultSellPrice)
-                    : effectivePrice?.sellPrice && selected?.id === item.id
-                      ? formatZar(effectivePrice.sellPrice!)
-                      : "—"}
-                </td>
-                {showCost ? (
-                  <td>
-                    {item.defaultCost != null ? formatZar(item.defaultCost) : "—"}
-                  </td>
-                ) : null}
-                <td>
-                  <PriceStatusBadge status={item.priceStatus} />
-                </td>
-                <td>
-                  <AdminButton
-                    type="button"
-                    size="sm"
-                    variant={selected?.id === item.id ? "primary" : "secondary"}
-                    onClick={() => pickItem(item)}
-                  >
-                    Select
-                  </AdminButton>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+      <div
+        className={`inv-results${showCost ? " inv-results--cost" : ""}`}
+        role="table"
+        aria-label="Inventory results"
+      >
+        <div className="inv-results__head" role="row" aria-hidden>
+          <span role="columnheader">Item</span>
+          <span role="columnheader">Category</span>
+          <span role="columnheader">Unit</span>
+          <span role="columnheader" className="inv-results__num">
+            Sell price
+          </span>
+          {showCost ? (
+            <span role="columnheader" className="inv-results__num">
+              Cost
+            </span>
+          ) : null}
+          {showCost ? (
+            <span role="columnheader" className="inv-results__num">
+              Margin
+            </span>
+          ) : null}
+          <span role="columnheader">Status</span>
+          <span role="columnheader" className="inv-results__action">
+            Action
+          </span>
+        </div>
+        {items.length === 0 ? (
+          <p className="inv-results__empty">
+            Search the catalogue to list matching inventory items.
+          </p>
+        ) : null}
+        {items.map((item) => {
+          const sell =
+            item.defaultSellPrice != null
+              ? item.defaultSellPrice
+              : effectivePrice?.sellPrice && selected?.id === item.id
+                ? effectivePrice.sellPrice
+                : null;
+          const margin =
+            showCost &&
+            item.defaultCost != null &&
+            sell != null &&
+            sell > 0
+              ? (((sell - item.defaultCost) / sell) * 100).toFixed(1)
+              : null;
+          return (
+            <div
+              key={item.id}
+              role="row"
+              className={`inv-results__row${
+                selected?.id === item.id ? " is-selected" : ""
+              }`}
+            >
+              <span role="cell" className="inv-results__item">
+                <strong>{item.name}</strong>
+                <span className="inv-results__code">{item.itemCode}</span>
+              </span>
+              <span role="cell">
+                <span className="inv-results__badge">{item.category}</span>
+              </span>
+              <span role="cell">{formatUnitLabel(item.quoteUnit)}</span>
+              <span role="cell" className="inv-results__num">
+                {sell != null ? formatZar(sell) : "—"}
+              </span>
+              {showCost ? (
+                <span role="cell" className="inv-results__num">
+                  {item.defaultCost != null ? formatZar(item.defaultCost) : "—"}
+                </span>
+              ) : null}
+              {showCost ? (
+                <span role="cell" className="inv-results__num">
+                  {margin != null ? `${margin}%` : "—"}
+                </span>
+              ) : null}
+              <span role="cell">
+                <PriceStatusBadge status={item.priceStatus} />
+              </span>
+              <span role="cell" className="inv-results__action">
+                <AdminButton
+                  type="button"
+                  size="sm"
+                  variant={selected?.id === item.id ? "primary" : "secondary"}
+                  onClick={() => pickItem(item)}
+                >
+                  Select
+                </AdminButton>
+              </span>
+            </div>
+          );
+        })}
       </div>
 
       {selected ? (

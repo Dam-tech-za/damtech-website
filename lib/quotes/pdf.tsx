@@ -9,6 +9,7 @@ import {
 } from "@react-pdf/renderer";
 import { formatZar } from "@/lib/estimating/money";
 import { formatQuoteNumber } from "./types";
+import { splitClauses } from "./content-sections";
 
 export type QuotePdfLine = {
   itemCode?: string | null;
@@ -31,6 +32,7 @@ export type QuotePdfPayload = {
   scopeSummary?: string | null;
   assumptions?: string | null;
   exclusions?: string | null;
+  customerMessage?: string | null;
   paymentTerms?: string | null;
   programmeNotes?: string | null;
   warrantyWording?: string | null;
@@ -90,6 +92,9 @@ function createStyles(primary: string) {
       color: primary,
     },
     para: { marginBottom: 4, lineHeight: 1.4 },
+    clauseRow: { flexDirection: "row", marginBottom: 3 },
+    clauseNum: { width: 18, lineHeight: 1.4 },
+    clauseText: { flex: 1, lineHeight: 1.4 },
     tableHeader: {
       flexDirection: "row",
       backgroundColor: "#f2f2f2",
@@ -134,6 +139,30 @@ function createStyles(primary: string) {
   });
 }
 
+function ClauseSection({
+  title,
+  text,
+  styles,
+}: {
+  title: string;
+  text?: string | null;
+  styles: ReturnType<typeof createStyles>;
+}) {
+  const clauses = splitClauses(text);
+  if (!clauses.length) return null;
+  return (
+    <View>
+      <Text style={styles.sectionTitle}>{title}</Text>
+      {clauses.map((clause, index) => (
+        <View key={`${title}-${index}`} style={styles.clauseRow} wrap={false}>
+          <Text style={styles.clauseNum}>{index + 1}.</Text>
+          <Text style={styles.clauseText}>{clause}</Text>
+        </View>
+      ))}
+    </View>
+  );
+}
+
 function QuotationDocument({ data }: { data: QuotePdfPayload }) {
   const primary = data.brandPrimaryHex || "#1B4D3E";
   const styles = createStyles(primary);
@@ -172,12 +201,7 @@ function QuotationDocument({ data }: { data: QuotePdfPayload }) {
         {data.projectLocation ? (
           <Text style={styles.para}>Location: {data.projectLocation}</Text>
         ) : null}
-        {data.scopeSummary ? (
-          <>
-            <Text style={styles.sectionTitle}>Scope summary</Text>
-            <Text style={styles.para}>{data.scopeSummary}</Text>
-          </>
-        ) : null}
+        <ClauseSection title="Scope of work" text={data.scopeSummary} styles={styles} />
 
         <Text style={styles.sectionTitle}>Pricing</Text>
         <View style={styles.tableHeader} fixed>
@@ -220,16 +244,12 @@ function QuotationDocument({ data }: { data: QuotePdfPayload }) {
           </View>
         </View>
 
-        {data.assumptions ? (
+        <ClauseSection title="Assumptions" text={data.assumptions} styles={styles} />
+        <ClauseSection title="Exclusions" text={data.exclusions} styles={styles} />
+        {data.customerMessage ? (
           <>
-            <Text style={styles.sectionTitle}>Assumptions</Text>
-            <Text style={styles.para}>{data.assumptions}</Text>
-          </>
-        ) : null}
-        {data.exclusions ? (
-          <>
-            <Text style={styles.sectionTitle}>Exclusions</Text>
-            <Text style={styles.para}>{data.exclusions}</Text>
+            <Text style={styles.sectionTitle}>Message</Text>
+            <Text style={styles.para}>{data.customerMessage}</Text>
           </>
         ) : null}
         {data.programmeNotes ? (

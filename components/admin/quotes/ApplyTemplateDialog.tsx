@@ -1,12 +1,14 @@
 "use client";
 
 import { AdminButton, AdminDialog } from "@/components/admin/ui";
+import type { ApplyStrategy } from "@/lib/quotes/project-autofill";
 
 export type TemplateApplyCounts = {
   items: number;
   scopeClauses: number;
   assumptions: number;
   exclusions: number;
+  fields?: number;
 };
 
 type Props = {
@@ -14,7 +16,7 @@ type Props = {
   templateName: string;
   counts: TemplateApplyCounts | null;
   hasExistingContent: boolean;
-  onChoose: (mode: "append" | "replace") => void;
+  onChoose: (mode: ApplyStrategy) => void;
   onClose: () => void;
 };
 
@@ -37,33 +39,50 @@ export function ApplyTemplateDialog({
           <li>{counts.scopeClauses} scope clauses</li>
           <li>{counts.assumptions} assumptions</li>
           <li>{counts.exclusions} exclusions</li>
+          {counts.fields ? <li>{counts.fields} project detail fields</li> : null}
         </ul>
       ) : null}
 
       {hasExistingContent ? (
         <p className="apply-template-note">
-          You already have content on this quote. Choose whether to keep and
-          append the template content, or replace existing content.
+          This quote already has content. Choose how to apply the template.
         </p>
       ) : null}
 
       <div className="apply-template-actions">
-        <AdminButton
-          type="button"
-          variant="primary"
-          onClick={() => onChoose("append")}
-        >
-          {hasExistingContent ? "Keep and append" : "Apply template"}
-        </AdminButton>
         {hasExistingContent ? (
+          <>
+            <AdminButton
+              type="button"
+              variant="primary"
+              onClick={() => onChoose("fill_blank")}
+            >
+              Keep existing, fill blanks
+            </AdminButton>
+            <AdminButton
+              type="button"
+              variant="secondary"
+              onClick={() => onChoose("append")}
+            >
+              Append template content
+            </AdminButton>
+            <AdminButton
+              type="button"
+              variant="secondary"
+              onClick={() => onChoose("replace")}
+            >
+              Replace template content
+            </AdminButton>
+          </>
+        ) : (
           <AdminButton
             type="button"
-            variant="secondary"
-            onClick={() => onChoose("replace")}
+            variant="primary"
+            onClick={() => onChoose("fill_blank")}
           >
-            Replace existing content
+            Apply template
           </AdminButton>
-        ) : null}
+        )}
         <AdminButton type="button" variant="ghost" onClick={onClose}>
           Cancel
         </AdminButton>

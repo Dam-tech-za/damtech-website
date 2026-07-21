@@ -1,9 +1,10 @@
 export { QuoteProgressStrip } from "./QuoteProgressStrip";
 export { QuoteCustomerPanel } from "./QuoteCustomerPanel";
 export { QuoteProjectPanel } from "./QuoteProjectPanel";
-export { QuoteItemRow } from "./QuoteItemRow";
+export { QuoteLineEditor } from "./QuoteLineEditor";
 export { QuoteItemsPanel } from "./QuoteItemsPanel";
 export { QuoteScopePanel } from "./QuoteScopePanel";
+export { QuoteTechnicalFieldsPanel } from "./QuoteTechnicalFieldsPanel";
 export { QuoteTermsPanel } from "./QuoteTermsPanel";
 export { QuoteSummaryPanel } from "./QuoteSummaryPanel";
 export { InventoryPickerDialog } from "./InventoryPickerDialog";

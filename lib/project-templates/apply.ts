@@ -8,6 +8,10 @@ import {
 import { normaliseUnitCode } from "@/lib/pricing/units";
 import type { EditableLine } from "@/lib/quotes/quote-builder-types";
 import type { QuoteLineType } from "@/lib/quotes/types";
+import {
+  mapCategoryToService,
+  type TemplateProjectFieldDef,
+} from "@/lib/quotes/project-autofill";
 import { countClauses } from "./clauses";
 import { getProjectTemplate } from "./queries";
 import type { ProjectTemplateItem, ProjectTemplateLineRole } from "./types";
@@ -72,6 +76,10 @@ function groupForRole(role: ProjectTemplateLineRole | string): string {
 }
 
 export type TemplateApplyContent = {
+  templateId: string;
+  templateCode: string;
+  templateName: string;
+  projectCategory: string | null;
   title: string;
   projectDescription: string;
   serviceRequired: string;
@@ -83,11 +91,13 @@ export type TemplateApplyContent = {
   warrantyWording: string;
   validityDays: number | null;
   lines: EditableLine[];
+  fields: TemplateProjectFieldDef[];
   counts: {
     items: number;
     scopeClauses: number;
     assumptions: number;
     exclusions: number;
+    fields: number;
   };
   snapshot: Record<string, unknown>;
   versionId: string | null;
@@ -222,6 +232,25 @@ export async function buildTemplateApplyContent(
     }
   }
 
+  const fields: TemplateProjectFieldDef[] = template.fields.map((field) => ({
+    fieldKey: field.fieldKey,
+    label: field.label,
+    fieldType: String(field.fieldType),
+    isRequired: field.isRequired,
+    isRecommended: field.isRecommended,
+    options: field.options,
+    unit: field.unit,
+    helpText: field.helpText,
+  }));
+
+  const title = template.defaultQuoteTitle ?? template.name;
+  const projectDescription =
+    template.defaultProjectDescription ?? template.shortDescription ?? "";
+  const serviceRequired =
+    template.defaultServiceType ??
+    mapCategoryToService(template.projectCategory) ??
+    "";
+
   const snapshot: Record<string, unknown> = {
     templateId: template.id,
     templateCode: template.code,
@@ -229,18 +258,33 @@ export async function buildTemplateApplyContent(
     versionId: versionRow ? String((versionRow as Row).id) : null,
     versionNumber: versionRow ? Number((versionRow as Row).version_number) : null,
     appliedAt: new Date().toISOString(),
+    defaultQuoteTitle: title,
+    defaultProjectDescription: projectDescription,
+    service: serviceRequired,
     scope: template.defaultScope ?? "",
     assumptions: template.defaultAssumptions ?? "",
     exclusions: template.defaultExclusions ?? "",
     customerMessage: template.defaultCustomerMessage ?? "",
     internalNotes: template.defaultInternalNotes ?? "",
     warranty: template.defaultWarrantyText ?? "",
+    suggestedItems: template.items.map((item) => ({
+      lineRole: item.lineRole,
+      pricingItemId: item.pricingItemId,
+      requestedItemCode: item.requestedItemCode,
+      defaultQuantity: item.defaultQuantity,
+      defaultUnit: item.defaultUnit,
+    })),
+    fieldDefinitions: fields,
   };
 
   return {
-    title: template.defaultQuoteTitle ?? template.name,
-    projectDescription: template.defaultProjectDescription ?? "",
-    serviceRequired: template.defaultServiceType ?? "",
+    templateId: template.id,
+    templateCode: template.code,
+    templateName: template.name,
+    projectCategory: template.projectCategory,
+    title,
+    projectDescription,
+    serviceRequired,
     scope: template.defaultScope ?? "",
     assumptions: template.defaultAssumptions ?? "",
     exclusions: template.defaultExclusions ?? "",
@@ -249,11 +293,13 @@ export async function buildTemplateApplyContent(
     warrantyWording: template.defaultWarrantyText ?? "",
     validityDays: template.defaultValidityDays,
     lines,
+    fields,
     counts: {
       items: lines.filter((l) => l.lineType !== "heading").length,
       scopeClauses: countClauses(template.defaultScope),
       assumptions: countClauses(template.defaultAssumptions),
       exclusions: countClauses(template.defaultExclusions),
+      fields: fields.length,
     },
     snapshot,
     versionId: versionRow ? String((versionRow as Row).id) : null,

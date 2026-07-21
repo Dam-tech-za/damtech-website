@@ -11,6 +11,7 @@ import {
   renderQuotePdfBuffer,
   type QuotePdfPayload,
 } from "./pdf";
+import { pickCustomerContent } from "./content-sections";
 
 export async function buildQuotePdfPayload(
   quoteId: string,
@@ -45,6 +46,9 @@ export async function buildQuotePdfPayload(
     quote.contact_name ||
     "Customer";
 
+  // Enforced mapping — customer-facing sections only, never internal_notes.
+  const content = pickCustomerContent(quote);
+
   const payload: QuotePdfPayload = {
     quoteNumber: quote.quote_number,
     revisionNumber: quote.revision_number ?? 0,
@@ -53,12 +57,13 @@ export async function buildQuotePdfPayload(
     validUntil: quote.valid_until,
     customerName,
     projectLocation: quote.project_location,
-    scopeSummary: quote.scope_summary,
-    assumptions: quote.assumptions,
-    exclusions: quote.exclusions,
+    scopeSummary: content.scopeSummary,
+    assumptions: content.assumptions,
+    exclusions: content.exclusions,
+    customerMessage: content.customerMessage,
     paymentTerms: quote.payment_terms,
     programmeNotes: quote.programme_notes,
-    warrantyWording: quote.warranty_wording,
+    warrantyWording: content.warrantyWording,
     lines: (lines ?? []).map((line) => ({
       itemCode: line.item_code,
       description: line.description,

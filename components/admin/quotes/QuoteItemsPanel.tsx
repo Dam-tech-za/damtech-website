@@ -5,18 +5,11 @@ import {
   AdminButton,
   AdminCheckbox,
   AdminInfoBanner,
-  AdminInput,
   AdminPanel,
-  AdminSelect,
 } from "@/components/admin/ui";
-import { PricingItemCombobox } from "@/components/admin/pricing/PricingItemCombobox";
 import type { EditableLine } from "@/lib/quotes/quote-builder-types";
-import { QUOTE_UNIT_OPTIONS } from "@/lib/quotes/quote-builder-types";
 import type { QuoteLineType } from "@/lib/quotes/types";
-import type { PricingItemRecord } from "@/lib/pricing/types";
-import { lineTotalExVat } from "@/lib/quotes/totals";
-import { formatZar } from "@/lib/estimating/money";
-import { QuoteItemRow } from "./QuoteItemRow";
+import { QuoteLineEditor } from "./QuoteLineEditor";
 import { InventoryPickerDialog } from "./InventoryPickerDialog";
 import {
   TankModelPickerDialog,
@@ -51,28 +44,6 @@ function emptyLine(sortOrder: number, lineType: QuoteLineType = "custom"): Edita
     sourceSupplierPriceId: null,
     metadata: null,
   };
-}
-
-function lineTypeForItemType(itemType: string): QuoteLineType {
-  switch (itemType) {
-    case "material":
-      return "material";
-    case "installation_service":
-    case "labour":
-      return "labour";
-    case "travel":
-      return "travel";
-    case "delivery":
-      return "delivery";
-    default:
-      return "item";
-  }
-}
-
-function taxCategoryFor(value: string): EditableLine["taxCategory"] {
-  if (value === "zero_rated" || value === "zero") return "zero";
-  if (value === "exempt" || value === "no_vat") return "exempt";
-  return "standard";
 }
 
 export function QuoteItemsPanel({
@@ -116,26 +87,13 @@ export function QuoteItemsPanel({
   }
 
   function deleteLine(index: number) {
-    onLinesChange(lines.filter((_, i) => i !== index).map((l, i) => ({ ...l, sortOrder: i })));
+    onLinesChange(
+      lines.filter((_, i) => i !== index).map((l, i) => ({ ...l, sortOrder: i })),
+    );
   }
 
   function addFromInventory(line: EditableLine) {
     onLinesChange([...lines, { ...line, sortOrder: lines.length }]);
-  }
-
-  function applyPickedItemToMobile(index: number, item: PricingItemRecord) {
-    updateLine(index, {
-      lineType: lineTypeForItemType(item.itemType),
-      itemCode: item.itemCode,
-      category: item.category,
-      description: item.quoteDescription || item.name,
-      unit: item.quoteUnit,
-      sellUnitPrice: item.defaultSellPrice ?? 0,
-      costUnitPrice: showCost ? item.defaultCost ?? null : lines[index].costUnitPrice,
-      taxCategory: taxCategoryFor(item.taxCategory),
-      sourcePricingItemId: item.id,
-      metadata: { ...(lines[index].metadata ?? {}), pricingItemId: item.id },
-    });
   }
 
   return (
@@ -147,7 +105,11 @@ export function QuoteItemsPanel({
           <AdminButton size="sm" variant="primary" onClick={() => appendLine("custom")}>
             + Add line
           </AdminButton>
-          <AdminButton size="sm" variant="secondary" onClick={() => setInventoryOpen(true)}>
+          <AdminButton
+            size="sm"
+            variant="secondary"
+            onClick={() => setInventoryOpen(true)}
+          >
             Browse inventory
           </AdminButton>
           {tankModels.length > 0 ? (
@@ -179,144 +141,43 @@ export function QuoteItemsPanel({
         </AdminInfoBanner>
       ) : null}
 
-      {/* Desktop table */}
-      <div className="admin-table-wrap quote-items-desktop">
-        <table className="admin-table quote-items-table">
-          <thead>
-            <tr>
-              <th style={{ width: "16%" }}>Item</th>
-              <th style={{ width: "26%" }}>Description</th>
-              <th style={{ width: "9%" }}>Qty</th>
-              <th style={{ width: "9%" }}>Unit</th>
-              <th style={{ width: "11%" }}>Unit price</th>
-              <th style={{ width: "8%" }}>Disc %</th>
-              <th style={{ width: "8%" }}>VAT</th>
-              <th style={{ width: "9%" }}>Amount</th>
-              <th style={{ width: "4%" }}>
-                <span className="sr-only">Actions</span>
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {lines.map((line, index) => (
-              <QuoteItemRow
-                key={`${line.id ?? "new"}-${index}`}
-                line={line}
-                index={index}
-                showCost={showCost}
-                onChange={updateLine}
-                onDuplicate={duplicateLine}
-                onMoveUp={(i) => moveLine(i, -1)}
-                onMoveDown={(i) => moveLine(i, 1)}
-                onDelete={deleteLine}
-                isFirst={index === 0}
-                isLast={index === lines.length - 1}
-              />
-            ))}
-          </tbody>
-        </table>
+      <div className="qlines" role="group" aria-label="Quote line items">
+        <div className="qlines__head" aria-hidden>
+          <span className="qlines__head-cell qlines__head-cell--item">Item</span>
+          <span className="qlines__head-cell qlines__head-cell--desc">Description</span>
+          <span className="qlines__head-cell qlines__head-cell--qty">Qty</span>
+          <span className="qlines__head-cell qlines__head-cell--unit">Unit</span>
+          <span className="qlines__head-cell qlines__head-cell--price">Unit price</span>
+          <span className="qlines__head-cell qlines__head-cell--disc">Disc %</span>
+          <span className="qlines__head-cell qlines__head-cell--vat">VAT</span>
+          <span className="qlines__head-cell qlines__head-cell--amount">Amount</span>
+          <span className="qlines__head-cell qlines__head-cell--actions" />
+        </div>
+
+        {lines.length === 0 ? (
+          <p className="qlines__empty">
+            No line items yet. Use “Add line” or “Browse inventory” to begin.
+          </p>
+        ) : null}
+
+        {lines.map((line, index) => (
+          <QuoteLineEditor
+            key={`${line.id ?? "new"}-${index}`}
+            line={line}
+            index={index}
+            showCost={showCost}
+            onChange={updateLine}
+            onDuplicate={duplicateLine}
+            onMoveUp={(i) => moveLine(i, -1)}
+            onMoveDown={(i) => moveLine(i, 1)}
+            onDelete={deleteLine}
+            isFirst={index === 0}
+            isLast={index === lines.length - 1}
+          />
+        ))}
       </div>
 
-      {/* Mobile editable cards */}
-      <div className="quote-items-mobile">
-        {lines.map((line, index) => {
-          if (line.lineType === "heading") {
-            return (
-              <div key={`${line.id ?? "new"}-${index}`} className="quote-item-card quote-item-card--heading">
-                <AdminInput
-                  value={line.description}
-                  onChange={(e) => updateLine(index, { description: e.target.value })}
-                  placeholder="Section heading"
-                  aria-label="Section heading"
-                />
-                <AdminButton size="sm" variant="ghost" onClick={() => deleteLine(index)}>
-                  Remove
-                </AdminButton>
-              </div>
-            );
-          }
-          if (line.lineType === "note") {
-            return (
-              <div key={`${line.id ?? "new"}-${index}`} className="quote-item-card">
-                <AdminInput
-                  value={line.description}
-                  onChange={(e) => updateLine(index, { description: e.target.value })}
-                  placeholder="Note"
-                  aria-label="Note"
-                />
-                <AdminButton size="sm" variant="ghost" onClick={() => deleteLine(index)}>
-                  Remove
-                </AdminButton>
-              </div>
-            );
-          }
-          return (
-            <div key={`${line.id ?? "new"}-${index}`} className="quote-item-card">
-              {line.itemCode ? (
-                <div className="quote-item-card__chip">
-                  <span>{line.itemCode}</span>
-                  <button
-                    type="button"
-                    aria-label="Clear item"
-                    onClick={() =>
-                      updateLine(index, { itemCode: "", sourcePricingItemId: null })
-                    }
-                  >
-                    ×
-                  </button>
-                </div>
-              ) : (
-                <PricingItemCombobox
-                  showCost={showCost}
-                  ariaLabel={`Search item for line ${index + 1}`}
-                  onSelect={(item) => applyPickedItemToMobile(index, item)}
-                  onCustomText={(text) => updateLine(index, { description: text })}
-                />
-              )}
-              <AdminInput
-                value={line.description}
-                onChange={(e) => updateLine(index, { description: e.target.value })}
-                placeholder="Description"
-                aria-label="Description"
-              />
-              <div className="quote-item-card__row">
-                <AdminInput
-                  type="number"
-                  step="0.0001"
-                  value={line.quantity}
-                  onChange={(e) => updateLine(index, { quantity: Number(e.target.value) })}
-                  aria-label="Quantity"
-                />
-                <AdminSelect
-                  value={line.unit}
-                  onChange={(e) => updateLine(index, { unit: e.target.value })}
-                  aria-label="Unit"
-                >
-                  {QUOTE_UNIT_OPTIONS.map((u) => (
-                    <option key={u} value={u}>
-                      {u}
-                    </option>
-                  ))}
-                </AdminSelect>
-                <AdminInput
-                  type="number"
-                  step="0.01"
-                  value={line.sellUnitPrice}
-                  onChange={(e) =>
-                    updateLine(index, { sellUnitPrice: Number(e.target.value) })
-                  }
-                  aria-label="Unit price"
-                />
-              </div>
-              <div className="quote-item-card__foot">
-                <span>{formatZar(lineTotalExVat(line))}</span>
-                <AdminButton size="sm" variant="ghost" onClick={() => deleteLine(index)}>
-                  Remove
-                </AdminButton>
-              </div>
-            </div>
-          );
-        })}
+      <div className="qlines__footer">
         <AdminButton size="sm" variant="secondary" onClick={() => appendLine("custom")}>
           + Add line
         </AdminButton>

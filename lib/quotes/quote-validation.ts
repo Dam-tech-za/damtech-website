@@ -1,6 +1,7 @@
 import type { QuoteLineInput } from "./types";
 import type { QuoteBuilderDefaults } from "./quote-builder-types";
 import { NON_PRICED_LINE_TYPES } from "./quote-builder-types";
+import { hasCustomerFacingContent } from "./content-sections";
 
 export type ValidationIssue = {
   id: string;
@@ -29,6 +30,7 @@ export function assessQuoteReadiness(input: {
   paymentTerms: string;
   hasCalculatorSuggestions: boolean;
   estimatorConfirmedSuggestions: boolean;
+  requiredProjectFieldsMissing?: number;
 }): ReadinessSection[] {
   const priced = pricedLines(input.lines);
   const hasPricedItem = priced.some(
@@ -36,6 +38,7 @@ export function assessQuoteReadiness(input: {
   );
   const needsConfirmation =
     input.hasCalculatorSuggestions && !input.estimatorConfirmedSuggestions;
+  const missingRequiredFields = input.requiredProjectFieldsMissing ?? 0;
 
   return [
     {
@@ -46,7 +49,11 @@ export function assessQuoteReadiness(input: {
     {
       id: "project",
       label: "Project",
-      status: input.title.trim() ? "complete" : "incomplete",
+      status: !input.title.trim()
+        ? "incomplete"
+        : missingRequiredFields > 0
+          ? "warning"
+          : "complete",
     },
     {
       id: "items",
@@ -146,8 +153,55 @@ export function validateSend(input: {
   hasCalculatorSuggestions: boolean;
   estimatorConfirmedSuggestions: boolean;
   status: string;
+  serviceRequired?: string;
+  projectDescription?: string;
+  requiredProjectFieldsMissing?: number;
+  contentReviewed?: boolean;
+  scopeSummary?: string | null;
+  assumptions?: string | null;
+  exclusions?: string | null;
+  customerMessage?: string | null;
+  warrantyWording?: string | null;
 }): ValidationIssue[] {
   const issues = validatePreview(input);
+
+  const contentToReview = hasCustomerFacingContent({
+    scopeSummary: input.scopeSummary,
+    assumptions: input.assumptions,
+    exclusions: input.exclusions,
+    customerMessage: input.customerMessage,
+    warrantyWording: input.warrantyWording,
+  });
+  if (contentToReview && !input.contentReviewed) {
+    issues.push({
+      id: "content-review",
+      section: "review",
+      level: "error",
+      message:
+        "Mark the customer-facing Scope & Notes as reviewed before sending.",
+    });
+  }
+
+  if (
+    !(input.serviceRequired ?? "").trim() &&
+    !(input.projectDescription ?? "").trim()
+  ) {
+    issues.push({
+      id: "project-type",
+      section: "project",
+      level: "warning",
+      message: "Select a service or add a project description before sending.",
+    });
+  }
+
+  if ((input.requiredProjectFieldsMissing ?? 0) > 0) {
+    issues.push({
+      id: "project-fields",
+      section: "project",
+      level: "error",
+      message: `Complete ${input.requiredProjectFieldsMissing} required project detail field(s) before sending.`,
+    });
+  }
   if (!input.email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(input.email.trim())) {
     issues.push({
       id: "email",

@@ -51,7 +51,10 @@ export default async function AdminQuoteEditPage({ params }: PageProps) {
 
   const templates = await listActiveTemplatesForSelector();
   const templateSnapshot = quote.project_template_snapshot as
-    | { templateName?: string }
+    | {
+        templateName?: string;
+        fieldDefinitions?: import("@/lib/quotes/project-autofill").TemplateProjectFieldDef[];
+      }
     | null;
 
   const metaDefaults = quoteDefaultsFromMetadata(quote as Record<string, unknown>);
@@ -179,6 +182,10 @@ export default async function AdminQuoteEditPage({ params }: PageProps) {
         projectTemplateId: quote.project_template_id ?? undefined,
         projectTemplateVersionId: quote.project_template_version_id ?? undefined,
         projectTemplateName: templateSnapshot?.templateName ?? undefined,
+        templateFields: templateSnapshot?.fieldDefinitions ?? [],
+        manualRfqReference: quote.manual_rfq_reference ?? undefined,
+        projectFieldValues:
+          (quote.project_field_values as Record<string, string> | null) ?? {},
         quoteId: quote.id,
         quoteNumber: quote.quote_number,
         revisionNumber: quote.revision_number ?? 0,
@@ -199,6 +206,7 @@ export default async function AdminQuoteEditPage({ params }: PageProps) {
         warrantyWording: quote.warranty_wording ?? "",
         customerMessage: quote.customer_message ?? "",
         internalNotes: quote.internal_notes ?? "",
+        contentReviewed: Boolean(quote.scope_reviewed),
         issueDate: quote.issue_date,
         validUntil: quote.valid_until,
         discountAmount: Number(quote.discount_amount ?? 0),

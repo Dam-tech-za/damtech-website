@@ -39,6 +39,50 @@ type QuoteSummaryPanelProps = {
   sendDisabled?: boolean;
 };
 
+function ChecklistIcon({ status }: { status: ReadinessSection["status"] }) {
+  const common = {
+    width: 16,
+    height: 16,
+    viewBox: "0 0 16 16",
+    fill: "none",
+    "aria-hidden": true,
+  } as const;
+  if (status === "complete") {
+    return (
+      <svg {...common}>
+        <circle cx="8" cy="8" r="7" fill="#dcfce7" stroke="#16a34a" strokeWidth="1.3" />
+        <path
+          d="M5 8.2 7 10l4-4.2"
+          stroke="#16a34a"
+          strokeWidth="1.6"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </svg>
+    );
+  }
+  if (status === "warning") {
+    return (
+      <svg {...common}>
+        <path
+          d="M8 2 15 14H1L8 2Z"
+          fill="#fef3c7"
+          stroke="#d97706"
+          strokeWidth="1.3"
+          strokeLinejoin="round"
+        />
+        <path d="M8 6.5v3.2" stroke="#d97706" strokeWidth="1.5" strokeLinecap="round" />
+        <circle cx="8" cy="11.6" r="0.8" fill="#d97706" />
+      </svg>
+    );
+  }
+  return (
+    <svg {...common}>
+      <circle cx="8" cy="8" r="6.5" stroke="#94a3b8" strokeWidth="1.3" />
+    </svg>
+  );
+}
+
 function saveStatusLabel(status: SaveStatus, savedAt?: string | null): string {
   switch (status) {
     case "idle":
@@ -195,10 +239,11 @@ export function QuoteSummaryPanel({
         {/* Validation checklist */}
         <ul className="quote-summary__checklist">
           {sections.map((s) => (
-            <li key={s.id} className={`quote-summary__checklist-item quote-summary__checklist-item--${s.status}`}>
-              <span aria-hidden>
-                {s.status === "complete" ? "✓" : s.status === "warning" ? "!" : "○"}
-              </span>
+            <li
+              key={s.id}
+              className={`quote-summary__checklist-item quote-summary__checklist-item--${s.status}`}
+            >
+              <ChecklistIcon status={s.status} />
               {s.label}
             </li>
           ))}
