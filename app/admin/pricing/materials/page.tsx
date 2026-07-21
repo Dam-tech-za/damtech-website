@@ -37,23 +37,38 @@ export default async function AdminMaterialsPage({ searchParams }: PageProps) {
 
   let priceHistory: PriceHistoryRow[] = [];
   if (canSeeCost) {
-    const { data: prices } = await supabase
-      .from("pricing_item_prices")
-      .select(
-        "id, cost_price, sell_price, source_type, source_reference, valid_from, valid_to, is_preferred, created_at, suppliers(name)",
-      )
-      .order("valid_from", { ascending: false })
-      .limit(25);
-    priceHistory = (prices ?? []).map((row) => {
-      const supplierName =
-        typeof row.suppliers === "object" && row.suppliers && "name" in row.suppliers
-          ? ((row.suppliers as { name?: string | null }).name ?? null)
-          : null;
-      return {
+    // Kept resilient: a failure loading recent price history must never take
+    // down the materials listing (e.g. right after a large CSV import).
+    try {
+      const { data: prices } = await supabase
+        .from("pricing_item_prices")
+        .select(
+          "id, cost_price, sell_price, source_type, source_reference, valid_from, valid_to, is_preferred, created_at, supplier_id",
+        )
+        .order("valid_from", { ascending: false })
+        .limit(25);
+
+      const supplierIds = Array.from(
+        new Set(
+          (prices ?? [])
+            .map((row) => row.supplier_id)
+            .filter((id): id is string => Boolean(id)),
+        ),
+      );
+      const supplierNames = new Map<string, string>();
+      if (supplierIds.length) {
+        const { data: suppliers } = await supabase
+          .from("suppliers")
+          .select("id, name")
+          .in("id", supplierIds);
+        for (const s of suppliers ?? []) supplierNames.set(String(s.id), String(s.name));
+      }
+
+      priceHistory = (prices ?? []).map((row) => ({
         id: String(row.id),
         costPrice: row.cost_price == null ? null : Number(row.cost_price),
         sellPrice: row.sell_price == null ? null : Number(row.sell_price),
-        supplierName,
+        supplierName: row.supplier_id ? (supplierNames.get(String(row.supplier_id)) ?? null) : null,
         sourceType: String(row.source_type),
         sourceReference: (row.source_reference as string | null) ?? null,
         validFrom: String(row.valid_from),
@@ -66,8 +81,10 @@ export default async function AdminMaterialsPage({ searchParams }: PageProps) {
           isPreferred: Boolean(row.is_preferred),
           sourceType: String(row.source_type),
         }),
-      };
-    });
+      }));
+    } catch {
+      priceHistory = [];
+    }
   }
 
   return (

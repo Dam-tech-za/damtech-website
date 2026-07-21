@@ -42,20 +42,30 @@ export const HEADER_ALIASES: Record<string, CanonicalHeader> = {
   code: "item_code",
   sku: "item_code",
   itemcode: "item_code",
+  product_code: "item_code",
+  inventory_code: "item_code",
+  stock_code: "item_code",
   item_type: "item_type",
   type: "item_type",
   category: "category",
   product_name: "product_name",
   name: "product_name",
   product: "product_name",
+  item_name: "product_name",
+  material_name: "product_name",
+  service_name: "product_name",
   quote_description: "quote_description",
   description: "quote_description",
   desc: "quote_description",
+  quote_text: "quote_description",
+  customer_description: "quote_description",
   purchase_unit: "purchase_unit",
   buy_unit: "purchase_unit",
+  supplier_unit: "purchase_unit",
   quote_unit: "quote_unit",
   unit: "quote_unit",
   sell_unit: "quote_unit",
+  selling_unit: "quote_unit",
   conversion_factor: "conversion_factor",
   conversion: "conversion_factor",
   usable_roll_area_m2: "conversion_factor",
@@ -64,11 +74,16 @@ export const HEADER_ALIASES: Record<string, CanonicalHeader> = {
   default_cost: "default_cost_ex_vat_zar",
   unit_cost: "default_cost_ex_vat_zar",
   cost_ex_vat: "default_cost_ex_vat_zar",
+  cost_price: "default_cost_ex_vat_zar",
+  buy_price: "default_cost_ex_vat_zar",
   recommended_sell_ex_vat_zar: "recommended_sell_ex_vat_zar",
   sell_price: "recommended_sell_ex_vat_zar",
   sell: "recommended_sell_ex_vat_zar",
   default_sell_price: "recommended_sell_ex_vat_zar",
   sell_ex_vat: "recommended_sell_ex_vat_zar",
+  selling_price: "recommended_sell_ex_vat_zar",
+  unit_price: "recommended_sell_ex_vat_zar",
+  recommended_price: "recommended_sell_ex_vat_zar",
   pricing_method: "pricing_method",
   default_markup_percent: "default_markup_percent",
   markup: "default_markup_percent",
@@ -105,8 +120,10 @@ export const HEADER_ALIASES: Record<string, CanonicalHeader> = {
   confidence: "confidence",
   requires_manual_confirmation: "requires_manual_confirmation",
   manual_confirmation: "requires_manual_confirmation",
+  confirm_price: "requires_manual_confirmation",
   is_active: "is_active",
   active: "is_active",
+  enabled: "is_active",
   notes: "notes",
   note: "notes",
 };
@@ -116,8 +133,10 @@ export function normaliseHeaderKey(raw: string): string {
     .replace(/^\uFEFF/, "")
     .trim()
     .toLowerCase()
-    .replace(/[\s/]+/g, "_")
-    .replace(/[^a-z0-9_]/g, "");
+    .replace(/[\s\-/]+/g, "_")
+    .replace(/[^a-z0-9_]/g, "")
+    .replace(/_+/g, "_")
+    .replace(/^_+|_+$/g, "");
 }
 
 export function resolveHeaderAlias(raw: string): CanonicalHeader | null {

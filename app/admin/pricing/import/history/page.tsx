@@ -20,7 +20,7 @@ export default async function AdminPricingImportHistoryPage() {
   const { data: batches, error } = await supabase
     .from("pricing_import_batches")
     .select(
-      "id, filename, imported_at, row_count, success_count, skipped_count, failure_count, warning_count, status, import_mode, rollback_status, error_report",
+      "id, filename, imported_at, row_count, success_count, created_count, updated_count, skipped_count, failure_count, warning_count, status, import_mode, template_type, rollback_status, error_report",
     )
     .order("imported_at", { ascending: false })
     .limit(50);
@@ -52,8 +52,9 @@ export default async function AdminPricingImportHistoryPage() {
                 <tr>
                   <th>Date</th>
                   <th>Filename</th>
+                  <th>Template</th>
                   <th>Rows</th>
-                  <th>Imported</th>
+                  <th>New / Updated</th>
                   <th>Skipped</th>
                   <th>Failed</th>
                   <th>Status</th>
@@ -65,8 +66,11 @@ export default async function AdminPricingImportHistoryPage() {
                   <tr key={batch.id}>
                     <td>{new Date(batch.imported_at).toLocaleString("en-ZA")}</td>
                     <td>{batch.filename}</td>
+                    <td>{batch.template_type ?? "—"}</td>
                     <td>{batch.row_count}</td>
-                    <td>{batch.success_count}</td>
+                    <td>
+                      {batch.created_count ?? batch.success_count} / {batch.updated_count ?? 0}
+                    </td>
                     <td>{batch.skipped_count}</td>
                     <td>{batch.failure_count}</td>
                     <td>

@@ -14,11 +14,16 @@ export type CommitImportInput = {
   importMode: ImportMode;
   actorUserId: string;
   makePreferred: boolean;
+  templateType?: string | null;
+  mappingSnapshot?: Record<string, string | null> | null;
+  validationSummary?: Record<string, unknown> | null;
 };
 
 export type CommitImportResult = {
   batchId: string;
   successCount: number;
+  createdCount: number;
+  updatedCount: number;
   skippedCount: number;
   failureCount: number;
   warningCount: number;
@@ -54,9 +59,14 @@ async function upsertMaterialAndCatalogue(
     makePreferred: boolean;
     existingPricingId?: string | null;
   },
-): Promise<{ pricingItemId: string | null; materialId: string | null; skipped: boolean }> {
+): Promise<{
+  pricingItemId: string | null;
+  materialId: string | null;
+  priceId: string | null;
+  skipped: boolean;
+}> {
   if (opts.existingPricingId && opts.duplicateMode === "skip") {
-    return { pricingItemId: opts.existingPricingId, materialId: null, skipped: true };
+    return { pricingItemId: opts.existingPricingId, materialId: null, priceId: null, skipped: true };
   }
 
   const metadata = {
@@ -101,7 +111,12 @@ async function upsertMaterialAndCatalogue(
 
   if (existingMaterial?.id) {
     if (opts.duplicateMode === "skip") {
-      return { pricingItemId: opts.existingPricingId ?? null, materialId: existingMaterial.id, skipped: true };
+      return {
+        pricingItemId: opts.existingPricingId ?? null,
+        materialId: existingMaterial.id,
+        priceId: null,
+        skipped: true,
+      };
     }
     if (opts.duplicateMode === "reactivate" || opts.duplicateMode === "update_fields" || opts.duplicateMode === "add_price") {
       await supabase.from("material_items").update(materialPayload).eq("id", existingMaterial.id);
@@ -159,7 +174,7 @@ async function upsertMaterialAndCatalogue(
 
   if (pricingItemId) {
     if (opts.duplicateMode === "skip") {
-      return { pricingItemId, materialId, skipped: true };
+      return { pricingItemId, materialId, priceId: null, skipped: true };
     }
     await supabase.from("pricing_items").update(pricingPayload).eq("id", pricingItemId);
   } else {
@@ -186,13 +201,14 @@ async function upsertMaterialAndCatalogue(
     opts.duplicateMode === "create_new" ||
     !opts.existingPricingId;
 
+  let priceId: string | null = null;
   if (
     shouldWritePrice &&
     pricingItemId &&
     (row.default_cost_ex_vat_zar != null || row.recommended_sell_ex_vat_zar != null)
   ) {
     if (opts.makePreferred || opts.duplicateMode === "add_price" || !opts.existingPricingId) {
-      await recordPriceVersion(supabase, {
+      const priceResult = await recordPriceVersion(supabase, {
         pricingItemId,
         costPrice: row.default_cost_ex_vat_zar,
         sellPrice: row.recommended_sell_ex_vat_zar,
@@ -202,10 +218,11 @@ async function upsertMaterialAndCatalogue(
         validFrom: row.price_date ?? undefined,
         createdBy: opts.actorUserId,
       });
+      if (priceResult.ok) priceId = priceResult.id;
     }
   }
 
-  return { pricingItemId, materialId, skipped: false };
+  return { pricingItemId, materialId, priceId, skipped: false };
 }
 
 async function upsertNonMaterialCatalogue(
@@ -217,9 +234,9 @@ async function upsertNonMaterialCatalogue(
     makePreferred: boolean;
     existingPricingId?: string | null;
   },
-): Promise<{ pricingItemId: string | null; skipped: boolean }> {
+): Promise<{ pricingItemId: string | null; priceId: string | null; skipped: boolean }> {
   if (opts.existingPricingId && opts.duplicateMode === "skip") {
-    return { pricingItemId: opts.existingPricingId, skipped: true };
+    return { pricingItemId: opts.existingPricingId, priceId: null, skipped: true };
   }
 
   const payload = {
@@ -262,7 +279,7 @@ async function upsertNonMaterialCatalogue(
   }
 
   if (pricingItemId) {
-    if (opts.duplicateMode === "skip") return { pricingItemId, skipped: true };
+    if (opts.duplicateMode === "skip") return { pricingItemId, priceId: null, skipped: true };
     await supabase.from("pricing_items").update(payload).eq("id", pricingItemId);
   } else {
     const { data: created, error } = await supabase
@@ -274,12 +291,13 @@ async function upsertNonMaterialCatalogue(
     pricingItemId = created.id;
   }
 
+  let priceId: string | null = null;
   if (
     pricingItemId &&
     (row.default_cost_ex_vat_zar != null || row.recommended_sell_ex_vat_zar != null) &&
     opts.duplicateMode !== "skip"
   ) {
-    await recordPriceVersion(supabase, {
+    const priceResult = await recordPriceVersion(supabase, {
       pricingItemId,
       costPrice: row.default_cost_ex_vat_zar,
       sellPrice: row.recommended_sell_ex_vat_zar,
@@ -288,9 +306,10 @@ async function upsertNonMaterialCatalogue(
       validFrom: row.price_date ?? undefined,
       createdBy: opts.actorUserId,
     });
+    if (priceResult.ok) priceId = priceResult.id;
   }
 
-  return { pricingItemId, skipped: false };
+  return { pricingItemId, priceId, skipped: false };
 }
 
 export async function commitInventoryImport(
@@ -304,6 +323,8 @@ export async function commitInventoryImport(
     return {
       batchId: "",
       successCount: 0,
+      createdCount: 0,
+      updatedCount: 0,
       skippedCount: 0,
       failureCount: invalid.length,
       warningCount: 0,
@@ -321,6 +342,9 @@ export async function commitInventoryImport(
       status: "draft",
       import_mode: input.importMode,
       duplicate_mode: input.duplicateMode,
+      template_type: input.templateType ?? null,
+      mapping_snapshot: input.mappingSnapshot ?? {},
+      validation_summary: input.validationSummary ?? {},
       original_csv: input.csvText.slice(0, 500_000),
       summary: {},
     })
@@ -331,6 +355,8 @@ export async function commitInventoryImport(
     return {
       batchId: "",
       successCount: 0,
+      createdCount: 0,
+      updatedCount: 0,
       skippedCount: 0,
       failureCount: input.rows.length,
       warningCount: 0,
@@ -339,6 +365,8 @@ export async function commitInventoryImport(
   }
 
   let successCount = 0;
+  let createdCount = 0;
+  let updatedCount = 0;
   let skippedCount = 0;
   let failureCount = 0;
   let warningCount = 0;
@@ -411,6 +439,8 @@ export async function commitInventoryImport(
         });
       } else {
         successCount += 1;
+        if (row.status === "duplicate") updatedCount += 1;
+        else createdCount += 1;
         if (row.warnings.length) warningCount += 1;
         await supabase.from("pricing_import_rows").insert({
           batch_id: batch.id,
@@ -419,10 +449,13 @@ export async function commitInventoryImport(
           status: "imported",
           action: input.duplicateMode === "add_price" ? "add_price" : "import",
           payload: row.data,
+          source_data: row.raw,
+          normalised_data: row.data,
           warnings: row.warnings,
           errors: [],
           pricing_item_id: result.pricingItemId,
           material_item_id: "materialId" in result ? result.materialId : null,
+          created_price_id: result.priceId ?? null,
         });
       }
     } catch (err) {
@@ -454,18 +487,23 @@ export async function commitInventoryImport(
     .update({
       status,
       success_count: successCount,
+      created_count: createdCount,
+      updated_count: updatedCount,
       skipped_count: skippedCount,
       failure_count: failureCount,
       warning_count: warningCount,
       rollback_status: successCount > 0 ? "eligible" : "not_applicable",
       summary: { errors: errors.slice(0, 50) },
       error_report: errors.length ? errors.join("\n") : null,
+      completed_at: new Date().toISOString(),
     })
     .eq("id", batch.id);
 
   return {
     batchId: batch.id,
     successCount,
+    createdCount,
+    updatedCount,
     skippedCount,
     failureCount,
     warningCount,

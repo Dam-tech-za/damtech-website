@@ -1,468 +1,662 @@
 "use client";
 
-import { useMemo, useState, useTransition } from "react";
+import { useEffect, useMemo, useRef, useState, useTransition } from "react";
 import {
+  AdminActionMenu,
   AdminButton,
-  AdminField,
-  AdminPanel,
-  AdminSelect,
-  AdminStatusBadge,
+  AdminCard,
   AdminEmptyState,
+  AdminInfoBanner,
+  AdminCheckbox,
 } from "@/components/admin/ui";
-import { CANONICAL_HEADERS, type CanonicalHeader } from "@/lib/pricing/csv/columns";
+import type { CanonicalHeader } from "@/lib/pricing/csv/columns";
 import type { RowValidationResult } from "@/lib/pricing/csv/validate";
 import {
   previewInventoryImportAction,
   commitInventoryImportAction,
   exportInventoryCsvAction,
+  revalidateRowsAction,
+  type PreviewInventoryImportResult,
 } from "@/app/admin/pricing/import/inventory-actions";
-import type { DuplicateMode, ImportMode } from "@/lib/pricing/csv/commit";
+import { AdminDialog } from "@/components/admin/ui/AdminDialog";
+import { ImportStepper } from "./import/ImportStepper";
+import { CsvDropzone, type SelectedFileMeta } from "./import/CsvDropzone";
+import {
+  ImportAnalysisProgress,
+  ImportAnalysisSummary,
+} from "./import/ImportAnalysisSummary";
+import { FieldMatchSummary } from "./import/FieldMatchSummary";
+import { ColumnMappingDrawer } from "./import/ColumnMappingDrawer";
+import { ValidationMetricCards } from "./import/ValidationMetricCards";
+import { ValidationIssueList, type ImportIssue } from "./import/ValidationIssueList";
+import { ImportPreviewTable } from "./import/ImportPreviewTable";
+import { ImportRowDrawer, type RowEdits } from "./import/ImportRowDrawer";
+import { ImportSettingsPanel } from "./import/ImportSettingsPanel";
+import { ImportStickyActionBar } from "./import/ImportStickyActionBar";
+import { ImportProgressPanel } from "./import/ImportProgressPanel";
+import { ImportCompletionSummary } from "./import/ImportCompletionSummary";
+import {
+  DEFAULT_IMPORT_SETTINGS,
+  type ImportSettings,
+  type ImportStepId,
+  type PreviewFilter,
+} from "./import/types";
 
 type InventoryImportWizardProps = {
   canImport: boolean;
   canExportCosts: boolean;
 };
 
-type Step = "upload" | "map" | "preview" | "results";
+type PreviewOk = Extract<PreviewInventoryImportResult, { ok: true }>;
 
-function statusLabel(status: RowValidationResult["status"]): string {
-  return status.replaceAll("_", " ");
+function downloadText(name: string, text: string) {
+  const blob = new Blob([text], { type: "text/csv;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = name;
+  a.click();
+  URL.revokeObjectURL(url);
 }
 
-export function InventoryImportWizard({
-  canImport,
-  canExportCosts,
-}: InventoryImportWizardProps) {
-  const [step, setStep] = useState<Step>("upload");
+function computeSummary(rows: RowValidationResult[]) {
+  return {
+    total: rows.length,
+    ready: rows.filter((r) => r.status === "ready").length,
+    warnings: rows.filter(
+      (r) =>
+        r.status === "ready_with_warning" ||
+        r.status === "manual_confirmation" ||
+        r.status === "missing_price",
+    ).length,
+    invalid: rows.filter((r) => r.status === "invalid").length,
+    duplicates: rows.filter((r) => r.status === "duplicate").length,
+    manual: rows.filter(
+      (r) => r.status === "manual_confirmation" || r.status === "missing_price",
+    ).length,
+    zeroPrice: rows.filter(
+      (r) =>
+        r.data &&
+        (r.data.recommended_sell_ex_vat_zar == null ||
+          r.data.recommended_sell_ex_vat_zar === 0),
+    ).length,
+    included: rows.filter((r) => !r.excluded && r.status !== "invalid").length,
+  };
+}
+
+function deriveIssues(rows: RowValidationResult[]): ImportIssue[] {
+  const issues: ImportIssue[] = [];
+  const invalid = rows.filter((r) => r.status === "invalid").length;
+  const duplicates = rows.filter((r) => r.status === "duplicate").length;
+  const zeroPrice = rows.filter(
+    (r) =>
+      r.data &&
+      (r.data.recommended_sell_ex_vat_zar == null ||
+        r.data.recommended_sell_ex_vat_zar === 0),
+  ).length;
+  const missingTechnical = rows.filter((r) =>
+    r.warnings.some((w) => /thickness|gsm/i.test(w)),
+  ).length;
+
+  if (invalid) {
+    issues.push({
+      id: "invalid",
+      group: "Invalid rows",
+      severity: "error",
+      count: invalid,
+      description: "Rows with errors that must be corrected or excluded before import.",
+      filter: "invalid",
+    });
+  }
+  if (duplicates) {
+    issues.push({
+      id: "duplicates",
+      group: "Duplicates",
+      severity: "info",
+      count: duplicates,
+      description: "Item codes that already exist in the catalogue.",
+      filter: "duplicates",
+    });
+  }
+  if (zeroPrice) {
+    issues.push({
+      id: "pricing",
+      group: "Pricing",
+      severity: "warning",
+      count: zeroPrice,
+      description: "Items with zero or missing selling prices require confirmation.",
+      filter: "manual",
+    });
+  }
+  if (missingTechnical) {
+    issues.push({
+      id: "technical",
+      group: "Technical data",
+      severity: "info",
+      count: missingTechnical,
+      description: "Items missing thickness or GSM for their category.",
+      filter: "warnings",
+    });
+  }
+  return issues;
+}
+
+export function InventoryImportWizard({ canImport, canExportCosts }: InventoryImportWizardProps) {
+  const [step, setStep] = useState<ImportStepId>("upload");
   const [pending, startTransition] = useTransition();
   const [message, setMessage] = useState<string | null>(null);
   const [filename, setFilename] = useState("inventory.csv");
-  const [mimeType, setMimeType] = useState<string>("text/csv");
+  const [mimeType, setMimeType] = useState("text/csv");
   const [csvText, setCsvText] = useState("");
-  const [headers, setHeaders] = useState<string[]>([]);
+  const [fileMeta, setFileMeta] = useState<SelectedFileMeta | null>(null);
+  const [preview, setPreview] = useState<PreviewOk | null>(null);
   const [mapping, setMapping] = useState<Record<string, CanonicalHeader | "">>({});
   const [rows, setRows] = useState<RowValidationResult[]>([]);
-  const [fileHash, setFileHash] = useState("");
-  const [summary, setSummary] = useState<{
-    total: number;
-    ready: number;
-    warnings: number;
-    invalid: number;
-    missingPrice: number;
-    manual: number;
-    duplicates: number;
-  } | null>(null);
-  const [duplicateMode, setDuplicateMode] = useState<DuplicateMode>("skip");
-  const [importMode, setImportMode] = useState<ImportMode>("valid_rows_only");
+  const [settings, setSettings] = useState<ImportSettings>(DEFAULT_IMPORT_SETTINGS);
+  const [filter, setFilter] = useState<PreviewFilter>("all");
+  const [search, setSearch] = useState("");
+  const [mappingOpen, setMappingOpen] = useState(false);
+  const [rowDrawer, setRowDrawer] = useState<number | null>(null);
+  const [analysing, setAnalysing] = useState(false);
+  const [analysisStep, setAnalysisStep] = useState(0);
+  const [importStage, setImportStage] = useState(0);
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [ackHistory, setAckHistory] = useState(false);
   const [result, setResult] = useState<{
     batchId: string;
     successCount: number;
+    createdCount: number;
+    updatedCount: number;
     skippedCount: number;
     failureCount: number;
     warningCount: number;
     errors: string[];
   } | null>(null);
 
-  const unmappedRequired = useMemo(() => {
-    const mapped = new Set(Object.values(mapping).filter(Boolean));
-    const required: CanonicalHeader[] = ["item_code", "product_name", "quote_unit"];
-    // category required too; quote_description can fall back to name
-    required.push("category");
-    return required.filter((h) => !mapped.has(h));
-  }, [mapping]);
+  const analysisTimer = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  function downloadText(name: string, text: string) {
-    const blob = new Blob([text], { type: "text/csv;charset=utf-8" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = name;
-    a.click();
-    URL.revokeObjectURL(url);
-  }
+  useEffect(() => {
+    if (!analysing) return;
+    analysisTimer.current = setInterval(() => {
+      setAnalysisStep((s) => (s < 3 ? s + 1 : s));
+    }, 220);
+    return () => {
+      if (analysisTimer.current) clearInterval(analysisTimer.current);
+    };
+  }, [analysing]);
 
-  function runPreview(nextMapping?: Record<string, CanonicalHeader | "">) {
+  const summary = useMemo(() => computeSummary(rows), [rows]);
+  const issues = useMemo(() => deriveIssues(rows), [rows]);
+  const activeRow = useMemo(
+    () => rows.find((r) => r.rowNumber === rowDrawer) ?? null,
+    [rows, rowDrawer],
+  );
+
+  const mappingBlocked =
+    (preview?.autoMap.missingRequired.length ?? 0) > 0 ||
+    (preview?.autoMap.conflicts.length ?? 0) > 0;
+
+  function analyse(nextCsv: string, name: string, mime: string, override?: Record<string, CanonicalHeader | "">) {
+    setAnalysing(true);
+    setAnalysisStep(0);
     startTransition(async () => {
-      const preview = await previewInventoryImportAction({
-        filename,
-        mimeType,
-        csvText,
-        mapping: nextMapping ?? mapping,
-        byteLength: new TextEncoder().encode(csvText).length,
+      const res = await previewInventoryImportAction({
+        filename: name,
+        mimeType: mime,
+        csvText: nextCsv,
+        mapping: override,
+        byteLength: new TextEncoder().encode(nextCsv).length,
       });
-      if (!preview.ok) {
-        setMessage(preview.error);
+      setAnalysing(false);
+      if (!res.ok) {
+        setMessage(res.error);
+        setFileMeta(null);
         return;
       }
-      setHeaders(preview.headers);
-      setMapping(preview.mapping);
-      setRows(preview.rows);
-      setFileHash(preview.fileHash);
-      setSummary(preview.summary);
+      setPreview(res);
+      setMapping(res.mapping);
+      setRows(res.rows);
       setMessage(null);
-      setStep(nextMapping || Object.keys(mapping).length ? "preview" : "map");
-      if (!nextMapping && preview.headers.length) setStep("map");
+      setFileMeta({
+        name,
+        sizeBytes: new TextEncoder().encode(nextCsv).length,
+        rows: res.summary.rowsFound,
+        columns: res.headers.length,
+        encoding: res.hadBom ? "UTF-8 (BOM)" : "UTF-8",
+        templateLabel: res.template.label,
+        templateConfidence: res.template.confidence,
+      });
+      // Canonical CSVs auto-advance to preview; only stop at the mapping review
+      // step when the engine flags unresolved fields.
+      setStep(res.autoMap.requiresAttention ? "review" : "preview");
     });
   }
 
+  function onSelectFile(file: File) {
+    setFilename(file.name);
+    setMimeType(file.type || "text/csv");
+    setResult(null);
+    void file.text().then((text) => {
+      setCsvText(text);
+      analyse(text, file.name, file.type || "text/csv");
+    });
+  }
+
+  function removeFile() {
+    setFileMeta(null);
+    setPreview(null);
+    setRows([]);
+    setCsvText("");
+    setStep("upload");
+  }
+
+  function applyMapping(next: Record<string, CanonicalHeader | "">) {
+    setMappingOpen(false);
+    setMapping(next);
+    analyse(csvText, filename, mimeType, next);
+  }
+
+  function acceptSuggestion(header: string, target: CanonicalHeader) {
+    const next = { ...mapping, [header]: target };
+    setMapping(next);
+    analyse(csvText, filename, mimeType, next);
+  }
+
+  function ignoreColumn(header: string) {
+    const next = { ...mapping, [header]: "" as const };
+    setMapping(next);
+    analyse(csvText, filename, mimeType, next);
+  }
+
+  function toggleRow(rowNumber: number, included: boolean) {
+    setRows((prev) =>
+      prev.map((r) => (r.rowNumber === rowNumber ? { ...r, excluded: !included } : r)),
+    );
+  }
+
+  function saveRow(rowNumber: number, edits: RowEdits) {
+    const target = rows.find((r) => r.rowNumber === rowNumber);
+    if (!target) return;
+    const mergedRaw: Record<string, string> = { ...target.raw };
+    for (const [key, value] of Object.entries(edits)) {
+      if (value !== undefined) mergedRaw[key] = value;
+    }
+    startTransition(async () => {
+      const res = await revalidateRowsAction({ rows: [{ rowNumber, raw: mergedRaw }] });
+      if (!res.ok) {
+        setMessage(res.error);
+        return;
+      }
+      const updated = res.rows[0];
+      if (updated) {
+        setRows((prev) =>
+          prev.map((r) =>
+            r.rowNumber === rowNumber ? { ...updated, excluded: r.excluded } : r,
+          ),
+        );
+      }
+      setRowDrawer(null);
+    });
+  }
+
+  function runImport() {
+    setConfirmOpen(false);
+    setStep("import");
+    setImportStage(0);
+    const stageTimer = setInterval(() => setImportStage((s) => (s < 4 ? s + 1 : s)), 300);
+
+    // Apply manual-confirmation setting to selected rows.
+    const prepared = rows.map((r) => {
+      if (!r.data) return r;
+      const isManual = r.status === "manual_confirmation" || r.status === "missing_price";
+      if (!isManual) return r;
+      if (settings.manualConfirmation === "exclude") return { ...r, excluded: true };
+      if (settings.manualConfirmation === "inactive") {
+        return { ...r, data: { ...r.data, is_active: false } };
+      }
+      return r;
+    });
+
+    startTransition(async () => {
+      const res = await commitInventoryImportAction({
+        filename,
+        csvText,
+        fileHash: preview?.fileHash ?? "",
+        rows: prepared,
+        duplicateMode: settings.duplicateMode,
+        importMode: settings.importMode,
+        makePreferred: settings.newPrices === "current",
+        templateType: preview?.template.template ?? null,
+        mappingSnapshot: mapping,
+        validationSummary: {
+          rowsFound: summary.total,
+          validRows: summary.ready,
+          warningRows: summary.warnings,
+          invalidRows: summary.invalid,
+          duplicates: summary.duplicates,
+        },
+      });
+      clearInterval(stageTimer);
+      if (!res.ok) {
+        setMessage(res.error);
+        setStep("preview");
+        return;
+      }
+      setResult(res);
+      setStep("complete");
+    });
+  }
+
+  function exportCsv(mode: "full" | "sell") {
+    startTransition(async () => {
+      const res = await exportInventoryCsvAction(mode);
+      if (!res.ok) {
+        setMessage(res.error);
+        return;
+      }
+      downloadText(res.filename, res.csv);
+    });
+  }
+
+  function downloadResults() {
+    const lines = [
+      "row,item_code,status,detail",
+      ...rows.map((r) =>
+        [
+          r.rowNumber,
+          r.data?.item_code ?? r.raw.item_code ?? "",
+          r.status,
+          JSON.stringify(r.errors[0] ?? r.warnings[0] ?? ""),
+        ].join(","),
+      ),
+    ];
+    downloadText("import-results.csv", lines.join("\n"));
+  }
+
+  const exportItems = [
+    ...(canExportCosts
+      ? [{ id: "full", label: "Export full inventory (with costs)", onSelect: () => exportCsv("full") }]
+      : []),
+    { id: "sell", label: "Export sell-price catalogue", onSelect: () => exportCsv("sell") },
+    {
+      id: "template",
+      label: "Download starter CSV",
+      href: "/admin/pricing/import/templates/damtech_inventory_import_starter.csv",
+    },
+    { id: "pricing", label: "View pricing catalogue", href: "/admin/pricing/" },
+  ];
+
+  const importableCount = summary.included;
+  const stepperError: ImportStepId | null =
+    step === "preview" && summary.invalid > 0 && settings.importMode === "all_or_nothing"
+      ? "preview"
+      : null;
+
+  if (!canImport) {
+    return (
+      <AdminEmptyState
+        title="Import requires pricing management permission."
+        description="Owner, admin or estimator roles can import inventory CSVs."
+      />
+    );
+  }
+
   return (
-    <div className="admin-stack">
-      <AdminPanel title="Export inventory">
-        <div className="admin-panel__actions">
-          {canExportCosts ? (
+    <div className="imp-shell">
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "0.75rem", flexWrap: "wrap" }}>
+        <ImportStepper current={step} errorStep={stepperError} />
+        <AdminActionMenu label="Export & tools" items={exportItems} />
+      </div>
+
+      {/* Compact help */}
+      <details className="admin-ui-card" style={{ padding: "0.85rem 1.1rem" }}>
+        <summary style={{ cursor: "pointer", fontWeight: 600 }}>
+          Need help preparing your CSV?
+        </summary>
+        <div style={{ marginTop: "0.6rem", display: "grid", gap: "0.5rem" }}>
+          <p className="admin-help-text">
+            Download the template or view the guide. Costs and sell prices are ex VAT; price changes
+            create history versions.
+          </p>
+          <div className="admin-panel__actions">
             <AdminButton
-              type="button"
-              variant="secondary"
+              href="/admin/pricing/import/templates/damtech-inventory-import-template.csv"
               size="sm"
-              disabled={pending}
-              onClick={() => {
-                startTransition(async () => {
-                  const res = await exportInventoryCsvAction("full");
-                  if (!res.ok) {
-                    setMessage(res.error);
-                    return;
-                  }
-                  downloadText(res.filename, res.csv);
-                });
-              }}
+              variant="secondary"
             >
-              Export full inventory (with costs)
+              Download template
             </AdminButton>
-          ) : null}
-          <AdminButton
-            type="button"
-            variant="secondary"
-            size="sm"
-            disabled={pending}
-            onClick={() => {
-              startTransition(async () => {
-                const res = await exportInventoryCsvAction("sell");
-                if (!res.ok) {
-                  setMessage(res.error);
-                  return;
-                }
-                downloadText(res.filename, res.csv);
-              });
-            }}
-          >
-            Export sell-price catalogue
-          </AdminButton>
-          <AdminButton href="/admin/pricing/import/history/" variant="outline" size="sm">
-            Import history
-          </AdminButton>
+            <AdminButton
+              href="/admin/pricing/import/templates/damtech-inventory-import-guide.md"
+              size="sm"
+              variant="ghost"
+            >
+              View guide
+            </AdminButton>
+          </div>
         </div>
-      </AdminPanel>
+      </details>
 
-      {!canImport ? (
-        <AdminEmptyState
-          title="Import requires pricing management permission."
-          description="Owner, admin or estimator roles can import inventory CSVs."
-        />
-      ) : (
+      {/* Step 1: Upload */}
+      {step === "upload" ? (
+        <AdminCard>
+          <CsvDropzone file={fileMeta} disabled={pending} onSelect={onSelectFile} onRemove={removeFile} />
+          {analysing ? (
+            <div style={{ marginTop: "1rem" }}>
+              <p style={{ fontWeight: 600, marginBottom: "0.5rem" }}>Analysing file</p>
+              <ImportAnalysisProgress activeIndex={analysisStep} />
+            </div>
+          ) : null}
+        </AdminCard>
+      ) : null}
+
+      {/* Step 2: Review */}
+      {step === "review" && preview ? (
         <>
-          {step === "upload" || step === "map" || step === "preview" ? (
-            <AdminPanel title="1. Upload CSV">
-              <div className="admin-stack">
-                <AdminField label="CSV file">
-                  <input
-                    className="admin-input"
-                    type="file"
-                    accept=".csv,text/csv,application/vnd.ms-excel"
-                    onChange={async (event) => {
-                      const file = event.target.files?.[0];
-                      if (!file) return;
-                      setFilename(file.name);
-                      setMimeType(file.type || "text/csv");
-                      const text = await file.text();
-                      setCsvText(text);
-                      setResult(null);
-                      setStep("upload");
-                    }}
-                  />
-                </AdminField>
-                <p className="admin-help-text">
-                  Accepts the Damtech starter format (`item_code,category,name,…`) and the full
-                  canonical inventory template. Max 5 MB / 5 000 rows. UTF-8 with BOM recommended for
-                  Excel (m² / m³).
-                </p>
-                <AdminButton
-                  type="button"
-                  variant="primary"
-                  disabled={pending || !csvText.trim()}
-                  onClick={() => runPreview()}
-                >
-                  {pending ? "Validating…" : "Parse & continue"}
-                </AdminButton>
-              </div>
-            </AdminPanel>
-          ) : null}
+          <AdminCard>
+            <CsvDropzone file={fileMeta} disabled={pending} onSelect={onSelectFile} onRemove={removeFile} />
+            <div style={{ marginTop: "1rem" }}>
+              <ImportAnalysisSummary
+                template={preview.template}
+                autoMap={preview.autoMap}
+                rowsFound={preview.summary.rowsFound}
+              />
+            </div>
+          </AdminCard>
 
-          {step === "map" || step === "preview" ? (
-            <AdminPanel title="2. Column mapping">
-              <p className="admin-help-text">
-                Unmapped columns are ignored. Required: item_code, category, product_name (or name),
-                quote_unit (or unit).
-              </p>
-              {unmappedRequired.length ? (
-                <p className="admin-help-text">
-                  Still need: {unmappedRequired.join(", ")}
-                </p>
-              ) : null}
-              <div className="admin-table-wrap">
-                <table className="admin-table">
-                  <thead>
-                    <tr>
-                      <th>CSV column</th>
-                      <th>Maps to</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {headers.map((header) => (
-                      <tr key={header}>
-                        <td>{header}</td>
-                        <td>
-                          <AdminSelect
-                            value={mapping[header] ?? ""}
-                            onChange={(e) => {
-                              const value = e.target.value as CanonicalHeader | "";
-                              setMapping((prev) => ({ ...prev, [header]: value }));
-                            }}
-                          >
-                            <option value="">— ignore —</option>
-                            {CANONICAL_HEADERS.map((h) => (
-                              <option key={h} value={h}>
-                                {h}
-                              </option>
-                            ))}
-                          </AdminSelect>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-              <div className="admin-panel__actions" style={{ marginTop: "0.75rem" }}>
-                <AdminButton
-                  type="button"
-                  variant="primary"
-                  disabled={pending || unmappedRequired.length > 0}
-                  onClick={() => runPreview(mapping)}
-                >
-                  Validate & preview
-                </AdminButton>
-              </div>
-            </AdminPanel>
-          ) : null}
+          <AdminCard>
+            <h2 className="admin-panel__title" style={{ marginBottom: "0.75rem" }}>
+              Field matching
+            </h2>
+            <FieldMatchSummary
+              autoMap={preview.autoMap}
+              mapping={mapping}
+              onReviewMapping={() => setMappingOpen(true)}
+              onAccept={acceptSuggestion}
+              onIgnore={ignoreColumn}
+            />
+          </AdminCard>
 
-          {step === "preview" && summary ? (
-            <AdminPanel title="3. Preview & confirm">
-              <dl className="admin-dl admin-metric-strip--inline">
-                <div>
-                  <dt>Rows</dt>
-                  <dd>{summary.total}</dd>
-                </div>
-                <div>
-                  <dt>Ready</dt>
-                  <dd>{summary.ready}</dd>
-                </div>
-                <div>
-                  <dt>Warnings</dt>
-                  <dd>{summary.warnings + summary.manual}</dd>
-                </div>
-                <div>
-                  <dt>Duplicates</dt>
-                  <dd>{summary.duplicates}</dd>
-                </div>
-                <div>
-                  <dt>Invalid</dt>
-                  <dd>{summary.invalid}</dd>
-                </div>
-              </dl>
-
-              <div className="admin-form-grid" style={{ marginTop: "1rem" }}>
-                <AdminField label="Duplicate behaviour">
-                  <AdminSelect
-                    value={duplicateMode}
-                    onChange={(e) => setDuplicateMode(e.target.value as DuplicateMode)}
-                  >
-                    <option value="skip">Skip existing item (default)</option>
-                    <option value="update_fields">Update non-price fields + new price version</option>
-                    <option value="add_price">Add new price version only</option>
-                    <option value="reactivate">Reactivate archived + update</option>
-                  </AdminSelect>
-                </AdminField>
-                <AdminField label="Import mode">
-                  <AdminSelect
-                    value={importMode}
-                    onChange={(e) => setImportMode(e.target.value as ImportMode)}
-                  >
-                    <option value="valid_rows_only">Valid rows only (default)</option>
-                    <option value="all_or_nothing">All or nothing</option>
-                  </AdminSelect>
-                </AdminField>
-              </div>
-
-              <div className="admin-table-wrap" style={{ marginTop: "1rem" }}>
-                <table className="admin-table">
-                  <thead>
-                    <tr>
-                      <th>Row</th>
-                      <th>Code</th>
-                      <th>Name</th>
-                      <th>Type</th>
-                      <th>Unit</th>
-                      <th>Cost</th>
-                      <th>Sell</th>
-                      <th>Status</th>
-                      <th>Include</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {rows.map((row) => (
-                      <tr key={row.rowNumber}>
-                        <td>{row.rowNumber}</td>
-                        <td>{row.data?.item_code ?? row.raw.item_code ?? "—"}</td>
-                        <td>{row.data?.product_name ?? row.raw.product_name ?? "—"}</td>
-                        <td>{row.data?.item_type ?? "—"}</td>
-                        <td>{row.data?.quote_unit ?? "—"}</td>
-                        <td>
-                          {canExportCosts
-                            ? row.data?.default_cost_ex_vat_zar ?? "—"
-                            : "•"}
-                        </td>
-                        <td>{row.data?.recommended_sell_ex_vat_zar ?? "—"}</td>
-                        <td>
-                          <AdminStatusBadge status={row.status} label={statusLabel(row.status)} domain="pricing" />
-                          {row.errors[0] || row.warnings[0] ? (
-                            <div className="admin-help-text">
-                              {row.errors[0] ?? row.warnings[0]}
-                            </div>
-                          ) : null}
-                        </td>
-                        <td>
-                          <input
-                            type="checkbox"
-                            checked={!row.excluded && row.status !== "invalid"}
-                            disabled={row.status === "invalid"}
-                            onChange={(e) => {
-                              const checked = e.target.checked;
-                              setRows((prev) =>
-                                prev.map((r) =>
-                                  r.rowNumber === row.rowNumber
-                                    ? { ...r, excluded: !checked }
-                                    : r,
-                                ),
-                              );
-                            }}
-                          />
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-
-              <div className="admin-panel__actions" style={{ marginTop: "1rem" }}>
-                <AdminButton
-                  type="button"
-                  variant="secondary"
-                  onClick={() => {
-                    const lines = [
-                      "row,item_code,field,error",
-                      ...rows
-                        .filter((r) => r.errors.length)
-                        .flatMap((r) =>
-                          r.errors.map(
-                            (err) =>
-                              `${r.rowNumber},${r.data?.item_code ?? r.raw.item_code ?? ""},,${JSON.stringify(err)}`,
-                          ),
-                        ),
-                    ];
-                    downloadText("import-errors.csv", lines.join("\n"));
-                  }}
-                >
-                  Download error report
-                </AdminButton>
-                <AdminButton
-                  type="button"
-                  variant="primary"
-                  disabled={pending}
-                  onClick={() => {
-                    startTransition(async () => {
-                      const res = await commitInventoryImportAction({
-                        filename,
-                        csvText,
-                        fileHash,
-                        rows,
-                        duplicateMode,
-                        importMode,
-                        makePreferred: true,
-                      });
-                      if (!res.ok) {
-                        setMessage(res.error);
-                        return;
-                      }
-                      setResult(res);
-                      setStep("results");
-                      setMessage(
-                        `Imported ${res.successCount} · skipped ${res.skippedCount} · failed ${res.failureCount}`,
-                      );
-                    });
-                  }}
-                >
-                  {pending ? "Importing…" : "Confirm import"}
-                </AdminButton>
-              </div>
-            </AdminPanel>
-          ) : null}
-
-          {step === "results" && result ? (
-            <AdminPanel title="4. Results">
-              <p>
-                Batch <code>{result.batchId}</code>
-              </p>
-              <ul className="admin-list">
-                <li>Imported: {result.successCount}</li>
-                <li>Skipped: {result.skippedCount}</li>
-                <li>Failed: {result.failureCount}</li>
-                <li>Warnings: {result.warningCount}</li>
-              </ul>
-              {result.errors.length ? (
-                <ul className="admin-list">
-                  {result.errors.slice(0, 20).map((err) => (
-                    <li key={err}>{err}</li>
-                  ))}
-                </ul>
-              ) : null}
-              <div className="admin-panel__actions">
-                <AdminButton href="/admin/pricing/materials/" variant="primary">
-                  View materials
-                </AdminButton>
-                <AdminButton href="/admin/quotes/new/" variant="secondary">
-                  Open quote builder
-                </AdminButton>
-                <AdminButton href="/admin/pricing/import/history/" variant="outline">
-                  Import history
-                </AdminButton>
-                <AdminButton
-                  type="button"
-                  variant="ghost"
-                  onClick={() => {
-                    setStep("upload");
-                    setCsvText("");
-                    setRows([]);
-                    setResult(null);
-                  }}
-                >
-                  Import another file
-                </AdminButton>
-              </div>
-            </AdminPanel>
-          ) : null}
+          {preview.autoMap.requiresAttention ? null : (
+            <AdminInfoBanner tone="info">
+              All required fields matched automatically. Continue to preview and validation.
+            </AdminInfoBanner>
+          )}
         </>
-      )}
+      ) : null}
 
-      {message ? <p className="admin-help-text">{message}</p> : null}
+      {/* Step 3: Preview */}
+      {step === "preview" && preview ? (
+        <>
+          <AdminInfoBanner tone="info">
+            <strong>{preview.template.label}</strong> recognised ·{" "}
+            {preview.autoMap.autoAcceptedCount} of {preview.autoMap.matches.length} columns matched
+            automatically.{" "}
+            <AdminButton type="button" variant="link" size="sm" onClick={() => setMappingOpen(true)}>
+              Review mapping
+            </AdminButton>
+          </AdminInfoBanner>
+          <AdminCard>
+            <h2 className="admin-panel__title" style={{ marginBottom: "0.75rem" }}>
+              Validation summary
+            </h2>
+            <ValidationMetricCards
+              active={filter}
+              onSelect={setFilter}
+              metrics={[
+                { filter: "all", label: "Total rows", value: summary.total },
+                { filter: "ready", label: "Ready", value: summary.ready, tone: "success" },
+                { filter: "warnings", label: "Warnings", value: summary.warnings, tone: "warning" },
+                { filter: "invalid", label: "Invalid", value: summary.invalid, tone: summary.invalid ? "warning" : "muted" },
+                { filter: "duplicates", label: "Duplicates", value: summary.duplicates, tone: "info" },
+              ]}
+            />
+            {issues.length ? (
+              <div style={{ marginTop: "1rem" }}>
+                <ValidationIssueList issues={issues} onViewRows={setFilter} />
+              </div>
+            ) : null}
+          </AdminCard>
+
+          <AdminCard>
+            <h2 className="admin-panel__title" style={{ marginBottom: "0.75rem" }}>
+              Import settings
+            </h2>
+            <ImportSettingsPanel settings={settings} onChange={setSettings} />
+          </AdminCard>
+
+          <AdminCard>
+            <ImportPreviewTable
+              rows={rows}
+              canSeeCost={canExportCosts}
+              filter={filter}
+              onFilterChange={setFilter}
+              search={search}
+              onSearchChange={setSearch}
+              onToggleRow={toggleRow}
+              onOpenRow={setRowDrawer}
+            />
+          </AdminCard>
+        </>
+      ) : null}
+
+      {/* Step 4: Import progress */}
+      {step === "import" ? (
+        <AdminCard>
+          <ImportProgressPanel activeIndex={importStage} />
+        </AdminCard>
+      ) : null}
+
+      {/* Step 5: Complete */}
+      {step === "complete" && result ? (
+        <AdminCard>
+          <ImportCompletionSummary
+            batchId={result.batchId}
+            created={result.createdCount}
+            updated={result.updatedCount}
+            skipped={result.skippedCount}
+            failed={result.failureCount}
+            errors={result.errors}
+            onImportAnother={() => {
+              removeFile();
+              setResult(null);
+            }}
+            onDownloadResults={downloadResults}
+          />
+        </AdminCard>
+      ) : null}
+
+      {message ? <AdminInfoBanner tone="warning">{message}</AdminInfoBanner> : null}
+
+      {/* Drawers */}
+      {preview ? (
+        <ColumnMappingDrawer
+          open={mappingOpen}
+          autoMap={preview.autoMap}
+          mapping={mapping}
+          onClose={() => setMappingOpen(false)}
+          onApply={applyMapping}
+        />
+      ) : null}
+
+      <ImportRowDrawer
+        open={rowDrawer !== null}
+        row={activeRow}
+        canSeeCost={canExportCosts}
+        onClose={() => setRowDrawer(null)}
+        onSave={saveRow}
+        onDuplicateModeChange={(_, mode) => setSettings((prev) => ({ ...prev, duplicateMode: mode }))}
+        duplicateMode={settings.duplicateMode}
+      />
+
+      {/* Confirmation dialog */}
+      <AdminDialog
+        open={confirmOpen}
+        title="Confirm import"
+        onClose={() => setConfirmOpen(false)}
+        footer={
+          <>
+            <AdminButton variant="secondary" onClick={() => setConfirmOpen(false)}>
+              Cancel
+            </AdminButton>
+            <AdminButton variant="primary" disabled={!ackHistory} onClick={runImport}>
+              Confirm import
+            </AdminButton>
+          </>
+        }
+      >
+        <ul className="admin-list">
+          <li>{importableCount} items will be imported</li>
+          <li>{summary.duplicates} existing item(s) handled as “{settings.duplicateMode.replaceAll("_", " ")}”</li>
+          <li>{summary.invalid} invalid row(s) excluded</li>
+        </ul>
+        <AdminCheckbox
+          label="I understand that price changes create new history versions."
+          checked={ackHistory}
+          onChange={(e) => setAckHistory(e.target.checked)}
+        />
+      </AdminDialog>
+
+      {/* Sticky action bar */}
+      {step === "review" ? (
+        <ImportStickyActionBar
+          selected={summary.total}
+          ready={summary.ready}
+          warnings={summary.warnings}
+          invalidExcluded={summary.invalid}
+          primaryLabel={mappingBlocked ? "Resolve mapping" : "Continue to preview"}
+          primaryDisabled={mappingBlocked}
+          onPrimary={() => (mappingBlocked ? setMappingOpen(true) : setStep("preview"))}
+          onBack={() => setStep("upload")}
+        />
+      ) : null}
+
+      {step === "preview" ? (
+        <ImportStickyActionBar
+          selected={summary.included}
+          ready={summary.ready}
+          warnings={summary.warnings}
+          invalidExcluded={summary.invalid}
+          primaryLabel={
+            summary.invalid > 0 && settings.importMode === "all_or_nothing"
+              ? `Review ${summary.invalid} errors`
+              : `Import ${importableCount} items`
+          }
+          primaryDisabled={
+            importableCount === 0 ||
+            (summary.invalid > 0 && settings.importMode === "all_or_nothing")
+          }
+          onPrimary={() => {
+            if (summary.invalid > 0 && settings.importMode === "all_or_nothing") {
+              setFilter("invalid");
+              return;
+            }
+            setAckHistory(false);
+            setConfirmOpen(true);
+          }}
+          onBack={() => setStep("review")}
+        />
+      ) : null}
     </div>
   );
 }

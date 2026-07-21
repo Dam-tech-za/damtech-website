@@ -5,17 +5,17 @@ import { assertAdmin } from "@/lib/auth/require-admin";
 import { canPerform } from "@/lib/auth/permissions";
 import { writeAuditLog } from "@/lib/auth/audit";
 import { createClient } from "@/lib/supabase/server";
-import {
-  prepareImportFromCsvText,
-  validateUploadMeta,
-  type CanonicalHeader,
-  type RowValidationResult,
-} from "@/lib/pricing/csv/prepare";
+import { validateUploadMeta } from "@/lib/pricing/csv/parse";
+import type { CanonicalHeader } from "@/lib/pricing/csv/columns";
+import type { RowValidationResult } from "@/lib/pricing/csv/validate";
 import {
   commitInventoryImport,
   type DuplicateMode,
   type ImportMode,
 } from "@/lib/pricing/csv/commit";
+import { buildImportPreview, type ImportPreview } from "@/lib/pricing/import/build-import-preview";
+import type { AutoMapResult, TemplateDetection } from "@/lib/pricing/import/import-types";
+import { validateMappedRow } from "@/lib/pricing/csv/validate";
 
 export type PreviewInventoryImportResult =
   | {
@@ -25,16 +25,10 @@ export type PreviewInventoryImportResult =
       delimiter: string;
       hadBom: boolean;
       fileHash: string;
+      template: TemplateDetection;
+      autoMap: AutoMapResult;
       rows: RowValidationResult[];
-      summary: {
-        total: number;
-        ready: number;
-        warnings: number;
-        invalid: number;
-        missingPrice: number;
-        manual: number;
-        duplicates: number;
-      };
+      summary: ImportPreview["summary"];
     }
   | { ok: false; error: string };
 
@@ -54,51 +48,98 @@ export async function previewInventoryImportAction(input: {
   });
   if (!meta.ok) return { ok: false, error: meta.error };
 
-  const prepared = prepareImportFromCsvText(input.csvText, input.mapping);
   const supabase = await createClient();
 
-  const codes = prepared.rows
+  // Duplicate detection needs candidate codes; run a lightweight parse + map
+  // first so we can look up existing catalogue items before full validation.
+  const scout = buildImportPreview(input.csvText, { mappingOverride: input.mapping });
+  const codes = scout.rows
     .map((r) => r.data?.item_code)
     .filter((c): c is string => Boolean(c));
 
-  const existingByCode = new Map<string, string>();
+  const existingCodes = new Set<string>();
+  const existingIds = new Map<string, string>();
   if (codes.length) {
     const { data } = await supabase
       .from("pricing_items")
       .select("id, item_code")
       .in("item_code", codes);
     for (const row of data ?? []) {
-      existingByCode.set(String(row.item_code), String(row.id));
+      existingCodes.add(String(row.item_code));
+      existingIds.set(String(row.item_code), String(row.id));
     }
   }
 
-  let duplicates = 0;
-  const rows = prepared.rows.map((row) => {
-    if (!row.data) return row;
-    const existingId = existingByCode.get(row.data.item_code) ?? null;
-    if (!existingId) return row;
-    duplicates += 1;
-    return {
-      ...row,
-      status: "duplicate" as const,
-      existingPricingItemId: existingId,
-      warnings: [
-        ...row.warnings,
-        "Item code already exists in catalogue — choose duplicate behaviour",
-      ],
-    };
+  const preview = buildImportPreview(input.csvText, {
+    mappingOverride: input.mapping,
+    existingCodes,
   });
+
+  const rows = preview.rows.map((row) =>
+    row.data && existingIds.has(row.data.item_code)
+      ? { ...row, existingPricingItemId: existingIds.get(row.data.item_code) ?? null }
+      : row,
+  );
 
   return {
     ok: true,
-    headers: prepared.headers,
-    mapping: prepared.mapping,
-    delimiter: prepared.delimiter,
-    hadBom: prepared.hadBom,
-    fileHash: prepared.fileHash,
+    headers: preview.headers,
+    mapping: preview.mapping,
+    delimiter: preview.delimiter,
+    hadBom: preview.hadBom,
+    fileHash: preview.fileHash,
+    template: preview.template,
+    autoMap: preview.autoMap,
     rows,
-    summary: { ...prepared.summary, duplicates },
+    summary: preview.summary,
   };
+}
+
+/**
+ * Re-validate a small set of rows after inline correction, without re-parsing
+ * the whole file. Re-checks catalogue duplicates for the edited item codes.
+ */
+export async function revalidateRowsAction(input: {
+  rows: Array<{ rowNumber: number; raw: Record<string, string> }>;
+}): Promise<
+  { ok: true; rows: RowValidationResult[] } | { ok: false; error: string }
+> {
+  await assertAdmin({ permission: "managePricing" });
+  const supabase = await createClient();
+
+  const seen = new Set<string>();
+  const validated = input.rows.map(({ rowNumber, raw }) =>
+    validateMappedRow(raw, rowNumber, seen),
+  );
+
+  const codes = validated
+    .map((r) => r.data?.item_code)
+    .filter((c): c is string => Boolean(c));
+  const existingIds = new Map<string, string>();
+  if (codes.length) {
+    const { data } = await supabase
+      .from("pricing_items")
+      .select("id, item_code")
+      .in("item_code", codes);
+    for (const row of data ?? []) existingIds.set(String(row.item_code), String(row.id));
+  }
+
+  const rows = validated.map((row) => {
+    if (row.data && existingIds.has(row.data.item_code)) {
+      return {
+        ...row,
+        status: "duplicate" as const,
+        existingPricingItemId: existingIds.get(row.data.item_code) ?? null,
+        warnings: [
+          ...row.warnings,
+          `item_code ${row.data.item_code} already exists; default action is Skip`,
+        ],
+      };
+    }
+    return row;
+  });
+
+  return { ok: true, rows };
 }
 
 export async function commitInventoryImportAction(input: {
@@ -109,11 +150,16 @@ export async function commitInventoryImportAction(input: {
   duplicateMode: DuplicateMode;
   importMode: ImportMode;
   makePreferred?: boolean;
+  templateType?: string | null;
+  mappingSnapshot?: Record<string, string | null> | null;
+  validationSummary?: Record<string, unknown> | null;
 }): Promise<
   | {
       ok: true;
       batchId: string;
       successCount: number;
+      createdCount: number;
+      updatedCount: number;
       skippedCount: number;
       failureCount: number;
       warningCount: number;
@@ -136,6 +182,9 @@ export async function commitInventoryImportAction(input: {
     importMode: input.importMode,
     actorUserId: admin.user.id,
     makePreferred: input.makePreferred ?? true,
+    templateType: input.templateType ?? null,
+    mappingSnapshot: input.mappingSnapshot ?? null,
+    validationSummary: input.validationSummary ?? null,
   });
 
   if (!result.batchId && result.errors.length) {
