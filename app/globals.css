@@ -7876,6 +7876,18 @@ a.admin-metric-compact:focus-visible {
 .imp-mobile-only { display: none; }
 .imp-preview-cards { display: grid; gap: var(--admin-space-2); }
 
+/* Tank import expanded row detail */
+.imp-detail-row > td { background: var(--admin-surface-muted, #f8fafc); }
+.tank-detail-grid {
+  display: grid;
+  gap: var(--admin-space-1);
+  padding: var(--admin-space-2) var(--admin-space-1);
+  font-size: 0.85rem;
+  color: var(--admin-text-muted, #475569);
+}
+.tank-detail-grid__error { color: var(--admin-danger, #b91c1c); }
+.tank-detail-grid__warning { color: var(--admin-warning, #b45309); }
+
 @media (max-width: 1099px) {
   .imp-sticky-bar { left: 0; }
 }

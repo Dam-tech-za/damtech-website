@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "eslint",
     "typecheck": "tsc --noEmit",
-    "test": "node --experimental-strip-types --test lib/auth/permissions.test.ts lib/auth/auth-guards.test.ts lib/estimating/estimating.test.ts lib/rfq/rfq.test.ts lib/rfq/calculations/calculations.test.ts lib/rfq/phase2.test.ts lib/rfq/list.test.ts lib/rfq/simple-quote.test.ts lib/rfq/submission-repair.test.ts lib/admin/phase4.test.ts lib/admin/dashboard/dashboard.test.ts lib/admin/rfqs/rfq-inbox.test.ts lib/admin/rfqs/delete-rfq.test.ts lib/admin/admin-design-system.test.ts lib/quotes/quotes.test.ts lib/quotes/quote-builder.test.ts lib/quotes/project-autofill.test.ts lib/quotes/content-sections.test.ts lib/pricing/pricing.test.ts lib/pricing/pricing-phase2.test.ts lib/pricing/csv/csv-import.test.ts lib/pricing/import/import-pipeline.test.ts",
+    "test": "node --experimental-strip-types --test lib/auth/permissions.test.ts lib/auth/auth-guards.test.ts lib/estimating/estimating.test.ts lib/rfq/rfq.test.ts lib/rfq/calculations/calculations.test.ts lib/rfq/phase2.test.ts lib/rfq/list.test.ts lib/rfq/simple-quote.test.ts lib/rfq/submission-repair.test.ts lib/admin/phase4.test.ts lib/admin/dashboard/dashboard.test.ts lib/admin/rfqs/rfq-inbox.test.ts lib/admin/rfqs/delete-rfq.test.ts lib/admin/admin-design-system.test.ts lib/quotes/quotes.test.ts lib/quotes/quote-builder.test.ts lib/quotes/project-autofill.test.ts lib/quotes/content-sections.test.ts lib/pricing/pricing.test.ts lib/pricing/pricing-phase2.test.ts lib/pricing/csv/csv-import.test.ts lib/pricing/import/import-pipeline.test.ts lib/pricing/tank-import/tank-import.test.ts",
     "test:visual": "playwright test tests/visual/admin-visual.spec.ts",
     "optimize-images": "node scripts/optimize-images.mjs"
   },

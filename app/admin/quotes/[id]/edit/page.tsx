@@ -69,33 +69,51 @@ export default async function AdminQuoteEditPage({ params }: PageProps) {
   const { data: tankRows } = await supabase
     .from("tank_models")
     .select(
-      "id, model_code, model_name, nominal_capacity_kl, usable_capacity_kl, internal_diameter_m, shell_height_m, base_price, installation_price, valid_to, is_active, supplier_id, suppliers(name)",
+      "id, model_code, model_name, ring_count, nominal_capacity_kl, usable_capacity_kl, internal_diameter_m, shell_height_m, base_price, installation_price, requires_manual_confirmation, valid_to, is_active, supplier_id, supplier_model_code, suppliers(name), tank_model_prices(id, steel_tank_cost_ex_vat_zar, steel_tank_sell_ex_vat_zar, pvc_liner_cost_ex_vat_zar, pvc_liner_sell_ex_vat_zar, roof_included, roof_sell_ex_vat_zar, foundation_included, foundation_sell_ex_vat_zar, installation_included, installation_sell_ex_vat_zar, total_sell_ex_vat_zar, is_current)",
     )
     .eq("is_active", true)
     .order("nominal_capacity_kl")
     .limit(100);
 
-  const tankModels = (tankRows ?? []).map((row) => ({
-    id: row.id,
-    modelCode: row.model_code,
-    modelName: row.model_name,
-    supplierName:
-      typeof row.suppliers === "object" && row.suppliers && "name" in row.suppliers
-        ? ((row.suppliers as { name?: string | null }).name ?? null)
-        : null,
-    nominalCapacityKl:
-      row.nominal_capacity_kl != null ? Number(row.nominal_capacity_kl) : null,
-    usableCapacityKl:
-      row.usable_capacity_kl != null ? Number(row.usable_capacity_kl) : null,
-    diameterM:
-      row.internal_diameter_m != null ? Number(row.internal_diameter_m) : null,
-    heightM: row.shell_height_m != null ? Number(row.shell_height_m) : null,
-    basePrice: row.base_price != null ? Number(row.base_price) : null,
-    installationPrice:
-      row.installation_price != null ? Number(row.installation_price) : null,
-    validTo: row.valid_to,
-    isActive: Boolean(row.is_active),
-  }));
+  const num = (v: unknown) => (v != null ? Number(v) : null);
+  const tankModels = (tankRows ?? []).map((row) => {
+    const prices = (row.tank_model_prices ?? []) as Array<Record<string, unknown>>;
+    const price = prices.find((p) => p.is_current) ?? prices[0] ?? null;
+    const steelSell = price ? num(price.steel_tank_sell_ex_vat_zar) : num(row.base_price);
+    return {
+      id: row.id,
+      modelCode: row.model_code,
+      modelName: row.model_name,
+      supplierName:
+        typeof row.suppliers === "object" && row.suppliers && "name" in row.suppliers
+          ? ((row.suppliers as { name?: string | null }).name ?? null)
+          : null,
+      supplierModelCode: row.supplier_model_code ?? null,
+      ringCount: num(row.ring_count),
+      nominalCapacityKl: num(row.nominal_capacity_kl),
+      usableCapacityKl: num(row.usable_capacity_kl),
+      diameterM: num(row.internal_diameter_m),
+      heightM: num(row.shell_height_m),
+      basePrice: steelSell,
+      installationPrice: price
+        ? num(price.installation_sell_ex_vat_zar)
+        : num(row.installation_price),
+      priceVersionId: price ? (price.id as string) : null,
+      steelCost: price ? num(price.steel_tank_cost_ex_vat_zar) : null,
+      steelSell,
+      linerCost: price ? num(price.pvc_liner_cost_ex_vat_zar) : null,
+      linerSell: price ? num(price.pvc_liner_sell_ex_vat_zar) : null,
+      roofIncluded: price ? Boolean(price.roof_included) : false,
+      roofSell: price ? num(price.roof_sell_ex_vat_zar) : null,
+      foundationIncluded: price ? Boolean(price.foundation_included) : false,
+      foundationSell: price ? num(price.foundation_sell_ex_vat_zar) : null,
+      installationIncluded: price ? Boolean(price.installation_included) : false,
+      totalSell: price ? num(price.total_sell_ex_vat_zar) : null,
+      requiresManualConfirmation: Boolean(row.requires_manual_confirmation),
+      validTo: row.valid_to,
+      isActive: Boolean(row.is_active),
+    };
+  });
 
   const mappedLines = (lines ?? []).map((line) => ({
     id: line.id,
