@@ -26,6 +26,7 @@ export type AdminNavItemId =
   | "quotes"
   | "customers"
   | "pricing"
+  | "project-templates"
   | "suppliers"
   | "settings"
   | "audit";

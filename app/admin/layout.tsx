@@ -41,6 +41,7 @@ function breadcrumbsFromPath(pathname: string): { label: string; href?: string }
     services: "Services & Installation",
     equipment: "Equipment & Site Costs",
     "tank-models": "Tank Models",
+    "project-templates": "Project Templates",
     review: "Price Review",
     new: "New Quote",
     edit: "Edit Quote",

@@ -53,6 +53,9 @@ export const quoteSaveSchema = z.object({
   province: z.string().max(80).nullable().optional(),
   lines: z.array(quoteLineSchema).max(500),
   estimatorConfirmedSuggestions: z.boolean().optional(),
+  projectTemplateId: z.string().uuid().nullable().optional(),
+  projectTemplateVersionId: z.string().uuid().nullable().optional(),
+  projectTemplateSnapshot: z.record(z.string(), z.unknown()).nullable().optional(),
 });
 
 export const acceptQuoteSchema = z.object({

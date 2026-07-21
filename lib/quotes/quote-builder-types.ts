@@ -62,6 +62,9 @@ export type QuoteBuilderDefaults = {
   lines: EditableLine[];
   estimatorConfirmedSuggestions: boolean;
   hasCalculatorSuggestions: boolean;
+  projectTemplateId?: string;
+  projectTemplateVersionId?: string;
+  projectTemplateName?: string;
 };
 
 export type SaveStatus =

@@ -1,7 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { AdminPanel, AdminTextarea } from "@/components/admin/ui";
+import { ClauseEditor } from "@/components/admin/project-templates/ClauseEditor";
+import {
+  clausesToText,
+  parseClauses,
+  type Clause,
+} from "@/lib/project-templates/clauses";
 
 type QuoteScopePanelProps = {
   scopeSummary: string;
@@ -9,6 +15,7 @@ type QuoteScopePanelProps = {
   exclusions: string;
   customerMessage: string;
   internalNotes: string;
+  templateName?: string | null;
   onChange: (field: string, value: string) => void;
 };
 
@@ -22,34 +29,80 @@ const TABS = [
 
 type TabId = (typeof TABS)[number]["id"];
 
+const CLAUSE_FIELD: Record<string, string> = {
+  scope: "scopeSummary",
+  assumptions: "assumptions",
+  exclusions: "exclusions",
+};
+
 export function QuoteScopePanel({
   scopeSummary,
   assumptions,
   exclusions,
   customerMessage,
   internalNotes,
+  templateName,
   onChange,
 }: QuoteScopePanelProps) {
   const [activeTab, setActiveTab] = useState<TabId>("scope");
 
-  const fieldValues: Record<TabId, string> = {
+  const [scopeClauses, setScopeClauses] = useState<Clause[]>(() =>
+    parseClauses(scopeSummary),
+  );
+  const [assumptionClauses, setAssumptionClauses] = useState<Clause[]>(() =>
+    parseClauses(assumptions),
+  );
+  const [exclusionClauses, setExclusionClauses] = useState<Clause[]>(() =>
+    parseClauses(exclusions),
+  );
+
+  // Track the text we last emitted upward so external changes (e.g. applying a
+  // template) re-seed the clause lists, but our own edits don't loop.
+  const emitted = useRef({
     scope: scopeSummary,
     assumptions,
     exclusions,
-    customerMessage,
-    internalNotes,
-  };
+  });
 
-  const fieldNames: Record<TabId, string> = {
-    scope: "scopeSummary",
-    assumptions: "assumptions",
-    exclusions: "exclusions",
-    customerMessage: "customerMessage",
-    internalNotes: "internalNotes",
-  };
+  useEffect(() => {
+    if (scopeSummary !== emitted.current.scope) {
+      setScopeClauses(parseClauses(scopeSummary));
+      emitted.current.scope = scopeSummary;
+    }
+  }, [scopeSummary]);
+  useEffect(() => {
+    if (assumptions !== emitted.current.assumptions) {
+      setAssumptionClauses(parseClauses(assumptions));
+      emitted.current.assumptions = assumptions;
+    }
+  }, [assumptions]);
+  useEffect(() => {
+    if (exclusions !== emitted.current.exclusions) {
+      setExclusionClauses(parseClauses(exclusions));
+      emitted.current.exclusions = exclusions;
+    }
+  }, [exclusions]);
+
+  function commitClauses(
+    tab: "scope" | "assumptions" | "exclusions",
+    clauses: Clause[],
+  ) {
+    if (tab === "scope") setScopeClauses(clauses);
+    if (tab === "assumptions") setAssumptionClauses(clauses);
+    if (tab === "exclusions") setExclusionClauses(clauses);
+    const text = clausesToText(clauses.filter((c) => c.included));
+    emitted.current[tab] = text;
+    onChange(CLAUSE_FIELD[tab], text);
+  }
 
   return (
     <AdminPanel id="quote-section-scope" title="Scope & Notes">
+      {templateName ? (
+        <p className="quote-template-applied">
+          Content populated from: <strong>{templateName}</strong>
+        </p>
+      ) : null}
+
       <nav className="admin-tabs__nav" aria-label="Scope tabs">
         <ul>
           {TABS.map((tab) => (
@@ -58,6 +111,7 @@ export function QuoteScopePanel({
                 type="button"
                 className={`admin-tabs__link${tab.id === activeTab ? " is-active" : ""}${tab.id === "internalNotes" ? " admin-tabs__link--warning" : ""}`}
                 onClick={() => setActiveTab(tab.id)}
+                aria-current={tab.id === activeTab ? "true" : undefined}
               >
                 {tab.label}
               </button>
@@ -67,18 +121,51 @@ export function QuoteScopePanel({
       </nav>
 
       <div className="admin-tabs__panel">
-        {activeTab === "internalNotes" ? (
-          <p className="admin-info-banner admin-info-banner--warning" role="note">
-            <span className="admin-info-banner__icon" aria-hidden>!</span>
-            <span>Internal — not visible to customer</span>
-          </p>
+        {activeTab === "scope" ? (
+          <ClauseEditor
+            label="Scope"
+            clauses={scopeClauses}
+            onChange={(c) => commitClauses("scope", c)}
+          />
         ) : null}
-        <AdminTextarea
-          name={fieldNames[activeTab]}
-          rows={5}
-          value={fieldValues[activeTab]}
-          onChange={(e) => onChange(fieldNames[activeTab], e.target.value)}
-        />
+        {activeTab === "assumptions" ? (
+          <ClauseEditor
+            label="Assumptions"
+            clauses={assumptionClauses}
+            onChange={(c) => commitClauses("assumptions", c)}
+          />
+        ) : null}
+        {activeTab === "exclusions" ? (
+          <ClauseEditor
+            label="Exclusions"
+            clauses={exclusionClauses}
+            onChange={(c) => commitClauses("exclusions", c)}
+          />
+        ) : null}
+        {activeTab === "customerMessage" ? (
+          <AdminTextarea
+            name="customerMessage"
+            rows={5}
+            value={customerMessage}
+            onChange={(e) => onChange("customerMessage", e.target.value)}
+          />
+        ) : null}
+        {activeTab === "internalNotes" ? (
+          <>
+            <p className="admin-info-banner admin-info-banner--warning" role="note">
+              <span className="admin-info-banner__icon" aria-hidden>
+                !
+              </span>
+              <span>Internal — not visible to customer</span>
+            </p>
+            <AdminTextarea
+              name="internalNotes"
+              rows={5}
+              value={internalNotes}
+              onChange={(e) => onChange("internalNotes", e.target.value)}
+            />
+          </>
+        ) : null}
       </div>
     </AdminPanel>
   );

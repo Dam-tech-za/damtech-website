@@ -138,6 +138,9 @@ export async function createDraftQuote(
         gross_margin_percent: totals.grossMarginPercent,
         deposit_percent:
           parsed.data.depositPercent ?? settings?.default_deposit_percent ?? 0,
+        project_template_id: parsed.data.projectTemplateId ?? null,
+        project_template_version_id: parsed.data.projectTemplateVersionId ?? null,
+        project_template_snapshot: parsed.data.projectTemplateSnapshot ?? null,
         line_items: [],
         created_by: admin.user.id,
         assigned_to: admin.user.id,
@@ -272,6 +275,16 @@ export async function updateDraftQuote(
         gross_profit: totals.grossProfit,
         gross_margin_percent: totals.grossMarginPercent,
         deposit_percent: parsed.data.depositPercent ?? existing.deposit_percent,
+        project_template_id:
+          parsed.data.projectTemplateId ?? existing.project_template_id ?? null,
+        project_template_version_id:
+          parsed.data.projectTemplateVersionId ??
+          existing.project_template_version_id ??
+          null,
+        project_template_snapshot:
+          parsed.data.projectTemplateSnapshot ??
+          existing.project_template_snapshot ??
+          null,
         calculation_snapshot: {
           serverRecalculated: true,
           at: new Date().toISOString(),

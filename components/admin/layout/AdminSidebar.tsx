@@ -24,7 +24,7 @@ const NAV_GROUPS: NavGroup[] = [
   {
     id: "estimating",
     label: "Estimating",
-    itemIds: ["pricing", "suppliers"],
+    itemIds: ["pricing", "project-templates", "suppliers"],
   },
   {
     id: "administration",
@@ -74,6 +74,13 @@ function NavIcon({ id }: { id: AdminNavItemId }) {
       return (
         <svg {...common}>
           <path d="M12 3v18M16.5 7.5c0-1.7-2-3-4.5-3s-4.5 1.3-4.5 3 2 3 4.5 3 4.5 1.3 4.5 3-2 3-4.5 3-4.5-1.3-4.5-3" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
+        </svg>
+      );
+    case "project-templates":
+      return (
+        <svg {...common}>
+          <path d="M5 4h9l5 5v11H5V4Z" stroke="currentColor" strokeWidth="1.7" strokeLinejoin="round" />
+          <path d="M14 4v5h5M8 13h8M8 16h5" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
         </svg>
       );
     case "suppliers":

@@ -15,6 +15,7 @@ import { quoteDefaultsFromMetadata } from "@/lib/quotes/quote-validation";
 import type { SendQuotePayload } from "@/components/admin/quotes/SendQuoteDialog";
 import { assessQuoteLinePriceFreshness } from "@/lib/pricing/stale-prices";
 import { getPricingItemById } from "@/lib/pricing/get-pricing-items";
+import { listActiveTemplatesForSelector } from "@/lib/project-templates/queries";
 
 type PageProps = { params: Promise<{ id: string }> };
 
@@ -47,6 +48,11 @@ export default async function AdminQuoteEditPage({ params }: PageProps) {
     )
     .order("company_name")
     .limit(500);
+
+  const templates = await listActiveTemplatesForSelector();
+  const templateSnapshot = quote.project_template_snapshot as
+    | { templateName?: string }
+    | null;
 
   const metaDefaults = quoteDefaultsFromMetadata(quote as Record<string, unknown>);
   const calcSnapshot = quote.calculation_snapshot as {
@@ -168,7 +174,11 @@ export default async function AdminQuoteEditPage({ params }: PageProps) {
       cancelHref={`/admin/quotes/${id}/`}
       tankModels={tankModels}
       staleAssessments={staleAssessments}
+      templates={templates}
       defaults={{
+        projectTemplateId: quote.project_template_id ?? undefined,
+        projectTemplateVersionId: quote.project_template_version_id ?? undefined,
+        projectTemplateName: templateSnapshot?.templateName ?? undefined,
         quoteId: quote.id,
         quoteNumber: quote.quote_number,
         revisionNumber: quote.revision_number ?? 0,

@@ -86,8 +86,22 @@ function quotePayloadFromForm(formData: FormData) {
     estimatorConfirmedSuggestions:
       formData.get("estimatorConfirmedSuggestions") === "on" ||
       formData.get("estimatorConfirmedSuggestions") === "true",
+    projectTemplateId: String(formData.get("projectTemplateId") || "") || null,
+    projectTemplateVersionId:
+      String(formData.get("projectTemplateVersionId") || "") || null,
+    projectTemplateSnapshot: parseJsonRecord(formData.get("projectTemplateSnapshot")),
     lines: formLines(formData),
   };
+}
+
+function parseJsonRecord(raw: FormDataEntryValue | null): Record<string, unknown> | null {
+  if (typeof raw !== "string" || !raw.trim()) return null;
+  try {
+    const parsed = JSON.parse(raw);
+    return parsed && typeof parsed === "object" ? (parsed as Record<string, unknown>) : null;
+  } catch {
+    return null;
+  }
 }
 
 export async function createQuoteAction(formData: FormData) {

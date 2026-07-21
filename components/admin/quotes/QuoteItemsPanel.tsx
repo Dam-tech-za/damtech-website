@@ -5,10 +5,17 @@ import {
   AdminButton,
   AdminCheckbox,
   AdminInfoBanner,
+  AdminInput,
   AdminPanel,
+  AdminSelect,
 } from "@/components/admin/ui";
+import { PricingItemCombobox } from "@/components/admin/pricing/PricingItemCombobox";
 import type { EditableLine } from "@/lib/quotes/quote-builder-types";
+import { QUOTE_UNIT_OPTIONS } from "@/lib/quotes/quote-builder-types";
 import type { QuoteLineType } from "@/lib/quotes/types";
+import type { PricingItemRecord } from "@/lib/pricing/types";
+import { lineTotalExVat } from "@/lib/quotes/totals";
+import { formatZar } from "@/lib/estimating/money";
 import { QuoteItemRow } from "./QuoteItemRow";
 import { InventoryPickerDialog } from "./InventoryPickerDialog";
 import {
@@ -44,6 +51,28 @@ function emptyLine(sortOrder: number, lineType: QuoteLineType = "custom"): Edita
     sourceSupplierPriceId: null,
     metadata: null,
   };
+}
+
+function lineTypeForItemType(itemType: string): QuoteLineType {
+  switch (itemType) {
+    case "material":
+      return "material";
+    case "installation_service":
+    case "labour":
+      return "labour";
+    case "travel":
+      return "travel";
+    case "delivery":
+      return "delivery";
+    default:
+      return "item";
+  }
+}
+
+function taxCategoryFor(value: string): EditableLine["taxCategory"] {
+  if (value === "zero_rated" || value === "zero") return "zero";
+  if (value === "exempt" || value === "no_vat") return "exempt";
+  return "standard";
 }
 
 export function QuoteItemsPanel({
@@ -94,28 +123,43 @@ export function QuoteItemsPanel({
     onLinesChange([...lines, { ...line, sortOrder: lines.length }]);
   }
 
+  function applyPickedItemToMobile(index: number, item: PricingItemRecord) {
+    updateLine(index, {
+      lineType: lineTypeForItemType(item.itemType),
+      itemCode: item.itemCode,
+      category: item.category,
+      description: item.quoteDescription || item.name,
+      unit: item.quoteUnit,
+      sellUnitPrice: item.defaultSellPrice ?? 0,
+      costUnitPrice: showCost ? item.defaultCost ?? null : lines[index].costUnitPrice,
+      taxCategory: taxCategoryFor(item.taxCategory),
+      sourcePricingItemId: item.id,
+      metadata: { ...(lines[index].metadata ?? {}), pricingItemId: item.id },
+    });
+  }
+
   return (
     <AdminPanel
       id="quote-section-items"
       title="Quote Items"
       actions={
         <>
+          <AdminButton size="sm" variant="primary" onClick={() => appendLine("custom")}>
+            + Add line
+          </AdminButton>
           <AdminButton size="sm" variant="secondary" onClick={() => setInventoryOpen(true)}>
-            Add from Inventory
+            Browse inventory
           </AdminButton>
           {tankModels.length > 0 ? (
             <AdminButton size="sm" variant="secondary" onClick={() => setTankOpen(true)}>
               Add Tank Model
             </AdminButton>
           ) : null}
-          <AdminButton size="sm" variant="secondary" onClick={() => appendLine("custom")}>
-            Add Custom Item
+          <AdminButton size="sm" variant="ghost" onClick={() => appendLine("heading")}>
+            Add heading
           </AdminButton>
-          <AdminButton size="sm" variant="secondary" onClick={() => appendLine("heading")}>
-            Add Section Heading
-          </AdminButton>
-          <AdminButton size="sm" variant="secondary" onClick={() => appendLine("note")}>
-            Add Note
+          <AdminButton size="sm" variant="ghost" onClick={() => appendLine("note")}>
+            Add note
           </AdminButton>
         </>
       }
@@ -123,8 +167,8 @@ export function QuoteItemsPanel({
       {hasCalculatorSuggestions && !estimatorConfirmedSuggestions ? (
         <AdminInfoBanner tone="warning">
           <p>
-            Suggested quantities originate from customer or calculator information and require
-            estimator confirmation.
+            Suggested quantities originate from customer, project or calculator
+            information and require estimator confirmation.
           </p>
           <AdminCheckbox
             label="Estimator confirms quote quantities"
@@ -137,16 +181,20 @@ export function QuoteItemsPanel({
 
       {/* Desktop table */}
       <div className="admin-table-wrap quote-items-desktop">
-        <table className="admin-table">
+        <table className="admin-table quote-items-table">
           <thead>
             <tr>
-              <th style={{ width: "36%" }}>Description</th>
-              <th style={{ width: "10%" }}>Qty</th>
-              <th style={{ width: "10%" }}>Unit</th>
-              <th style={{ width: "14%" }}>Unit price</th>
-              <th style={{ width: "10%" }}>VAT</th>
-              <th style={{ width: "14%" }}>Total</th>
-              <th style={{ width: "6%" }} />
+              <th style={{ width: "16%" }}>Item</th>
+              <th style={{ width: "26%" }}>Description</th>
+              <th style={{ width: "9%" }}>Qty</th>
+              <th style={{ width: "9%" }}>Unit</th>
+              <th style={{ width: "11%" }}>Unit price</th>
+              <th style={{ width: "8%" }}>Disc %</th>
+              <th style={{ width: "8%" }}>VAT</th>
+              <th style={{ width: "9%" }}>Amount</th>
+              <th style={{ width: "4%" }}>
+                <span className="sr-only">Actions</span>
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -169,21 +217,109 @@ export function QuoteItemsPanel({
         </table>
       </div>
 
-      {/* Mobile cards */}
+      {/* Mobile editable cards */}
       <div className="quote-items-mobile">
-        {lines.map((line, index) => (
-          <div key={`${line.id ?? "new"}-${index}`} className="quote-item-card">
-            <p className="quote-item-card__description">
-              {line.description || <em>No description</em>}
-            </p>
-            <p className="quote-item-card__meta">
-              {line.quantity} × {line.unit} @ {line.sellUnitPrice}
-            </p>
-            <p className="quote-item-card__meta">
-              VAT: {line.taxCategory}
-            </p>
-          </div>
-        ))}
+        {lines.map((line, index) => {
+          if (line.lineType === "heading") {
+            return (
+              <div key={`${line.id ?? "new"}-${index}`} className="quote-item-card quote-item-card--heading">
+                <AdminInput
+                  value={line.description}
+                  onChange={(e) => updateLine(index, { description: e.target.value })}
+                  placeholder="Section heading"
+                  aria-label="Section heading"
+                />
+                <AdminButton size="sm" variant="ghost" onClick={() => deleteLine(index)}>
+                  Remove
+                </AdminButton>
+              </div>
+            );
+          }
+          if (line.lineType === "note") {
+            return (
+              <div key={`${line.id ?? "new"}-${index}`} className="quote-item-card">
+                <AdminInput
+                  value={line.description}
+                  onChange={(e) => updateLine(index, { description: e.target.value })}
+                  placeholder="Note"
+                  aria-label="Note"
+                />
+                <AdminButton size="sm" variant="ghost" onClick={() => deleteLine(index)}>
+                  Remove
+                </AdminButton>
+              </div>
+            );
+          }
+          return (
+            <div key={`${line.id ?? "new"}-${index}`} className="quote-item-card">
+              {line.itemCode ? (
+                <div className="quote-item-card__chip">
+                  <span>{line.itemCode}</span>
+                  <button
+                    type="button"
+                    aria-label="Clear item"
+                    onClick={() =>
+                      updateLine(index, { itemCode: "", sourcePricingItemId: null })
+                    }
+                  >
+                    ×
+                  </button>
+                </div>
+              ) : (
+                <PricingItemCombobox
+                  showCost={showCost}
+                  ariaLabel={`Search item for line ${index + 1}`}
+                  onSelect={(item) => applyPickedItemToMobile(index, item)}
+                  onCustomText={(text) => updateLine(index, { description: text })}
+                />
+              )}
+              <AdminInput
+                value={line.description}
+                onChange={(e) => updateLine(index, { description: e.target.value })}
+                placeholder="Description"
+                aria-label="Description"
+              />
+              <div className="quote-item-card__row">
+                <AdminInput
+                  type="number"
+                  step="0.0001"
+                  value={line.quantity}
+                  onChange={(e) => updateLine(index, { quantity: Number(e.target.value) })}
+                  aria-label="Quantity"
+                />
+                <AdminSelect
+                  value={line.unit}
+                  onChange={(e) => updateLine(index, { unit: e.target.value })}
+                  aria-label="Unit"
+                >
+                  {QUOTE_UNIT_OPTIONS.map((u) => (
+                    <option key={u} value={u}>
+                      {u}
+                    </option>
+                  ))}
+                </AdminSelect>
+                <AdminInput
+                  type="number"
+                  step="0.01"
+                  value={line.sellUnitPrice}
+                  onChange={(e) =>
+                    updateLine(index, { sellUnitPrice: Number(e.target.value) })
+                  }
+                  aria-label="Unit price"
+                />
+              </div>
+              <div className="quote-item-card__foot">
+                <span>{formatZar(lineTotalExVat(line))}</span>
+                <AdminButton size="sm" variant="ghost" onClick={() => deleteLine(index)}>
+                  Remove
+                </AdminButton>
+              </div>
+            </div>
+          );
+        })}
+        <AdminButton size="sm" variant="secondary" onClick={() => appendLine("custom")}>
+          + Add line
+        </AdminButton>
       </div>
 
       <InventoryPickerDialog

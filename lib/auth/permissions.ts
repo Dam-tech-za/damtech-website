@@ -27,6 +27,7 @@ const NAV_ACCESS: Record<AdminNavItemId, readonly AdminRole[]> = {
   quotes: ["owner", "admin", "sales", "estimator", "viewer"],
   customers: ["owner", "admin", "sales", "viewer"],
   pricing: ["owner", "admin", "estimator", "viewer"],
+  "project-templates": ["owner", "admin", "estimator", "viewer"],
   suppliers: ["owner", "admin", "viewer"],
   settings: ["owner", "admin"],
   audit: ["owner", "admin"],
@@ -62,6 +63,12 @@ export const ADMIN_NAV_ITEMS: AdminNavItem[] = [
     label: "Pricing",
     href: "/admin/pricing/",
     description: "Materials and labour",
+  },
+  {
+    id: "project-templates",
+    label: "Project Templates",
+    href: "/admin/pricing/project-templates/",
+    description: "Reusable estimating content",
   },
   {
     id: "suppliers",

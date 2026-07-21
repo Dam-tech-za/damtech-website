@@ -24,6 +24,13 @@ import {
   StalePriceWarning,
   type SendQuotePayload,
 } from "@/components/admin/quotes";
+import {
+  QuoteTemplatePanel,
+  type QuoteTemplateOption,
+} from "./QuoteTemplatePanel";
+import { ApplyTemplateDialog } from "./ApplyTemplateDialog";
+import { getTemplateApplyContentAction } from "@/app/admin/pricing/project-templates/actions";
+import type { TemplateApplyContent } from "@/lib/project-templates/apply";
 import { calculateQuote, convertLinesForVatModeChange } from "@/lib/quotes/calculate-quote";
 import type { RfqImportPreview } from "@/lib/quotes/import-rfq";
 import type {
@@ -71,6 +78,7 @@ export type QuoteBuilderProps = {
   duplicateHref?: string;
   tankModels?: import("./TankModelPickerDialog").TankModelRecord[];
   staleAssessments?: import("@/lib/pricing/stale-prices").StaleLineAssessment[];
+  templates?: QuoteTemplateOption[];
 };
 
 function emptyLine(sortOrder: number, lineType: QuoteLineType = "custom"): EditableLine {
@@ -108,6 +116,7 @@ export function QuoteBuilder({
   duplicateHref,
   tankModels = [],
   staleAssessments = [],
+  templates = [],
 }: QuoteBuilderProps) {
   const router = useRouter();
   const formRef = useRef<HTMLFormElement>(null);
@@ -171,11 +180,30 @@ export function QuoteBuilder({
     defaults.hasCalculatorSuggestions,
   );
 
+  const [projectTemplateId, setProjectTemplateId] = useState(
+    defaults.projectTemplateId ?? "",
+  );
+  const [projectTemplateVersionId, setProjectTemplateVersionId] = useState(
+    defaults.projectTemplateVersionId ?? "",
+  );
+  const [projectTemplateName, setProjectTemplateName] = useState(
+    defaults.projectTemplateName ?? "",
+  );
+  const [projectTemplateSnapshot, setProjectTemplateSnapshot] = useState<
+    Record<string, unknown> | null
+  >(null);
+  const [templatePending, startTemplateTransition] = useTransition();
+  const [applyContent, setApplyContent] = useState<TemplateApplyContent | null>(null);
+  const [applyDialogOpen, setApplyDialogOpen] = useState(false);
+  const [pendingTemplateName, setPendingTemplateName] = useState("");
+
   const dirtyRef = useRef(false);
   const savingRef = useRef(false);
+  const [dirtyTick, setDirtyTick] = useState(0);
   const markDirty = useCallback(() => {
     dirtyRef.current = true;
     setSaveStatus("unsaved");
+    setDirtyTick((n) => n + 1);
   }, []);
 
   useEffect(() => {
@@ -367,8 +395,106 @@ export function QuoteBuilder({
       "estimatorConfirmedSuggestions",
       estimatorConfirmed ? "true" : "false",
     );
+    if (projectTemplateId) formData.set("projectTemplateId", projectTemplateId);
+    if (projectTemplateVersionId)
+      formData.set("projectTemplateVersionId", projectTemplateVersionId);
+    if (projectTemplateSnapshot)
+      formData.set(
+        "projectTemplateSnapshot",
+        JSON.stringify(projectTemplateSnapshot),
+      );
     formData.set("linesJson", JSON.stringify(lines));
     return formData;
+  }
+
+  function requestApplyTemplate(templateId: string) {
+    const option = templates.find((t) => t.id === templateId);
+    setPendingTemplateName(option?.name ?? "template");
+    startTemplateTransition(async () => {
+      const result = await getTemplateApplyContentAction(templateId);
+      if (!result.ok) {
+        setError(result.error);
+        return;
+      }
+      setApplyContent(result.content);
+      setApplyDialogOpen(true);
+    });
+  }
+
+  function hasExistingQuoteContent(): boolean {
+    const hasLines = lines.some(
+      (line) =>
+        line.lineType !== "heading" &&
+        line.lineType !== "note" &&
+        (line.description.trim() || line.sellUnitPrice > 0),
+    );
+    return Boolean(
+      hasLines || scopeSummary.trim() || assumptions.trim() || exclusions.trim(),
+    );
+  }
+
+  function applyTemplateContent(strategy: "append" | "replace") {
+    const content = applyContent;
+    if (!content) return;
+    markDirty();
+
+    const joinText = (existing: string, incoming: string) => {
+      if (strategy === "replace") return incoming;
+      if (!existing.trim()) return incoming;
+      if (!incoming.trim()) return existing;
+      return `${existing.trim()}\n${incoming.trim()}`;
+    };
+
+    if (content.title && (strategy === "replace" || !title.trim())) {
+      setTitle(content.title);
+    }
+    if (content.projectDescription) {
+      setProjectDescription((prev) => joinText(prev, content.projectDescription));
+    }
+    if (content.serviceRequired && (strategy === "replace" || !serviceRequired)) {
+      setServiceRequired(content.serviceRequired);
+    }
+    setScopeSummary((prev) => joinText(prev, content.scope));
+    setAssumptions((prev) => joinText(prev, content.assumptions));
+    setExclusions((prev) => joinText(prev, content.exclusions));
+    setCustomerMessage((prev) => joinText(prev, content.customerMessage));
+    setInternalNotes((prev) => joinText(prev, content.internalNotes));
+    if (content.warrantyWording) {
+      setWarrantyWording((prev) => joinText(prev, content.warrantyWording));
+    }
+
+    if (content.lines.length) {
+      setLines((current) => {
+        const kept =
+          strategy === "replace"
+            ? []
+            : current.filter(
+                (line) =>
+                  line.description.trim() ||
+                  line.sellUnitPrice > 0 ||
+                  line.itemCode,
+              );
+        const merged = [...kept, ...content.lines];
+        return merged.map((line, index) => ({ ...line, sortOrder: index }));
+      });
+    }
+
+    const hasSuggested = content.lines.some(
+      (line) =>
+        line.metadata &&
+        (line.metadata as Record<string, unknown>).quantitySuggested === true,
+    );
+    if (hasSuggested) {
+      setHasCalculatorSuggestions(true);
+      setEstimatorConfirmed(false);
+    }
+
+    setProjectTemplateId(content.snapshot.templateId as string);
+    setProjectTemplateVersionId(content.versionId ?? "");
+    setProjectTemplateName(pendingTemplateName);
+    setProjectTemplateSnapshot(content.snapshot);
+    setApplyDialogOpen(false);
+    setApplyContent(null);
   }
 
   function applyRfqImport(preview: RfqImportPreview) {
@@ -458,6 +584,23 @@ export function QuoteBuilder({
       savingRef.current = false;
     }
   }
+
+  const persistDraftRef = useRef(persistDraft);
+  useEffect(() => {
+    persistDraftRef.current = persistDraft;
+  });
+
+  // Debounced draft autosave — only for already-saved quotes with a customer.
+  useEffect(() => {
+    if (dirtyTick === 0) return;
+    if (!quoteId || !customerId) return;
+    if (status !== "draft" && status !== "internal_review") return;
+    const timer = setTimeout(() => {
+      if (savingRef.current) return;
+      void persistDraftRef.current();
+    }, 2000);
+    return () => clearTimeout(timer);
+  }, [dirtyTick, quoteId, customerId, status]);
 
   function handleSaveDraft(closeAfter = false) {
     startTransition(async () => {
@@ -644,6 +787,14 @@ export function QuoteBuilder({
             onEditDetailsToggle={() => setEditDetailsOpen((prev) => !prev)}
           />
 
+          <QuoteTemplatePanel
+            templates={templates}
+            appliedTemplateId={projectTemplateId}
+            appliedTemplateName={projectTemplateName}
+            pending={templatePending}
+            onApply={requestApplyTemplate}
+          />
+
           <QuoteProjectPanel
             title={title}
             rfqReference={rfqReference}
@@ -681,6 +832,7 @@ export function QuoteBuilder({
             exclusions={exclusions}
             customerMessage={customerMessage}
             internalNotes={internalNotes}
+            templateName={projectTemplateName}
             onChange={handleFieldChange}
           />
 
@@ -778,6 +930,18 @@ export function QuoteBuilder({
           setPendingVatMode(null);
         }}
         onChoose={confirmVatModeChange}
+      />
+
+      <ApplyTemplateDialog
+        open={applyDialogOpen}
+        templateName={pendingTemplateName}
+        counts={applyContent?.counts ?? null}
+        hasExistingContent={hasExistingQuoteContent()}
+        onChoose={applyTemplateContent}
+        onClose={() => {
+          setApplyDialogOpen(false);
+          setApplyContent(null);
+        }}
       />
     </div>
   );

@@ -17,6 +17,7 @@ import {
 } from "../actions";
 import type { SendQuotePayload } from "@/components/admin/quotes/SendQuoteDialog";
 import type { QuoteBuilderDefaults } from "@/lib/quotes/quote-builder-types";
+import { listActiveTemplatesForSelector } from "@/lib/project-templates/queries";
 
 type PageProps = {
   searchParams: Promise<{ rfqId?: string; customerId?: string }>;
@@ -37,6 +38,8 @@ export default async function AdminNewQuotePage({ searchParams }: PageProps) {
     )
     .order("company_name")
     .limit(500);
+
+  const templates = await listActiveTemplatesForSelector();
 
   let rfqDefaults: Partial<QuoteBuilderDefaults> = {};
   if (params.rfqId) {
@@ -101,6 +104,7 @@ export default async function AdminNewQuotePage({ searchParams }: PageProps) {
         ownerOverrideUnapproved: admin.profile.role === "owner",
       })}
       customers={customers ?? []}
+      templates={templates}
       onSave={saveNewQuoteDraftAction}
       onSend={handleSend}
       onSearchRfqs={searchRfqsForImportAction}
