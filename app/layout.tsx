@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics, AnalyticsNoScript } from "@/components/Analytics";
 import { ConditionalSiteShell } from "@/components/ConditionalSiteShell";
 import { SEOJsonLd } from "@/components/SEOJsonLd";
@@ -38,6 +39,7 @@ export default function RootLayout({
         <SEOJsonLd data={globalSchemas} />
         <ConditionalSiteShell>{children}</ConditionalSiteShell>
         <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );
