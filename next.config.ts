@@ -6,18 +6,50 @@ const supabaseHost =
   process.env.SUPABASE_URL?.replace(/^https?:\/\//, "").split("/")[0] ||
   "*.supabase.co";
 
+// GTM can load; GA4/Meta still need their collect + pixel hosts allowlisted
+// or browsers silently drop hits (see Google Tag Platform CSP guide).
 const contentSecurityPolicy = [
   "default-src 'self'",
   "base-uri 'self'",
   "form-action 'self'",
   "frame-ancestors 'none'",
   "object-src 'none'",
-  `img-src 'self' data: blob: https://*.googleusercontent.com https://dam-tech.co.za https://www.dam-tech.co.za https://${supabaseHost}`,
-  `script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://connect.facebook.net`,
-  `style-src 'self' 'unsafe-inline'`,
-  `font-src 'self' data:`,
-  `connect-src 'self' https://${supabaseHost} wss://${supabaseHost} https://www.google-analytics.com https://www.googletagmanager.com https://www.facebook.com https://connect.facebook.net`,
-  `frame-src 'self' https://accounts.google.com https://${supabaseHost}`,
+  [
+    "img-src 'self' data: blob:",
+    "https://*.googleusercontent.com",
+    "https://*.google-analytics.com",
+    "https://www.googletagmanager.com",
+    "https://www.facebook.com",
+    "https://dam-tech.co.za",
+    "https://www.dam-tech.co.za",
+    `https://${supabaseHost}`,
+  ].join(" "),
+  [
+    "script-src 'self' 'unsafe-inline'",
+    "https://www.googletagmanager.com",
+    "https://*.googletagmanager.com",
+    "https://connect.facebook.net",
+  ].join(" "),
+  "style-src 'self' 'unsafe-inline'",
+  "font-src 'self' data:",
+  [
+    "connect-src 'self'",
+    `https://${supabaseHost}`,
+    `wss://${supabaseHost}`,
+    "https://*.google-analytics.com",
+    "https://*.analytics.google.com",
+    "https://www.googletagmanager.com",
+    "https://*.googletagmanager.com",
+    "https://www.facebook.com",
+    "https://connect.facebook.net",
+    "https://vitals.vercel-insights.com",
+  ].join(" "),
+  [
+    "frame-src 'self'",
+    "https://accounts.google.com",
+    "https://www.googletagmanager.com",
+    `https://${supabaseHost}`,
+  ].join(" "),
 ].join("; ");
 
 const nextConfig: NextConfig = {
