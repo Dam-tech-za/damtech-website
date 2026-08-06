@@ -238,6 +238,43 @@ export const redirects: Redirect[] = [
     destination: "/projects/north-west-game-lodge-hdpe-dam-lining/",
     permanent: true,
   },
+  // Prompt 11 Group A — leak-repair blog consolidation (deploy alone)
+  {
+    source: "/fix-leaks-in-your-farms-water-storage-system",
+    destination:
+      "/essential-farm-dam-leak-repair-techniques-to-safeguard-your-water-storage-in-south-africa/",
+    permanent: true,
+  },
+  {
+    source: "/fix-leaks-in-your-farms-water-storage-system/",
+    destination:
+      "/essential-farm-dam-leak-repair-techniques-to-safeguard-your-water-storage-in-south-africa/",
+    permanent: true,
+  },
+  {
+    source: "/prevent-leaks-in-your-water-storage-system",
+    destination:
+      "/essential-farm-dam-leak-repair-techniques-to-safeguard-your-water-storage-in-south-africa/",
+    permanent: true,
+  },
+  {
+    source: "/prevent-leaks-in-your-water-storage-system/",
+    destination:
+      "/essential-farm-dam-leak-repair-techniques-to-safeguard-your-water-storage-in-south-africa/",
+    permanent: true,
+  },
+  {
+    source: "/how-to-prevent-and-repair-leaks-in-your-farms-dam",
+    destination:
+      "/essential-farm-dam-leak-repair-techniques-to-safeguard-your-water-storage-in-south-africa/",
+    permanent: true,
+  },
+  {
+    source: "/how-to-prevent-and-repair-leaks-in-your-farms-dam/",
+    destination:
+      "/essential-farm-dam-leak-repair-techniques-to-safeguard-your-water-storage-in-south-africa/",
+    permanent: true,
+  },
 ];
 
 /**

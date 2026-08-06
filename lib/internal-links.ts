@@ -53,6 +53,18 @@ const LEGACY_PATH_REWRITES: Record<string, string> = {
   "/blog/": "/blog/",
   "/projects": "/projects/",
   "/projects/": "/projects/",
+  "/fix-leaks-in-your-farms-water-storage-system":
+    "/essential-farm-dam-leak-repair-techniques-to-safeguard-your-water-storage-in-south-africa/",
+  "/fix-leaks-in-your-farms-water-storage-system/":
+    "/essential-farm-dam-leak-repair-techniques-to-safeguard-your-water-storage-in-south-africa/",
+  "/prevent-leaks-in-your-water-storage-system":
+    "/essential-farm-dam-leak-repair-techniques-to-safeguard-your-water-storage-in-south-africa/",
+  "/prevent-leaks-in-your-water-storage-system/":
+    "/essential-farm-dam-leak-repair-techniques-to-safeguard-your-water-storage-in-south-africa/",
+  "/how-to-prevent-and-repair-leaks-in-your-farms-dam":
+    "/essential-farm-dam-leak-repair-techniques-to-safeguard-your-water-storage-in-south-africa/",
+  "/how-to-prevent-and-repair-leaks-in-your-farms-dam/":
+    "/essential-farm-dam-leak-repair-techniques-to-safeguard-your-water-storage-in-south-africa/",
 };
 
 const SERVICE_PAGES: readonly InternalServiceLink[] = [
