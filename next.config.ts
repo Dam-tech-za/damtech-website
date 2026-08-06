@@ -6,8 +6,8 @@ const supabaseHost =
   process.env.SUPABASE_URL?.replace(/^https?:\/\//, "").split("/")[0] ||
   "*.supabase.co";
 
-// GTM can load; GA4/Meta still need their collect + pixel hosts allowlisted
-// or browsers silently drop hits (see Google Tag Platform CSP guide).
+// Allow GTM → GA4 (G-F01WG96KRG) + Consent Mode / ads signals + Meta Pixel.
+// See https://developers.google.com/tag-platform/security/guides/csp
 const contentSecurityPolicy = [
   "default-src 'self'",
   "base-uri 'self'",
@@ -18,7 +18,12 @@ const contentSecurityPolicy = [
     "img-src 'self' data: blob:",
     "https://*.googleusercontent.com",
     "https://*.google-analytics.com",
+    "https://*.analytics.google.com",
     "https://www.googletagmanager.com",
+    "https://*.g.doubleclick.net",
+    "https://www.google.com",
+    "https://googleads.g.doubleclick.net",
+    "https://www.googleadservices.com",
     "https://www.facebook.com",
     "https://dam-tech.co.za",
     "https://www.dam-tech.co.za",
@@ -40,6 +45,13 @@ const contentSecurityPolicy = [
     "https://*.analytics.google.com",
     "https://www.googletagmanager.com",
     "https://*.googletagmanager.com",
+    "https://*.g.doubleclick.net",
+    "https://www.google.com",
+    "https://google.com",
+    "https://www.googleadservices.com",
+    "https://googleads.g.doubleclick.net",
+    "https://pagead2.googlesyndication.com",
+    "https://ade.googlesyndication.com",
     "https://www.facebook.com",
     "https://connect.facebook.net",
     "https://vitals.vercel-insights.com",
@@ -48,8 +60,10 @@ const contentSecurityPolicy = [
     "frame-src 'self'",
     "https://accounts.google.com",
     "https://www.googletagmanager.com",
+    "https://td.doubleclick.net",
     `https://${supabaseHost}`,
   ].join(" "),
+  "worker-src 'self' blob: https://www.googletagmanager.com",
 ].join("; ");
 
 const nextConfig: NextConfig = {
