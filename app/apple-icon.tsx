@@ -3,7 +3,10 @@ import { ImageResponse } from "next/og";
 export const size = { width: 180, height: 180 };
 export const contentType = "image/png";
 
-/** Apple touch icon — same mark as icon.svg, re-rendered as PNG (Apple doesn't accept SVG here). */
+/**
+ * Apple touch icon — navy background on purpose (iOS fills transparent icons black).
+ * Browser favicons use the transparent mark under public/icons/.
+ */
 export default function AppleIcon() {
   return new ImageResponse(
     (
