@@ -179,6 +179,9 @@ export async function submitPublicRfqAction(
   const adminPayload = {
     rfqNumber: created.rfqNumber,
     customerName: data.name,
+    customerEmail: data.email,
+    customerPhone: data.phone,
+    customerCompany: data.company,
     services: data.servicesRequested,
     location,
     assetCount: data.assets.length,

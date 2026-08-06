@@ -1,6 +1,8 @@
 # Damtech Admin — authentication setup
 
-This guide walks through creating a Supabase project and enabling Google OAuth for `/admin`.
+This guide walks through creating a Supabase project and enabling Google OAuth **and** email/password sign-in for `/admin`.
+
+Auth uses **Supabase Auth** (not Auth.js / NextAuth). Both providers share the same `admin_email_allowlist` gate.
 
 ## 1. Create a Supabase project
 
@@ -66,7 +68,19 @@ https://PROJECT_REF.supabase.co/auth/v1/callback
 3. Paste Client ID + Client Secret.
 4. Save.
 
-## 5. Configure Supabase Auth URL settings
+## 5. Enable email/password in Supabase Auth
+
+1. Supabase → **Authentication** → **Providers** → **Email**.
+2. Enable **Email**.
+3. Prefer disabling public sign-ups if your Supabase plan/UI offers it — admins are created by an owner, not self-registered.
+4. Create each allowlisted admin user:
+   - **Authentication** → **Users** → **Add user** → email + password, or
+   - Ask the user to use “Forgot password” only if you intentionally enable recovery emails.
+5. Ensure the same address is on `admin_email_allowlist` (lowercase).
+
+Password and Google can both be used for the same allowlisted email if that user exists in Auth with both methods linked (or only password / only Google).
+
+## 6. Configure Supabase Auth URL settings
 
 Authentication → **URL Configuration**:
 
@@ -87,7 +101,7 @@ https://www.dam-tech.co.za/auth/callback
 
 Only add Vercel preview wildcards if your security policy allows them.
 
-## 6. Vercel environment variables
+## 7. Vercel environment variables
 
 Project → Settings → Environment Variables. Set for Production (and Preview if needed):
 
@@ -100,7 +114,7 @@ Project → Settings → Environment Variables. Set for Production (and Preview 
 
 Redeploy after saving.
 
-## 7. Local development
+## 8. Local development
 
 ```bash
 cp .env.example .env.local
@@ -110,14 +124,14 @@ npm run dev
 
 Open `http://localhost:3000/admin/login/`.
 
-## 8. First login
+## 9. First login
 
-1. Continue with Google using the allowlisted account.
-2. `/auth/callback` verifies the allowlist, upserts `admin_profiles`, writes an audit `login` event.
-3. Approved users land on `/admin/`.
-4. Unapproved users are signed out and sent to `/admin/unauthorised/`.
+1. Sign in with email/password **or** Continue with Google using an allowlisted account.
+2. Google flow: `/auth/callback` exchanges the code, then verifies the allowlist.
+3. Password flow: server action `signInWithEmailPassword` verifies credentials, then the same allowlist provisioning.
+4. Approved users land on `/admin/`. Unapproved sessions are signed out and denied.
 
-## 9. Deactivate an admin
+## 10. Deactivate an admin
 
 ```sql
 -- Disable allowlist entry (blocks future provisioning)
@@ -133,14 +147,14 @@ where email = 'user@example.com';
 
 Ask the user to sign out, or revoke sessions in Supabase → Authentication → Users.
 
-## 10. Rotate the service-role key
+## 11. Rotate the service-role key
 
 1. Supabase → Project Settings → API → reset / rotate service role key.
 2. Update `SUPABASE_SERVICE_ROLE_KEY` in Vercel and `.env.local`.
 3. Redeploy.
 4. Confirm public lead inserts and admin login still work.
 
-## 11. Remove localhost before hardening production (optional)
+## 12. Remove localhost before hardening production (optional)
 
 When you no longer need local OAuth against production credentials:
 

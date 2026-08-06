@@ -156,7 +156,7 @@ export async function resendRfqAdminNotificationAction(
   const { data: rfq, error } = await client
     .from("rfqs")
     .select(
-      "id, rfq_number, contact_name, service_required, services_requested, project_location, enquiry_channel, project_description",
+      "id, rfq_number, contact_name, company_name, email, phone, service_required, services_requested, project_location, enquiry_channel, project_description",
     )
     .eq("id", rfqId)
     .maybeSingle();
@@ -173,6 +173,9 @@ export async function resendRfqAdminNotificationAction(
   const result = await sendRfqAdminNotification({
     rfqNumber: rfq.rfq_number,
     customerName: rfq.contact_name || "Customer",
+    customerEmail: rfq.email || undefined,
+    customerPhone: rfq.phone || undefined,
+    customerCompany: rfq.company_name || undefined,
     services: Array.isArray(rfq.services_requested)
       ? rfq.services_requested
       : [rfq.service_required || "Other"],

@@ -15,8 +15,9 @@ function isAdminRole(value: unknown): value is AdminRole {
 }
 
 /**
- * After Google OAuth: match normalised email to allowlist, upsert admin_profiles.
- * Uses the service-role client so allowlist checks cannot be bypassed via RLS.
+ * After successful auth (Google OAuth or email/password): match normalised email
+ * to allowlist, upsert admin_profiles. Uses the service-role client so allowlist
+ * checks cannot be bypassed via RLS.
  */
 export async function provisionAdminFromAllowlist(input: {
   userId: string;
@@ -70,7 +71,7 @@ export async function provisionAdminFromAllowlist(input: {
       return {
         ok: false,
         reason: "not_allowlisted",
-        message: "This Google account is not approved for Damtech Administration.",
+        message: "This account is not approved for Damtech Administration.",
       };
     }
 
