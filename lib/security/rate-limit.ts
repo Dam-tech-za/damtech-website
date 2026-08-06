@@ -198,10 +198,12 @@ export function publicSubmissionLimitError(result: RateLimitResult): string {
 
 export const RATE_LIMITS = {
   loginInitiation: {
-    limit: 10,
-    windowMs: 60_000,
+    // Shared office NATs + Google OAuth redirects can burn attempts quickly.
+    limit: 30,
+    windowMs: 5 * 60_000,
     name: "login-initiation",
-    onProviderError: "fail_closed" as const,
+    // Prefer temporary Over-allowance if Upstash is down over locking admins out.
+    onProviderError: "fail_open_public" as const,
   },
   adminSensitiveAction: {
     limit: 30,

@@ -167,6 +167,9 @@ export async function submitSimpleQuote(
   const adminPayload = {
     rfqNumber: created.rfqNumber,
     customerName: parsed.data.name,
+    customerEmail: parsed.data.email,
+    customerPhone: parsed.data.phone,
+    customerCompany: parsed.data.company,
     services: [parsed.data.serviceRequired],
     location: parsed.data.projectLocation || parsed.data.province || "—",
     assetCount: 0,

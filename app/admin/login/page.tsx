@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { DamtechLogo } from "@/components/DamtechLogo";
+import { EmailPasswordSignInForm } from "@/components/admin/EmailPasswordSignInForm";
 import { GoogleSignInButton } from "@/components/admin/GoogleSignInButton";
 import { getCurrentAdmin } from "@/lib/auth/get-current-user";
 import { redirect } from "next/navigation";
@@ -33,8 +34,8 @@ export default async function AdminLoginPage({ searchParams }: PageProps) {
         </div>
 
         <p className="admin-login__lead">
-          Sign in with your approved Google account to manage RFQs, quotes and
-          operational records. There is no public registration.
+          Sign in with your approved work email (password or Google). There is
+          no public registration.
         </p>
 
         {!configured ? (
@@ -44,7 +45,13 @@ export default async function AdminLoginPage({ searchParams }: PageProps) {
             <code>NEXT_PUBLIC_SUPABASE_ANON_KEY</code> on the server.
           </p>
         ) : (
-          <GoogleSignInButton nextPath={nextPath} />
+          <>
+            <EmailPasswordSignInForm nextPath={nextPath} />
+            <div className="admin-login__divider" role="separator">
+              <span>or</span>
+            </div>
+            <GoogleSignInButton nextPath={nextPath} />
+          </>
         )}
 
         {errorMessage ? (
@@ -55,7 +62,7 @@ export default async function AdminLoginPage({ searchParams }: PageProps) {
 
         <p className="admin-login__notice">
           Access is restricted to Damtech team members on the approved-email
-          allowlist. Unapproved Google accounts are denied automatically.
+          allowlist. Unapproved accounts are denied automatically.
         </p>
 
         <Link href="/" className="admin-login__back">
