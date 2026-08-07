@@ -1,10 +1,12 @@
 import { Hero } from "@/components/Hero";
 import { CalculatorsSeoIntro } from "@/components/CalculatorsSeoIntro";
 import { CalculatorHeroActions } from "@/components/calculators/CalculatorHeroActions";
-import { CalculatorHub } from "@/components/calculators/CalculatorHub";
-import { LazyCTA as CTA } from "@/components/lazy";
+import {
+  LazyCalculatorHub as CalculatorHub,
+  LazyCTA as CTA,
+  LazyRelatedPageLinks as RelatedPageLinks,
+} from "@/components/lazy";
 import { PageSeo } from "@/components/PageSeo";
-import { RelatedPageLinks } from "@/components/ServicePageSections";
 import { SiteSection } from "@/components/SiteSection";
 import { createPageMetadata, PAGE_SEO } from "@/lib/pages";
 import { createFaqPageSchema, createWebPageSchema } from "@/lib/seo";
