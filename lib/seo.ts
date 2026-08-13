@@ -64,6 +64,10 @@ export function normalizeAssetPath(path: string): string {
 
 /** Absolute URL for static assets (images) — never adds trailing slash after file extension. */
 export function absoluteAssetUrl(path: string): string {
+  if (/^https?:\/\//i.test(path)) {
+    const url = new URL(path);
+    return `${url.origin}${normalizeAssetPath(url.pathname)}`;
+  }
   const base = siteConfig.domain.replace(/\/$/, "");
   const clean = normalizeAssetPath(path);
   return clean === "/" ? `${base}/` : `${base}${clean}`;
@@ -634,5 +638,75 @@ export function createProjectCaseStudySchema(project: {
     creator: {
       "@id": `${siteConfig.domain}/#organization`,
     },
+  };
+}
+
+export function createProductSchema(input: {
+  name: string;
+  description: string;
+  path: string;
+  sku: string;
+  priceInclVatZar: string;
+  imageUrl?: string;
+  imageUrls?: readonly string[];
+  brandName?: string;
+}): Record<string, unknown> {
+  const url = absoluteUrl(input.path);
+  const offer: Record<string, unknown> = {
+    "@type": "Offer",
+    url,
+    priceCurrency: "ZAR",
+    price: input.priceInclVatZar,
+    itemCondition: "https://schema.org/NewCondition",
+    seller: {
+      "@id": `${siteConfig.domain}/#organization`,
+    },
+  };
+
+  const schema: Record<string, unknown> = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: input.name,
+    description: input.description,
+    sku: input.sku,
+    mpn: input.sku,
+    url,
+    brand: {
+      "@type": "Brand",
+      name: input.brandName ?? siteConfig.name,
+    },
+    manufacturer: {
+      "@id": `${siteConfig.domain}/#organization`,
+      name: siteConfig.name,
+    },
+    offers: offer,
+  };
+
+  const imageUrls = [
+    ...(input.imageUrls ?? []),
+    ...(input.imageUrl ? [input.imageUrl] : []),
+  ].filter((url, index, list) => list.indexOf(url) === index);
+  if (imageUrls.length > 0) {
+    schema.image = imageUrls.map((url) => absoluteAssetUrl(url));
+  }
+
+  return schema;
+}
+
+export function createItemListSchema(
+  items: ReadonlyArray<{ name: string; path: string }>,
+  listName: string,
+): Record<string, unknown> {
+  return {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    name: listName,
+    numberOfItems: items.length,
+    itemListElement: items.map((item, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      name: item.name,
+      url: absoluteUrl(item.path),
+    })),
   };
 }

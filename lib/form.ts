@@ -2,6 +2,8 @@ export const SERVICE_OPTIONS = [
   "HDPE dam liner",
   "PVC dam liner",
   "Steel water tank",
+  "Fish pond / aquaculture tank",
+  "Livestock water trough",
   "Bitumen waterproofing",
   "Dam leak repair",
   "Reservoir repair",

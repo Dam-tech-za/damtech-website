@@ -63,12 +63,12 @@ export const PAGE_SEO: Record<StaticPageKey, PageSeoEntry> = {
     image: IMAGE_PATHS.hdpeDamLiningFieldInstallation,
   },
   "steel-tanks": {
-    title: "Steel Water Tanks South Africa | Corrugated Reservoirs | Damtech",
+    title: "Steel Water Tanks for Sale South Africa | Sizes & Prices",
     description:
-      "Durable corrugated steel water tanks and reservoirs for farms, mines, estates, game lodges and commercial water storage applications.",
+      "Corrugated steel water tanks for sale in South Africa. VAT-inclusive kit prices, supply-only. Transport and installation excluded.",
     path: "/steel-water-storage-tanks",
-    h1: "Steel Water Tanks and Corrugated Reservoirs",
-    serviceName: "Corrugated Steel Water Tank Installation",
+    h1: "Corrugated Steel Water Tanks for Sale in South Africa",
+    serviceName: "Corrugated Steel Water Tank Supply",
     image: IMAGE_PATHS.tulbaghWesternCapeSteelWaterTankProject,
   },
   bitumen: {
@@ -192,7 +192,7 @@ export const SEO_FAQ_ITEMS = [
   {
     question: "Do you offer steel water tanks?",
     answer:
-      "Yes. Damtech supplies and installs corrugated galvanised steel water tanks and reservoirs from 11 kL to 500 kL+, with PVC lining, columns, inlet/outlet fittings and optional roofs. They suit farms, mines, estates, game lodges and commercial yards where modular water storage is needed.",
+      "Yes. Damtech publishes fixed-price, supply-only corrugated steel water tank kits on the steel water tanks page, and also supplies and installs larger reservoirs from about 11 kL to 500 kL+ with PVC lining, columns, inlet/outlet fittings and optional roofs. Transport and installation are excluded from kit prices unless quoted separately.",
   },
   {
     question: "Do you offer waterproofing for farms and mines?",
@@ -225,7 +225,8 @@ export const CONTACT_SERVICES = [
   },
   {
     title: "Steel Water Tanks",
-    description: "Corrugated galvanised steel reservoirs from 11 kL to 500 kL+.",
+    description:
+      "Fixed-price corrugated steel tank kits with VAT-inclusive prices, plus larger reservoirs on request.",
     href: "/steel-water-storage-tanks",
   },
   {

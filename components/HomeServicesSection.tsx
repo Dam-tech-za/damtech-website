@@ -17,9 +17,9 @@ const SERVICE_CARDS = [
     id: "reservoirs",
     title: "Steel Reservoirs",
     description:
-      "Durable corrugated steel reservoirs engineered for reliable, weather-resistant water storage on farms, mines, estates and commercial sites.",
-    linkLabel: "Learn more about steel reservoirs",
-    href: "/steel-water-storage-tanks",
+      "Fixed-price corrugated steel water tank kits for farms, estates, game lodges and commercial sites — VAT-inclusive supply-only prices.",
+    linkLabel: "View steel tank sizes and prices",
+    href: "/steel-water-storage-tanks/#popular-tank-sizes",
     Icon: ReservoirIcon,
     featured: false,
   },

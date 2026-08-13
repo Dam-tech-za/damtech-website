@@ -178,7 +178,7 @@ export const SERVICES_DROPDOWN_LINKS: NavLink[] = [
   { href: "/hdpe-dam-lining", label: "HDPE Dam Lining" },
   { href: "/pvc-dam-lining", label: "PVC Dam Lining" },
   { href: "/torch-on-dam-lining", label: "Torch-On Dam Lining" },
-  { href: "/steel-water-storage-tanks", label: "Steel Water Tanks" },
+  { href: "/steel-water-storage-tanks", label: "Steel Water Tanks & Prices" },
   { href: "/bitumen-waterproofing", label: "Waterproofing" },
   { href: "/reservoir-lining", label: "Reservoir Lining" },
   { href: "/dam-repair-services", label: "Leaking Dam Repair" },
@@ -243,7 +243,7 @@ export const FOOTER_SERVICE_LINKS: NavLink[] = [
   { href: "/hdpe-dam-lining", label: "HDPE Dam Lining" },
   { href: "/pvc-dam-lining", label: "PVC Dam Lining" },
   { href: "/torch-on-dam-lining", label: "Torch-On Dam Lining" },
-  { href: "/steel-water-storage-tanks", label: "Steel Water Tanks" },
+  { href: "/steel-water-storage-tanks", label: "Steel Water Tanks & Prices" },
   { href: "/bitumen-waterproofing", label: "Waterproofing" },
   { href: "/reservoir-lining", label: "Reservoir Lining" },
   { href: "/dam-repair-services", label: "Leaking Dam Repair" },
@@ -260,6 +260,9 @@ export const FOOTER_COMPANY_LINKS: NavLink[] = [
   { href: "/blog", label: "Blog" },
   { href: "/contact", label: "Contact" },
   { href: "/quote", label: "Request a Quote" },
+  { href: "/privacy", label: "Privacy" },
+  { href: "/terms", label: "Terms" },
+  { href: "/returns", label: "Returns" },
 ];
 
 /** @deprecated Use FOOTER_SERVICE_LINKS and FOOTER_COMPANY_LINKS */
@@ -290,7 +293,11 @@ export const FOOTER_REGION_LINKS: NavLink[] = [
   { href: "/johannesburg-dam-liners", label: "Johannesburg" },
 ];
 
-/** Paths disallowed in robots.txt — must not be listed in sitemap.xml. */
+/**
+ * Paths disallowed in robots.txt — must not be listed in sitemap.xml.
+ * Do not disallow `/order/`: Google and AdsBot must crawl the checkout to
+ * see page-level noindex. Order URLs stay out of the sitemap.
+ */
 export const ROBOTS_DISALLOW_PATHS = [
   "/thank-you/",
   "/api/",
@@ -328,4 +335,7 @@ export const INDEXABLE_STATIC_PATHS = [
   "/reservoir-lining",
   "/dam-lining-cost-south-africa",
   "/calculators",
+  "/privacy",
+  "/terms",
+  "/returns",
 ] as const;

@@ -29,8 +29,10 @@ If they were **never** applied, run the files below in order.
 | 6 | `20260715170000_public_rfq_assets_phase1.sql` | `rfq_assets`, calculations, tank models, project fields. **Simple RFQs may have 0 assets.** |
 | 7 | `20260715180000_admin_rfq_phase2_enum.sql` | `site_measurement_required`, `archived` on `rfq_status` (**own transaction**) |
 | 8 | `20260715180100_admin_rfq_phase2.sql` | Simple RFQ columns, measurement status, scheduling, info requests, calculator drafts, confirmed qty fields |
+| 9 | `20260813090000_rfq_catalogue_line_items.sql` | Catalogue invoice-request line items + `catalogue_invoice_request` enquiry channel |
+| 10 | `20260813093808_catalogue_orders.sql` | Fixed-price catalogue orders (`catalogue_orders`) with RLS denying anonymous access |
 
-Run **7 and 8 as separate SQL editor runs** (Postgres enum rule).
+Run **7 and 8 as separate SQL editor runs** (Postgres enum rule). Apply **9** after 8. Apply **10** after 9.
 
 ---
 

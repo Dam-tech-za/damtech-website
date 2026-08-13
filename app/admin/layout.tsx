@@ -31,6 +31,7 @@ function breadcrumbsFromPath(pathname: string): { label: string; href?: string }
   const labels: Record<string, string> = {
     rfqs: "RFQs",
     quotes: "Quotes",
+    orders: "Orders",
     customers: "Customers",
     pricing: "Pricing",
     import: "CSV Import",
@@ -115,6 +116,7 @@ function titleFromPath(pathname: string): string {
   const labels: Record<string, string> = {
     rfqs: "RFQs",
     quotes: "Quotes",
+    orders: "Orders",
     customers: "Customers",
     pricing: "Pricing",
     settings: "Settings",

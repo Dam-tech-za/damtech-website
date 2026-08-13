@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Hero } from "@/components/Hero";
 
 import { ServiceIntroSection } from "@/components/ServiceIntroSection";
@@ -33,7 +34,16 @@ import {
 
 } from "@/components/lazy";
 
-import { createFaqPageSchema, createServiceSchema } from "@/lib/seo";
+import { CatalogueProductGrid } from "@/components/catalogue/CatalogueProductGrid";
+
+import {
+  catalogueProductUrlPath,
+  getFishPondProducts,
+  getLivestockTroughProducts,
+  getWaterStorageProducts,
+} from "@/lib/catalogue";
+
+import { createFaqPageSchema, createItemListSchema, createServiceSchema } from "@/lib/seo";
 
 import { createPageMetadata, PAGE_SEO } from "@/lib/pages";
 
@@ -163,6 +173,11 @@ export default function SteelTanksPage() {
 
   ];
 
+  const waterTanks = getWaterStorageProducts();
+  const fishPonds = getFishPondProducts();
+  const troughs = getLivestockTroughProducts();
+  const featuredProducts = [...waterTanks, ...fishPonds, ...troughs];
+
 
 
   return (
@@ -179,7 +194,7 @@ export default function SteelTanksPage() {
 
             name: seo.serviceName ?? seo.title,
 
-            serviceType: seo.serviceName ?? "Corrugated Steel Water Tank Installation",
+            serviceType: seo.serviceName ?? "Corrugated Steel Water Tank Supply",
 
             description: seo.description,
 
@@ -188,6 +203,14 @@ export default function SteelTanksPage() {
             offers: [...STEEL_TANKS_SCHEMA_OFFERS],
 
           }),
+
+          createItemListSchema(
+            featuredProducts.map((product) => ({
+              name: product.name,
+              path: catalogueProductUrlPath(product),
+            })),
+            "Damtech steel water tank, fish pond and livestock trough kits",
+          ),
 
           createFaqPageSchema(STEEL_TANKS_CONTENT.faqs),
 
@@ -201,11 +224,11 @@ export default function SteelTanksPage() {
 
         compact
 
-        eyebrow="11 kL – 500 kL+"
+        eyebrow="Fixed-price supply-only kits"
 
         title={seo.h1}
 
-        description="Damtech provides corrugated steel water tanks and reservoirs for farms, mines, estates, game lodges and commercial water storage applications."
+        description="Damtech supplies fixed-price corrugated steel reservoir kits for farms, estates, game lodges and commercial sites. Prices are in South African rand, include 15% VAT and exclude transport and installation."
 
         breadcrumbs={breadcrumbs}
 
@@ -214,6 +237,50 @@ export default function SteelTanksPage() {
 
 
       <ServiceIntroSection {...STEEL_TANKS_INTRO} />
+
+
+
+      <CatalogueProductGrid
+        id="popular-tank-sizes"
+        eyebrow="PRICES INCL. VAT"
+        title="Popular Steel Water Tank Sizes and Prices"
+        intro="Four fixed-price, supply-only corrugated steel water tank kits. Each price includes 15% VAT. Transport and installation excluded."
+        products={waterTanks}
+        variant="tanks"
+      >
+        <div className="catalogue-secondary-actions">
+          <a className="btn-secondary catalogue-cta" href="#tank-capacity">
+            Compare all tank sizes
+          </a>
+          <Link
+            className="btn-secondary catalogue-cta"
+            href="/calculators/#steel-tank-size"
+          >
+            Use the tank size calculator
+          </Link>
+        </div>
+      </CatalogueProductGrid>
+
+
+
+      <CatalogueProductGrid
+        id="fish-ponds-aquaculture"
+        eyebrow="AQUACULTURE"
+        title="Fish Ponds and Aquaculture Tanks"
+        intro="Fixed-price supply-only fish pond kits. VAT included. Transport, installation, filtration, pumps and aeration excluded."
+        products={fishPonds}
+        variant="ponds"
+        tone="muted"
+      />
+
+      <CatalogueProductGrid
+        id="livestock-watering"
+        eyebrow="LIVESTOCK"
+        title="Livestock Watering"
+        intro="Round livestock and cattle water trough. VAT included. Transport, installation, pipework and float valves excluded."
+        products={troughs}
+        variant="troughs"
+      />
 
 
 
@@ -231,7 +298,7 @@ export default function SteelTanksPage() {
 
           title="Tank Capacity Tables"
 
-          intro="Select a diameter and ring height to match your daily water demand, borehole refill rate and available site footprint. Full schedules are available on request for sizes above 500 kL."
+          intro="Select a diameter and ring height to match your daily water demand, borehole refill rate and available site footprint. Featured kits above are the current fixed-price supply-only range. Full schedules are available on request for sizes above 500 kL."
 
         />
 
@@ -303,11 +370,11 @@ export default function SteelTanksPage() {
 
         <SectionCta
           title="Need help sizing a tank?"
-          description="Tell us daily water use, borehole output and site footprint — we will recommend diameter, ring height and optional roof."
+          description="Tell us daily water use, borehole output and site footprint — we will recommend diameter, ring height and optional roof. Featured kits are supply-only; installation can be quoted separately."
           primaryHref="/calculators/#steel-tank-size"
-          primaryLabel="Open Steel Tank Size Calculator"
-          secondaryHref="/quote"
-          secondaryLabel="Request a Quote"
+          primaryLabel="Use the tank size calculator"
+          secondaryHref="/steel-water-storage-tanks/#popular-tank-sizes"
+          secondaryLabel="Compare all tank sizes"
         />
 
       </SiteSection>

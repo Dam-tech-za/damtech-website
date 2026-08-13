@@ -51,6 +51,7 @@ export async function sendRfqCustomerConfirmation(input: {
   assetSummaries: string[];
   enquiryChannel?: EnquiryChannel | string;
   serviceRequired?: string;
+  invoiceRequest?: boolean;
 }): Promise<EmailSendResult> {
   const config = getRfqEmailConfig();
   if (!config.configured) {
@@ -73,13 +74,47 @@ export async function sendRfqCustomerConfirmation(input: {
     };
   }
 
+  const isInvoice = Boolean(
+    input.invoiceRequest ||
+      input.enquiryChannel === "catalogue_invoice_request",
+  );
   const isSimple =
-    !input.enquiryChannel ||
-    input.enquiryChannel === "simple_public_rfq" ||
-    input.enquiryChannel === "contact_enquiry";
+    !isInvoice &&
+    (!input.enquiryChannel ||
+      input.enquiryChannel === "simple_public_rfq" ||
+      input.enquiryChannel === "contact_enquiry");
 
-  const subject = `Damtech RFQ Received — ${input.rfqNumber}`;
-  const text = isSimple
+  const subject = isInvoice
+    ? `Damtech invoice request received — ${input.rfqNumber}`
+    : `Damtech RFQ Received — ${input.rfqNumber}`;
+  const invoiceText = [
+    `Dear ${input.customerName},`,
+    "",
+    `Your invoice request has been received (${input.rfqNumber}). Damtech will confirm transport and availability before sending your invoice. Installation is not included unless quoted separately.`,
+    input.serviceRequired ? `Service: ${input.serviceRequired}` : "",
+    input.projectLocation ? `Project location: ${input.projectLocation}` : "",
+    "",
+    ...(input.assetSummaries.length
+      ? ["Requested kit:", ...input.assetSummaries.map((s) => `• ${s}`), ""]
+      : []),
+    "Submitting this request is not a completed purchase. No invoice has been emailed yet unless you receive a separate invoice from Damtech.",
+    "",
+    `Damtech · ${config.replyToEmail} · ${siteConfig.phone}`,
+  ].filter(Boolean);
+  const invoiceHtml = `<p>Dear ${escapeHtml(input.customerName)},</p>
+        <p>Your invoice request has been received (<strong>${escapeHtml(input.rfqNumber)}</strong>). Damtech will confirm transport and availability before sending your invoice. Installation is not included unless quoted separately.</p>
+        ${input.serviceRequired ? `<p>Service: ${escapeHtml(input.serviceRequired)}</p>` : ""}
+        ${input.projectLocation ? `<p>${escapeHtml(input.projectLocation)}</p>` : ""}
+        ${
+          input.assetSummaries.length
+            ? `<ul>${input.assetSummaries.map((s) => `<li>${escapeHtml(s)}</li>`).join("")}</ul>`
+            : ""
+        }
+        <p>Submitting this request is not a completed purchase. No invoice has been emailed yet unless you receive a separate invoice from Damtech.</p>
+        <p>Damtech · ${escapeHtml(config.replyToEmail)}</p>`;
+  const text = isInvoice
+    ? invoiceText.join("\n")
+    : isSimple
     ? [
         `Dear ${input.customerName},`,
         "",
@@ -111,7 +146,9 @@ export async function sendRfqCustomerConfirmation(input: {
         .filter(Boolean)
         .join("\n");
 
-  const html = isSimple
+  const html = isInvoice
+    ? invoiceHtml
+    : isSimple
     ? `<p>Dear ${escapeHtml(input.customerName)},</p>
         <p>Thank you. We have received your quote request <strong>${escapeHtml(input.rfqNumber)}</strong>.</p>
         ${input.serviceRequired ? `<p>Service: ${escapeHtml(input.serviceRequired)}</p>` : ""}

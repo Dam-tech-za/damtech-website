@@ -100,7 +100,10 @@ export default async function CalculatorsPage({ searchParams }: PageProps) {
           links={[
             { href: "/dam-liners", label: "Dam Liners & Dam Lining Services" },
             { href: "/hdpe-dam-lining", label: "HDPE Dam Lining" },
-            { href: "/steel-water-storage-tanks", label: "Steel Water Tanks" },
+            {
+              href: "/steel-water-storage-tanks/#popular-tank-sizes",
+              label: "Steel water tank sizes and prices",
+            },
             { href: "/bitumen-waterproofing", label: "Waterproofing" },
             { href: "/dam-repair-services", label: "Leaking Dam Repair" },
             { href: "/reservoir-lining", label: "Reservoir Lining" },

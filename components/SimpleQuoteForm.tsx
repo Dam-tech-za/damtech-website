@@ -10,6 +10,17 @@ import {
   type ReactNode,
 } from "react";
 import { submitSimpleQuote } from "@/app/actions/submit-simple-quote";
+import { BeginInvoiceRequestAnalytics } from "@/components/catalogue/CatalogueAnalytics";
+import { RfqProductSummary } from "@/components/catalogue/RfqProductSummary";
+import { pushCatalogueAnalytics } from "@/components/catalogue/pushCatalogueAnalytics";
+import {
+  buildCatalogueAnalyticsFromLine,
+  CATALOGUE_ANALYTICS_EVENTS,
+} from "@/lib/catalogue/analytics";
+import {
+  parseCatalogueQuantity,
+  type CatalogueLineSnapshot,
+} from "@/lib/catalogue";
 import {
   MATERIAL_PREFERENCE_OPTIONS,
   PROVINCE_OPTIONS,
@@ -24,6 +35,7 @@ type SimpleQuoteFormProps = {
   sourcePage?: string;
   submitLabel?: string;
   id?: string;
+  catalogueLine?: CatalogueLineSnapshot | null;
 };
 
 function Field({
@@ -51,17 +63,28 @@ function Field({
   );
 }
 
-function pushQuoteAnalytics(rfqNumber: string) {
+function pushQuoteAnalytics(
+  rfqNumber: string,
+  catalogueLine?: CatalogueLineSnapshot | null,
+) {
   if (typeof window === "undefined") return;
   const w = window as Window & {
     dataLayer?: Array<Record<string, unknown>>;
   };
   w.dataLayer = w.dataLayer || [];
   w.dataLayer.push({
-    event: "simple_quote_submitted",
-    rfq_channel: "simple_public_rfq",
+    event: CATALOGUE_ANALYTICS_EVENTS.rfqSubmitted,
+    rfq_channel: catalogueLine
+      ? "catalogue_invoice_request"
+      : "simple_public_rfq",
     rfq_number: rfqNumber,
   });
+  if (catalogueLine) {
+    const item = buildCatalogueAnalyticsFromLine(catalogueLine);
+    pushCatalogueAnalytics(CATALOGUE_ANALYTICS_EVENTS.generateLead, item, {
+      rfq_number: rfqNumber,
+    });
+  }
 }
 
 export function SimpleQuoteForm({
@@ -70,13 +93,15 @@ export function SimpleQuoteForm({
   sourcePage = "/quote",
   submitLabel = "Request a Free Quote",
   id = "simple-quote-form",
+  catalogueLine = null,
 }: SimpleQuoteFormProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
-  const [service, setService] = useState("");
+  const [service, setService] = useState(catalogueLine?.rfqService ?? "");
   const [formStartedAt] = useState(() => Date.now());
   const [submissionId] = useState(() => crypto.randomUUID());
+  const isInvoiceRequest = Boolean(catalogueLine);
 
   const serviceHints = useMemo(() => {
     const lining =
@@ -106,25 +131,44 @@ export function SimpleQuoteForm({
         return;
       }
 
-      pushQuoteAnalytics(result.rfqNumber);
+      const submittedLine =
+        catalogueLine
+          ? {
+              ...catalogueLine,
+              quantity: parseCatalogueQuantity(
+                String(formData.get("quantity") ?? catalogueLine.quantity),
+              ),
+            }
+          : null;
+      pushQuoteAnalytics(result.rfqNumber, submittedLine);
       const params = new URLSearchParams({
         ref: result.rfqNumber,
         upload: result.uploadToken,
       });
+      if (isInvoiceRequest) params.set("flow", "invoice");
       router.push(`/quote/success/?${params.toString()}`);
     });
   }
 
   return (
     <div className="site-form-card relative">
-      <h2 className="section-heading !mt-0">{title}</h2>
+      {catalogueLine ? (
+        <BeginInvoiceRequestAnalytics line={catalogueLine} />
+      ) : null}
+      <h2 className="section-heading !mt-0">
+        {isInvoiceRequest ? "Request an invoice" : title}
+      </h2>
       <p className="mt-2 text-sm leading-relaxed text-slate-600 sm:text-base">
-        {subtitle}
+        {isInvoiceRequest
+          ? "Add this fixed-price supply-only kit to your RFQ. Damtech will confirm transport and send an invoice."
+          : subtitle}
       </p>
-      <p className="mt-2 text-sm text-slate-600">
-        You do not need exact measurements — approximate details are enough to
-        start.
-      </p>
+      {isInvoiceRequest ? null : (
+        <p className="mt-2 text-sm text-slate-600">
+          You do not need exact measurements — approximate details are enough to
+          start.
+        </p>
+      )}
 
       <form
         id={id}
@@ -187,26 +231,99 @@ export function SimpleQuoteForm({
           Provide at least one of email or phone so we can respond.
         </p>
 
+        {catalogueLine ? <RfqProductSummary line={catalogueLine} /> : null}
+
         <Field id={`${id}-service`} label="Service required" required>
-          <select
-            id={`${id}-service`}
-            required
-            name="serviceRequired"
-            className="form-input"
-            disabled={isPending}
-            value={service}
-            onChange={(e) => setService(e.target.value)}
-          >
-            <option value="" disabled>
-              Select a service
-            </option>
-            {SERVICE_OPTIONS.map((option) => (
-              <option key={option} value={option}>
-                {option}
+          {catalogueLine ? (
+            <>
+              <input
+                type="hidden"
+                name="serviceRequired"
+                value={catalogueLine.rfqService}
+              />
+              <input
+                id={`${id}-service`}
+                className="form-input bg-slate-50"
+                value={catalogueLine.rfqService}
+                readOnly
+                aria-readonly="true"
+              />
+            </>
+          ) : (
+            <select
+              id={`${id}-service`}
+              required
+              name="serviceRequired"
+              className="form-input"
+              disabled={isPending}
+              value={service}
+              onChange={(e) => setService(e.target.value)}
+            >
+              <option value="" disabled>
+                Select a service
               </option>
-            ))}
-          </select>
+              {SERVICE_OPTIONS.map((option) => (
+                <option key={option} value={option}>
+                  {option}
+                </option>
+              ))}
+            </select>
+          )}
         </Field>
+
+        {isInvoiceRequest ? (
+          <div className="grid gap-6 sm:grid-cols-2">
+            <Field id={`${id}-province`} label="Province" required>
+              <select
+                id={`${id}-province`}
+                name="province"
+                className="form-input"
+                required
+                disabled={isPending}
+                defaultValue=""
+              >
+                <option value="" disabled>
+                  Select province
+                </option>
+                {PROVINCE_OPTIONS.map((province) => (
+                  <option key={province} value={province}>
+                    {province}
+                  </option>
+                ))}
+              </select>
+            </Field>
+            <Field id={`${id}-town`} label="Town / project location" required>
+              <input
+                id={`${id}-town`}
+                name="town"
+                type="text"
+                required
+                placeholder="Town or nearest town"
+                className="form-input"
+                disabled={isPending}
+              />
+            </Field>
+          </div>
+        ) : null}
+
+        {isInvoiceRequest ? (
+          <Field
+            id={`${id}-delivery`}
+            label="Delivery address or delivery location"
+            required
+            hint="Needed so Damtech can calculate transport. Transport is excluded from the kit price."
+          >
+            <textarea
+              id={`${id}-delivery`}
+              name="deliveryAddress"
+              required
+              rows={3}
+              placeholder="Farm name, street, GPS or site access notes"
+              className="form-input"
+              disabled={isPending}
+            />
+          </Field>
+        ) : null}
 
         <Field
           id={`${id}-message`}
@@ -219,6 +336,11 @@ export function SimpleQuoteForm({
             name="message"
             required
             rows={4}
+            defaultValue={
+              isInvoiceRequest
+                ? "Please confirm transport and send an invoice for this supply-only kit. Installation is not included unless quoted separately."
+                : undefined
+            }
             placeholder="Describe your dam, tank or waterproofing requirements."
             className="form-input"
             disabled={isPending}
@@ -249,23 +371,26 @@ export function SimpleQuoteForm({
               />
             </Field>
 
-            <Field id={`${id}-province`} label="Province">
-              <select
-                id={`${id}-province`}
-                name="province"
-                className="form-input"
-                disabled={isPending}
-                defaultValue=""
-              >
-                <option value="">Select province</option>
-                {PROVINCE_OPTIONS.map((province) => (
-                  <option key={province} value={province}>
-                    {province}
-                  </option>
-                ))}
-              </select>
-            </Field>
+            {isInvoiceRequest ? null : (
+              <Field id={`${id}-province`} label="Province">
+                <select
+                  id={`${id}-province`}
+                  name="province"
+                  className="form-input"
+                  disabled={isPending}
+                  defaultValue=""
+                >
+                  <option value="">Select province</option>
+                  {PROVINCE_OPTIONS.map((province) => (
+                    <option key={province} value={province}>
+                      {province}
+                    </option>
+                  ))}
+                </select>
+              </Field>
+            )}
 
+            {isInvoiceRequest ? null : (
             <div className="grid gap-6 sm:grid-cols-2">
               <Field
                 id={`${id}-size`}
@@ -291,6 +416,7 @@ export function SimpleQuoteForm({
                 />
               </Field>
             </div>
+            )}
 
             <div className="grid gap-6 sm:grid-cols-2">
               <Field id={`${id}-material`} label="Material preference">
@@ -309,6 +435,7 @@ export function SimpleQuoteForm({
                   ))}
                 </select>
               </Field>
+              {isInvoiceRequest ? null : (
               <Field id={`${id}-assets`} label="Approximate number of dams / tanks">
                 <input
                   id={`${id}-assets`}
@@ -321,6 +448,7 @@ export function SimpleQuoteForm({
                   disabled={isPending}
                 />
               </Field>
+              )}
             </div>
 
             <Field id={`${id}-timeframe`} label="Preferred timeframe">
@@ -445,7 +573,11 @@ export function SimpleQuoteForm({
             className="btn-primary min-h-11 w-full sm:w-auto disabled:opacity-60"
             disabled={isPending}
           >
-            {isPending ? "Submitting..." : submitLabel}
+            {isPending
+              ? "Submitting..."
+              : isInvoiceRequest
+                ? "Submit invoice request"
+                : submitLabel}
           </button>
           <p className="text-sm text-slate-600">
             Or call{" "}

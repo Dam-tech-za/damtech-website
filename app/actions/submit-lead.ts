@@ -42,6 +42,7 @@ export async function submitLead(
         softEstimates: parsed.softEstimates,
         simpleServiceFields: parsed.simpleServiceFields,
         assetsEstimate: parsed.assetsEstimate,
+        catalogueLine: parsed.catalogueLine,
       });
     }
     return { success: true };
@@ -72,6 +73,7 @@ export async function submitLead(
       softEstimates: parsed.softEstimates,
       simpleServiceFields: parsed.simpleServiceFields,
       assetsEstimate: parsed.assetsEstimate,
+      catalogueLine: parsed.catalogueLine,
     });
     if (!rfqResult.ok) {
       rfqLogError("rfq_submission_database_failed", {

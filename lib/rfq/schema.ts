@@ -6,6 +6,10 @@ import {
   TIMEFRAME_OPTIONS,
   normaliseServiceOption,
 } from "@/lib/form";
+import {
+  resolveCatalogueLine,
+  type CatalogueLineSnapshot,
+} from "@/lib/catalogue";
 import { RFQ_STATUSES, type RfqStatus } from "./statuses";
 import { softParseProjectSize } from "./soft-size-parse";
 import type { EnquiryChannel } from "./enquiry-channel";
@@ -55,6 +59,8 @@ export const publicRfqSubmissionSchema = z.object({
   tankCapacityKl: z.string().max(40).optional().default(""),
   waterproofingAreaM2: z.string().max(40).optional().default(""),
   surfaceType: z.string().max(80).optional().default(""),
+  town: z.string().max(120).optional().default(""),
+  deliveryAddress: z.string().max(500).optional().default(""),
 });
 
 export type PublicRfqSubmission = z.infer<typeof publicRfqSubmissionSchema>;
@@ -66,6 +72,7 @@ export type ParsedSimpleServiceFields = {
   tankCapacityKl?: string;
   waterproofingAreaM2?: string;
   surfaceType?: string;
+  catalogueLine?: CatalogueLineSnapshot;
 };
 
 export function buildSimpleServiceFields(
@@ -103,6 +110,7 @@ export function parsePublicRfqFormData(
       simpleServiceFields: ParsedSimpleServiceFields;
       assetsEstimate: number | null;
       enquiryChannel: EnquiryChannel;
+      catalogueLine: CatalogueLineSnapshot | null;
     }
   | { ok: false; error: string } {
   const rawService = sanitizeString(formData.get("serviceRequired"), 80);
@@ -137,7 +145,41 @@ export function parsePublicRfqFormData(
     tankCapacityKl: sanitizeString(formData.get("tankCapacityKl"), 40),
     waterproofingAreaM2: sanitizeString(formData.get("waterproofingAreaM2"), 40),
     surfaceType: sanitizeString(formData.get("surfaceType"), 80),
+    town: sanitizeString(formData.get("town"), 120),
+    deliveryAddress: sanitizeString(formData.get("deliveryAddress"), 500),
   };
+
+  const requestedSku = sanitizeString(formData.get("sku"), 40).toUpperCase();
+  const requestedQty = sanitizeString(
+    formData.get("quantity") || formData.get("qty"),
+    10,
+  );
+  // Never trust a product name or price supplied through the form or URL.
+  void formData.get("price");
+  void formData.get("name");
+  void formData.get("unitPrice");
+  void formData.get("productName");
+
+  let catalogueLine: CatalogueLineSnapshot | null = null;
+  if (requestedSku) {
+    catalogueLine = resolveCatalogueLine(requestedSku, Number(requestedQty || "1"));
+    if (!catalogueLine) {
+      return {
+        ok: false,
+        error: "Select a product from the Damtech catalogue to request an invoice.",
+      };
+    }
+    raw.serviceRequired = catalogueLine.rfqService;
+    if (!raw.projectSize) {
+      raw.projectSize = `${catalogueLine.productName} × ${catalogueLine.quantity}`;
+    }
+    if (!raw.projectLocation && raw.town) {
+      raw.projectLocation = raw.town;
+    }
+    if (!raw.numberOfAssetsEstimate) {
+      raw.numberOfAssetsEstimate = String(catalogueLine.quantity);
+    }
+  }
 
   if (!raw.phone && !raw.email) {
     return {
@@ -173,6 +215,27 @@ export function parsePublicRfqFormData(
     raw.preferredTimeframe = "";
   }
 
+  if (catalogueLine) {
+    if (!raw.province) {
+      return {
+        ok: false,
+        error: "Please select the province for delivery so we can calculate transport.",
+      };
+    }
+    if (!raw.town) {
+      return {
+        ok: false,
+        error: "Please enter the town or project location for delivery.",
+      };
+    }
+    if (!raw.deliveryAddress) {
+      return {
+        ok: false,
+        error: "Please enter a delivery address or delivery location.",
+      };
+    }
+  }
+
   const parsed = publicRfqSubmissionSchema.safeParse(raw);
   if (!parsed.success) {
     const first = parsed.error.issues[0]?.message ?? "Invalid form submission.";
@@ -192,7 +255,8 @@ export function parsePublicRfqFormData(
 
   const page = parsed.data.sourcePage.toLowerCase();
   let enquiryChannel: EnquiryChannel = "simple_public_rfq";
-  if (page.includes("contact")) enquiryChannel = "contact_enquiry";
+  if (catalogueLine) enquiryChannel = "catalogue_invoice_request";
+  else if (page.includes("contact")) enquiryChannel = "contact_enquiry";
   else if (
     page.includes("project-budget") ||
     page.includes("quote-preparation") ||
@@ -201,14 +265,22 @@ export function parsePublicRfqFormData(
     enquiryChannel = "calculator_quote_preparation";
   }
 
+  const simpleServiceFields = buildSimpleServiceFields(parsed.data);
+  if (catalogueLine) {
+    simpleServiceFields.catalogueLine = catalogueLine;
+  }
+
   return {
     ok: true,
     data: parsed.data,
     calculator,
     isSpam: Boolean(parsed.data.website),
     softEstimates: softParseProjectSize(parsed.data.projectSize),
-    simpleServiceFields: buildSimpleServiceFields(parsed.data),
-    assetsEstimate: parseAssetsEstimate(parsed.data.numberOfAssetsEstimate),
+    simpleServiceFields,
+    assetsEstimate:
+      catalogueLine?.quantity ??
+      parseAssetsEstimate(parsed.data.numberOfAssetsEstimate),
     enquiryChannel,
+    catalogueLine,
   };
 }

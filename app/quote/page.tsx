@@ -4,6 +4,7 @@ import { PageSeo } from "@/components/PageSeo";
 import { QuoteTrustPanel } from "@/components/QuoteTrustPanel";
 import { SiteSection } from "@/components/SiteSection";
 import { SimpleQuoteForm } from "@/components/SimpleQuoteForm";
+import { resolveCatalogueSelectionFromParams } from "@/lib/catalogue";
 import { createPageMetadata, PAGE_SEO } from "@/lib/pages";
 import {
   LazyCTA as CTA,
@@ -14,7 +15,14 @@ const seo = PAGE_SEO.quote;
 
 export const metadata = createPageMetadata(seo);
 
-export default function QuotePage() {
+type QuotePageProps = {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+};
+
+export default async function QuotePage({ searchParams }: QuotePageProps) {
+  const params = await searchParams;
+  const catalogueLine = resolveCatalogueSelectionFromParams(params);
+
   return (
     <>
       <PageSeo
@@ -26,9 +34,15 @@ export default function QuotePage() {
 
       <Hero
         compact
-        eyebrow="Free quote"
-        title={seo.h1}
-        description="Share your project details — exact measurements are not required. We typically respond within one business day."
+        eyebrow={catalogueLine ? "Invoice request" : "Free quote"}
+        title={
+          catalogueLine ? "Request an invoice for a supply-only kit" : seo.h1
+        }
+        description={
+          catalogueLine
+            ? "Add this fixed-price supply-only kit to your RFQ. Damtech will confirm transport and send an invoice. Transport and installation are excluded."
+            : "Share your project details — exact measurements are not required. We typically respond within one business day."
+        }
         breadcrumbs={[
           { name: "Home", path: "/" },
           { name: "Request a Free Quote", path: seo.path },
@@ -37,7 +51,10 @@ export default function QuotePage() {
 
       <SiteSection>
         <div className="site-quote-grid">
-          <SimpleQuoteForm sourcePage="/quote" />
+          <SimpleQuoteForm
+            sourcePage="/quote"
+            catalogueLine={catalogueLine}
+          />
           <QuoteTrustPanel />
         </div>
       </SiteSection>

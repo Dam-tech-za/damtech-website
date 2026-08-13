@@ -562,12 +562,31 @@ export const LOCAL_LANDING_PAGES: LocalLandingPage[] = [
     relatedProjects: [
       { href: "/projects/stellenbosch-hdpe-dam-liner", label: "Stellenbosch HDPE dam" },
       { href: "/projects/grabouw-hdpe-farm-dam", label: "Grabouw farm dam" },
-      { href: "/steel-water-storage-tanks", label: "Steel water tanks" },
+      {
+        href: "/steel-water-storage-tanks/#popular-tank-sizes",
+        label: "Steel water tank sizes and prices",
+      },
     ],
     relatedLocations: [
       { href: "/farm-dam-liners", label: "Farm dam linings" },
       { href: "/western-cape-dam-liners", label: "Dam Linings Western Cape" },
       { href: "/calculators", label: "Plan water storage with Damtech’s calculators" },
+      {
+        href: "/steel-water-storage-tanks/20000-litre-water-tank/",
+        label: "20 000L steel water tank for farms",
+      },
+      {
+        href: "/steel-water-storage-tanks/50000-litre-water-tank/",
+        label: "50 000L agricultural water tank",
+      },
+      {
+        href: "/steel-water-storage-tanks/100000-litre-water-tank/",
+        label: "100 000L bulk farm water tank",
+      },
+      {
+        href: "/steel-water-storage-tanks/livestock-water-trough/",
+        label: "Livestock and cattle water trough",
+      },
       { href: "/pretoria-dam-liners", label: "Pretoria" },
       { href: "/limpopo-dam-liners", label: "Limpopo" },
     ],

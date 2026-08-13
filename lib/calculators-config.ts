@@ -308,8 +308,8 @@ export const CALCULATORS: CalculatorConfig[] = [
     ],
     resultHelp:
       "Steel water tank sizing should account for peak demand, fire reserve and site layout — Damtech can recommend a practical capacity.",
-    relatedServiceHref: "/steel-water-storage-tanks",
-    relatedServiceLabel: "Explore steel water tanks",
+    relatedServiceHref: "/steel-water-storage-tanks/#popular-tank-sizes",
+    relatedServiceLabel: "View steel water tank sizes and prices",
   },
   {
     id: "annual-water-requirement",
@@ -370,8 +370,8 @@ export const CALCULATORS: CalculatorConfig[] = [
     ],
     resultHelp:
       "Annual farm water requirement estimates help size dams, steel tanks and backup storage before seasonal demand peaks.",
-    relatedServiceHref: "/agricultural-water-storage",
-    relatedServiceLabel: "Learn about agricultural water storage",
+    relatedServiceHref: "/steel-water-storage-tanks/#livestock-watering",
+    relatedServiceLabel: "View livestock water troughs and farm storage kits",
   },
   {
     id: "water-by-land-size",
@@ -572,8 +572,8 @@ export const CALCULATORS: CalculatorConfig[] = [
     ],
     resultHelp:
       "Rainwater harvesting estimates help decide between steel water tanks and lined catchment dams.",
-    relatedServiceHref: "/steel-water-storage-tanks",
-    relatedServiceLabel: "Explore steel water tanks",
+    relatedServiceHref: "/steel-water-storage-tanks/#popular-tank-sizes",
+    relatedServiceLabel: "View steel water tank sizes and prices",
   },
   {
     id: "waterproofing-area",

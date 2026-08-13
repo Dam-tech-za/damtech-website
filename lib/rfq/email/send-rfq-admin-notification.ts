@@ -58,6 +58,7 @@ export async function sendRfqAdminNotification(input: {
   adminUrl: string;
   enquiryChannel?: EnquiryChannel | string;
   messagePreview?: string;
+  extraRows?: ReadonlyArray<readonly [string, string]>;
 }): Promise<EmailSendResult> {
   const config = getRfqEmailConfig();
   if (!config.configured) {
@@ -113,6 +114,7 @@ export async function sendRfqAdminNotification(input: {
     ...(input.messagePreview
       ? [["Message", input.messagePreview] as const]
       : []),
+    ...(input.extraRows ?? []),
   ]
     .map(
       ([label, value]) =>

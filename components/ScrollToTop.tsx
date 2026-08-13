@@ -1,5 +1,6 @@
 "use client";
 
+import { usePathname } from "next/navigation";
 import { useSyncExternalStore } from "react";
 import { createPortal } from "react-dom";
 
@@ -66,6 +67,7 @@ function ArrowUpIcon() {
 }
 
 export function ScrollToTop() {
+  const pathname = usePathname();
   const isClient = useSyncExternalStore(
     subscribeClient,
     getClientSnapshot,
@@ -81,7 +83,7 @@ export function ScrollToTop() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
-  if (!isClient) {
+  if (!isClient || pathname.startsWith("/order")) {
     return null;
   }
 

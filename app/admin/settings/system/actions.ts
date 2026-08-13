@@ -165,6 +165,28 @@ export async function resendRfqAdminNotificationAction(
     return { ok: false, error: "RFQ not found." };
   }
 
+  const { data: catalogueLines } = await client
+    .from("rfq_catalogue_line_items")
+    .select(
+      "sku, product_name, quantity, unit_price_incl_vat_zar, line_total_incl_vat_zar",
+    )
+    .eq("rfq_id", rfqId);
+
+  const extraRows: Array<readonly [string, string]> =
+    catalogueLines?.flatMap((line) => [
+      ["SKU", String(line.sku)] as const,
+      ["Product", String(line.product_name)] as const,
+      ["Quantity", String(line.quantity)] as const,
+      [
+        "Unit price incl. VAT",
+        `R ${Number(line.unit_price_incl_vat_zar).toFixed(2)}`,
+      ] as const,
+      [
+        "Line total incl. VAT",
+        `R ${Number(line.line_total_incl_vat_zar).toFixed(2)}`,
+      ] as const,
+    ]) ?? [];
+
   const origin =
     process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") ||
     "https://www.dam-tech.co.za";
@@ -180,10 +202,14 @@ export async function resendRfqAdminNotificationAction(
       ? rfq.services_requested
       : [rfq.service_required || "Other"],
     location: rfq.project_location || "—",
-    assetCount: 0,
-    quantitySummary: (rfq.project_description || "").slice(0, 200) || "—",
+    assetCount: catalogueLines?.length ?? 0,
+    quantitySummary:
+      extraRows.length > 0
+        ? extraRows.map(([, value]) => value).join(" · ")
+        : (rfq.project_description || "").slice(0, 200) || "—",
     adminUrl: `${origin}/admin/rfqs/${rfq.id}/`,
     enquiryChannel: rfq.enquiry_channel || "simple_public_rfq",
+    extraRows,
   });
 
   await recordRfqCommunication({

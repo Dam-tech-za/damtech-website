@@ -72,11 +72,12 @@ export async function submitSimpleQuote(
       data: parsed.data,
       calculator: null,
       markSpam: true,
-      enquiryChannel: "simple_public_rfq",
+      enquiryChannel: parsed.enquiryChannel,
       softEstimates: parsed.softEstimates,
       simpleServiceFields: parsed.simpleServiceFields,
       assetsEstimate: parsed.assetsEstimate,
       submissionId,
+      catalogueLine: parsed.catalogueLine,
     });
     return {
       success: true,
@@ -110,11 +111,12 @@ export async function submitSimpleQuote(
   const created = await createRfqFromPublicSubmission({
     data: parsed.data,
     calculator: null,
-    enquiryChannel: "simple_public_rfq",
+    enquiryChannel: parsed.enquiryChannel,
     softEstimates: parsed.softEstimates,
     simpleServiceFields: parsed.simpleServiceFields,
     assetsEstimate: parsed.assetsEstimate,
     submissionId,
+    catalogueLine: parsed.catalogueLine,
   });
 
   if (!created.ok) {
@@ -155,13 +157,15 @@ export async function submitSimpleQuote(
     process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") ||
     "https://www.dam-tech.co.za";
 
-  const sizeHint =
-    parsed.data.projectSize ||
-    (parsed.softEstimates.estimated_area_m2
-      ? `~${parsed.softEstimates.estimated_area_m2} m² (soft parse)`
-      : parsed.softEstimates.estimated_capacity_kl
-        ? `~${parsed.softEstimates.estimated_capacity_kl} kL (soft parse)`
-        : "Size not provided");
+  const catalogueLine = parsed.catalogueLine;
+  const sizeHint = catalogueLine
+    ? `${catalogueLine.sku} · ${catalogueLine.productName} × ${catalogueLine.quantity} · R ${catalogueLine.lineTotalInclVatZar.toFixed(2)} incl. VAT · transport excluded · installation excluded`
+    : parsed.data.projectSize ||
+      (parsed.softEstimates.estimated_area_m2
+        ? `~${parsed.softEstimates.estimated_area_m2} m² (soft parse)`
+        : parsed.softEstimates.estimated_capacity_kl
+          ? `~${parsed.softEstimates.estimated_capacity_kl} kL (soft parse)`
+          : "Size not provided");
 
   const emailConfig = getRfqEmailConfig();
   const adminPayload = {
@@ -171,12 +175,35 @@ export async function submitSimpleQuote(
     customerPhone: parsed.data.phone,
     customerCompany: parsed.data.company,
     services: [parsed.data.serviceRequired],
-    location: parsed.data.projectLocation || parsed.data.province || "—",
-    assetCount: 0,
+    location:
+      parsed.data.deliveryAddress ||
+      parsed.data.town ||
+      parsed.data.projectLocation ||
+      parsed.data.province ||
+      "—",
+    assetCount: catalogueLine ? catalogueLine.quantity : 0,
     quantitySummary: sizeHint,
     adminUrl: `${origin}/admin/rfqs/${created.rfqId}/`,
-    enquiryChannel: "simple_public_rfq" as const,
+    enquiryChannel: parsed.enquiryChannel,
     messagePreview: parsed.data.message.slice(0, 280),
+    extraRows: catalogueLine
+      ? ([
+          ["SKU", catalogueLine.sku],
+          ["Product", catalogueLine.productName],
+          ["Quantity", String(catalogueLine.quantity)],
+          [
+            "Unit price incl. VAT",
+            `R ${catalogueLine.unitPriceInclVatZar.toFixed(2)}`,
+          ],
+          [
+            "Line total incl. VAT",
+            `R ${catalogueLine.lineTotalInclVatZar.toFixed(2)}`,
+          ],
+          ["VAT", "Included (15%)"],
+          ["Transport", "Excluded"],
+          ["Installation", "Excluded"],
+        ] as const)
+      : undefined,
   };
 
   const [adminResult, customerResult] = await Promise.all([
@@ -186,10 +213,20 @@ export async function submitSimpleQuote(
           to: parsed.data.email,
           customerName: parsed.data.name,
           rfqNumber: created.rfqNumber,
-          projectLocation: parsed.data.projectLocation || "",
-          assetSummaries: [],
-          enquiryChannel: "simple_public_rfq",
+          projectLocation:
+            parsed.data.town || parsed.data.projectLocation || "",
+          assetSummaries: catalogueLine
+            ? [
+                `${catalogueLine.productName} (${catalogueLine.sku}) × ${catalogueLine.quantity}`,
+                `Unit price: R ${catalogueLine.unitPriceInclVatZar.toFixed(2)} incl. VAT`,
+                `Line total: R ${catalogueLine.lineTotalInclVatZar.toFixed(2)} incl. VAT`,
+                "Transport excluded",
+                "Installation excluded",
+              ]
+            : [],
+          enquiryChannel: parsed.enquiryChannel,
           serviceRequired: parsed.data.serviceRequired,
+          invoiceRequest: Boolean(catalogueLine),
         })
       : Promise.resolve({ ok: true as const, status: "skipped" as const }),
   ]);

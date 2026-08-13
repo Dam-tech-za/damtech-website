@@ -105,9 +105,9 @@ export const WATERPROOFING_INTRO: ServiceIntroConfig = {
 
 export const STEEL_TANKS_INTRO: ServiceIntroConfig = {
   eyebrow: "STEEL WATER TANKS",
-  heading: "Steel Water Tanks for Practical Water Storage",
+  heading: "Fixed-price corrugated steel reservoir kits",
   description:
-    "Damtech supplies corrugated steel water tanks for farms, estates, mines and commercial properties that need durable above-ground water storage. Modular tank sizes support backup supply, irrigation reserves and practical site layouts across South Africa.",
+    "Damtech supplies fixed-price corrugated steel reservoir kits for farms, estates, game lodges and commercial sites. Listed prices are in South African rand, include 15% VAT and cover the supply-only kit. Transport and installation are excluded and confirmed on the invoice.",
   cards: [
     {
       title: "Corrugated Tanks",
@@ -115,9 +115,9 @@ export const STEEL_TANKS_INTRO: ServiceIntroConfig = {
         "Galvanised corrugated steel shells with PVC lining for reliable above-ground storage.",
     },
     {
-      title: "Backup Storage",
+      title: "Fixed VAT-inclusive prices",
       description:
-        "Practical capacity for borehole backup, household supply and operational water needs.",
+        "Published kit prices include 15% VAT. No “from” pricing and no ex-VAT consumer price.",
     },
     {
       title: "Farm & Commercial Use",
@@ -125,8 +125,14 @@ export const STEEL_TANKS_INTRO: ServiceIntroConfig = {
         "Suited to farms, estates, game lodges and commercial water-storage applications.",
     },
   ],
-  primaryCta: { label: "Request a Steel Tank Quote", href: "/quote" },
-  secondaryCta: { label: "Estimate Tank Size", href: "/calculators" },
+  primaryCta: {
+    label: "View tank sizes and prices",
+    href: "/steel-water-storage-tanks/#popular-tank-sizes",
+  },
+  secondaryCta: {
+    label: "Use the tank size calculator",
+    href: "/calculators/#steel-tank-size",
+  },
   image: SITE_IMAGES.steelTank.image,
   imageAlt:
     "Corrugated steel water tank for farm and commercial water storage",

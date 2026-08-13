@@ -284,6 +284,14 @@ export const PROJECT_CASE_STUDIES: ProjectCaseStudy[] = [
     ],
     relatedServices: [
       { href: "/steel-water-storage-tanks", label: "View steel water tank services" },
+      {
+        href: "/steel-water-storage-tanks/10000-litre-water-tank/",
+        label: "10 000L corrugated steel water tank kit",
+      },
+      {
+        href: "/steel-water-storage-tanks/20000-litre-water-tank/",
+        label: "20 000L farm and lodge water tank",
+      },
       { href: "/agricultural-water-storage", label: "View agricultural water-storage solutions" },
       { href: "/calculators", label: "Estimate steel water tank size" },
       { href: "/quote", label: "Request a steel water tank quote" },

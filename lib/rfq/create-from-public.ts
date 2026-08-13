@@ -2,6 +2,7 @@ import { createHash, randomBytes } from "node:crypto";
 import { createServiceRoleClient } from "@/lib/supabase/admin";
 import { isSupabaseServiceConfigured } from "@/lib/supabase/env";
 import { writeAuditLog } from "@/lib/auth/audit";
+import type { CatalogueLineSnapshot } from "@/lib/catalogue";
 import type { EnquiryChannel } from "./enquiry-channel";
 import type {
   CalculatorPayload,
@@ -91,6 +92,7 @@ export async function createRfqFromPublicSubmission(input: {
   simpleServiceFields?: ParsedSimpleServiceFields;
   assetsEstimate?: number | null;
   submissionId?: string | null;
+  catalogueLine?: CatalogueLineSnapshot | null;
 }): Promise<CreateRfqResult> {
   if (!isSupabaseServiceConfigured()) {
     return {
@@ -209,6 +211,8 @@ export async function createRfqFromPublicSubmission(input: {
         material_preference: input.data.materialPreference || null,
         number_of_assets_estimate: input.assetsEstimate ?? null,
         preferred_timeframe: input.data.preferredTimeframe || null,
+        town: input.data.town || null,
+        address_line: input.data.deliveryAddress || null,
         simple_service_fields: input.simpleServiceFields ?? {},
         measurement_status: "information_not_yet_confirmed",
         has_calculator_data: hasCalculator,
@@ -254,16 +258,46 @@ export async function createRfqFromPublicSubmission(input: {
       };
     }
 
+    if (input.catalogueLine) {
+      const line = input.catalogueLine;
+      const { error: lineError } = await client
+        .from("rfq_catalogue_line_items")
+        .insert({
+          rfq_id: rfq.id,
+          sku: line.sku,
+          product_name: line.productName,
+          quantity: line.quantity,
+          unit_price_incl_vat_zar: line.unitPriceInclVatZar,
+          line_total_incl_vat_zar: line.lineTotalInclVatZar,
+          vat_included: true,
+          vat_rate_percent: line.vatRatePercent,
+          currency: line.currency,
+          transport_excluded: true,
+          installation_excluded: true,
+          catalogue_snapshot: line,
+        });
+      if (lineError) {
+        console.error(
+          "[rfq] catalogue line insert failed:",
+          lineError.message,
+          lineError.code,
+        );
+      }
+    }
+
     await client.from("rfq_events").insert({
       rfq_id: rfq.id,
       event_type: "submitted",
-      message: "RFQ submitted from public website",
+      message: input.catalogueLine
+        ? `Invoice request submitted for ${input.catalogueLine.sku}`
+        : "RFQ submitted from public website",
       metadata: {
         source_page: input.data.sourcePage,
         enquiry_channel: enquiryChannel,
         has_calculator: hasCalculator,
         asset_count: 0,
         spam: Boolean(input.markSpam),
+        catalogue_sku: input.catalogueLine?.sku ?? null,
       },
     });
 

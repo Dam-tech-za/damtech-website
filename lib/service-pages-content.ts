@@ -257,7 +257,7 @@ export const STEEL_TANKS_CONTENT = {
     {
       question: "What sizes of steel water tanks do you supply?",
       answer:
-        "We offer corrugated galvanised tanks from approximately 11 kL up to 500 kL and larger on request. Diameter ranges from 3 m to 17 m with one to four ring heights. See the capacity tables on this page or contact us for a full schedule.",
+        "Fixed-price supply-only kits are listed on this page for 10 000 L, 20 000 L, 50 000 L and 100 000 L, plus fish-pond and livestock-trough kits. We also fabricate corrugated galvanised tanks from approximately 11 kL up to 500 kL and larger on request. Diameter ranges from 3 m to 17 m with one to four ring heights. See the capacity tables below or contact us for a full schedule.",
     },
     {
       question: "How long does installation take?",
@@ -277,14 +277,18 @@ export const STEEL_TANKS_CONTENT = {
   ] satisfies ServiceFaqItem[],
   relatedLinks: [
     {
+      href: "/steel-water-storage-tanks/#popular-tank-sizes",
+      label: "Compare all tank sizes and prices",
+    },
+    {
       href: "/calculators/#steel-tank-size",
-      label: "Need help sizing a tank? → Steel Tank Size Calculator",
+      label: "Use the tank size calculator",
     },
     { href: "/dam-liners", label: "Dam Liners & Dam Lining Services" },
     { href: "/agricultural-water-storage", label: "Agricultural Water Storage" },
     { href: "/projects", label: "Tank Installation Projects" },
     { href: "/faq", label: "Reservoir FAQ" },
-    { href: "/quote", label: "Request a Steel Tank Quote" },
+    { href: "/quote", label: "Request a Steel Tank Invoice" },
   ],
 };
 
@@ -371,9 +375,9 @@ export const SERVICES_OVERVIEW_CARDS = [
   {
     title: "Corrugated Steel Water Tanks",
     description:
-      "Galvanised steel reservoirs with PVC lining from 11 kL to 500 kL+ for farms, mines and rural storage.",
+      "Fixed-price corrugated steel water tank kits with VAT-inclusive prices, plus larger reservoirs on request.",
     href: "/steel-water-storage-tanks",
-    cta: "Steel tank installation",
+    cta: "Steel tank sizes and prices",
   },
   {
     title: "Bitumen Waterproofing",

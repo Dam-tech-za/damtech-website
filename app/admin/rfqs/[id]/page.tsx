@@ -28,6 +28,7 @@ import {
   isSimpleEnquiryChannel,
 } from "@/lib/rfq/enquiry-channel";
 import { ResendRfqNotificationButton } from "@/components/admin/ResendRfqNotificationButton";
+import { RfqCatalogueLinePanel } from "@/components/admin/RfqCatalogueLinePanel";
 import { RfqDetailActions } from "@/components/admin/rfqs/RfqDetailActions";
 import {
   AdminButton,
@@ -96,6 +97,7 @@ export default async function AdminRfqDetailPage({
     { data: assets },
     { data: infoRequests },
     { data: communications },
+    { data: catalogueLines },
   ] = await Promise.all([
     rfq.customer_id
       ? supabase.from("customers").select("*").eq("id", rfq.customer_id).maybeSingle()
@@ -136,6 +138,13 @@ export default async function AdminRfqDetailPage({
       .eq("rfq_id", id)
       .order("created_at", { ascending: false })
       .limit(20),
+    supabase
+      .from("rfq_catalogue_line_items")
+      .select(
+        "id, sku, product_name, quantity, unit_price_incl_vat_zar, line_total_incl_vat_zar, vat_included, transport_excluded, installation_excluded",
+      )
+      .eq("rfq_id", id)
+      .order("created_at", { ascending: true }),
   ]);
 
   const assetRows = assets ?? [];
@@ -379,6 +388,14 @@ export default async function AdminRfqDetailPage({
               <dd>{rfq.project_location ?? "—"}</dd>
             </div>
             <div>
+              <dt>Town</dt>
+              <dd>{rfq.town ?? "—"}</dd>
+            </div>
+            <div>
+              <dt>Delivery address</dt>
+              <dd>{rfq.address_line ?? "—"}</dd>
+            </div>
+            <div>
               <dt>Province</dt>
               <dd>{rfq.province ?? "—"}</dd>
             </div>
@@ -410,6 +427,44 @@ export default async function AdminRfqDetailPage({
           <h3 className="admin-subheading">General description</h3>
           <p className="admin-prose">{rfq.project_description}</p>
         </AdminPanel>
+
+        <RfqCatalogueLinePanel
+          lines={
+            catalogueLines && catalogueLines.length
+              ? catalogueLines
+              : (() => {
+                  const snapshot = (
+                    rfq.simple_service_fields as {
+                      catalogueLine?: {
+                        sku: string;
+                        productName: string;
+                        quantity: number;
+                        unitPriceInclVatZar: number;
+                        lineTotalInclVatZar: number;
+                        vatIncluded?: boolean;
+                        transportExcluded?: boolean;
+                        installationExcluded?: boolean;
+                      };
+                    }
+                  )?.catalogueLine;
+                  if (!snapshot) return [];
+                  return [
+                    {
+                      id: "snapshot",
+                      sku: snapshot.sku,
+                      product_name: snapshot.productName,
+                      quantity: snapshot.quantity,
+                      unit_price_incl_vat_zar: snapshot.unitPriceInclVatZar,
+                      line_total_incl_vat_zar: snapshot.lineTotalInclVatZar,
+                      vat_included: snapshot.vatIncluded ?? true,
+                      transport_excluded: snapshot.transportExcluded ?? true,
+                      installation_excluded:
+                        snapshot.installationExcluded ?? true,
+                    },
+                  ];
+                })()
+          }
+        />
 
         <AdminPanel
           id="rfq-assets"

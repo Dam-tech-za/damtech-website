@@ -62,6 +62,19 @@ export function CalculatorsSeoIntro() {
           </CalculatorJumpLink>{" "}
           estimates corrugated steel reservoir capacity from daily water use, backup storage
           days and a safety factor — useful when sizing farm, lodge or commercial water storage.
+          Compare the result with Damtech’s fixed-price{" "}
+          <Link href="/steel-water-storage-tanks/20000-litre-water-tank/" className="text-water hover:underline">
+            20 000L
+          </Link>
+          ,{" "}
+          <Link href="/steel-water-storage-tanks/50000-litre-water-tank/" className="text-water hover:underline">
+            50 000L
+          </Link>{" "}
+          and{" "}
+          <Link href="/steel-water-storage-tanks/100000-litre-water-tank/" className="text-water hover:underline">
+            100 000L
+          </Link>{" "}
+          supply-only kits.
         </p>
       </section>
 

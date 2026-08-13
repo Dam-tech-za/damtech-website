@@ -3,6 +3,7 @@ export const ENQUIRY_CHANNELS = [
   "calculator_quote_preparation",
   "contact_enquiry",
   "admin_created",
+  "catalogue_invoice_request",
   "other",
 ] as const;
 
@@ -18,6 +19,8 @@ export function enquiryChannelLabel(channel: string | null | undefined): string 
       return "Contact form";
     case "admin_created":
       return "Admin created";
+    case "catalogue_invoice_request":
+      return "Invoice request";
     case "other":
       return "Other";
     default:
@@ -37,6 +40,8 @@ export function enquiryChannelBadgeClass(
       return "admin-source-badge admin-source-badge--contact";
     case "admin_created":
       return "admin-source-badge admin-source-badge--admin";
+    case "catalogue_invoice_request":
+      return "admin-source-badge admin-source-badge--simple";
     default:
       return "admin-source-badge";
   }
@@ -48,6 +53,7 @@ export function isSimpleEnquiryChannel(
   return (
     channel === "simple_public_rfq" ||
     channel === "contact_enquiry" ||
+    channel === "catalogue_invoice_request" ||
     !channel
   );
 }

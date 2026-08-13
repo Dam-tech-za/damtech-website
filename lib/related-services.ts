@@ -29,7 +29,7 @@ export const RELATED_SERVICE_LINKS: readonly RelatedServiceLink[] = [
   },
   {
     href: "/steel-water-storage-tanks",
-    label: "Steel Water Tanks",
+    label: "Steel Water Tanks & Prices",
     Icon: ReservoirIcon,
   },
   {

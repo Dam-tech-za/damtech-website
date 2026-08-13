@@ -9,13 +9,14 @@ export const metadata: Metadata = {
 };
 
 type PageProps = {
-  searchParams: Promise<{ ref?: string; upload?: string }>;
+  searchParams: Promise<{ ref?: string; upload?: string; flow?: string }>;
 };
 
 export default async function QuoteSuccessPage({ searchParams }: PageProps) {
   const params = await searchParams;
   const rfqNumber = params.ref || "your request";
   const uploadToken = params.upload;
+  const isInvoiceRequest = params.flow === "invoice";
   const showUpload =
     Boolean(uploadToken) &&
     uploadToken !== "spam" &&
@@ -27,8 +28,16 @@ export default async function QuoteSuccessPage({ searchParams }: PageProps) {
       <Hero
         compact
         eyebrow="Received"
-        title="Thank you — your quote request is with Damtech"
-        description="We typically respond within one business day. No quotation has been issued yet; our team will confirm details before quoting."
+        title={
+          isInvoiceRequest
+            ? "Invoice request received"
+            : "Thank you — your quote request is with Damtech"
+        }
+        description={
+          isInvoiceRequest
+            ? "Your invoice request has been received. Damtech will confirm transport and availability before sending your invoice. Installation is not included unless quoted separately."
+            : "We typically respond within one business day. No quotation has been issued yet; our team will confirm details before quoting."
+        }
       />
       <SiteSection>
         <p>

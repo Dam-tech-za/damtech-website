@@ -25,6 +25,7 @@ const NAV_ACCESS: Record<AdminNavItemId, readonly AdminRole[]> = {
   dashboard: ["owner", "admin", "sales", "estimator", "viewer"],
   rfqs: ["owner", "admin", "sales", "estimator", "viewer"],
   quotes: ["owner", "admin", "sales", "estimator", "viewer"],
+  orders: ["owner", "admin", "sales", "estimator", "viewer"],
   customers: ["owner", "admin", "sales", "viewer"],
   pricing: ["owner", "admin", "estimator", "viewer"],
   "project-templates": ["owner", "admin", "estimator", "viewer"],
@@ -51,6 +52,12 @@ export const ADMIN_NAV_ITEMS: AdminNavItem[] = [
     label: "Quotes",
     href: "/admin/quotes/",
     description: "Draft and sent",
+  },
+  {
+    id: "orders",
+    label: "Orders",
+    href: "/admin/orders/",
+    description: "Catalogue kit orders",
   },
   {
     id: "customers",
@@ -112,6 +119,7 @@ export const PERMISSIONS = {
   manageQuoteNumbering: ["owner", "admin"] as const,
   exportQuotes: ["owner", "admin", "sales"] as const,
   manageRfqs: ["owner", "admin", "sales", "estimator"] as const,
+  manageOrders: ["owner", "admin", "sales", "estimator"] as const,
   deleteRfqs: ["owner", "admin"] as const,
   manageCustomers: ["owner", "admin", "sales"] as const,
   managePricing: ["owner", "admin", "estimator"] as const,
