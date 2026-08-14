@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { createServiceRoleClient } from "../supabase/admin.ts";
 import { isSupabaseServiceConfigured } from "../supabase/env.ts";
-import { COLLECTION_FULFILMENT } from "./collection.ts";
+import { DELIVERY_FULFILMENT } from "./delivery.ts";
 import { generateOrderReference } from "./reference.ts";
 import type { OrderPriceSnapshot } from "./pricing.ts";
 import type { PublicOrderFormInput } from "./schema.ts";
@@ -121,7 +121,7 @@ export async function createCatalogueOrder(input: {
         billing_city: data.city,
         billing_province: data.province,
         billing_postal_code: data.postalCode,
-        fulfilment_method: COLLECTION_FULFILMENT.method,
+        fulfilment_method: DELIVERY_FULFILMENT.method,
         notes: data.notes || null,
         terms_accepted_at: acceptedAtIso,
         privacy_accepted_at: acceptedAtIso,

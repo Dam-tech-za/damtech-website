@@ -113,13 +113,13 @@ const RESERVOIR_LIFESTYLE_CAPTION =
   "Open corrugated steel reservoir in a farm setting. Shared lifestyle image for the open-top tank kits; not a measured pack shot of a listed diameter or height.";
 
 const SHALLOW_SHARED_CAPTION =
-  "Shared shallow corrugated-steel basin image. This is not a measured pack shot of a listed fish-pond capacity. The galvanised safety crossbar is shown; Damtech has not confirmed that it is included in the fixed-price kit.";
+  "Shared shallow corrugated-steel basin image. The galvanised safety crossbar shown is an illustrative optional safety feature and is not confirmed as included in the fixed-price kit.";
 
 const TROUGH_PRIMARY_CAPTION =
-  "Round galvanised livestock water trough with liner. Listed size is 1.5 m diameter × 381 mm high; this image is a shared representation, not a measured pack shot. The galvanised safety crossbar is shown; Damtech has not confirmed that it is included in the fixed-price kit.";
+  "Round galvanised livestock water trough with liner. Listed size is 1.5 m diameter × 381 mm high. The galvanised safety crossbar shown is an illustrative optional safety feature and is not confirmed as included in the fixed-price kit.";
 
 const SHALLOW_LIFESTYLE_CAPTION =
-  "Shallow corrugated steel basin in a farm setting. Shared lifestyle image for the fish-pond and livestock-trough kits.";
+  "Shallow corrugated steel basin in a farm setting. Shared lifestyle image for the fish-pond and livestock-trough kits. The safety crossbar, where visible, is illustrative and not a confirmed kit inclusion.";
 
 /** White-background open reservoir. Primary image for all four open tank SKUs. */
 export const RESERVOIR_PRIMARY_IMAGE: CatalogueImageAsset = {

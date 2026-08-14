@@ -9,7 +9,7 @@ const path = "/terms";
 export const metadata = createMetadata({
   title: "Terms of Sale | Damtech",
   description:
-    "Terms for Damtech fixed-price supply-only steel reservoir kits, invoice payment and collection.",
+    "Terms for Damtech fixed-price supply-only steel reservoir kits, invoice payment and delivery.",
   path,
 });
 
@@ -31,33 +31,36 @@ export default function TermsPage() {
       <SiteSection>
         <div className="catalogue-prose space-y-4">
           <p>
-            Catalogue prices are VAT-inclusive for the supply-only kit. Transport
+            Catalogue prices are VAT-inclusive for the supply-only kit. Delivery
             and installation are excluded unless Damtech quotes them separately.
           </p>
           <h2>Orders and invoices</h2>
           <p>
-            Placing an order records the kit, quantity and customer details. It
-            does not take payment. Damtech sends a tax invoice separately.
-            Payment must be made only using the banking details on that invoice.
+            Placing an order records the kit, quantity, customer details and
+            delivery address. It does not take payment. Damtech sends a tax
+            invoice separately. Payment must be made only using the banking
+            details on that invoice.
           </p>
           <h2>Fulfilment</h2>
           <p>
-            The advertised kit price is for collection or customer-arranged
-            transport. Damtech confirms the collection point on the invoice.
-            Damtech-arranged transport is quoted on request and is never added
-            as a hidden amount to the online kit total.
+            Catalogue kits are delivery only throughout South Africa. DamTech
+            does not offer customer collection and does not provide a public
+            collection point. DamTech will confirm the delivery charge on the
+            formal invoice. Delivery is never added as a hidden amount to the
+            online kit total.
           </p>
-          <h2>Availability</h2>
+          <h2>Availability and lead times</h2>
           <p>
-            Kits are made to order. Damtech confirms availability before or with
-            the invoice. These terms do not guarantee stock on the day the order
-            is placed.
+            Kits are made to order and available to order. Manufacturing takes
+            5–10 business days after cleared payment. Estimated delivery takes a
+            further 3–5 business days after manufacturing is complete. Estimated
+            total fulfilment time is 8–15 business days after cleared payment.
           </p>
           <h2>Custom work</h2>
           <p>
-            Installation, modified fittings, non-standard sizes and Damtech
-            transport remain quotation items. Use the custom-quote form for that
-            work.
+            Installation, modified fittings, non-standard sizes and unusual
+            delivery requirements remain quotation items. Use the custom-quote
+            form for that work.
           </p>
           <p>
             Contact: <a href={`mailto:${siteConfig.email}`}>{siteConfig.email}</a>{" "}

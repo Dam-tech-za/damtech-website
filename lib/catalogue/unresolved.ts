@@ -27,7 +27,7 @@ export const UNRESOLVED_BUSINESS_FACTS = {
     status: "unresolved",
     field: "safetyCrossbar",
     reason:
-      "The primary shallow-basin image shows a galvanised safety crossbar, but Damtech has not confirmed that the bar is included in the fixed-price fish-pond or trough kits. Do not list it as an inclusion. This image must not be used as a Merchant image_link until the inclusion is verified or a bar-free pack shot is supplied.",
+      "The shallow-basin image shows a galvanised safety crossbar. Damtech has not confirmed that the bar is included in the fixed-price fish-pond or trough kits. Treat it as an illustrative optional safety feature in captions. Do not list it as a kit inclusion.",
   },
   troughFilledCapacity: {
     status: "unresolved",
@@ -44,13 +44,20 @@ export const UNRESOLVED_BUSINESS_FACTS = {
   leadTimeDays: {
     status: "unresolved",
     field: "leadTimeDays",
-    reason: "Fabrication and dispatch lead times are not confirmed per SKU.",
+    reason:
+      "Legacy unresolved marker. Catalogue fulfilment lead times are now confirmed in lib/catalogue/availability.ts.",
+  },
+  merchantAvailability: {
+    status: "unresolved",
+    field: "merchantAvailability",
+    reason:
+      "Legacy unresolved marker. Catalogue Merchant availability is now confirmed as in_stock in lib/catalogue/availability.ts.",
   },
   stockStatus: {
     status: "unresolved",
     field: "stockStatus",
     reason:
-      "In-stock versus made-to-order status is not confirmed. Do not mark Schema.org InStock, PreOrder or BackOrder.",
+      "Legacy unresolved marker. Kits are made to order and available to order; Schema.org InStock is published from the confirmed Merchant availability config.",
   },
   productWeight: {
     status: "unresolved",
@@ -79,12 +86,12 @@ export const UNRESOLVED_BUSINESS_FACTS = {
     status: "unresolved",
     field: "onlineCheckout",
     reason:
-      "An invoice-payment order flow exists for collection/customer-arranged transport, but Merchant eligibility stays closed until a genuine collection location is displayed before checkout and the production order/invoice flow is verified. RFQ is not checkout.",
+      "Legacy unresolved marker. The catalogue invoice-payment order flow is live for delivery throughout South Africa.",
   },
   collectionLocation: {
     status: "unresolved",
     field: "collectionLocation",
     reason:
-      "No confirmed public collection address or depot has been supplied. Operating bases are not walk-in collection points. Do not invent a collection address for checkout or Merchant Center.",
+      "DamTech does not offer customer collection and has no public collection point. Catalogue orders are delivery-only.",
   },
 } as const satisfies Record<string, UnresolvedBusinessFact>;

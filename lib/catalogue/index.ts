@@ -23,19 +23,39 @@ export {
   isUnresolvedFact,
 } from "./types.ts";
 export type {
+  CatalogueCollectionLeadTime,
   CatalogueDimension,
   CatalogueFaq,
+  CatalogueFulfilmentLeadTime,
   CatalogueImage,
   CatalogueLineSnapshot,
+  CatalogueMerchantAvailability,
   CatalogueProduct,
   CatalogueSku,
   CatalogueSpecification,
+  MerchantAvailabilityCode,
   ProductCategoryId,
+  ResolvedCollectionLeadTime,
+  ResolvedFulfilmentLeadTime,
   ResolvedImage,
+  ResolvedMerchantAvailability,
   UnresolvedBusinessFact,
 } from "./types.ts";
 export { CATALOGUE_PRODUCTS } from "./products.ts";
 export { UNRESOLVED_BUSINESS_FACTS } from "./unresolved.ts";
+export {
+  CATALOGUE_AVAILABILITY_COPY,
+  CATALOGUE_COLLECTION_LEAD_TIME,
+  CATALOGUE_FULFILMENT_COPY,
+  CATALOGUE_FULFILMENT_LEAD_TIME,
+  CATALOGUE_MERCHANT_AVAILABILITY,
+  catalogueDeliveryLeadTimeLabel,
+  catalogueManufacturingLeadTimeLabel,
+  cataloguePublicAvailabilityCopy,
+  catalogueTotalFulfilmentLeadTimeLabel,
+  merchantAvailabilityToFeedValue,
+  merchantAvailabilityToSchemaUrl,
+} from "./availability.ts";
 export {
   canonicalProductImageUrl,
   getOgImageAsset,
@@ -63,9 +83,18 @@ export {
 } from "./format.ts";
 export {
   MERCHANT_CENTER_RELEASE_GATE,
-  getMerchantFeedProducts,
-  isProductMerchantEligible,
 } from "./merchant.ts";
+export {
+  MERCHANT_FEED_COLUMNS,
+  MERCHANT_FEED_CONTENT_TYPE,
+  MERCHANT_FEED_PATH,
+  MERCHANT_FEED_URL,
+  createMerchantFeedHttpResult,
+  getCatalogueMerchantBlockerReport,
+  getMerchantFeedProducts,
+  getProductMerchantBlockers,
+  isProductMerchantEligible,
+} from "./merchant-feed.ts";
 export {
   buildCatalogueAnalyticsFromLine,
   buildCatalogueAnalyticsItem,

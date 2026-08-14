@@ -23,6 +23,7 @@ function isDisallowedSitemapPath(path: string): boolean {
     normalised === "/thank-you/" ||
     normalised.startsWith("/quote/success") ||
     normalised.startsWith("/order") ||
+    normalised.startsWith("/feeds") ||
     /\/quote\/.+\/upload/.test(normalised)
   );
 }

@@ -36,9 +36,9 @@ import {
 } from "./email/templates.ts";
 import { getMerchantOrderReadiness } from "./merchant-readiness.ts";
 import {
-  COLLECTION_FULFILMENT,
-  isCollectionLocationConfigured,
-} from "./collection.ts";
+  DELIVERY_FULFILMENT,
+  isDeliveryFulfilmentConfigured,
+} from "./delivery.ts";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "../..");
 
@@ -58,7 +58,7 @@ function validFields(overrides: Record<string, string> = {}) {
     confirmSupplyOnly: "true",
     confirmExclusions: "true",
     confirmPolicies: "true",
-    fulfilmentMethod: "collection_customer_arranged",
+    fulfilmentMethod: "delivery_south_africa",
     submissionId: "11111111-1111-4111-8111-111111111111",
     formStartedAt: String(Date.now() - 5000),
     website: "",
@@ -85,7 +85,7 @@ describe("1 valid order submission parse", () => {
     assert.equal(snapshot.unitPriceInclVatZar, 12999);
     assert.equal(snapshot.totalInclVatZar, 12999);
     assert.equal(snapshot.transportExcluded, true);
-    assert.equal(COLLECTION_FULFILMENT.method, parsed.data.fulfilmentMethod);
+    assert.equal(DELIVERY_FULFILMENT.method, parsed.data.fulfilmentMethod);
   });
 });
 
@@ -179,8 +179,12 @@ describe("7 customer email rendering", () => {
     );
     assert.match(email.text, new RegExp(ORDER_PENDING_INVOICE_NOTICE));
     assert.match(email.html, /Pending invoice/);
-    assert.match(email.text, /Transport excluded/);
-    assert.match(email.text, /Installation excluded/);
+    assert.match(email.text, /Product price excludes delivery/);
+    assert.match(email.text, /Product price excludes installation/);
+    assert.match(email.text, /Delivery only/);
+    assert.match(email.text, /5–10 business days/);
+    assert.match(email.text, /3–5 business days/);
+    assert.doesNotMatch(email.text, /collection|pickup/i);
     assert.doesNotMatch(email.text, /account number|branch code|FNB|Standard Bank/i);
     assert.doesNotMatch(email.html, /<script/i);
   });
@@ -264,14 +268,18 @@ describe("11 VAT calculation", () => {
 });
 
 describe("checkout summary copy", () => {
-  it("labels included VAT without calling it a VAT-inclusive amount", () => {
+  it("shows compact VAT-inclusive pricing and delivery-only timeline", () => {
     const summary = readFileSync(
       join(root, "components/order/OrderSummary.tsx"),
       "utf8",
     );
+    assert.match(summary, /Unit price incl\. VAT/);
     assert.match(summary, /Included VAT/);
-    assert.doesNotMatch(summary, /VAT component/);
-    assert.doesNotMatch(summary, /incl\. VAT/);
+    assert.match(summary, /Order total incl\. VAT/);
+    assert.match(summary, /What you are ordering/);
+    assert.match(summary, /Estimated timeline/);
+    assert.match(summary, /Delivery only/);
+    assert.doesNotMatch(summary, /Collection or own transport|collection point/i);
     const scroll = readFileSync(join(root, "components/ScrollToTop.tsx"), "utf8");
     assert.match(scroll, /pathname\.startsWith\("\/order"\)/);
   });
@@ -326,8 +334,8 @@ describe("13 noindex metadata", () => {
   });
 });
 
-describe("14 RFQ transport link prefill", () => {
-  it("builds the existing quote path with SKU and quantity", () => {
+describe("14 delivery-only order form", () => {
+  it("collects a delivery address and does not advertise collection", () => {
     assert.equal(
       invoiceRequestPath("DMT-WT-10000", 2),
       "/quote/?sku=DMT-WT-10000&qty=2",
@@ -336,10 +344,13 @@ describe("14 RFQ transport link prefill", () => {
       join(root, "components/order/OrderForm.tsx"),
       "utf8",
     );
-    assert.match(form, /Need DamTech to arrange transport/);
-    assert.match(form, /Request a transport quote/);
+    assert.match(form, /Delivery only/);
+    assert.match(form, /Delivery address/);
+    assert.match(form, /Street address/);
+    assert.match(form, /Delivery instructions/);
+    assert.match(form, /Request a custom quote/);
     assert.match(form, /invoiceRequestPath/);
-    assert.doesNotMatch(form, /A public collection address is not published yet/);
+    assert.doesNotMatch(form, /collection point|customer-arranged|pickup|Collection or own transport/i);
   });
 });
 
@@ -411,15 +422,21 @@ describe("18 invalid order URLs reveal no catalogue internals", () => {
   });
 });
 
-describe("merchant readiness remains closed", () => {
-  it("does not enable the feed or a collection address", () => {
-    assert.equal(MERCHANT_CENTER_RELEASE_GATE.feedEnabled, false);
-    assert.equal(isCollectionLocationConfigured(), false);
-    assert.equal(getMerchantOrderReadiness().ready, false);
+describe("merchant readiness is delivery-only", () => {
+  it("enables the feed and delivery fulfilment without a collection address", () => {
+    assert.equal(MERCHANT_CENTER_RELEASE_GATE.feedEnabled, true);
+    assert.equal(isDeliveryFulfilmentConfigured(), true);
+    assert.equal(getMerchantOrderReadiness().ready, true);
     assert.ok(
+      getMerchantOrderReadiness().blockers.some(
+        (item) => item.id === "merchant-center-delivery-settings",
+      ),
+    );
+    assert.equal(
       getMerchantOrderReadiness().blockers.some(
         (item) => item.id === "collection-location",
       ),
+      false,
     );
   });
 });

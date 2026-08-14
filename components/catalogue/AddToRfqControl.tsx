@@ -85,10 +85,10 @@ export function AddToRfqControl({ product }: { product: CatalogueProduct }) {
         Request a custom quote
       </Link>
       <p className="catalogue-buybox__help">
-        <strong>Order this kit</strong> buys the standard fixed-price supply-only
-        product for collection or customer-arranged transport.{" "}
+        <strong>Order this kit</strong> places a binding order for the standard
+        fixed-price supply-only product with delivery throughout South Africa.{" "}
         <strong>Request a custom quote</strong> is for installation, modified
-        fittings, Damtech-arranged transport or other non-standard work.
+        fittings, unusual delivery requirements or other non-standard work.
       </p>
     </div>
   );

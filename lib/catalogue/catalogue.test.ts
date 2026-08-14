@@ -18,10 +18,8 @@ import {
   resolveCatalogueLine,
   resolveCatalogueSelectionFromParams,
 } from "./rfq.ts";
-import {
-  getMerchantFeedProducts,
-  MERCHANT_CENTER_RELEASE_GATE,
-} from "./merchant.ts";
+import { MERCHANT_CENTER_RELEASE_GATE } from "./merchant.ts";
+import { getMerchantFeedProducts } from "./merchant-feed.ts";
 import {
   CATALOGUE_IMAGE_ORIGIN,
   getOgImageAsset,
@@ -158,7 +156,7 @@ describe("water tank product pages", () => {
       );
       assert.equal(
         product.supplyNotice,
-        "Fixed-price supply-only reservoir kit. Price includes VAT. Transport and installation are excluded.",
+        "Fixed-price supply-only reservoir kit. Price includes VAT. Delivery and installation are excluded.",
       );
       assert.match(product.ctaLabel, /Add .+ Tank to RFQ — Request Invoice/);
       assert.equal(isUnresolvedFact(product.inclusions), false);
@@ -283,7 +281,7 @@ describe("niche fish pond and trough pages", () => {
         published,
         /includes (a |the )?(filter|pump|aeration|fish)\b/i,
       );
-      assert.match(pond.supplyNotice, /Transport, installation, filtration/);
+      assert.match(pond.supplyNotice, /Delivery, installation, filtration/);
     }
   });
 
@@ -381,14 +379,18 @@ describe("product image SEO architecture", () => {
     assert.doesNotMatch(pond.images.main.caption ?? "", /1\.5 m|381/);
     assert.ok(trough && !isUnresolvedFact(trough.images.main));
     assert.match(trough.images.main.alt, /livestock water trough/i);
-    assert.deepEqual(getMerchantFeedProducts(), []);
+    assert.equal(getMerchantFeedProducts().length, 7);
   });
 });
 
 describe("Merchant Center gate", () => {
-  it("exposes no feed products until collection location and production checks pass", () => {
-    assert.equal(MERCHANT_CENTER_RELEASE_GATE.feedEnabled, false);
-    assert.deepEqual(getMerchantFeedProducts(), []);
+  it("enables the feed for all seven eligible catalogue products", () => {
+    assert.equal(MERCHANT_CENTER_RELEASE_GATE.feedEnabled, true);
+    assert.equal(
+      CATALOGUE_PRODUCTS.every((product) => product.merchantEligible === true),
+      true,
+    );
+    assert.equal(getMerchantFeedProducts().length, 7);
   });
 });
 
@@ -406,6 +408,7 @@ describe("catalogue sitemap and robots", () => {
     assert.match(sitemap, /CATALOGUE_PRODUCTS/);
     assert.match(sitemap, /catalogueProductUrlPath/);
     assert.match(sitemap, /normalised\.startsWith\("\/order"\)/);
+    assert.match(sitemap, /normalised\.startsWith\("\/feeds"\)/);
     assert.doesNotMatch(sitemap, /lastModified:\s*now/);
     assert.doesNotMatch(robots, /["']\/order\//);
     assert.match(robots, /Googlebot/);
@@ -413,6 +416,7 @@ describe("catalogue sitemap and robots", () => {
     assert.match(robots, /CANONICAL_ORIGIN/);
     assert.match(robots, /sitemap\.xml/);
     assert.doesNotMatch(disallowBlock, /"\/order\/"/);
+    assert.doesNotMatch(disallowBlock, /\/feeds/);
     assert.match(disallowBlock, /"\/admin\/"/);
     for (const path of [
       '"/"',

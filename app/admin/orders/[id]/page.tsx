@@ -4,7 +4,7 @@ import { canAccessNavItem, canPerform } from "@/lib/auth/permissions";
 import { getCatalogueOrder } from "@/lib/orders/list";
 import { ORDER_STATUSES } from "@/lib/orders/types";
 import { formatZar } from "@/lib/estimating/money";
-import { COLLECTION_FULFILMENT } from "@/lib/orders/collection";
+import { DELIVERY_FULFILMENT } from "@/lib/orders/delivery";
 import {
   updateOrderStatusAction,
 } from "../actions";
@@ -88,7 +88,7 @@ export default async function AdminOrderDetailPage({ params }: PageProps) {
           </div>
         </dl>
       </AdminPanel>
-      <AdminPanel title="Billing">
+      <AdminPanel title="Delivery address">
         <p>
           {order.billing_line1}
           {order.billing_line2 ? `, ${order.billing_line2}` : ""}
@@ -118,10 +118,10 @@ export default async function AdminOrderDetailPage({ params }: PageProps) {
           </div>
           <div>
             <dt>Fulfilment</dt>
-            <dd>{COLLECTION_FULFILMENT.label}</dd>
+            <dd>{DELIVERY_FULFILMENT.label}</dd>
           </div>
           <div>
-            <dt>Notes</dt>
+            <dt>Delivery instructions</dt>
             <dd>{order.notes || "—"}</dd>
           </div>
           <div>

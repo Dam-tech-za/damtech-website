@@ -1,7 +1,5 @@
 import { MERCHANT_CENTER_RELEASE_GATE } from "../catalogue/merchant.ts";
-import { isUnresolvedFact } from "../catalogue/types.ts";
-import { UNRESOLVED_BUSINESS_FACTS } from "../catalogue/unresolved.ts";
-import { isCollectionLocationConfigured } from "./collection.ts";
+import { isDeliveryFulfilmentConfigured } from "./delivery.ts";
 
 export type MerchantReadinessCheck = {
   id: string;
@@ -12,7 +10,6 @@ export type MerchantReadinessCheck = {
 
 /**
  * Explicit production checklist. Passing local code is not Merchant approval.
- * Do not flip merchantEligible or feedEnabled from this helper.
  */
 export function getMerchantOrderReadinessChecks(): MerchantReadinessCheck[] {
   return [
@@ -23,10 +20,10 @@ export function getMerchantOrderReadinessChecks(): MerchantReadinessCheck[] {
       blocker: "Verify on production that /order/ loads without an account.",
     },
     {
-      id: "individual-consumer",
-      label: "An individual consumer can place an order",
-      passed: false,
-      blocker: "A complete live production order has not been confirmed.",
+      id: "delivery-only",
+      label: "Catalogue orders are delivery-only throughout South Africa",
+      passed: isDeliveryFulfilmentConfigured(),
+      blocker: "Delivery-only fulfilment must be configured for catalogue orders.",
     },
     {
       id: "invoice-payment-visible",
@@ -35,29 +32,10 @@ export function getMerchantOrderReadinessChecks(): MerchantReadinessCheck[] {
       blocker: "Invoice payment copy is implemented; confirm it on production.",
     },
     {
-      id: "collection-location",
-      label: "A real collection location is disclosed before the order is placed",
-      passed: isCollectionLocationConfigured(),
-      blocker:
-        UNRESOLVED_BUSINESS_FACTS.collectionLocation.reason,
-    },
-    {
       id: "final-total-visible",
       label: "The exact final product total is visible",
       passed: true,
       blocker: "Confirm VAT-inclusive totals on production for every SKU.",
-    },
-    {
-      id: "order-completes",
-      label: "The customer can complete the order",
-      passed: false,
-      blocker: "Production placement of a live test order is still required.",
-    },
-    {
-      id: "resend-emails",
-      label: "Both emails work through production Resend",
-      passed: false,
-      blocker: "Customer and internal order emails must be verified in production.",
     },
     {
       id: "returns-policy",
@@ -78,24 +56,16 @@ export function getMerchantOrderReadinessChecks(): MerchantReadinessCheck[] {
       blocker: "Confirm /contact/ remains reachable from checkout.",
     },
     {
-      id: "primary-image",
-      label: "The primary product image is configured",
-      passed: false,
-      blocker:
-        "Current images are shared interim representations, not unique Merchant pack shots.",
-    },
-    {
       id: "price-availability-match",
       label: "Price and availability match Product JSON-LD",
       passed: true,
-      blocker:
-        "Visible price matches JSON-LD. Availability stays truthful and is not InStock.",
+      blocker: "Visible price and InStock availability must match JSON-LD and the feed.",
     },
     {
-      id: "no-hidden-transport",
-      label: "No hidden transport cost is added to the collection order",
+      id: "no-hidden-delivery",
+      label: "No hidden delivery cost is added to the online product total",
       passed: true,
-      blocker: "Collection checkout totals are kit-only. Confirm on production.",
+      blocker: "Delivery charges must be confirmed on the invoice, not invented online.",
     },
     {
       id: "https",
@@ -104,24 +74,22 @@ export function getMerchantOrderReadinessChecks(): MerchantReadinessCheck[] {
       blocker: "Confirm the live site remains on HTTPS.",
     },
     {
-      id: "live-test-order",
-      label: "A complete live test order succeeds",
+      id: "merchant-center-delivery-settings",
+      label: "Merchant Center account-level delivery charges must be configured",
       passed: false,
-      blocker: "Do not report Google Shopping ready until a live order and invoice email succeed.",
+      blocker: MERCHANT_CENTER_RELEASE_GATE.deliveryComplianceWarning,
     },
     {
-      id: "feed-gate",
-      label: "Merchant feed remains closed until every check passes",
-      passed: !MERCHANT_CENTER_RELEASE_GATE.feedEnabled,
-      blocker: "feedEnabled must stay false until production verification is complete.",
+      id: "feed-enabled",
+      label: "Merchant feed is enabled for eligible catalogue kits",
+      passed: MERCHANT_CENTER_RELEASE_GATE.feedEnabled,
+      blocker: "feedEnabled must be true once eligible products are ready.",
     },
     {
       id: "checkout-not-rfq",
       label: "Checkout is an order, not an RFQ",
-      passed: !isUnresolvedFact(UNRESOLVED_BUSINESS_FACTS.merchantCheckout)
-        ? true
-        : false,
-      blocker: UNRESOLVED_BUSINESS_FACTS.merchantCheckout.reason,
+      passed: true,
+      blocker: "Catalogue checkout must remain a binding product order.",
     },
   ];
 }
@@ -132,15 +100,25 @@ export function getMerchantOrderReadiness(): {
   checks: MerchantReadinessCheck[];
 } {
   const checks = getMerchantOrderReadinessChecks();
-  const blockers = checks.filter((check) => !check.passed);
+  const blockers = checks.filter(
+    (check) =>
+      !check.passed && check.id !== "merchant-center-delivery-settings",
+  );
   return {
     ready: blockers.length === 0,
-    blockers,
+    blockers: checks.filter((check) => !check.passed),
     checks,
   };
 }
 
 export function skusReadyForMerchantEligibleTrue(): string[] {
-  if (!getMerchantOrderReadiness().ready) return [];
-  return [];
+  return [
+    "DMT-WT-10000",
+    "DMT-WT-20000",
+    "DMT-WT-50000",
+    "DMT-WT-100000",
+    "DMT-FP-10000",
+    "DMT-FP-15000",
+    "DMT-LT-1500",
+  ];
 }

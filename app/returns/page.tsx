@@ -51,9 +51,9 @@ export default function ReturnsPage() {
           </p>
           <h2>Damaged or incorrect goods</h2>
           <p>
-            Report shortages or transport damage as soon as the kit is collected
-            or received, with photographs and your order reference. Damtech will
-            assess replacement or credit under the invoice terms.
+            Report shortages or delivery damage as soon as the kit is received,
+            with photographs and your order reference. Damtech will assess
+            replacement or credit under the invoice terms.
           </p>
           <p>
             Contact: <a href={`mailto:${siteConfig.email}`}>{siteConfig.email}</a>{" "}

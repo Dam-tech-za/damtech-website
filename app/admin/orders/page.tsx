@@ -30,7 +30,7 @@ export default async function AdminOrdersPage({ searchParams }: PageProps) {
     <div className="admin-stack--page">
       <AdminPageHeader
         title="Orders"
-        description="Fixed-price catalogue orders awaiting invoice, payment or collection."
+        description="Fixed-price catalogue orders awaiting invoice, payment or delivery."
       />
       <AdminFilterToolbar>
         <form className="admin-filter-toolbar__form" method="get">

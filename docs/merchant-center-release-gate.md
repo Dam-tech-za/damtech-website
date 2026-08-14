@@ -1,33 +1,79 @@
 # Merchant Center release gate
 
-Damtech’s steel-tank product pages keep **on-page content, visible price and JSON-LD price consistent**. Product JSON-LD may include catalogue images. That is **not** the same as being eligible to advertise those products as Google Shopping offers.
+Damtech’s steel-tank catalogue uses a **gated, scheduled TSV feed** as the controlled Merchant product source. Product JSON-LD remains consistent with the catalogue and can also support Google’s automatic website import if enabled later.
 
-## What the product pages already support
+Feed URL:
 
-- One product per URL under `/steel-water-storage-tanks/{slug}/`.
-- VAT-inclusive ZAR prices with no “from”, “starting at”, estimated or ex-VAT consumer price.
-- Visible price equals the catalogue price and the Offer `price` in JSON-LD.
-- Brand Damtech, SKU/MPN from the catalogue, `NewCondition`.
-- No fabricated GTINs, ratings, reviews or shipping amounts.
-- Product.image points at original static WebP URLs on `https://www.dam-tech.co.za` (not `/_next/image`).
-- `merchantEligible` stays false until checkout and model-accurate pack shots exist.
+`https://www.dam-tech.co.za/feeds/google-merchant.tsv`
 
-## What still blocks a Shopping feed
+`MERCHANT_CENTER_RELEASE_GATE.feedEnabled` is **true**. The feed returns HTTP 200 with seven eligible rows when validation passes. It is excluded from the XML sitemap and tagged `noindex`. It is **not** disallowed in robots.txt.
 
-1. **Collection location.** The invoice-payment order flow exists at `/order/?sku={SKU}&qty=1` for collection / customer-arranged transport. A genuine public collection address is **not** configured or displayed before checkout. Do not invent one. Merchant eligibility stays closed until that address is shown on the order page.
-2. **Production verification.** A complete live test order, production Resend confirmation, and invoice-email path have not been signed off. See `lib/orders/merchant-readiness.ts`.
-3. **Availability.** Kits are made to order. There is no confirmed `InStock` status and no factual `availabilityDate`.
-4. **Images.** Current WebPs are shared interim representations (and AI composites). They are suitable for the website and Product JSON-LD, not as unique Merchant `image_link` pack shots for every capacity. The shallow-basin primary image also shows a safety crossbar that is not a verified kit inclusion.
-5. **No roofed domestic SKU.** The roofed tank images are unused until a residential product includes that roof in the advertised price.
+## Delivery compliance warning
 
-## Release rule
+The feed assumes that Merchant Center account-level delivery settings contain the actual delivery charges or rates customers will pay. Handling time is **5–10 business days** and transit time is **3–5 business days**. If compulsory delivery charges are not configured accurately in Merchant Center, products may be disapproved.
 
-`MERCHANT_CENTER_RELEASE_GATE.feedEnabled` in `lib/catalogue/merchant.ts` is **false**.
+Delivery cost and delivery time are separate requirements. Configuring lead times on the website does **not** verify Merchant Center delivery-cost compliance.
 
-`getMerchantFeedProducts()` therefore returns an empty list. **No product should be submitted as an online Shopping offer** until Damtech has:
+## Google product category
 
-- a complete online order flow as listed above, and
-- a genuine, model-accurate primary image per SKU, and
-- factual availability.
+| SKUs | Category ID | Path |
+| --- | --- | --- |
+| DMT-WT-10000, DMT-WT-20000, DMT-WT-50000, DMT-WT-100000, DMT-FP-10000, DMT-FP-15000 | `1910` | Hardware > Storage Tanks |
+| DMT-LT-1500 | `6990` | Business & Industrial > Agriculture > Animal Husbandry > Livestock Feeders & Waterers |
 
-A normal RFQ must **not** be presented internally as guaranteed Merchant-compliant checkout.
+## Fulfilment
+
+Catalogue orders are **delivery only** throughout South Africa.
+
+- DamTech does **not** offer customer collection.
+- There is **no** public collection point.
+- Pretoria may be used internally as a dispatch origin only.
+- Product prices include VAT and exclude delivery and installation.
+- DamTech confirms the delivery charge on the formal invoice.
+
+## Availability and lead times
+
+All seven kits are made to order and available to order.
+
+| Window | Business days |
+| --- | --- |
+| Manufacturing / handling | 5–10 after cleared payment |
+| Delivery / transit after manufacture | 3–5 |
+| Combined fulfilment estimate | 8–15 after cleared payment |
+
+Merchant and Schema.org availability: `in_stock` / `https://schema.org/InStock`.
+
+No `availability_date` for `in_stock` products.
+
+## Identifiers
+
+- Brand: `DamTech`
+- MPN: existing catalogue SKU
+- `identifier_exists`: `yes`
+- No GTIN invented
+
+## Image mapping
+
+| SKU | Merchant `image_link` |
+| --- | --- |
+| DMT-WT-10000 / 20000 / 50000 / 100000 | Reservoir white/light-neutral WebP |
+| DMT-FP-10000 / DMT-FP-15000 / DMT-LT-1500 | Livestock/fish-pond white/light-neutral WebP with safety bar |
+| Domestic roofed tank WebP | Unused — no roof-included SKU |
+
+The safety bar shown on the shallow-basin image is an illustrative optional safety feature and is not listed as a kit inclusion.
+
+Static `https://www.dam-tech.co.za/images/*.webp` URLs only. Not `/_next/image`.
+
+## Eligible SKUs
+
+All seven catalogue SKUs are `merchantEligible: true` when validation passes:
+
+- DMT-WT-10000
+- DMT-WT-20000
+- DMT-WT-50000
+- DMT-WT-100000
+- DMT-FP-10000
+- DMT-FP-15000
+- DMT-LT-1500
+
+If the feed is enabled but unexpectedly has zero valid rows, the endpoint returns **HTTP 503**, not an empty TSV.

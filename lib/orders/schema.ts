@@ -154,13 +154,13 @@ export function parsePublicOrderFormData(formData: FormData): ParsedPublicOrder 
     ORDER_FIELD_LIMITS.postalCode,
   );
   if (!billingLine1) {
-    return { ok: false, error: "Enter billing address line 1.", field: "billingLine1" };
+    return { ok: false, error: "Enter the street address.", field: "billingLine1" };
   }
   if (!suburb) {
-    return { ok: false, error: "Enter the suburb.", field: "suburb" };
+    return { ok: false, error: "Enter the suburb or district.", field: "suburb" };
   }
   if (!city) {
-    return { ok: false, error: "Enter the city or town.", field: "city" };
+    return { ok: false, error: "Enter the town or city.", field: "city" };
   }
   if (!(PROVINCE_OPTIONS as readonly string[]).includes(province)) {
     return { ok: false, error: "Select a province.", field: "province" };
@@ -179,7 +179,7 @@ export function parsePublicOrderFormData(formData: FormData): ParsedPublicOrder 
   if (!isChecked(formData.get("confirmExclusions"))) {
     return {
       ok: false,
-      error: "Confirm that transport and installation are excluded.",
+      error: "Confirm that delivery and installation are excluded.",
       field: "confirmExclusions",
     };
   }

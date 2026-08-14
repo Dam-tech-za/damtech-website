@@ -650,6 +650,7 @@ export function createProductSchema(input: {
   imageUrl?: string;
   imageUrls?: readonly string[];
   brandName?: string;
+  availability?: string;
 }): Record<string, unknown> {
   const url = absoluteUrl(input.path);
   const offer: Record<string, unknown> = {
@@ -662,6 +663,9 @@ export function createProductSchema(input: {
       "@id": `${siteConfig.domain}/#organization`,
     },
   };
+  if (input.availability) {
+    offer.availability = input.availability;
+  }
 
   const schema: Record<string, unknown> = {
     "@context": "https://schema.org",

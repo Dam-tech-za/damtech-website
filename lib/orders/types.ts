@@ -4,7 +4,7 @@ export const ORDER_STATUSES = [
   "awaiting_payment",
   "paid",
   "processing",
-  "ready_for_collection",
+  "ready_for_delivery",
   "completed",
   "cancelled",
 ] as const;
@@ -25,7 +25,7 @@ export const ORDER_CUSTOMER_TYPES = ["individual", "business"] as const;
 
 export type OrderCustomerType = (typeof ORDER_CUSTOMER_TYPES)[number];
 
-export const ORDER_FULFILMENT_METHOD = "collection_customer_arranged" as const;
+export const ORDER_FULFILMENT_METHOD = "delivery_south_africa" as const;
 
 export type OrderFulfilmentMethod = typeof ORDER_FULFILMENT_METHOD;
 

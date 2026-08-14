@@ -9,6 +9,7 @@ import {
 } from "@/components/lazy";
 import {
   CATALOGUE_CATEGORY_PATH,
+  CATALOGUE_MERCHANT_AVAILABILITY,
   catalogueProductUrlPath,
   formatJsonLdPrice,
   formatZarWholeInclVat,
@@ -16,6 +17,7 @@ import {
   getCatalogueSlugs,
   getOgImageAsset,
   getSchemaImageUrls,
+  merchantAvailabilityToSchemaUrl,
 } from "@/lib/catalogue";
 import { createPageMetadata, PAGE_SEO } from "@/lib/pages";
 import {
@@ -77,6 +79,9 @@ export default async function CatalogueProductPage({ params }: Props) {
             sku: product.sku,
             priceInclVatZar: formatJsonLdPrice(product.priceInclVatZar),
             imageUrls: schemaImages,
+            availability: merchantAvailabilityToSchemaUrl(
+              CATALOGUE_MERCHANT_AVAILABILITY,
+            ),
           }),
           createFaqPageSchema(product.faqs),
         ]}

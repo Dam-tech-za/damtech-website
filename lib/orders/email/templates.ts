@@ -1,10 +1,15 @@
+import {
+  catalogueDeliveryLeadTimeLabel,
+  catalogueManufacturingLeadTimeLabel,
+  catalogueTotalFulfilmentLeadTimeLabel,
+} from "../../catalogue/availability.ts";
 import { formatZarInclVat, formatZarNumber } from "../../catalogue/format.ts";
-import { COLLECTION_FULFILMENT } from "../collection.ts";
+import { DELIVERY_FULFILMENT } from "../delivery.ts";
+import type { PublicOrderFormInput } from "../schema.ts";
+import type { OrderPriceSnapshot } from "../pricing.ts";
 
 const CONTACT_PHONE = "+27 82 853 1026";
 const CONTACT_EMAIL = "info@dam-tech.co.za";
-import type { PublicOrderFormInput } from "../schema.ts";
-import type { OrderPriceSnapshot } from "../pricing.ts";
 
 export function escapeHtml(value: string): string {
   return value
@@ -31,7 +36,7 @@ function moneyAmount(amount: number): string {
   return `R ${formatZarNumber(amount)}`;
 }
 
-function billingBlock(data: PublicOrderFormInput): string[] {
+function deliveryBlock(data: PublicOrderFormInput): string[] {
   return [
     data.billingLine1,
     data.billingLine2,
@@ -83,7 +88,7 @@ export function buildCustomerOrderEmail(input: {
     timeZone: "Africa/Johannesburg",
   });
   const subject = customerOrderEmailSubject(orderReference);
-  const billing = billingBlock(data);
+  const delivery = deliveryBlock(data);
   const text = [
     `Dear ${data.customerName},`,
     "",
@@ -98,17 +103,25 @@ export function buildCustomerOrderEmail(input: {
     `Unit price including VAT: ${moneyInclVat(snapshot.unitPriceInclVatZar)}`,
     `VAT amount: ${moneyAmount(snapshot.vatAmountZar)}`,
     `Total including VAT: ${moneyInclVat(snapshot.totalInclVatZar)}`,
-    "Transport excluded",
-    "Installation excluded",
-    `Fulfilment: ${COLLECTION_FULFILMENT.label}`,
+    "Product price excludes delivery",
+    "Product price excludes installation",
+    `Fulfilment: ${DELIVERY_FULFILMENT.label}`,
+    `Manufacturing: ${catalogueManufacturingLeadTimeLabel()} after cleared payment`,
+    `Delivery estimate: ${catalogueDeliveryLeadTimeLabel()}`,
+    `Total estimate: ${catalogueTotalFulfilmentLeadTimeLabel()}`,
     "",
-    "Billing details:",
-    ...billing,
+    "Delivery address:",
+    ...delivery,
+    data.notes ? `Delivery instructions: ${data.notes}` : null,
+    "",
+    "DamTech will send the formal invoice separately.",
     "",
     `If any details need correcting, contact DamTech on ${CONTACT_PHONE} or ${CONTACT_EMAIL} and quote your order reference.`,
     "",
     "Do not pay using details from this email. Wait for the official DamTech invoice.",
-  ].join("\n");
+  ]
+    .filter((line): line is string => line !== null)
+    .join("\n");
 
   const html = htmlChrome(
     `Order received – ${orderReference}`,
@@ -125,11 +138,16 @@ export function buildCustomerOrderEmail(input: {
         ${row("Unit price including VAT", moneyInclVat(snapshot.unitPriceInclVatZar))}
         ${row("VAT amount", moneyAmount(snapshot.vatAmountZar))}
         ${row("Total including VAT", moneyInclVat(snapshot.totalInclVatZar))}
-        ${row("Transport", "Excluded")}
+        ${row("Delivery", "Excluded from product price")}
         ${row("Installation", "Excluded")}
-        ${row("Fulfilment", COLLECTION_FULFILMENT.label)}
-        ${row("Billing", billing.join(", "))}
+        ${row("Fulfilment", DELIVERY_FULFILMENT.label)}
+        ${row("Manufacturing", `${catalogueManufacturingLeadTimeLabel()} after cleared payment`)}
+        ${row("Delivery estimate", catalogueDeliveryLeadTimeLabel())}
+        ${row("Total estimate", catalogueTotalFulfilmentLeadTimeLabel())}
+        ${row("Delivery address", delivery.join(", "))}
+        ${data.notes ? row("Delivery instructions", data.notes) : ""}
       </table>
+      <p>DamTech will send the formal invoice separately.</p>
       <p>If any details need correcting, contact DamTech on ${escapeHtml(CONTACT_PHONE)} or <a href="mailto:${escapeHtml(CONTACT_EMAIL)}">${escapeHtml(CONTACT_EMAIL)}</a> and quote your order reference.</p>
       <p>Do not pay using details from this email. Wait for the official DamTech invoice.</p>
     `,
@@ -159,7 +177,7 @@ export function buildInternalOrderEmail(input: {
     exclusionsAcceptedAt,
   } = input;
   const subject = internalOrderEmailSubject(orderReference, snapshot.productName);
-  const billing = billingBlock(data);
+  const delivery = deliveryBlock(data);
   const text = [
     `New website order ${orderReference}`,
     `Status: pending_invoice`,
@@ -171,15 +189,17 @@ export function buildInternalOrderEmail(input: {
     `Phone: ${data.phone}`,
     data.vatNumber ? `VAT number: ${data.vatNumber}` : null,
     data.customerPoNumber ? `Customer PO: ${data.customerPoNumber}` : null,
-    `Billing: ${billing.join(", ")}`,
+    `Delivery address: ${delivery.join(", ")}`,
     `Product: ${snapshot.productName}`,
     `SKU: ${snapshot.sku}`,
     `Quantity: ${snapshot.quantity}`,
     `Unit price incl. VAT: ${moneyInclVat(snapshot.unitPriceInclVatZar)}`,
     `VAT: ${moneyAmount(snapshot.vatAmountZar)}`,
     `Total incl. VAT: ${moneyInclVat(snapshot.totalInclVatZar)}`,
-    `Fulfilment: ${COLLECTION_FULFILMENT.label}`,
-    data.notes ? `Notes: ${data.notes}` : "Notes: —",
+    `Fulfilment: ${DELIVERY_FULFILMENT.label}`,
+    `Manufacturing: ${catalogueManufacturingLeadTimeLabel()} after cleared payment`,
+    `Delivery estimate: ${catalogueDeliveryLeadTimeLabel()}`,
+    data.notes ? `Delivery instructions: ${data.notes}` : "Delivery instructions: —",
     `Supply-only confirmed: ${termsAcceptedAt}`,
     `Exclusions confirmed: ${exclusionsAcceptedAt}`,
     `Policies accepted: ${privacyAcceptedAt}`,
@@ -201,15 +221,17 @@ export function buildInternalOrderEmail(input: {
         ${row("Phone", data.phone)}
         ${data.vatNumber ? row("VAT number", data.vatNumber) : ""}
         ${data.customerPoNumber ? row("Customer PO", data.customerPoNumber) : ""}
-        ${row("Billing", billing.join(", "))}
+        ${row("Delivery address", delivery.join(", "))}
         ${row("Product", snapshot.productName)}
         ${row("SKU", snapshot.sku)}
         ${row("Quantity", String(snapshot.quantity))}
         ${row("Unit price incl. VAT", moneyInclVat(snapshot.unitPriceInclVatZar))}
         ${row("VAT amount", moneyAmount(snapshot.vatAmountZar))}
         ${row("Total incl. VAT", moneyInclVat(snapshot.totalInclVatZar))}
-        ${row("Fulfilment", COLLECTION_FULFILMENT.label)}
-        ${row("Notes", data.notes || "—")}
+        ${row("Fulfilment", DELIVERY_FULFILMENT.label)}
+        ${row("Manufacturing", `${catalogueManufacturingLeadTimeLabel()} after cleared payment`)}
+        ${row("Delivery estimate", catalogueDeliveryLeadTimeLabel())}
+        ${row("Delivery instructions", data.notes || "—")}
         ${row("Supply-only confirmed", termsAcceptedAt)}
         ${row("Exclusions confirmed", exclusionsAcceptedAt)}
         ${row("Policies accepted", privacyAcceptedAt)}

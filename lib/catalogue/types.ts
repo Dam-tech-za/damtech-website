@@ -41,6 +41,41 @@ export type UnresolvedBusinessFact = {
   reason: string;
 };
 
+export type MerchantAvailabilityCode =
+  | "in_stock"
+  | "out_of_stock"
+  | "preorder"
+  | "backorder";
+
+export type ResolvedMerchantAvailability = {
+  status: "resolved";
+  value: MerchantAvailabilityCode;
+  /** Required for `preorder` and `backorder`. ISO date `YYYY-MM-DD`. */
+  availabilityDate?: string;
+};
+
+export type CatalogueMerchantAvailability =
+  | ResolvedMerchantAvailability
+  | UnresolvedBusinessFact;
+
+export type ResolvedFulfilmentLeadTime = {
+  status: "resolved";
+  manufacturingMinBusinessDays: number;
+  manufacturingMaxBusinessDays: number;
+  deliveryMinBusinessDays: number;
+  deliveryMaxBusinessDays: number;
+  totalMinBusinessDays: number;
+  totalMaxBusinessDays: number;
+};
+
+export type CatalogueFulfilmentLeadTime =
+  | ResolvedFulfilmentLeadTime
+  | UnresolvedBusinessFact;
+
+/** @deprecated Prefer CatalogueFulfilmentLeadTime / ResolvedFulfilmentLeadTime */
+export type ResolvedCollectionLeadTime = ResolvedFulfilmentLeadTime;
+export type CatalogueCollectionLeadTime = CatalogueFulfilmentLeadTime;
+
 export type ResolvedImage = {
   status: "resolved";
   src: string;
@@ -99,6 +134,8 @@ export type CatalogueProduct = {
   relatedSkus: readonly CatalogueSku[];
   /** Merchant/feed title. Not submitted while the Merchant Center gate is closed. */
   feedTitle: string;
+  /** Per-SKU Merchant release flag. Independent of `feedEnabled`. */
+  merchantEligible: boolean;
   heroCopy: string;
   supplyNotice: string;
   ctaLabel: string;

@@ -8548,8 +8548,10 @@ a.admin-metric-compact:focus-visible {
     overflow-wrap: anywhere;
   }
 
-  .order-summary__sku {
-    margin: 0.25rem 0 0;
+  .order-summary__sku,
+  .order-summary__spec,
+  .order-summary__qty {
+    margin: 0.2rem 0 0;
     font-size: 0.875rem;
     color: var(--text-secondary);
   }
@@ -8558,8 +8560,13 @@ a.admin-metric-compact:focus-visible {
   .order-summary__notice {
     display: grid;
     gap: 0.65rem;
-    padding-bottom: 1.25rem;
+    padding-bottom: 1rem;
     border-bottom: 1px solid var(--border-subtle);
+  }
+
+  .order-summary__block--last {
+    border-bottom: 0;
+    padding-bottom: 0;
   }
 
   .order-summary__block-title {
@@ -8571,8 +8578,22 @@ a.admin-metric-compact:focus-visible {
     color: var(--text-secondary);
   }
 
-  .order-summary__notice p {
+  .order-summary__notice p,
+  .order-summary__price-note {
     margin: 0;
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+  }
+
+  .order-summary__list {
+    margin: 0;
+    padding-left: 1.1rem;
+    display: grid;
+    gap: 0.35rem;
+  }
+
+  .order-summary__list li {
+    overflow-wrap: anywhere;
   }
 
   .order-summary__rows {
@@ -8584,9 +8605,22 @@ a.admin-metric-compact:focus-visible {
   .order-summary__rows > div,
   .order-success__list > div {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
     gap: 0.75rem;
     align-items: start;
+  }
+
+  @media (max-width: 359px) {
+    .order-summary__rows > div,
+    .order-success__list > div {
+      grid-template-columns: 1fr;
+      gap: 0.15rem;
+    }
+
+    .order-summary__rows dd,
+    .order-success__list dd {
+      text-align: left;
+    }
   }
 
   .order-summary__rows dt,
@@ -8599,6 +8633,12 @@ a.admin-metric-compact:focus-visible {
   .order-success__list dd {
     margin: 0;
     text-align: right;
+    overflow-wrap: anywhere;
+  }
+
+  .order-summary__rows-total dt,
+  .order-summary__rows-total dd {
+    font-weight: 700;
   }
 
   .order-money {
@@ -8607,39 +8647,11 @@ a.admin-metric-compact:focus-visible {
     white-space: nowrap;
   }
 
-  .order-summary__total-panel {
-    display: grid;
-    gap: 0.2rem;
-    padding: 0.9rem 1rem;
-    border-radius: 0.75rem;
-    background: #e8f1fa;
-  }
-
-  .order-summary__total-label {
-    margin: 0;
-    font-size: 0.75rem;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    font-weight: 700;
-    color: var(--text-secondary);
-  }
-
-  .order-summary__total-value {
-    margin: 0;
-    font-size: 1.65rem;
-    font-weight: 700;
-    line-height: 1.2;
-    font-variant-numeric: tabular-nums;
-  }
-
-  .order-summary__total-note {
+  .order-custom-quote-note {
     margin: 0;
     font-size: 0.875rem;
     color: var(--text-secondary);
-  }
-
-  .order-summary__meta {
-    padding-bottom: 0;
+    overflow-wrap: anywhere;
   }
 
   .order-success__list {

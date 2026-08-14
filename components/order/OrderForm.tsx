@@ -232,8 +232,8 @@ export function OrderForm({ snapshot }: { snapshot: OrderPriceSnapshot }) {
         </fieldset>
 
         <fieldset className="order-fieldset">
-          <legend>Billing</legend>
-          <Field id="billingLine1" label="Billing address line 1" required>
+          <legend>Delivery address</legend>
+          <Field id="billingLine1" label="Street address" required>
             <input
               id="billingLine1"
               name="billingLine1"
@@ -245,7 +245,7 @@ export function OrderForm({ snapshot }: { snapshot: OrderPriceSnapshot }) {
               disabled={isPending}
             />
           </Field>
-          <Field id="billingLine2" label="Billing address line 2">
+          <Field id="billingLine2" label="Address line 2">
             <input
               id="billingLine2"
               name="billingLine2"
@@ -257,7 +257,7 @@ export function OrderForm({ snapshot }: { snapshot: OrderPriceSnapshot }) {
             />
           </Field>
           <div className="order-form__grid">
-            <Field id="suburb" label="Suburb" required>
+            <Field id="suburb" label="Suburb or district" required>
               <input
                 id="suburb"
                 name="suburb"
@@ -269,7 +269,7 @@ export function OrderForm({ snapshot }: { snapshot: OrderPriceSnapshot }) {
                 disabled={isPending}
               />
             </Field>
-            <Field id="city" label="City or town" required>
+            <Field id="city" label="Town or city" required>
               <input
                 id="city"
                 name="city"
@@ -335,12 +335,12 @@ export function OrderForm({ snapshot }: { snapshot: OrderPriceSnapshot }) {
               disabled={isPending}
             />
           </Field>
-          <Field id="notes" label="Customer notes">
+          <Field id="notes" label="Delivery instructions" hint="Optional">
             <textarea
               id="notes"
               name="notes"
               className="form-input"
-              rows={4}
+              rows={3}
               maxLength={2000}
               disabled={isPending}
             />
@@ -349,33 +349,33 @@ export function OrderForm({ snapshot }: { snapshot: OrderPriceSnapshot }) {
 
         <section className="order-section" aria-labelledby="order-fulfilment-heading">
           <h2 id="order-fulfilment-heading" className="order-section__heading">
-            How will you receive your kit?
+            Fulfilment
           </h2>
           <div className="order-fulfilment-card">
             <div className="order-fulfilment-card__top">
               <p className="order-fulfilment-card__title">
-                Collection or own transport
+                Delivery only
                 <span className="sr-only">, selected fulfilment method</span>
               </p>
               <span className="order-fulfilment-card__badge">Selected</span>
             </div>
             <p>
-              You or your appointed transporter will collect the kit. DamTech
-              will confirm the collection point and collection arrangements on
-              your invoice.
+              DamTech delivers throughout South Africa. Manufacturing takes
+              5–10 business days after cleared payment. Estimated delivery takes
+              a further 3–5 business days after manufacturing is complete.
             </p>
             <p className="order-fulfilment-card__notice">
-              Transport is not included in your order total.
+              Product price includes VAT. Delivery and installation are
+              excluded. DamTech will confirm the delivery charge on the formal
+              invoice.
             </p>
           </div>
-          <div className="order-transport-panel">
-            <h3 className="order-section__subheading">
-              Need DamTech to arrange transport?
-            </h3>
-            <p>Request a separate transport quote for delivery to your location.</p>
+          <p className="order-custom-quote-note">
+            Need a customised product, unusual delivery requirement or
+            installation?{" "}
             <Link
               href={invoiceRequestPath(snapshot.sku, quantity)}
-              className="btn-secondary order-transport-panel__button"
+              className="text-water hover:underline"
               onClick={() => {
                 pushCatalogueAnalytics(
                   CATALOGUE_ANALYTICS_EVENTS.addToRfq,
@@ -383,9 +383,10 @@ export function OrderForm({ snapshot }: { snapshot: OrderPriceSnapshot }) {
                 );
               }}
             >
-              Request a transport quote
+              Request a custom quote
             </Link>
-          </div>
+            .
+          </p>
         </section>
 
         <fieldset className="order-fieldset">
@@ -408,7 +409,7 @@ export function OrderForm({ snapshot }: { snapshot: OrderPriceSnapshot }) {
               required
               disabled={isPending}
             />
-            <span>I understand that transport and installation are excluded.</span>
+            <span>I understand that delivery and installation are excluded.</span>
           </label>
           <label className="order-check">
             <input
@@ -455,8 +456,8 @@ export function OrderForm({ snapshot }: { snapshot: OrderPriceSnapshot }) {
 
         <div className="order-submit">
           <p className="order-submit__confirm">
-            You are placing an order for a fixed-price supply-only kit. Transport
-            and installation are excluded.
+            You are placing an order for a fixed-price supply-only kit. Delivery
+            and installation are excluded from the product price.
           </p>
           <button
             type="submit"

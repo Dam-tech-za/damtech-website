@@ -4,19 +4,13 @@ import {
   livestockTroughImageManifest,
   waterTankImageManifest,
 } from "./images.ts";
+import { cataloguePublicAvailabilityCopy } from "./availability.ts";
 import {
   PRODUCT_CATEGORY_LABELS,
   VAT_RATE_PERCENT,
   type CatalogueProduct,
 } from "./types.ts";
 import { UNRESOLVED_BUSINESS_FACTS } from "./unresolved.ts";
-
-const SUPPLY_EXCLUSIONS = [
-  "Transport and delivery to site",
-  "Installation and on-site assembly",
-  "Foundation, sand base or civils",
-  "Optional roofs unless listed as included",
-] as const;
 
 /** Verified from Damtech steel-tank copy: liner, bidem, columns and 50 mm fittings ship with the kit. */
 const WATER_TANK_INCLUSIONS = [
@@ -28,13 +22,13 @@ const WATER_TANK_INCLUSIONS = [
 ] as const;
 
 const WATER_TANK_SUPPLY_NOTICE =
-  "Fixed-price supply-only reservoir kit. Price includes VAT. Transport and installation are excluded.";
+  "Fixed-price supply-only reservoir kit. Price includes VAT. Delivery and installation are excluded.";
 
 const FISH_POND_SUPPLY_NOTICE =
-  "Fixed-price supply-only pond kit. Price includes VAT. Transport, installation, filtration, pumps and aeration equipment are excluded.";
+  "Fixed-price supply-only pond kit. Price includes VAT. Delivery, installation, filtration, pumps and aeration equipment are excluded.";
 
 const TROUGH_SUPPLY_NOTICE =
-  "Fixed-price supply-only livestock water trough. Price includes VAT. Transport, installation, pipework and automatic filling equipment are excluded.";
+  "Fixed-price supply-only livestock water trough. Price includes VAT. Delivery, installation, pipework and automatic filling equipment are excluded.";
 
 const FISH_POND_INCLUSIONS = [
   "Corrugated galvanised steel shell",
@@ -43,7 +37,7 @@ const FISH_POND_INCLUSIONS = [
 ] as const;
 
 const FISH_POND_EXCLUSIONS = [
-  "Transport and delivery to site",
+  "Delivery and transport to site",
   "Installation and on-site assembly",
   "Foundation, sand base or civils",
   "Filtration, pumps and aeration equipment",
@@ -51,7 +45,7 @@ const FISH_POND_EXCLUSIONS = [
 ] as const;
 
 const TROUGH_EXCLUSIONS = [
-  "Transport and delivery to site",
+  "Delivery and transport to site",
   "Installation and on-site assembly",
   "Foundation, sand base or civils",
   "Pipework and automatic filling equipment",
@@ -62,10 +56,16 @@ const SHARED_WARRANTY =
   "Warranty for this supply-only kit is confirmed in writing on the invoice. Qualifying materials supplied by Damtech may carry a supplier-backed material warranty of up to 10 years where stated in that invoice or quotation and subject to the supplier’s terms. Damtech workmanship cover applies only when Damtech quotes and completes installation separately.";
 
 const SHARED_DELIVERY =
-  "This is a supply-only kit. Transport is excluded from the listed price. Order this kit for collection or customer-arranged transport at the advertised price. If you need Damtech to arrange transport, request a custom quote instead — that transport cost is quoted separately and is not added to the fixed kit price. Installation is not included unless quoted separately.";
+  "Delivery only throughout South Africa. The listed price excludes delivery and installation. DamTech will confirm the delivery charge on the formal invoice after the delivery address is confirmed. Manufacturing takes 5–10 business days after cleared payment. Estimated delivery takes a further 3–5 business days after manufacturing is complete. Estimated total fulfilment time is 8–15 business days after cleared payment.";
 
-const SHARED_AVAILABILITY =
-  "Made to order. Damtech will confirm availability before sending your invoice.";
+const SHARED_AVAILABILITY = cataloguePublicAvailabilityCopy();
+
+const SUPPLY_EXCLUSIONS = [
+  "Delivery and transport to site",
+  "Installation and on-site assembly",
+  "Foundation, sand base or civils",
+  "Optional roofs unless listed as included",
+] as const;
 
 function waterTankSpecifications(input: {
   sku: string;
@@ -80,7 +80,7 @@ function waterTankSpecifications(input: {
     { label: "Height", value: `${input.heightM} m` },
     { label: "Product type", value: "Corrugated steel water reservoir kit" },
     { label: "Supply format", value: "Supply only" },
-    { label: "Transport", value: "Excluded" },
+    { label: "Delivery", value: "Excluded" },
     { label: "Installation", value: "Excluded" },
     { label: "SKU", value: input.sku },
     { label: "Price", value: formatZarWholeInclVat(input.priceInclVatZar) },
@@ -96,14 +96,15 @@ export const CATALOGUE_PRODUCTS: readonly CatalogueProduct[] = [
     seoTitle: "10 000L Water Tank Price South Africa | Damtech",
     seoDescription:
       "Buy a 10 000L corrugated steel water tank kit from Damtech for R12 999 incl. VAT. 3 m diameter × 1.5 m high. Transport and installation excluded.",
-    feedTitle: "Damtech 10 000L Corrugated Steel Water Tank Kit – 3m × 1.5m",
+    feedTitle: "10 000L Corrugated Steel Water Tank Kit – 3 m × 1.5 m",
+    merchantEligible: true,
     heroCopy:
       "Secure practical water storage for a smallholding, farm, estate or commercial property with a compact 10 000L corrugated steel reservoir kit. Its 3 m diameter and 1.5 m height provide useful storage without the footprint of multiple smaller tanks.",
     description:
       "This 10 000 litre water tank is suited to customers who need a compact above-ground water reserve for borehole storage, livestock watering, rainwater collection or general property backup. The modular corrugated-steel construction provides an alternative to linking several small plastic tanks together.",
     bodyHeading: "10 000 Litre Water Storage for Farms and Properties",
     bodyCopy:
-      "A 10 000L water tank — often searched as a 10000L water tank — is a practical first step into bulk storage when smaller household tanks no longer cover borehole pumping windows, stock troughs or rainwater capture. The 3 m × 1.5 m kit sits behind a shed or along a service yard without the civils of an earth dam. The price is R12 999 incl. VAT for the supply-only reservoir kit. Transport and installation are excluded.",
+      "A 10 000L water tank — often searched as a 10000L water tank — is a practical first step into bulk storage when smaller household tanks no longer cover borehole pumping windows, stock troughs or rainwater capture. The 3 m × 1.5 m kit sits behind a shed or along a service yard without the civils of an earth dam. The price is R12 999 incl. VAT for the supply-only reservoir kit. Delivery and installation are excluded.",
     categoryId: "corrugated-steel-water-tanks",
     categoryLabel: PRODUCT_CATEGORY_LABELS["corrugated-steel-water-tanks"],
     rfqService: "Steel water tank",
@@ -156,7 +157,7 @@ export const CATALOGUE_PRODUCTS: readonly CatalogueProduct[] = [
       {
         question: "Are transport and installation included?",
         answer:
-          "No. Transport and installation are excluded. Add the 10 000L tank to an RFQ so Damtech can confirm delivery to your site and send an invoice. Installation can be quoted separately if you want Damtech to assemble the tank.",
+          "No. Delivery and installation are excluded. Add the 10 000L tank to an RFQ so Damtech can confirm delivery to your site and send an invoice. Installation can be quoted separately if you want Damtech to assemble the tank.",
       },
       {
         question: "What are the tank’s dimensions?",
@@ -203,14 +204,15 @@ export const CATALOGUE_PRODUCTS: readonly CatalogueProduct[] = [
     seoTitle: "20 000L Water Tank Price South Africa | Damtech",
     seoDescription:
       "20 000L corrugated steel water tank kit for R15 999 incl. VAT. Measures 4 m × 1.5 m. A supply-only farm and property tank from Damtech.",
-    feedTitle: "Damtech 20 000L Corrugated Steel Water Tank Kit – 4m × 1.5m",
+    feedTitle: "20 000L Corrugated Steel Water Tank Kit – 4 m × 1.5 m",
+    merchantEligible: true,
     heroCopy:
       "The Damtech 20 000L water tank provides an economical step up from household-sized storage for farms, smallholdings, lodges and commercial properties. Its low 1.5 m profile makes access and routine inspection more practical.",
     description:
       "A 20 000 litre water tank can provide buffer storage between a borehole, pump, irrigation line or livestock watering system. It is aimed at customers who have outgrown smaller domestic tanks but do not yet require a large commercial reservoir.",
     bodyHeading: "Affordable 20 000 Litre Bulk Water Storage",
     bodyCopy:
-      "At 4 m × 1.5 m the 20 000L kit holds a working reserve for mixed farm use without the height of a taller ring tank. Farmers and lodge managers use this size to store borehole water pumped when power is available, then draw it for stock or irrigation. The price is R15 999 incl. VAT for the supply-only kit. Transport and installation are excluded.",
+      "At 4 m × 1.5 m the 20 000L kit holds a working reserve for mixed farm use without the height of a taller ring tank. Farmers and lodge managers use this size to store borehole water pumped when power is available, then draw it for stock or irrigation. The price is R15 999 incl. VAT for the supply-only kit. Delivery and installation are excluded.",
     categoryId: "corrugated-steel-water-tanks",
     categoryLabel: PRODUCT_CATEGORY_LABELS["corrugated-steel-water-tanks"],
     rfqService: "Steel water tank",
@@ -314,14 +316,15 @@ export const CATALOGUE_PRODUCTS: readonly CatalogueProduct[] = [
     seoTitle: "50 000L Steel Water Tank Price South Africa | Damtech",
     seoDescription:
       "Order a 50 000L-class corrugated steel water tank kit for R24 999 incl. VAT. 5 m diameter × 2.3 m high. Transport and installation excluded.",
-    feedTitle: "Damtech 50 000L Corrugated Steel Water Tank Kit – 5m × 2.3m",
+    feedTitle: "50 000L Corrugated Steel Water Tank Kit – 5 m × 2.3 m",
+    merchantEligible: true,
     heroCopy:
       "Store approximately 50 000 litres of water in a compact corrugated steel reservoir designed for agricultural, lodge, estate and commercial applications. The 5 m diameter balances useful bulk storage with a manageable site footprint.",
     description:
       "The 50 000L tank is positioned between small property-backup tanks and large farm reservoirs. It can be incorporated into borehole, rainwater, livestock or irrigation systems where a meaningful water buffer is required.",
     bodyHeading: "50 000 Litre Water Tank for Agricultural and Commercial Storage",
     bodyCopy:
-      "At 5 m × 2.3 m this 50 000L-class kit stores more volume on a modest footprint than the 1.5 m-high tanks. Game lodges, estates and commercial yards use it as borehole-balancing or irrigation buffer storage. The price is R24 999 incl. VAT for the supply-only kit, including the 850 gsm PVC liner. Transport and installation are excluded.",
+      "At 5 m × 2.3 m this 50 000L-class kit stores more volume on a modest footprint than the 1.5 m-high tanks. Game lodges, estates and commercial yards use it as borehole-balancing or irrigation buffer storage. The price is R24 999 incl. VAT for the supply-only kit, including the 850 gsm PVC liner. Delivery and installation are excluded.",
     categoryId: "corrugated-steel-water-tanks",
     categoryLabel: PRODUCT_CATEGORY_LABELS["corrugated-steel-water-tanks"],
     rfqService: "Steel water tank",
@@ -365,7 +368,7 @@ export const CATALOGUE_PRODUCTS: readonly CatalogueProduct[] = [
       {
         question: "What is the price of a 50 000 litre water tank?",
         answer:
-          "This 50 000L-class corrugated steel water tank kit is R24 999 incl. VAT. Transport and installation are excluded.",
+          "This 50 000L-class corrugated steel water tank kit is R24 999 incl. VAT. Delivery and installation are excluded.",
       },
       {
         question: "Does the price include VAT?",
@@ -380,7 +383,7 @@ export const CATALOGUE_PRODUCTS: readonly CatalogueProduct[] = [
       {
         question: "Are transport and installation excluded?",
         answer:
-          "Yes. Transport and installation are excluded. Add the kit to an RFQ so Damtech can confirm delivery and send an invoice.",
+          "Yes. Delivery and installation are excluded. Add the kit to an RFQ so Damtech can confirm delivery and send an invoice.",
       },
       {
         question: "What base preparation is required?",
@@ -425,14 +428,15 @@ export const CATALOGUE_PRODUCTS: readonly CatalogueProduct[] = [
     seoTitle: "100 000L Water Tank Price South Africa | Damtech",
     seoDescription:
       "100 000L corrugated steel water tank kit for R40 999 incl. VAT. 9 m diameter × 1.5 m high. Fixed-price supply-only reservoir from Damtech.",
-    feedTitle: "Damtech 100 000L Corrugated Steel Water Tank Kit – 9m × 1.5m",
+    feedTitle: "100 000L Corrugated Steel Water Tank Kit – 9 m × 1.5 m",
+    merchantEligible: true,
     heroCopy:
       "The Damtech 100 000L water tank provides large-capacity above-ground storage for farms, estates, game lodges and commercial sites. Its broad 9 m diameter and 1.5 m height create a lower-profile reservoir for sites where bulk capacity matters.",
     description:
       "A 100 000 litre water tank creates a substantial reserve for livestock, irrigation, borehole balancing, estate backup or commercial operations. It offers one central storage point instead of a large bank of smaller tanks, simplifying the basic storage layout and connections.",
     bodyHeading: "100 000 Litre Bulk Water Storage",
     bodyCopy:
-      "This 100 000L water tank — also found in searches as a 100000L water tank — spreads volume across a 9 m × 1.5 m footprint rather than a tall narrow shell. Farms and commercial sites use it as a single bulk reserve instead of many linked plastic tanks. The price is R40 999 incl. VAT for the supply-only kit. Transport and installation are excluded.",
+      "This 100 000L water tank — also found in searches as a 100000L water tank — spreads volume across a 9 m × 1.5 m footprint rather than a tall narrow shell. Farms and commercial sites use it as a single bulk reserve instead of many linked plastic tanks. The price is R40 999 incl. VAT for the supply-only kit. Delivery and installation are excluded.",
     categoryId: "corrugated-steel-water-tanks",
     categoryLabel: PRODUCT_CATEGORY_LABELS["corrugated-steel-water-tanks"],
     rfqService: "Steel water tank",
@@ -476,7 +480,7 @@ export const CATALOGUE_PRODUCTS: readonly CatalogueProduct[] = [
       {
         question: "How much is the 100 000L water tank?",
         answer:
-          "The 100 000L corrugated steel water tank kit is R40 999 incl. VAT. Transport and installation are excluded.",
+          "The 100 000L corrugated steel water tank kit is R40 999 incl. VAT. Delivery and installation are excluded.",
       },
       {
         question: "Is R40 999 the complete VAT-inclusive kit price?",
@@ -535,15 +539,16 @@ export const CATALOGUE_PRODUCTS: readonly CatalogueProduct[] = [
     h1: "10 000L Fish Pond and Aquaculture Tank",
     seoTitle: "10 000L Fish Pond for Sale South Africa | Damtech",
     seoDescription:
-      "10 000L corrugated steel fish pond and aquaculture tank kit for R13 999 incl. VAT. Supply only. Transport, installation and filtration excluded.",
-    feedTitle: "Damtech 10 000L Corrugated Steel Fish Pond Kit",
+      "10 000L corrugated steel fish pond and aquaculture tank kit for R13 999 incl. VAT. Supply only. Delivery, installation and filtration excluded.",
+    feedTitle: "10 000L Corrugated Steel Fish Pond Kit",
+    merchantEligible: true,
     heroCopy:
       "Create a practical above-ground containment pond for fish farming, aquaculture or a large managed fish-pond system. This 10 000L corrugated steel pond kit combines a modular supporting shell with the verified liner system specified in the Damtech product catalogue.",
     description:
       "The 10 000L fish pond provides significantly more water volume than a small moulded garden pond while avoiding permanent concrete construction. It can be used as the containment component of a correctly designed fish-farming, aquaculture or ornamental pond system.",
     bodyHeading: "Large Fish Pond for South African Properties and Aquaculture Projects",
     bodyCopy:
-      "At 10 000 litres this supply-only kit is sized for small aquaculture projects, fish-farming trials and large ornamental fish ponds on farms and estates. Diameter and height are confirmed on the invoice; they are not published here because they are not in the verified commercial data. The price is R13 999 incl. VAT. Transport, installation, filtration, pumps and aeration are excluded.",
+      "At 10 000 litres this supply-only kit is sized for small aquaculture projects, fish-farming trials and large ornamental fish ponds on farms and estates. Diameter and height are confirmed on the invoice; they are not published here because they are not in the verified commercial data. The price is R13 999 incl. VAT. Delivery, installation, filtration, pumps and aeration are excluded.",
     supportingSections: [
       {
         heading: "Containment Is Only One Part of a Healthy Fish-Pond System",
@@ -570,7 +575,7 @@ export const CATALOGUE_PRODUCTS: readonly CatalogueProduct[] = [
       { label: "Nominal marketed capacity", value: "10 000 litres" },
       { label: "Product type", value: "Corrugated steel fish pond kit" },
       { label: "Supply format", value: "Supply only" },
-      { label: "Transport", value: "Excluded" },
+      { label: "Delivery", value: "Excluded" },
       { label: "Installation", value: "Excluded" },
       { label: "Filtration and aeration", value: "Excluded" },
       { label: "SKU", value: "DMT-FP-10000" },
@@ -581,7 +586,7 @@ export const CATALOGUE_PRODUCTS: readonly CatalogueProduct[] = [
     publicAvailability: SHARED_AVAILABILITY,
     warranty: SHARED_WARRANTY,
     deliveryExplanation:
-      "This is a supply-only pond kit. Transport is excluded. Order this kit for collection or customer-arranged transport at the advertised price. Request a custom quote if Damtech should arrange transport. Installation, filtration, pumps and aeration are not included unless quoted separately.",
+      "This is a supply-only pond kit. Delivery only throughout South Africa. Delivery and installation are excluded from the listed price. DamTech will confirm the delivery charge on the formal invoice. Installation, filtration, pumps and aeration are not included unless quoted separately.",
     sitePreparation:
       "A level, compacted pad is required before assembling the corrugated steel shell so the liner is not stressed by settlement. Damtech typically specifies sand or crusher dust on geotextile for steel kits. Pond diameter is confirmed on the invoice. Base work, assembly, filtration and aeration are excluded from the R13 999 incl. VAT price.",
     applications: [
@@ -596,7 +601,7 @@ export const CATALOGUE_PRODUCTS: readonly CatalogueProduct[] = [
       {
         question: "How much does the 10 000L fish pond cost?",
         answer:
-          "The 10 000L fish pond kit is R13 999 incl. VAT. That is the fixed supply-only price. Transport, installation, filtration, pumps and aeration are excluded.",
+          "The 10 000L fish pond kit is R13 999 incl. VAT. That is the fixed supply-only price. Delivery, installation, filtration, pumps and aeration are excluded.",
       },
       {
         question: "Does the pond include a filter or pump?",
@@ -616,7 +621,7 @@ export const CATALOGUE_PRODUCTS: readonly CatalogueProduct[] = [
       {
         question: "Are delivery and installation included?",
         answer:
-          "No. Transport and installation are excluded. Damtech calculates transport from the delivery location on your RFQ and can quote assembly separately.",
+          "No. Delivery and installation are excluded. Damtech calculates transport from the delivery location on your RFQ and can quote assembly separately.",
       },
       {
         question: "What preparation is required before assembling the pond?",
@@ -659,14 +664,15 @@ export const CATALOGUE_PRODUCTS: readonly CatalogueProduct[] = [
     seoTitle: "15 000L Fish Farming Pond South Africa | Damtech",
     seoDescription:
       "15 000L fish-farming pond and aquaculture tank kit for R17 999 incl. VAT. Corrugated steel supply-only kit. Transport and installation excluded.",
-    feedTitle: "Damtech 15 000L Corrugated Steel Fish Farming Pond Kit",
+    feedTitle: "15 000L Corrugated Steel Fish Pond Kit",
+    merchantEligible: true,
     heroCopy:
       "The 15 000L Damtech fish-farming pond offers additional managed water volume for aquaculture projects, fish holding and larger ornamental-pond applications. It is supplied as a fixed-price corrugated steel and liner kit.",
     description:
       "This larger pond is intended for customers who require more containment volume than the 10 000L model. The final aquaculture system must still be designed around the species, stocking density, water exchange, filtration, aeration and operational requirements.",
     bodyHeading: "15 000 Litre Fish-Farming and Aquaculture Containment",
     bodyCopy:
-      "The 15 000L kit is a containment vessel, not a commercially productive fish farm on its own. It does not include aeration, filtration or livestock. Diameter and height remain unpublished until Damtech confirms them on the invoice. The price is R17 999 incl. VAT. Transport and installation are excluded.",
+      "The 15 000L kit is a containment vessel, not a commercially productive fish farm on its own. It does not include aeration, filtration or livestock. Diameter and height remain unpublished until Damtech confirms them on the invoice. The price is R17 999 incl. VAT. Delivery and installation are excluded.",
     supportingSections: [
       {
         heading: "Containment Is Only One Part of a Healthy Fish-Pond System",
@@ -693,7 +699,7 @@ export const CATALOGUE_PRODUCTS: readonly CatalogueProduct[] = [
       { label: "Nominal marketed capacity", value: "15 000 litres" },
       { label: "Product type", value: "Corrugated steel fish-farming pond kit" },
       { label: "Supply format", value: "Supply only" },
-      { label: "Transport", value: "Excluded" },
+      { label: "Delivery", value: "Excluded" },
       { label: "Installation", value: "Excluded" },
       { label: "Filtration and aeration", value: "Excluded" },
       { label: "SKU", value: "DMT-FP-15000" },
@@ -704,7 +710,7 @@ export const CATALOGUE_PRODUCTS: readonly CatalogueProduct[] = [
     publicAvailability: SHARED_AVAILABILITY,
     warranty: SHARED_WARRANTY,
     deliveryExplanation:
-      "This is a supply-only pond kit. Transport is excluded. Order the kit for collection or customer-arranged transport, or request a custom quote if Damtech should arrange delivery. Assembly, filtration and aeration are quoted separately if required.",
+      "This is a supply-only pond kit. Delivery only throughout South Africa. Delivery and installation are excluded from the listed price. DamTech will confirm the delivery charge on the formal invoice. Assembly, filtration and aeration are quoted separately if required.",
     sitePreparation:
       "Prepare a level, compacted sand or crusher-dust base on geotextile before assembling the 15 000L shell. The larger volume still needs an even pad so the liner is not strained. Exact footprint is confirmed on the invoice. The base, transport and installation are excluded from the R17 999 incl. VAT price.",
     applications: [
@@ -729,7 +735,7 @@ export const CATALOGUE_PRODUCTS: readonly CatalogueProduct[] = [
       {
         question: "What is excluded from the fish-pond kit?",
         answer:
-          "Transport, installation, the prepared base, filtration, pumps, aeration equipment, fish, biological media and water treatment are excluded.",
+          "Delivery, installation, the prepared base, filtration, pumps, aeration equipment, fish, biological media and water treatment are excluded.",
       },
       {
         question: "Does the pond include aeration or filtration?",
@@ -785,14 +791,15 @@ export const CATALOGUE_PRODUCTS: readonly CatalogueProduct[] = [
     seoTitle: "Livestock Water Trough for Cattle | R4 999 | Damtech",
     seoDescription:
       "Round livestock and cattle water trough for R4 999 incl. VAT. 1.5 m diameter × 381 mm high. Supply only; transport and installation excluded.",
-    feedTitle: "Damtech Round Livestock Water Trough – 1.5m Diameter",
+    feedTitle: "Round Galvanised Livestock Water Trough",
+    merchantEligible: true,
     heroCopy:
       "A durable round livestock water trough for cattle, sheep, goats and suitable game-farming applications. Also known as a waterkrip or beeswaterkrip, this low-profile farm trough provides access from multiple sides.",
     description:
       "This round cattle water trough provides a practical drinking point in camps, paddocks, kraals and selected game-farming applications. The circular layout allows animals to approach from multiple directions, while the low wall height supports practical access and cleaning.",
     bodyHeading: "Cattle Water Trough for South African Farms",
     bodyCopy:
-      "Farmers use this livestock water trough — a cattle drinking trough or farm water trough — where a simple, round watering point is enough. In Afrikaans it is a waterkrip or beeswaterkrip; waterkrippe of this type suit camps that already have a reliable water supply. Die ronde waterkrip is geskik as ’n praktiese drinkpunt vir vee waar die toevoer, vlotterklep en basis korrek voorberei is. The price is R4 999 incl. VAT. Transport, installation, pipework and automatic filling equipment are excluded.",
+      "Farmers use this livestock water trough — a cattle drinking trough or farm water trough — where a simple, round watering point is enough. In Afrikaans it is a waterkrip or beeswaterkrip; waterkrippe of this type suit camps that already have a reliable water supply. Die ronde waterkrip is geskik as ’n praktiese drinkpunt vir vee waar die toevoer, vlotterklep en basis korrek voorberei is. The price is R4 999 incl. VAT. Delivery, installation, pipework and automatic filling equipment are excluded.",
     supplyNotice: TROUGH_SUPPLY_NOTICE,
     ctaLabel: "Add Livestock Trough to RFQ — Request Invoice",
     categoryId: "livestock-water-troughs",
@@ -819,7 +826,7 @@ export const CATALOGUE_PRODUCTS: readonly CatalogueProduct[] = [
       },
       { label: "Product type", value: "Round livestock water trough" },
       { label: "Supply format", value: "Supply only" },
-      { label: "Transport", value: "Excluded" },
+      { label: "Delivery", value: "Excluded" },
       { label: "Installation", value: "Excluded" },
       { label: "Pipework and float valve", value: "Not included" },
       { label: "SKU", value: "DMT-LT-1500" },
@@ -830,7 +837,7 @@ export const CATALOGUE_PRODUCTS: readonly CatalogueProduct[] = [
     publicAvailability: SHARED_AVAILABILITY,
     warranty: SHARED_WARRANTY,
     deliveryExplanation:
-      "This livestock water trough is supply only. Transport is excluded. Order it for collection or customer-arranged transport at the advertised price. Request a custom quote if Damtech should deliver to the farm or camp. Pipework, float valves and installation are not included unless quoted separately.",
+      "This livestock water trough is supply only. Delivery only throughout South Africa. Delivery and installation are excluded from the listed price. DamTech will confirm the delivery charge on the formal invoice. Pipework, float valves and installation are not included unless quoted separately.",
     sitePreparation:
       "Stand the cattle water trough on a level, compacted patch so it does not tilt and spill. Pipework, a float valve and automatic filling equipment are not included. Damtech can quote those items with transport after the RFQ.",
     applications: [
@@ -844,7 +851,7 @@ export const CATALOGUE_PRODUCTS: readonly CatalogueProduct[] = [
       {
         question: "What is the price of the livestock water trough?",
         answer:
-          "The round livestock water trough is R4 999 incl. VAT. Transport and installation are excluded.",
+          "The round livestock water trough is R4 999 incl. VAT. Delivery and installation are excluded.",
       },
       {
         question: "Is this suitable as a cattle water trough?",

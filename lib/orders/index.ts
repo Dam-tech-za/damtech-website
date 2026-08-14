@@ -1,8 +1,7 @@
 export {
-  COLLECTION_FULFILMENT,
-  collectionLocationDisplayLines,
-  isCollectionLocationConfigured,
-} from "./collection.ts";
+  DELIVERY_FULFILMENT,
+  isDeliveryFulfilmentConfigured,
+} from "./delivery.ts";
 export {
   createCatalogueOrder,
   getOrderByPublicConfirmation,
