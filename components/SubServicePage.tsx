@@ -80,25 +80,20 @@ export function SubServicePage({ page }: SubServicePageProps) {
           eyebrow={page.serviceName.toUpperCase()}
           heading={page.h1}
           description={page.intro}
-          cards={page.benefits.slice(0, 3).map((benefit) => ({
-            title: page.serviceName,
-            description: benefit,
+          trustPoints={page.benefits.slice(0, 3).map((benefit) => ({
+            label: benefit,
           }))}
           primaryCta={{
             label: page.sectionCtaTitle ?? `Request a ${page.serviceName} Quote`,
             href: "/quote",
           }}
           secondaryCta={{
-            label: "View Dam Linings Overview",
+            label: "View dam linings overview",
             href: "/dam-liners",
           }}
           image={fallbackImage.image}
           imageAlt={fallbackImage.alt}
-          imageCaption={fallbackImage.caption}
-          benefitChips={page.benefits.slice(3, 6).map((benefit) => ({
-            title: "Benefit",
-            description: benefit,
-          }))}
+          ribbonFacts={page.benefits.slice(3, 6).map((benefit) => benefit)}
         />
       )}
 

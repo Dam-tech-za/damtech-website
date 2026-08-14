@@ -8,6 +8,8 @@ const supabaseHost =
 
 // Allow GTM → GA4 (G-F01WG96KRG) + Consent Mode / ads signals + Meta Pixel.
 // See https://developers.google.com/tag-platform/security/guides/csp
+// Dev only: React needs 'unsafe-eval' for debugging (never added in production).
+const isDev = process.env.NODE_ENV !== "production";
 const contentSecurityPolicy = [
   "default-src 'self'",
   "base-uri 'self'",
@@ -31,10 +33,13 @@ const contentSecurityPolicy = [
   ].join(" "),
   [
     "script-src 'self' 'unsafe-inline'",
+    isDev ? "'unsafe-eval'" : "",
     "https://www.googletagmanager.com",
     "https://*.googletagmanager.com",
     "https://connect.facebook.net",
-  ].join(" "),
+  ]
+    .filter(Boolean)
+    .join(" "),
   "style-src 'self' 'unsafe-inline'",
   "font-src 'self' data:",
   [

@@ -1,17 +1,19 @@
 import Image from "next/image";
 import Link from "next/link";
+import type { ReactNode } from "react";
 import type { StaticImageData } from "next/image";
 import { SiteSection } from "@/components/SiteSection";
+import {
+  CheckCircleIcon,
+  DropletIcon,
+  ShieldCheckIcon,
+} from "@/components/icons/StrokeIcons";
 
-export type ServiceIntroCard = {
-  title: string;
-  description: string;
-  href?: string;
-};
+export type ServiceIntroTrustIcon = "check" | "shield" | "droplet";
 
-export type ServiceIntroChip = {
-  title: string;
-  description: string;
+export type ServiceIntroTrustPoint = {
+  label: string;
+  icon?: ServiceIntroTrustIcon;
 };
 
 export type ServiceIntroCta = {
@@ -19,78 +21,129 @@ export type ServiceIntroCta = {
   href: string;
 };
 
+/**
+ * Next.js Link often skips same-page hash scrolling. Use a native <a> for any
+ * href that includes a fragment so in-page anchors and calculator deep links work.
+ */
+function ServiceIntroCtaLink({
+  href,
+  className,
+  children,
+}: {
+  href: string;
+  className: string;
+  children: ReactNode;
+}) {
+  if (href.includes("#")) {
+    return (
+      <a href={href} className={className}>
+        {children}
+      </a>
+    );
+  }
+
+  return (
+    <Link href={href} className={className}>
+      {children}
+    </Link>
+  );
+}
+
 export type ServiceIntroSectionProps = {
   eyebrow: string;
   heading: string;
   description: string;
-  cards: readonly ServiceIntroCard[];
+  trustPoints: readonly ServiceIntroTrustPoint[];
   primaryCta: ServiceIntroCta;
   secondaryCta: ServiceIntroCta;
   image: StaticImageData | string;
   imageAlt: string;
-  imageCaption?: string;
-  benefitChips: readonly ServiceIntroChip[];
+  /** Three short commercial facts shown on the photo ribbon. */
+  ribbonFacts: readonly string[];
+  /** Optional clarification under the media (e.g. delivery available ≠ included). */
+  footnote?: string;
   explainerTitle?: string;
   explainerContent?: string;
   explainerSecondaryContent?: string;
   tone?: "default" | "muted";
 };
 
+const TRUST_ICONS = {
+  check: CheckCircleIcon,
+  shield: ShieldCheckIcon,
+  droplet: DropletIcon,
+} as const;
+
+const DEFAULT_TRUST_ICONS: readonly ServiceIntroTrustIcon[] = [
+  "check",
+  "shield",
+  "droplet",
+];
+
 /**
- * Homepage-style below-hero intro for service pages:
- * two-column layout, system cards, image card, benefit chips, optional explainer.
+ * Bridge section between the service-page hero and detailed content.
+ * Explains the offer quickly, shows the product, builds trust, then guides
+ * the next action. Reusable across DamTech service pages via content config.
  */
 export function ServiceIntroSection({
   eyebrow,
   heading,
   description,
-  cards,
+  trustPoints,
   primaryCta,
   secondaryCta,
   image,
   imageAlt,
-  imageCaption,
-  benefitChips,
+  ribbonFacts,
+  footnote,
   explainerTitle,
   explainerContent,
   explainerSecondaryContent,
-  tone = "default",
 }: ServiceIntroSectionProps) {
   const showExplainer = Boolean(explainerTitle && explainerContent);
+  const facts = ribbonFacts.slice(0, 3);
 
   return (
-    <SiteSection tone={tone}>
+    <SiteSection className="service-intro-section">
       <div className="service-intro">
         <div className="service-intro__grid">
           <div className="service-intro__copy">
-            <p className="service-intro__eyebrow">{eyebrow}</p>
-            <h2 className="service-intro__heading">{heading}</h2>
-            <p className="service-intro__description">{description}</p>
+            <div className="service-intro__lead">
+              <p className="service-intro__eyebrow">{eyebrow}</p>
+              <h2 className="service-intro__heading">{heading}</h2>
+              <p className="service-intro__description">{description}</p>
+            </div>
 
-            <ul className="service-intro__cards">
-              {cards.map((card) => (
-                <li key={card.title} className="service-intro__card">
-                  <h3 className="service-intro__card-title">
-                    {card.href ? (
-                      <Link href={card.href} className="service-intro__card-link">
-                        {card.title}
-                      </Link>
-                    ) : (
-                      card.title
-                    )}
-                  </h3>
-                  <p className="service-intro__card-text">{card.description}</p>
-                </li>
-              ))}
+            <ul className="service-intro__trust">
+              {trustPoints.slice(0, 3).map((point, index) => {
+                const iconKey =
+                  point.icon ?? DEFAULT_TRUST_ICONS[index] ?? "check";
+                const Icon = TRUST_ICONS[iconKey];
+                return (
+                  <li key={point.label} className="service-intro__trust-item">
+                    <Icon className="service-intro__trust-icon" />
+                    <span className="service-intro__trust-label">
+                      {point.label}
+                    </span>
+                  </li>
+                );
+              })}
             </ul>
 
             <div className="service-intro__actions">
-              <Link href={primaryCta.href} className="btn-primary">
+              <ServiceIntroCtaLink
+                href={primaryCta.href}
+                className="btn-primary"
+              >
                 {primaryCta.label}
-              </Link>
-              <Link href={secondaryCta.href} className="btn-secondary">
+              </ServiceIntroCtaLink>
+              <ServiceIntroCtaLink
+                href={secondaryCta.href}
+                className="service-intro__secondary-link"
+              >
                 {secondaryCta.label}
-              </Link>
+                <span aria-hidden="true"> →</span>
+              </ServiceIntroCtaLink>
             </div>
           </div>
 
@@ -106,27 +159,39 @@ export function ServiceIntroSection({
                   loading="lazy"
                 />
               </div>
-              {imageCaption ? (
-                <figcaption className="service-intro__caption">
-                  {imageCaption}
+              {facts.length > 0 ? (
+                <figcaption className="service-intro__ribbon">
+                  {facts.map((fact, index) => (
+                    <span key={fact} className="service-intro__ribbon-fact">
+                      {index > 0 ? (
+                        <span
+                          className="service-intro__ribbon-sep"
+                          aria-hidden="true"
+                        >
+                          •
+                        </span>
+                      ) : null}
+                      {fact}
+                    </span>
+                  ))}
                 </figcaption>
               ) : null}
             </figure>
-
-            <ul className="service-intro__chips">
-              {benefitChips.map((chip) => (
-                <li key={chip.title} className="service-intro__chip">
-                  <p className="service-intro__chip-title">{chip.title}</p>
-                  <p className="service-intro__chip-text">{chip.description}</p>
-                </li>
-              ))}
-            </ul>
+            {footnote ? (
+              <p className="service-intro__footnote">{footnote}</p>
+            ) : null}
           </div>
         </div>
 
         {showExplainer ? (
-          <aside className="service-intro__explainer" aria-labelledby="service-intro-explainer">
-            <h3 id="service-intro-explainer" className="service-intro__explainer-title">
+          <aside
+            className="service-intro__explainer"
+            aria-labelledby="service-intro-explainer"
+          >
+            <h3
+              id="service-intro-explainer"
+              className="service-intro__explainer-title"
+            >
               {explainerTitle}
             </h3>
             <p className="service-intro__explainer-text">{explainerContent}</p>
