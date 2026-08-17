@@ -85,6 +85,14 @@ export {
   MERCHANT_CENTER_RELEASE_GATE,
 } from "./merchant.ts";
 export {
+  createMerchantReturnPolicySchema,
+  createOfferMerchantReturnPolicy,
+  createOfferShippingDetails,
+  createShippingServiceSchema,
+  MERCHANT_RETURN_POLICY_COPY,
+  MERCHANT_SHIPPING_POLICY_COPY,
+} from "./merchant-policies.ts";
+export {
   MERCHANT_FEED_COLUMNS,
   MERCHANT_FEED_CONTENT_TYPE,
   MERCHANT_FEED_PATH,

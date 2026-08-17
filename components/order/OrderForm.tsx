@@ -366,7 +366,8 @@ export function OrderForm({ snapshot }: { snapshot: OrderPriceSnapshot }) {
             </p>
             <p className="order-fulfilment-card__notice">
               Product price includes VAT. Delivery and installation are
-              excluded. DamTech will confirm the delivery charge on the formal
+              excluded. Delivery is calculated from the kit shipping weight in
+              kilograms. DamTech will confirm the delivery charge on the formal
               invoice.
             </p>
           </div>

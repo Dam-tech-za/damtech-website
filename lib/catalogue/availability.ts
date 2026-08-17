@@ -84,7 +84,7 @@ export const CATALOGUE_FULFILMENT_COPY = {
   priceExclusions:
     "Product price includes VAT. Delivery and installation are excluded.",
   deliveryCharge:
-    "DamTech will confirm the delivery charge on the formal invoice.",
+    "Delivery is calculated from the kit shipping weight in kilograms. DamTech confirms the delivery charge on the formal invoice.",
 } as const;
 
 /** Visible product/order availability. */

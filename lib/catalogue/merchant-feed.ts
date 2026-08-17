@@ -19,6 +19,7 @@ import {
   UNUSED_DOMESTIC_ROOFED_PRIMARY,
 } from "./images.ts";
 import { MERCHANT_CENTER_RELEASE_GATE } from "./merchant.ts";
+import { merchantFeedHandlingTransitFields } from "./merchant-policies.ts";
 import { CATALOGUE_PRODUCTS } from "./products.ts";
 import { isDeliveryFulfilmentConfigured } from "../orders/delivery.ts";
 import { CANONICAL_ORIGIN } from "../site-url.ts";
@@ -64,6 +65,11 @@ export const MERCHANT_FEED_COLUMNS = [
   "identifier_exists",
   "google_product_category",
   "product_type",
+  "min_handling_time",
+  "max_handling_time",
+  "min_transit_time",
+  "max_transit_time",
+  "ships_from_country",
 ] as const;
 
 export type MerchantFeedColumn = (typeof MERCHANT_FEED_COLUMNS)[number];
@@ -134,6 +140,11 @@ const REQUIRED_ROW_COLUMNS: readonly MerchantFeedColumn[] = [
   "identifier_exists",
   "google_product_category",
   "product_type",
+  "min_handling_time",
+  "max_handling_time",
+  "min_transit_time",
+  "max_transit_time",
+  "ships_from_country",
 ];
 
 export type MerchantFeedBlocker = {
@@ -290,6 +301,7 @@ function buildFeedDescription(product: CatalogueProduct): string {
   parts.push(
     "Delivery only throughout South Africa.",
     "Delivery excluded. Installation excluded.",
+    "Delivery charge is calculated from shipping weight in kilograms.",
     "Manufacturing time: 5–10 business days after cleared payment.",
     "Estimated delivery time: 3–5 business days after manufacturing is complete.",
   );
@@ -547,6 +559,7 @@ function buildMerchantFeedRow(
     identifier_exists: "yes",
     google_product_category: googleProductCategoryId(product),
     product_type: PRODUCT_TYPE[product.categoryId],
+    ...merchantFeedHandlingTransitFields(),
   };
 }
 

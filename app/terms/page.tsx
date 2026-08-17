@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Hero } from "@/components/Hero";
 import { PageSeo } from "@/components/PageSeo";
 import { SiteSection } from "@/components/SiteSection";
@@ -45,9 +46,10 @@ export default function TermsPage() {
           <p>
             Catalogue kits are delivery only throughout South Africa. DamTech
             does not offer customer collection and does not provide a public
-            collection point. DamTech will confirm the delivery charge on the
-            formal invoice. Delivery is never added as a hidden amount to the
-            online kit total.
+            collection point. Delivery is calculated from the kit shipping
+            weight in kilograms because kit sizes differ substantially. DamTech
+            will confirm the delivery charge on the formal invoice. Delivery is
+            never added as a hidden amount to the online kit total.
           </p>
           <h2>Availability and lead times</h2>
           <p>
@@ -55,6 +57,16 @@ export default function TermsPage() {
             5–10 business days after cleared payment. Estimated delivery takes a
             further 3–5 business days after manufacturing is complete. Estimated
             total fulfilment time is 8–15 business days after cleared payment.
+          </p>
+          <h2>Returns</h2>
+          <p>
+            Returns are accepted only when a catalogue kit arrives damaged or is
+            the wrong product. Made-to-order kits that were supplied correctly
+            are not returnable. See the{" "}
+            <Link href="/returns/" className="text-water hover:underline">
+              returns and cancellation
+            </Link>{" "}
+            page.
           </p>
           <h2>Custom work</h2>
           <p>

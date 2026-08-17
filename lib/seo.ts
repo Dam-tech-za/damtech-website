@@ -1,4 +1,10 @@
 import type { Metadata } from "next";
+import {
+  createMerchantReturnPolicySchema,
+  createOfferMerchantReturnPolicy,
+  createOfferShippingDetails,
+  createShippingServiceSchema,
+} from "./catalogue/merchant-policies.ts";
 import { DEFAULT_OG_IMAGE, DEFAULT_OG_IMAGE_ALT, IMAGE_PATHS, altForImagePath } from "./images";
 import {
   BUSINESS_HOURS,
@@ -350,6 +356,8 @@ export function createOrganizationSchema() {
       jobTitle: BLOG_AUTHOR.role,
       url: absoluteUrl(BLOG_AUTHOR.path),
     },
+    hasMerchantReturnPolicy: createMerchantReturnPolicySchema(),
+    hasShippingService: createShippingServiceSchema(),
   };
 }
 
@@ -662,6 +670,8 @@ export function createProductSchema(input: {
     seller: {
       "@id": `${siteConfig.domain}/#organization`,
     },
+    hasMerchantReturnPolicy: createOfferMerchantReturnPolicy(),
+    shippingDetails: createOfferShippingDetails(),
   };
   if (input.availability) {
     offer.availability = input.availability;

@@ -128,6 +128,12 @@ describe("enabled Merchant TSV content", () => {
       } else {
         assert.equal(row.google_product_category, "1910");
       }
+      assert.equal(row.min_handling_time, "5");
+      assert.equal(row.max_handling_time, "10");
+      assert.equal(row.min_transit_time, "3");
+      assert.equal(row.max_transit_time, "5");
+      assert.equal(row.ships_from_country, "ZA");
+      assert.match(row.description, /shipping weight in kilograms/);
     }
   });
 

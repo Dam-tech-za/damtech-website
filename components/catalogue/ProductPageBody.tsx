@@ -180,7 +180,7 @@ export function ProductPageBody({ product }: { product: CatalogueProduct }) {
           id="commercial-terms"
           eyebrow="TERMS"
           title="Refunds, returns and contact"
-          intro="Order this kit online for delivery throughout South Africa at the advertised VAT-inclusive price. Delivery and installation are excluded. Damtech then sends a tax invoice separately. This website does not take card payments. Refunds, returns and payment terms are confirmed on that invoice. Installation and unusual delivery requirements remain custom-quote items."
+          intro="Order this kit online for delivery throughout South Africa at the advertised VAT-inclusive price. Delivery is calculated from shipping weight in kilograms and is excluded from the kit price, as is installation. Damtech then sends a tax invoice separately. This website does not take card payments. Returns are accepted only for damaged or incorrect goods. Installation and unusual delivery requirements remain custom-quote items."
         />
         <ul className="catalogue-list">
           {COMMERCIAL_LINKS.map((link) => (

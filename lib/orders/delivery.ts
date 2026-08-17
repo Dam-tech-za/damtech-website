@@ -12,10 +12,10 @@ export const DELIVERY_FULFILMENT = {
   paymentMethodLabel: "Invoice payment",
   paymentExplanation:
     "Your order will be recorded immediately. DamTech will send the formal invoice separately. Payment must only be made using the banking details shown on the official DamTech invoice.",
-  explanation:
-    "DamTech delivers throughout South Africa. The advertised product price excludes delivery and installation. DamTech will confirm the delivery charge on the formal invoice.",
+    explanation:
+    "DamTech delivers throughout South Africa. The advertised product price excludes delivery and installation. Delivery is calculated from the kit shipping weight in kilograms. DamTech will confirm the delivery charge on the formal invoice.",
   deliveryChargeNotice:
-    "DamTech will confirm the delivery charge on the formal invoice.",
+    "Delivery is calculated from the kit shipping weight in kilograms. DamTech will confirm the delivery charge on the formal invoice.",
   configured: true as const,
 } as const;
 

@@ -5,6 +5,7 @@ import {
   waterTankImageManifest,
 } from "./images.ts";
 import { cataloguePublicAvailabilityCopy } from "./availability.ts";
+import { MERCHANT_SHIPPING_POLICY_COPY } from "./merchant-policies.ts";
 import {
   PRODUCT_CATEGORY_LABELS,
   VAT_RATE_PERCENT,
@@ -56,7 +57,7 @@ const SHARED_WARRANTY =
   "Warranty for this supply-only kit is confirmed in writing on the invoice. Qualifying materials supplied by Damtech may carry a supplier-backed material warranty of up to 10 years where stated in that invoice or quotation and subject to the supplier’s terms. Damtech workmanship cover applies only when Damtech quotes and completes installation separately.";
 
 const SHARED_DELIVERY =
-  "Delivery only throughout South Africa. The listed price excludes delivery and installation. DamTech will confirm the delivery charge on the formal invoice after the delivery address is confirmed. Manufacturing takes 5–10 business days after cleared payment. Estimated delivery takes a further 3–5 business days after manufacturing is complete. Estimated total fulfilment time is 8–15 business days after cleared payment.";
+  `Delivery only throughout South Africa. The listed price excludes delivery and installation. ${MERCHANT_SHIPPING_POLICY_COPY.deliveryCharge} Manufacturing takes 5–10 business days after cleared payment. Estimated delivery takes a further 3–5 business days after manufacturing is complete. Estimated total fulfilment time is 8–15 business days after cleared payment.`;
 
 const SHARED_AVAILABILITY = cataloguePublicAvailabilityCopy();
 
@@ -586,7 +587,7 @@ export const CATALOGUE_PRODUCTS: readonly CatalogueProduct[] = [
     publicAvailability: SHARED_AVAILABILITY,
     warranty: SHARED_WARRANTY,
     deliveryExplanation:
-      "This is a supply-only pond kit. Delivery only throughout South Africa. Delivery and installation are excluded from the listed price. DamTech will confirm the delivery charge on the formal invoice. Installation, filtration, pumps and aeration are not included unless quoted separately.",
+      `This is a supply-only pond kit. Delivery only throughout South Africa. Delivery and installation are excluded from the listed price. ${MERCHANT_SHIPPING_POLICY_COPY.deliveryCharge} Installation, filtration, pumps and aeration are not included unless quoted separately.`,
     sitePreparation:
       "A level, compacted pad is required before assembling the corrugated steel shell so the liner is not stressed by settlement. Damtech typically specifies sand or crusher dust on geotextile for steel kits. Pond diameter is confirmed on the invoice. Base work, assembly, filtration and aeration are excluded from the R13 999 incl. VAT price.",
     applications: [
@@ -710,7 +711,7 @@ export const CATALOGUE_PRODUCTS: readonly CatalogueProduct[] = [
     publicAvailability: SHARED_AVAILABILITY,
     warranty: SHARED_WARRANTY,
     deliveryExplanation:
-      "This is a supply-only pond kit. Delivery only throughout South Africa. Delivery and installation are excluded from the listed price. DamTech will confirm the delivery charge on the formal invoice. Assembly, filtration and aeration are quoted separately if required.",
+      `This is a supply-only pond kit. Delivery only throughout South Africa. Delivery and installation are excluded from the listed price. ${MERCHANT_SHIPPING_POLICY_COPY.deliveryCharge} Assembly, filtration and aeration are quoted separately if required.`,
     sitePreparation:
       "Prepare a level, compacted sand or crusher-dust base on geotextile before assembling the 15 000L shell. The larger volume still needs an even pad so the liner is not strained. Exact footprint is confirmed on the invoice. The base, transport and installation are excluded from the R17 999 incl. VAT price.",
     applications: [
@@ -837,7 +838,7 @@ export const CATALOGUE_PRODUCTS: readonly CatalogueProduct[] = [
     publicAvailability: SHARED_AVAILABILITY,
     warranty: SHARED_WARRANTY,
     deliveryExplanation:
-      "This livestock water trough is supply only. Delivery only throughout South Africa. Delivery and installation are excluded from the listed price. DamTech will confirm the delivery charge on the formal invoice. Pipework, float valves and installation are not included unless quoted separately.",
+      `This livestock water trough is supply only. Delivery only throughout South Africa. Delivery and installation are excluded from the listed price. ${MERCHANT_SHIPPING_POLICY_COPY.deliveryCharge} Pipework, float valves and installation are not included unless quoted separately.`,
     sitePreparation:
       "Stand the cattle water trough on a level, compacted patch so it does not tilt and spill. Pipework, a float valve and automatic filling equipment are not included. Damtech can quote those items with transport after the RFQ.",
     applications: [
