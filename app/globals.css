@@ -74,7 +74,6 @@
   }
 
   html {
-    scroll-behavior: smooth;
     scroll-padding-top: calc(var(--header-height) + 0.75rem);
     scrollbar-width: none;
     -ms-overflow-style: none;
