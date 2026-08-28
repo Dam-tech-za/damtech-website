@@ -311,6 +311,17 @@ export default function AboutPage() {
 
         </div>
 
+        <p className="mt-2 max-w-[65ch] text-sm text-muted">
+          Digital platform built by{" "}
+          <a
+            href="https://www.koppiesystems.co.za/projects/damtech-website/"
+            className="underline-offset-2 transition hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-accent-blue)]"
+          >
+            Koppie Systems
+          </a>
+          .
+        </p>
+
       </PageOverviewSection>
 
 
