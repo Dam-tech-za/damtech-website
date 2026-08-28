@@ -1,7 +1,7 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import { useSyncExternalStore } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
 import { createPortal } from "react-dom";
 
 const SHOW_AFTER_PX = 160;
@@ -68,6 +68,7 @@ function ArrowUpIcon() {
 
 export function ScrollToTop() {
   const pathname = usePathname();
+  const [footerVisible, setFooterVisible] = useState(false);
   const isClient = useSyncExternalStore(
     subscribeClient,
     getClientSnapshot,
@@ -78,6 +79,22 @@ export function ScrollToTop() {
     getScrollSnapshot,
     getServerScrollSnapshot,
   );
+  const showButton = visible && !footerVisible;
+
+  useEffect(() => {
+    const footer = document.getElementById("site-footer");
+    if (!footer) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setFooterVisible(entry.isIntersecting);
+      },
+      { threshold: 0 },
+    );
+
+    observer.observe(footer);
+    return () => observer.disconnect();
+  }, []);
 
   function scrollToTop() {
     const behavior = window.matchMedia("(prefers-reduced-motion: reduce)").matches
@@ -95,10 +112,10 @@ export function ScrollToTop() {
       type="button"
       onClick={scrollToTop}
       aria-label="Scroll to top"
-      aria-hidden={!visible}
-      tabIndex={visible ? 0 : -1}
+      aria-hidden={!showButton}
+      tabIndex={showButton ? 0 : -1}
       className={`fixed right-4 z-[100] flex h-12 w-12 items-center justify-center rounded-full border-2 border-slate-200/90 bg-navy text-white shadow-[0_8px_24px_rgba(15,39,68,0.28)] transition-[opacity,transform] duration-300 hover:border-water hover:bg-water focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white bottom-[calc(4.75rem+env(safe-area-inset-bottom))] lg:bottom-6 ${
-        visible
+        showButton
           ? "pointer-events-auto translate-y-0 scale-100 opacity-100"
           : "pointer-events-none translate-y-3 scale-95 opacity-0"
       }`}

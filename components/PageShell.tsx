@@ -1,8 +1,8 @@
 import { Footer } from "./Footer";
 import { Header } from "./Header";
 import { MobileStickyCta } from "./MobileStickyCta";
+import { RouteScrollReset } from "./RouteScrollReset";
 import { ScrollToTop } from "./ScrollToTop";
-import { SmoothInPageAnchors } from "./SmoothInPageAnchors";
 import type { ReactNode } from "react";
 
 type PageShellProps = {
@@ -16,7 +16,7 @@ export function PageShell({ children }: PageShellProps) {
       <div className="site-header-spacer" aria-hidden />
       <main className="flex-1 pb-[4.5rem] lg:pb-0">{children}</main>
       <Footer />
-      <SmoothInPageAnchors />
+      <RouteScrollReset />
       <ScrollToTop />
       <MobileStickyCta />
     </>
