@@ -21,7 +21,7 @@ function restoreEnv() {
 }
 
 function requestWithAuth(secret: string): Request {
-  return new Request("https://www.dam-tech.co.za/api/cron/supabase-keepalive", {
+  return new Request("https://www.dam-tech.co.za/api/cron/supabase-keepalive/", {
     headers: { authorization: `Bearer ${secret}` },
   });
 }
@@ -45,7 +45,7 @@ describe("authorizeCronRequest", () => {
   it("rejects a missing authorization header", () => {
     process.env.CRON_SECRET = "test-cron-secret-value";
     const result = authorizeCronRequest(
-      new Request("https://www.dam-tech.co.za/api/cron/supabase-keepalive"),
+      new Request("https://www.dam-tech.co.za/api/cron/supabase-keepalive/"),
     );
     assert.equal(result.ok, false);
     if (!result.ok) assert.equal(result.reason, "invalid_secret");

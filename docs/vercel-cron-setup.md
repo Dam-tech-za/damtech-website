@@ -4,11 +4,11 @@
 
 | Path | Schedule (UTC) | Purpose |
 |------|----------------|---------|
-| `/api/cron/expire-quotes` | `0 4 * * *` | Mark overdue sent/viewed quotes expired |
-| `/api/cron/quote-reminders` | `30 4 * * *` | Expiry / not-viewed / not-answered reminders |
-| `/api/cron/supabase-keepalive` | `15 4 * * *` | Supabase Postgres keepalive (morning) |
-| `/api/cron/supabase-keepalive` | `15 12 * * *` | Supabase Postgres keepalive (midday) |
-| `/api/cron/supabase-keepalive` | `15 20 * * *` | Supabase Postgres keepalive (evening) |
+| `/api/cron/expire-quotes/` | `0 4 * * *` | Mark overdue sent/viewed quotes expired |
+| `/api/cron/quote-reminders/` | `30 4 * * *` | Expiry / not-viewed / not-answered reminders |
+| `/api/cron/supabase-keepalive/` | `15 4 * * *` | Supabase Postgres keepalive (morning) |
+| `/api/cron/supabase-keepalive/` | `15 12 * * *` | Supabase Postgres keepalive (midday) |
+| `/api/cron/supabase-keepalive/` | `15 20 * * *` | Supabase Postgres keepalive (evening) |
 
 ## Security
 
@@ -20,7 +20,7 @@ Authorization: Bearer $CRON_SECRET
 
 Vercel injects this header automatically when `CRON_SECRET` is set on the project.
 
-They return JSON only (no redirects).
+They return JSON only (no redirects). With `trailingSlash: true`, cron paths in `vercel.json` must include the trailing slash — Vercel Cron does not follow redirects, so a `308` to the canonical URL would never reach the handler.
 
 Set `CRON_SECRET` in the Vercel project environment.
 

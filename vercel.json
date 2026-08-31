@@ -27,23 +27,23 @@
   ],
   "crons": [
     {
-      "path": "/api/cron/expire-quotes",
+      "path": "/api/cron/expire-quotes/",
       "schedule": "0 4 * * *"
     },
     {
-      "path": "/api/cron/quote-reminders",
+      "path": "/api/cron/quote-reminders/",
       "schedule": "30 4 * * *"
     },
     {
-      "path": "/api/cron/supabase-keepalive",
+      "path": "/api/cron/supabase-keepalive/",
       "schedule": "15 4 * * *"
     },
     {
-      "path": "/api/cron/supabase-keepalive",
+      "path": "/api/cron/supabase-keepalive/",
       "schedule": "15 12 * * *"
     },
     {
-      "path": "/api/cron/supabase-keepalive",
+      "path": "/api/cron/supabase-keepalive/",
       "schedule": "15 20 * * *"
     }
   ]
