@@ -1,19 +1,20 @@
 "use server";
 
 import { headers } from "next/headers";
-import { sendLeadEmail, leadEmailChannel } from "@/lib/email";
 import { insertLead, isSupabaseConfigured } from "@/lib/supabase/server";
 import { isSupabaseServiceConfigured } from "@/lib/supabase/env";
 import { limitPublicRfqSubmit } from "@/lib/rate-limit/public-rfq";
 import { createRfqFromPublicSubmission } from "@/lib/rfq/create-from-public";
 import { parsePublicRfqFormData } from "@/lib/rfq/schema";
-import {
-  customerMessageForCode,
-} from "@/lib/rfq/submission-result";
+import { customerMessageForCode } from "@/lib/rfq/submission-result";
 import { newIncidentId, rfqLogError } from "@/lib/rfq/diagnostics";
+import { attemptDatabaseFallbackAfterPersistenceFailure } from "@/lib/fallback/after-persistence-failure";
+import { buildContactFallbackInput } from "@/lib/fallback/payloads";
+import { parseSubmissionIdFromFormData } from "@/lib/fallback/submission-id";
 
 export type SubmitLeadResult =
-  | { success: true; rfqNumber?: string }
+  | { success: true; deliveryMode: "normal"; rfqNumber?: string }
+  | { success: true; deliveryMode: "fallback"; incidentId: string }
   | { success: false; error: string; code?: string; incidentId?: string };
 
 export async function submitLead(
@@ -32,6 +33,28 @@ export async function submitLead(
     };
   }
 
+  const submissionParsed = parseSubmissionIdFromFormData(formData);
+  if (!submissionParsed.ok) {
+    return {
+      success: false,
+      error: submissionParsed.error,
+      code: "VALIDATION_ERROR",
+      incidentId,
+    };
+  }
+  const submissionId = submissionParsed.submissionId;
+
+  const formStartedRaw = String(formData.get("formStartedAt") ?? "").trim();
+  const formStartedAt = formStartedRaw ? Number(formStartedRaw) : NaN;
+  if (Number.isFinite(formStartedAt) && Date.now() - formStartedAt < 4000) {
+    return {
+      success: false,
+      error: "Please take a moment to review your details.",
+      code: "VALIDATION_ERROR",
+      incidentId,
+    };
+  }
+
   if (parsed.isSpam) {
     if (isSupabaseServiceConfigured()) {
       await createRfqFromPublicSubmission({
@@ -43,9 +66,10 @@ export async function submitLead(
         simpleServiceFields: parsed.simpleServiceFields,
         assetsEstimate: parsed.assetsEstimate,
         catalogueLine: parsed.catalogueLine,
+        submissionId,
       });
     }
-    return { success: true };
+    return { success: true, deliveryMode: "normal" };
   }
 
   const headerList = await headers();
@@ -63,8 +87,9 @@ export async function submitLead(
     };
   }
 
-  // Persist RFQ first when service role is available — email is secondary.
   let rfqNumber: string | undefined;
+  let persistenceErrorCode: string | undefined;
+
   if (isSupabaseServiceConfigured()) {
     const rfqResult = await createRfqFromPublicSubmission({
       data: parsed.data,
@@ -74,7 +99,9 @@ export async function submitLead(
       simpleServiceFields: parsed.simpleServiceFields,
       assetsEstimate: parsed.assetsEstimate,
       catalogueLine: parsed.catalogueLine,
+      submissionId,
     });
+
     if (!rfqResult.ok) {
       rfqLogError("rfq_submission_database_failed", {
         incidentId,
@@ -82,30 +109,14 @@ export async function submitLead(
         code: rfqResult.code,
         message: rfqResult.details || rfqResult.error,
       });
-      // Fall through to email-only path for contact if DB fails — still try email.
+      persistenceErrorCode = rfqResult.code;
     } else {
       rfqNumber = rfqResult.rfqNumber;
     }
+  } else {
+    persistenceErrorCode = "CONFIGURATION_ERROR";
   }
 
-  const channel = leadEmailChannel(sourcePage);
-  const emailResult = await sendLeadEmail(
-    {
-      name: parsed.data.name,
-      company: parsed.data.company,
-      phone: parsed.data.phone,
-      email: parsed.data.email,
-      province: parsed.data.province,
-      serviceRequired: parsed.data.serviceRequired,
-      projectSize: parsed.data.projectSize,
-      projectLocation: parsed.data.projectLocation,
-      message: parsed.data.message,
-      sourcePage: parsed.data.sourcePage,
-    },
-    channel,
-  );
-
-  // Success if RFQ saved OR email sent — never lose the enquiry both ways.
   if (rfqNumber) {
     if (isSupabaseConfigured()) {
       await insertLead({
@@ -121,32 +132,32 @@ export async function submitLead(
         source_page: parsed.data.sourcePage,
       });
     }
-    return { success: true, rfqNumber };
+    return { success: true, deliveryMode: "normal", rfqNumber };
   }
 
-  if (!emailResult.ok) {
-    return {
-      success: false,
-      error: emailResult.error,
-      code: "CONFIGURATION_ERROR",
+  const fallback = await attemptDatabaseFallbackAfterPersistenceFailure({
+    incidentId,
+    databaseErrorCode: persistenceErrorCode,
+    fallbackInput: buildContactFallbackInput({
       incidentId,
+      submissionId,
+      data: parsed.data,
+      sourcePage,
+    }),
+  });
+
+  if (fallback.ok) {
+    return {
+      success: true,
+      deliveryMode: "fallback",
+      incidentId: fallback.incidentId,
     };
   }
 
-  if (isSupabaseConfigured()) {
-    await insertLead({
-      name: parsed.data.name,
-      company: parsed.data.company || null,
-      phone: parsed.data.phone || null,
-      email: parsed.data.email || null,
-      province: parsed.data.province || null,
-      service_required: parsed.data.serviceRequired,
-      project_size: parsed.data.projectSize || null,
-      project_location: parsed.data.projectLocation || null,
-      message: parsed.data.message,
-      source_page: parsed.data.sourcePage,
-    });
-  }
-
-  return { success: true };
+  return {
+    success: false,
+    error: fallback.customerMessage,
+    code: persistenceErrorCode || "DATABASE_UNAVAILABLE",
+    incidentId,
+  };
 }

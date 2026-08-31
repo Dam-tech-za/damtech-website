@@ -90,6 +90,12 @@ export function OrderForm({ snapshot }: { snapshot: OrderPriceSnapshot }) {
         setError(result.error);
         return;
       }
+      if (result.deliveryMode === "fallback") {
+        router.replace(
+          `/order/fallback/?incident=${encodeURIComponent(result.incidentId)}`,
+        );
+        return;
+      }
       pushCatalogueAnalytics(
         CATALOGUE_ANALYTICS_EVENTS.orderSubmitted,
         buildCatalogueAnalyticsItem(snapshot.product, result.quantity),

@@ -13,7 +13,8 @@ import {
 } from "@/lib/rfq/communications";
 import {
   customerMessageForCode,
-  type PublicRfqSubmissionResult,
+  type PublicRfqSubmissionFailure,
+  type PublicRfqSubmissionSuccess,
 } from "@/lib/rfq/submission-result";
 import {
   newIncidentId,
@@ -21,8 +22,13 @@ import {
   rfqLogError,
 } from "@/lib/rfq/diagnostics";
 import { getRfqEmailConfig } from "@/lib/rfq/email/config";
+import { attemptDatabaseFallbackAfterPersistenceFailure } from "@/lib/fallback/after-persistence-failure";
+import { buildCalculatorRfqFallbackInput } from "@/lib/fallback/payloads";
 
-export type SubmitPublicRfqResult = PublicRfqSubmissionResult;
+export type SubmitPublicRfqResult =
+  | (PublicRfqSubmissionSuccess & { deliveryMode?: "normal" })
+  | { ok: true; deliveryMode: "fallback"; incidentId: string }
+  | PublicRfqSubmissionFailure;
 
 export async function submitPublicRfqAction(
   payload: unknown,
@@ -127,19 +133,30 @@ export async function submitPublicRfqAction(
       code: created.code,
       message: created.details || created.error,
     });
+
+    const fallback = await attemptDatabaseFallbackAfterPersistenceFailure({
+      incidentId,
+      databaseErrorCode: created.code,
+      fallbackInput: buildCalculatorRfqFallbackInput({
+        incidentId,
+        submissionId: data.submissionId,
+        data,
+      }),
+    });
+
+    if (fallback.ok) {
+      return {
+        ok: true,
+        deliveryMode: "fallback",
+        incidentId: fallback.incidentId,
+      };
+    }
+
     const code = created.code || "DATABASE_UNAVAILABLE";
     return {
       ok: false,
       code: code === "VALIDATION_ERROR" ? "VALIDATION_ERROR" : code,
-      message:
-        code === "VALIDATION_ERROR"
-          ? created.error
-          : customerMessageForCode(
-              code === "CONFIGURATION_ERROR"
-                ? "CONFIGURATION_ERROR"
-                : "DATABASE_UNAVAILABLE",
-              { incidentId },
-            ),
+      message: fallback.customerMessage,
       incidentId,
     };
   }
@@ -154,6 +171,7 @@ export async function submitPublicRfqAction(
   if (created.idempotentReplay) {
     return {
       ok: true,
+      deliveryMode: "normal",
       rfqNumber: created.rfqNumber,
       uploadToken: created.uploadToken,
       rfqId: created.rfqId,
@@ -260,6 +278,7 @@ export async function submitPublicRfqAction(
 
   return {
     ok: true,
+    deliveryMode: "normal",
     rfqNumber: created.rfqNumber,
     uploadToken: created.uploadToken,
     rfqId: created.rfqId,

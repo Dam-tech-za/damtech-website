@@ -62,6 +62,8 @@ export function FormSection({
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
+  const [submissionId] = useState(() => crypto.randomUUID());
+  const [formStartedAt] = useState(() => Date.now());
   const [prefill] = useState<QuotePrefill | null>(() =>
     loadPrefill(applyCalculatorPrefill),
   );
@@ -95,6 +97,12 @@ export function FormSection({
       const result = await submitLead(formData, sourcePage);
 
       if (result.success) {
+        if (result.deliveryMode === "fallback") {
+          router.push(
+            `/thank-you/?fallback=1&incident=${encodeURIComponent(result.incidentId)}`,
+          );
+          return;
+        }
         router.push("/thank-you");
         return;
       }
@@ -145,6 +153,8 @@ export function FormSection({
             defaultValue=""
           />
         </div>
+        <input type="hidden" name="submissionId" value={submissionId} />
+        <input type="hidden" name="formStartedAt" value={String(formStartedAt)} />
         {prefill?.calculatorJson ? (
           <input
             type="hidden"

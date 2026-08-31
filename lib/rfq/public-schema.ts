@@ -91,7 +91,7 @@ export const publicMultiRfqSchema = z.object({
   website: z.string().max(200).optional().default(""),
   formStartedAt: z.number().optional(),
   /** Client-generated UUID for idempotent retries / double-submit protection. */
-  submissionId: z.string().uuid().optional(),
+  submissionId: z.string().uuid(),
   calculatorSource: z
     .object({
       calculatorType: z.string().max(120),

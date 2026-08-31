@@ -21,13 +21,22 @@ import {
   rfqLogError,
 } from "@/lib/rfq/diagnostics";
 import { getRfqEmailConfig } from "@/lib/rfq/email/config";
+import { attemptDatabaseFallbackAfterPersistenceFailure } from "@/lib/fallback/after-persistence-failure";
+import { buildSimpleQuoteFallbackInput } from "@/lib/fallback/payloads";
+import { parseSubmissionIdFromFormData } from "@/lib/fallback/submission-id";
 
 export type SubmitSimpleQuoteResult =
   | {
       success: true;
+      deliveryMode: "normal";
       rfqNumber: string;
       uploadToken: string;
       notificationStatus: PublicRfqNotificationStatus;
+    }
+  | {
+      success: true;
+      deliveryMode: "fallback";
+      incidentId: string;
     }
   | { success: false; error: string; code?: string; incidentId?: string };
 
@@ -48,13 +57,16 @@ export async function submitSimpleQuote(
     };
   }
 
-  const submissionIdRaw = String(formData.get("submissionId") ?? "").trim();
-  const submissionId =
-    /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(
-      submissionIdRaw,
-    )
-      ? submissionIdRaw
-      : null;
+  const submissionParsed = parseSubmissionIdFromFormData(formData);
+  if (!submissionParsed.ok) {
+    return {
+      success: false,
+      error: submissionParsed.error,
+      code: "VALIDATION_ERROR",
+      incidentId,
+    };
+  }
+  const submissionId = submissionParsed.submissionId;
 
   const formStartedRaw = String(formData.get("formStartedAt") ?? "").trim();
   const formStartedAt = formStartedRaw ? Number(formStartedRaw) : NaN;
@@ -81,6 +93,7 @@ export async function submitSimpleQuote(
     });
     return {
       success: true,
+      deliveryMode: "normal",
       rfqNumber: "RFQ-RECEIVED",
       uploadToken: "spam",
       notificationStatus: "sent",
@@ -126,14 +139,30 @@ export async function submitSimpleQuote(
       code: created.code,
       message: created.details || created.error,
     });
+
+    const fallback = await attemptDatabaseFallbackAfterPersistenceFailure({
+      incidentId,
+      databaseErrorCode: created.code,
+      fallbackInput: buildSimpleQuoteFallbackInput({
+        incidentId,
+        submissionId,
+        data: parsed.data,
+        catalogueLine: parsed.catalogueLine,
+        sourcePage,
+      }),
+    });
+
+    if (fallback.ok) {
+      return {
+        success: true,
+        deliveryMode: "fallback",
+        incidentId: fallback.incidentId,
+      };
+    }
+
     return {
       success: false,
-      error: customerMessageForCode(
-        created.code === "CONFIGURATION_ERROR"
-          ? "CONFIGURATION_ERROR"
-          : "DATABASE_UNAVAILABLE",
-        { incidentId },
-      ),
+      error: fallback.customerMessage,
       code: created.code || "DATABASE_UNAVAILABLE",
       incidentId,
     };
@@ -147,6 +176,7 @@ export async function submitSimpleQuote(
   if (created.idempotentReplay) {
     return {
       success: true,
+      deliveryMode: "normal",
       rfqNumber: created.rfqNumber,
       uploadToken: created.uploadToken,
       notificationStatus: "sent",
@@ -262,6 +292,7 @@ export async function submitSimpleQuote(
 
   return {
     success: true,
+    deliveryMode: "normal",
     rfqNumber: created.rfqNumber,
     uploadToken: created.uploadToken,
     notificationStatus: aggregateNotificationStatus([

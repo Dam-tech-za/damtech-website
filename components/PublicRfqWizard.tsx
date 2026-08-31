@@ -447,6 +447,15 @@ export function PublicRfqWizard({
         setError(result.message);
         return;
       }
+
+      if ("deliveryMode" in result && result.deliveryMode === "fallback") {
+        sessionStorage.removeItem(DRAFT_KEY);
+        router.push(
+          `/quote/fallback/?incident=${encodeURIComponent(result.incidentId)}`,
+        );
+        return;
+      }
+
       sessionStorage.removeItem(DRAFT_KEY);
       sessionStorage.setItem(
         "damtech.rfqSuccess",

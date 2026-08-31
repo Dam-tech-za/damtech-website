@@ -19,10 +19,13 @@ import {
 } from "@/lib/orders/email/send";
 import type { OrderEmailStatus } from "@/lib/orders/types";
 import type { EmailSendResult } from "@/lib/rfq/email/types";
+import { attemptDatabaseFallbackAfterPersistenceFailure } from "@/lib/fallback/after-persistence-failure";
+import { buildCatalogueOrderFallbackInput } from "@/lib/fallback/payloads";
 
 export type SubmitOrderResult =
   | {
       success: true;
+      deliveryMode: "normal";
       orderReference: string;
       viewToken: string;
       email: string;
@@ -32,7 +35,12 @@ export type SubmitOrderResult =
       confirmationEmailStatus: OrderEmailStatus;
       internalEmailStatus: OrderEmailStatus;
     }
-  | { success: false; error: string; code?: string };
+  | {
+      success: true;
+      deliveryMode: "fallback";
+      incidentId: string;
+    }
+  | { success: false; error: string; code?: string; incidentId?: string };
 
 function emailStatus(result: EmailSendResult): OrderEmailStatus {
   if (result.ok) return result.status === "skipped" ? "skipped" : "sent";
@@ -57,16 +65,19 @@ export async function submitCatalogueOrder(
   }
 
   if (parsed.isSpam) {
-    return publicOrderSuccess({
-      orderReference: "DT-RECEIVED",
-      viewToken: "spam",
-      email: parsed.data.email,
-      productName: "Order received",
-      quantity: parsed.data.quantity,
-      totalInclVatZar: 0,
-      confirmationEmailStatus: "sent",
-      internalEmailStatus: "sent",
-    });
+    return {
+      ...publicOrderSuccess({
+        orderReference: "DT-RECEIVED",
+        viewToken: "spam",
+        email: parsed.data.email,
+        productName: "Order received",
+        quantity: parsed.data.quantity,
+        totalInclVatZar: 0,
+        confirmationEmailStatus: "sent",
+        internalEmailStatus: "sent",
+      }),
+      deliveryMode: "normal",
+    };
   }
 
   const snapshot = resolveOrderableProduct(
@@ -107,29 +118,48 @@ export async function submitCatalogueOrder(
       incidentId,
       code: created.code,
     });
+
+    const fallback = await attemptDatabaseFallbackAfterPersistenceFailure({
+      incidentId,
+      databaseErrorCode: created.code,
+      fallbackInput: buildCatalogueOrderFallbackInput({
+        incidentId,
+        submissionId: parsed.data.submissionId,
+        data: parsed.data,
+        snapshot,
+      }),
+    });
+
+    if (fallback.ok) {
+      return {
+        success: true,
+        deliveryMode: "fallback",
+        incidentId: fallback.incidentId,
+      };
+    }
+
     return {
       success: false,
-      error: customerMessageForCode(
-        created.code === "CONFIGURATION_ERROR"
-          ? "CONFIGURATION_ERROR"
-          : "DATABASE_UNAVAILABLE",
-        { incidentId },
-      ),
+      error: fallback.customerMessage,
       code: created.code,
+      incidentId,
     };
   }
 
   if (created.order.idempotentReplay) {
-    return publicOrderSuccess({
-      orderReference: created.order.orderReference,
-      viewToken: created.order.confirmationViewToken,
-      email: created.order.email,
-      productName: created.order.productName,
-      quantity: created.order.quantity,
-      totalInclVatZar: created.order.totalInclVatZar,
-      confirmationEmailStatus: "sent",
-      internalEmailStatus: "sent",
-    });
+    return {
+      ...publicOrderSuccess({
+        orderReference: created.order.orderReference,
+        viewToken: created.order.confirmationViewToken,
+        email: created.order.email,
+        productName: created.order.productName,
+        quantity: created.order.quantity,
+        totalInclVatZar: created.order.totalInclVatZar,
+        confirmationEmailStatus: "sent",
+        internalEmailStatus: "sent",
+      }),
+      deliveryMode: "normal",
+    };
   }
 
   const origin =
@@ -188,14 +218,17 @@ export async function submitCatalogueOrder(
     });
   }
 
-  return publicOrderSuccess({
-    orderReference: created.order.orderReference,
-    viewToken: created.order.confirmationViewToken,
-    email: created.order.email,
-    productName: created.order.productName,
-    quantity: created.order.quantity,
-    totalInclVatZar: created.order.totalInclVatZar,
-    confirmationEmailStatus: emailStatus(customerResult),
-    internalEmailStatus: emailStatus(internalResult),
-  });
+  return {
+    ...publicOrderSuccess({
+      orderReference: created.order.orderReference,
+      viewToken: created.order.confirmationViewToken,
+      email: created.order.email,
+      productName: created.order.productName,
+      quantity: created.order.quantity,
+      totalInclVatZar: created.order.totalInclVatZar,
+      confirmationEmailStatus: emailStatus(customerResult),
+      internalEmailStatus: emailStatus(internalResult),
+    }),
+    deliveryMode: "normal",
+  };
 }

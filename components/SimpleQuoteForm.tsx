@@ -131,6 +131,13 @@ export function SimpleQuoteForm({
         return;
       }
 
+      if (result.deliveryMode === "fallback") {
+        router.push(
+          `/quote/fallback/?incident=${encodeURIComponent(result.incidentId)}`,
+        );
+        return;
+      }
+
       const submittedLine =
         catalogueLine
           ? {
