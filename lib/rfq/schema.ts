@@ -13,6 +13,7 @@ import {
 import { RFQ_STATUSES, type RfqStatus } from "./statuses";
 import { softParseProjectSize } from "./soft-size-parse";
 import type { EnquiryChannel } from "./enquiry-channel";
+import { parseLeadAttribution, type LeadAttribution } from "@/lib/analytics/attribution";
 
 export { RFQ_STATUSES, type RfqStatus };
 export {
@@ -73,6 +74,8 @@ export type ParsedSimpleServiceFields = {
   waterproofingAreaM2?: string;
   surfaceType?: string;
   catalogueLine?: CatalogueLineSnapshot;
+  /** First-touch landing page, referrer and campaign tags (see lib/analytics/attribution.ts). */
+  attribution?: LeadAttribution;
 };
 
 export function buildSimpleServiceFields(
@@ -268,6 +271,10 @@ export function parsePublicRfqFormData(
   const simpleServiceFields = buildSimpleServiceFields(parsed.data);
   if (catalogueLine) {
     simpleServiceFields.catalogueLine = catalogueLine;
+  }
+  const attribution = parseLeadAttribution(formData.get("attribution"));
+  if (attribution) {
+    simpleServiceFields.attribution = attribution;
   }
 
   return {

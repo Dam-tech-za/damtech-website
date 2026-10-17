@@ -10,7 +10,13 @@ type ParsedBlock =
   | { type: "image"; src: string; alt: string; width?: number; height?: number };
 
 function parseProseHtml(html: string): ParsedBlock[] {
-  const normalized = rewriteBlogHtml(html);
+  // Unwrap images that sit alone inside <p> or <figure>. Splitting the HTML at an
+  // image that is still wrapped leaves unbalanced fragments (e.g. "<p>" … "</p>"),
+  // which the browser repairs differently from the server markup and breaks hydration.
+  const normalized = rewriteBlogHtml(html).replace(
+    /<(p|figure)\b[^>]*>\s*(<img\b[^>]*>)\s*<\/\1>/gi,
+    "$2",
+  );
   const blocks: ParsedBlock[] = [];
   const imgPattern = /<img\b[^>]*>/gi;
   let lastIndex = 0;

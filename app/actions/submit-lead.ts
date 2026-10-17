@@ -56,6 +56,12 @@ export async function submitLead(
   }
 
   if (parsed.isSpam) {
+    // Bots that trip the honeypot are still recorded for review, but only within
+    // the public rate limit so they cannot flood the rfqs/customers tables.
+    const spamLimit = await limitPublicRfqSubmit(await headers());
+    if (!spamLimit.success) {
+      return { success: true, deliveryMode: "normal" };
+    }
     if (isSupabaseServiceConfigured()) {
       await createRfqFromPublicSubmission({
         data: parsed.data,

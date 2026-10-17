@@ -22,7 +22,7 @@ export function ServiceProseSections({
         <article key={section.id ?? section.heading} className="site-prose-card">
           <PageSectionHeader
             id={section.id}
-            eyebrow="MORE DETAIL"
+            eyebrow={section.eyebrow}
             title={section.heading}
           />
           {section.paragraphs.map((paragraph) => (

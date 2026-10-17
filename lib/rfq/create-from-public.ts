@@ -46,7 +46,8 @@ async function findOrCreateCustomer(input: {
     const { data } = await client
       .from("customers")
       .select("id")
-      .ilike("email", email)
+      // Escape LIKE wildcards so "%@%.%" cannot match another customer.
+      .ilike("email", email.replace(/[\\%_]/g, (c) => `\\${c}`))
       .limit(1)
       .maybeSingle();
     if (data?.id) return data.id;

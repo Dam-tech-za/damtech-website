@@ -24,11 +24,11 @@ export function BlogCard({ post }: BlogCardProps) {
           {post.category}
         </span>
       </div>
-      <h3 className="mt-3 text-[length:var(--text-h4)] font-semibold leading-snug text-navy">
+      <h2 className="mt-3 text-[length:var(--text-h4)] font-semibold leading-snug text-navy">
         <Link href={`/${post.slug}`} className="hover:text-water">
           {post.title}
         </Link>
-      </h3>
+      </h2>
       <p className="mt-3 line-clamp-3 flex-1 text-sm leading-relaxed text-slate-600">
         {resolvePostExcerpt(post)}
       </p>

@@ -194,7 +194,7 @@ export default function ServicesPage() {
 
             { href: "/steel-water-storage-tanks", label: "Steel Water Tanks" },
 
-            { href: "/bitumen-waterproofing", label: "Bitumen Waterproofing" },
+            { href: "/waterproofing", label: "Home waterproofing" },
 
             { href: "/dam-repair-services", label: "Leaking Dam Repair" },
 

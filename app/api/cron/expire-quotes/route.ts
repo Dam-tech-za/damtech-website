@@ -1,3 +1,4 @@
+import { authorizeCronRequest } from "@/lib/cron/authorize-cron";
 import { NextResponse } from "next/server";
 import { createServiceRoleClient } from "@/lib/supabase/admin";
 import { writeQuoteEvent } from "@/lib/quotes/events";
@@ -11,9 +12,7 @@ export const runtime = "nodejs";
  * Never redirects — returns JSON only.
  */
 export async function GET(request: Request) {
-  const secret = process.env.CRON_SECRET?.trim();
-  const auth = request.headers.get("authorization");
-  if (!secret || auth !== `Bearer ${secret}`) {
+  if (!authorizeCronRequest(request).ok) {
     return NextResponse.json({ ok: false, error: "Unauthorised" }, { status: 401 });
   }
 

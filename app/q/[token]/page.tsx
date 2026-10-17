@@ -41,9 +41,9 @@ export default async function PublicQuotePage({ params }: PageProps) {
   });
   if (!limited.success) {
     return (
-      <main className="public-quote">
+      <div className="public-quote">
         <p>Too many requests. Please try again shortly.</p>
-      </main>
+      </div>
     );
   }
 
@@ -54,7 +54,7 @@ export default async function PublicQuotePage({ params }: PageProps) {
   const display = formatQuoteNumber(view.quoteNumber, view.revisionNumber);
 
   return (
-    <main className="public-quote">
+    <div className="public-quote">
       <header className="public-quote__header">
         <p className="public-quote__brand">{view.companyName}</p>
         <h1>Quotation</h1>
@@ -177,6 +177,6 @@ export default async function PublicQuotePage({ params }: PageProps) {
           </p>
         ) : null}
       </section>
-    </main>
+    </div>
   );
 }

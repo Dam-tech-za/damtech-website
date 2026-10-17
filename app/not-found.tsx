@@ -13,13 +13,13 @@ export const metadata = createMetadata({
 const QUICK_LINKS = [
   { href: "/dam-liners", label: "Dam Linings" },
   { href: "/steel-water-storage-tanks", label: "Steel Water Tanks" },
-  { href: "/bitumen-waterproofing", label: "Bitumen Waterproofing" },
+  { href: "/waterproofing", label: "Waterproofing" },
   { href: "/projects", label: "Projects" },
 ] as const;
 
 export default function NotFound() {
   return (
-    <main className="content-wrap flex min-h-[50vh] flex-col items-center justify-center text-center">
+    <div className="content-wrap flex min-h-[50vh] flex-col items-center justify-center text-center">
       <p className="text-sm font-semibold uppercase tracking-[0.08em] text-body">
         404
       </p>
@@ -62,6 +62,6 @@ export default function NotFound() {
           {siteConfig.phone}
         </a>
       </p>
-    </main>
+    </div>
   );
 }

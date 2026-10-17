@@ -424,7 +424,7 @@ export const PROJECT_CASE_STUDIES: ProjectCaseStudy[] = [
       ),
     ],
     relatedServices: [
-      { href: "/bitumen-waterproofing", label: "Bitumen Waterproofing" },
+      { href: "/torch-on-dam-lining", label: "Torch-On Dam Lining" },
       { href: "/limpopo-dam-liners", label: "Limpopo Dam Linings" },
       { href: "/dam-liners", label: "Dam Linings" },
     ],
@@ -519,7 +519,7 @@ export const PROJECT_CASE_STUDIES: ProjectCaseStudy[] = [
     serviceType: "Concrete dam waterproofing",
     material: "Torch-on bitumen membrane",
     scope:
-      "Torch-on bitumen waterproofing for a round concrete dam with a 15 m diameter. Approximately 177 m² circular base footprint (geometric estimate). Installed membrane area is higher once walls are included — roughly +50 m² for a 2.3 m high wall all around, plus overlaps, detailing and waste.",
+      "Torch-on bitumen waterproofing for a round concrete dam with a 15 m diameter. Approximately 177 m² circular base footprint (geometric estimate). Installed membrane area is higher once walls are included — roughly +108 m² if the wall is 2.3 m high all around (π × 15 m × 2.3 m), plus overlaps, detailing and waste.",
     background:
       "A Mpumalanga client needed reliable waterproofing on a round concrete water-retaining structure where seepage or surface deterioration was reducing usable storage. Concrete dams and reservoirs in the region often require a bonded membrane system rather than loose-laid geomembrane when the substrate is rigid and correctly prepared.",
     siteConditions:
@@ -532,7 +532,7 @@ export const PROJECT_CASE_STUDIES: ProjectCaseStudy[] = [
       "Torch-on bitumen waterproofing was completed on the round concrete dam (15 m diameter; approximately 177 m² circular base footprint). Base footprint is a geometric estimate — not the measured installed membrane quantity.",
     outcomes: [
       "15 m diameter round concrete dam — approximately 177 m² circular base footprint.",
-      "Installed membrane area higher once walls, overlaps and detailing are included (about +50 m² for a 2.3 m wall).",
+      "Installed membrane area higher once walls, overlaps and detailing are included (about +108 m² of wall if 2.3 m high).",
       "Continuous membrane laps across wall and floor transitions.",
       "Detailing completed at corners, outlets and penetrations.",
     ],
@@ -548,7 +548,7 @@ export const PROJECT_CASE_STUDIES: ProjectCaseStudy[] = [
       ),
     ],
     relatedServices: [
-      { href: "/bitumen-waterproofing", label: "Bitumen Waterproofing" },
+      { href: "/torch-on-dam-lining", label: "Torch-On Dam Lining" },
       { href: "/dam-repair-services", label: "Leaking Dam Repair" },
       { href: "/calculators", label: "Waterproofing Area Calculator" },
       { href: "/quote", label: "Request a Similar Quote" },
@@ -576,7 +576,7 @@ export const PROJECT_CASE_STUDIES: ProjectCaseStudy[] = [
     serviceType: "Concrete dam waterproofing",
     material: "Torch-on bitumen membrane",
     scope:
-      "Torch-on bitumen waterproofing for a round concrete dam with an 18 m diameter. Approximately 255 m² circular base footprint, calculated from the 18 m diameter. This is a geometric base-area estimate — not the measured installed membrane quantity. Installed membrane area is higher once walls are included — roughly +50 m² for a 2.3 m high wall all around, plus overlaps, detailing and waste.",
+      "Torch-on bitumen waterproofing for a round concrete dam with an 18 m diameter. Approximately 255 m² circular base footprint, calculated from the 18 m diameter. This is a geometric base-area estimate — not the measured installed membrane quantity. Installed membrane area is higher once walls are included — roughly +130 m² if the wall is 2.3 m high all around (π × 18 m × 2.3 m), plus overlaps, detailing and waste.",
     background:
       "A Tzaneen-area client required waterproofing on a round concrete dam used for water storage. Torch-on bitumen can be a practical option for selected concrete reservoirs, channels and water-retaining surfaces when surface preparation, overlaps and detailing are correctly handled.",
     siteConditions:
@@ -589,7 +589,7 @@ export const PROJECT_CASE_STUDIES: ProjectCaseStudy[] = [
       "Torch-on bitumen waterproofing was completed on the 18 m diameter concrete dam (approximately 255 m² circular base footprint). Base footprint is calculated from diameter — not a measured installed membrane quantity.",
     outcomes: [
       "18 m diameter round concrete dam — approximately 255 m² circular base footprint (calculated from diameter).",
-      "Installed membrane area higher once walls, overlaps and detailing are included (about +50 m² for a 2.3 m wall).",
+      "Installed membrane area higher once walls, overlaps and detailing are included (about +130 m² of wall if 2.3 m high).",
       "Surface preparation and continuous membrane laps across rigid concrete.",
       "Detailing at corners, outlets and penetrations completed to torch-on practice.",
     ],
@@ -605,7 +605,7 @@ export const PROJECT_CASE_STUDIES: ProjectCaseStudy[] = [
       ),
     ],
     relatedServices: [
-      { href: "/bitumen-waterproofing", label: "Bitumen Waterproofing" },
+      { href: "/torch-on-dam-lining", label: "Torch-On Dam Lining" },
       { href: "/reservoir-lining", label: "Reservoir Lining" },
       { href: "/calculators", label: "Waterproofing Area Calculator" },
       { href: "/quote", label: "Request a Similar Quote" },
@@ -677,7 +677,7 @@ export const PROJECT_CASE_STUDIES: ProjectCaseStudy[] = [
     ],
     relatedServices: [
       { href: "/dam-liners", label: "Explore dam lining services" },
-      { href: "/bitumen-waterproofing", label: "View Damtech’s bitumen waterproofing services" },
+      { href: "/torch-on-dam-lining", label: "Torch-On Dam Lining" },
       { href: "/torch-on-dam-lining", label: "Torch-On Dam Lining" },
       { href: "/calculators", label: "Use the dam lining area calculator" },
       { href: "/quote", label: "Request a similar quote" },

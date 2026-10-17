@@ -175,7 +175,7 @@ const WHAT_WE_DO = [
 
       "Bitumen torch-on and maintenance for roofs, foundations and retaining structures on farms and commercial buildings.",
 
-    href: "/bitumen-waterproofing",
+    href: "/waterproofing",
 
     cta: "Waterproofing",
 

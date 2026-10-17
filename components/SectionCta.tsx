@@ -21,7 +21,7 @@ export function SectionCta({
 }: SectionCtaProps) {
   return (
     <div className="home-final-cta__card home-final-cta__card--inline">
-      <h3 className="home-final-cta__title home-final-cta__title--inline">{title}</h3>
+      <h2 className="home-final-cta__title home-final-cta__title--inline">{title}</h2>
       <p className="home-final-cta__intro">{description}</p>
       <div className="home-final-cta__actions">
         <Link href={primaryHref} className="btn-primary home-final-cta__btn">

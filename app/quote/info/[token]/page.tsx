@@ -1,5 +1,11 @@
+import type { Metadata } from "next";
 import { getPublicInfoRequest } from "@/lib/rfq/info-request";
 import { submitInfoResponseAction } from "@/app/actions/submit-info-response";
+
+export const metadata: Metadata = {
+  title: { absolute: "Information request | Damtech" },
+  robots: { index: false, follow: false },
+};
 
 type PageProps = {
   params: Promise<{ token: string }>;
@@ -16,17 +22,17 @@ export default async function PublicInfoRequestPage({
 
   if (!loaded.ok) {
     return (
-      <main className="section section--narrow">
+      <div className="section section--narrow">
         <h1>Information request</h1>
         <p>{loaded.error}</p>
-      </main>
+      </div>
     );
   }
 
   const { view } = loaded;
 
   return (
-    <main className="section section--narrow">
+    <div className="section section--narrow">
       <h1>Additional information for {view.rfqNumber}</h1>
       <p>
         Damtech needs a few details to continue your quotation. Internal notes
@@ -153,6 +159,6 @@ export default async function PublicInfoRequestPage({
           Submit
         </button>
       </form>
-    </main>
+    </div>
   );
 }

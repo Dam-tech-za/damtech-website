@@ -3,18 +3,21 @@ import { Header } from "./Header";
 import { MobileStickyCta } from "./MobileStickyCta";
 import { RouteScrollReset } from "./RouteScrollReset";
 import { ScrollToTop } from "./ScrollToTop";
-import type { ReactNode } from "react";
 
-type PageShellProps = {
-  children: ReactNode;
-};
-
-export function PageShell({ children }: PageShellProps) {
+/** Public marketing chrome rendered above `<main>`. */
+export function PageShellTop() {
   return (
     <>
       <Header />
       <div className="site-header-spacer" aria-hidden />
-      <main className="flex-1 pb-[4.5rem] lg:pb-0">{children}</main>
+    </>
+  );
+}
+
+/** Public marketing chrome rendered below `<main>`. */
+export function PageShellBottom() {
+  return (
+    <>
       <Footer />
       <RouteScrollReset />
       <ScrollToTop />

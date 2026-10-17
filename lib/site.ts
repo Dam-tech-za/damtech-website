@@ -11,17 +11,17 @@ export const siteConfig = {
   name: "Damtech",
   domain: resolveSiteOrigin(),
   defaultTitle:
-    "Dam Liners & Steel Water Tanks | Damtech South Africa",
+    "Dam Liners, Steel Water Tanks & Waterproofing | Damtech",
   defaultDescription:
-    "Damtech installs HDPE and PVC dam liners, corrugated steel water tanks and bitumen waterproofing for farms, mines and estates across South Africa. Free quotes and site inspections.",
+    "HDPE and PVC dam liners, corrugated steel water tanks and waterproofing for farms, mines, businesses and homes across South Africa. Free quotes from Damtech.",
   defaultOgDescription:
-    "Damtech installs HDPE and PVC dam liners, corrugated steel water tanks and bitumen waterproofing for farms, mines and estates across South Africa. Free quotes and site inspections.",
+    "HDPE and PVC dam liners, corrugated steel water tanks and waterproofing for farms, mines, businesses and homes across South Africa. Free quotes from Damtech.",
   defaultOgTitle:
-    "Dam Liners & Steel Water Tanks | Damtech South Africa",
+    "Dam Liners, Steel Water Tanks & Waterproofing | Damtech",
   defaultTwitterTitle:
-    "Dam Liners & Steel Water Tanks | Damtech South Africa",
+    "Dam Liners, Steel Water Tanks & Waterproofing | Damtech",
   defaultTwitterDescription:
-    "Damtech installs HDPE and PVC dam liners, corrugated steel water tanks and bitumen waterproofing for farms, mines and estates across South Africa. Free quotes and site inspections.",
+    "HDPE and PVC dam liners, corrugated steel water tanks and waterproofing for farms, mines, businesses and homes across South Africa. Free quotes from Damtech.",
   phone: "+27 82 853 1026",
   email: "info@dam-tech.co.za",
   location: "South Africa",
@@ -179,11 +179,12 @@ export const SERVICES_DROPDOWN_LINKS: NavLink[] = [
   { href: "/pvc-dam-lining", label: "PVC Dam Lining" },
   { href: "/torch-on-dam-lining", label: "Torch-On Dam Lining" },
   { href: "/steel-water-storage-tanks", label: "Steel Water Tanks & Prices" },
-  { href: "/bitumen-waterproofing", label: "Waterproofing" },
   { href: "/reservoir-lining", label: "Reservoir Lining" },
   { href: "/dam-repair-services", label: "Leaking Dam Repair" },
+  { href: "/dam-lining-cost-south-africa", label: "Dam Lining Cost Guide" },
   { href: "/farm-dam-liners", label: "Farm Dam Liners" },
   { href: "/mining-dam-liners", label: "Mining Dam Liners" },
+  { href: "/agricultural-water-storage", label: "Agricultural Water Storage" },
   { href: "/western-cape-dam-liners", label: "Western Cape Dam Liners" },
 ];
 
@@ -222,6 +223,7 @@ export const HEADER_NAV_ITEMS: HeaderNavItem[] = [
     hubLabel: null,
     children: SERVICES_DROPDOWN_LINKS,
   },
+  { type: "link", href: "/waterproofing", label: "Waterproofing" },
   { type: "link", href: "/projects", label: "Projects" },
   { type: "link", href: "/calculators", label: "Calculators" },
   { type: "link", href: "/blog", label: "Blog" },
@@ -244,11 +246,13 @@ export const FOOTER_SERVICE_LINKS: NavLink[] = [
   { href: "/pvc-dam-lining", label: "PVC Dam Lining" },
   { href: "/torch-on-dam-lining", label: "Torch-On Dam Lining" },
   { href: "/steel-water-storage-tanks", label: "Steel Water Tanks & Prices" },
-  { href: "/bitumen-waterproofing", label: "Waterproofing" },
+  { href: "/waterproofing", label: "Waterproofing" },
   { href: "/reservoir-lining", label: "Reservoir Lining" },
   { href: "/dam-repair-services", label: "Leaking Dam Repair" },
+  { href: "/dam-lining-cost-south-africa", label: "Dam Lining Cost Guide" },
   { href: "/farm-dam-liners", label: "Farm Dam Liners" },
   { href: "/mining-dam-liners", label: "Mining Dam Liners" },
+  { href: "/agricultural-water-storage", label: "Agricultural Water Storage" },
   { href: "/western-cape-dam-liners", label: "Western Cape Dam Liners" },
 ];
 
@@ -277,7 +281,7 @@ export const SERVICE_LINKS = [
   { href: "/dam-liners", label: "Dam Linings (HDPE, PVC, Torch-On)" },
   { href: "/hdpe-dam-lining", label: "HDPE Dam Lining" },
   { href: "/steel-water-storage-tanks", label: "Steel Water Storage Tanks" },
-  { href: "/bitumen-waterproofing", label: "Bitumen Waterproofing" },
+  { href: "/waterproofing", label: "Waterproofing" },
   { href: "/services", label: "All Services" },
   { href: "/dam-repair-services", label: "Leaking Dam Repair" },
   { href: "/reservoir-lining", label: "Reservoir Lining" },
@@ -314,7 +318,7 @@ export const INDEXABLE_STATIC_PATHS = [
   "/services",
   "/dam-liners",
   "/steel-water-storage-tanks",
-  "/bitumen-waterproofing",
+  "/waterproofing",
   "/faq",
   "/blog",
   "/contact",

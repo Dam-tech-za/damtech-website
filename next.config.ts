@@ -88,11 +88,6 @@ const nextConfig: NextConfig = {
         hostname: "www.dam-tech.co.za",
         pathname: "/wp-content/uploads/**",
       },
-      {
-        protocol: "https",
-        hostname: "lh3.googleusercontent.com",
-        pathname: "/**",
-      },
     ],
   },
   async redirects() {

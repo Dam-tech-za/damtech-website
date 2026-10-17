@@ -6,7 +6,7 @@ import { formatZarWholeInclVat } from "@/lib/catalogue";
 import { getOrderByPublicConfirmation } from "@/lib/orders";
 
 export const metadata: Metadata = {
-  title: "Order placed | Damtech",
+  title: { absolute: "Order placed | Damtech" },
   robots: { index: false, follow: false, nocache: true },
 };
 

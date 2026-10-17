@@ -24,7 +24,7 @@ export function MobileStickyCta() {
   }, []);
 
   return (
-    <div
+    <div data-track-location="mobile_sticky_bar"
       className={`fixed inset-x-0 bottom-0 z-40 border-t border-slate-200 bg-white/95 px-2 py-2 shadow-[0_-4px_20px_rgba(15,23,42,0.08)] backdrop-blur transition-transform duration-200 ease-out sm:px-3 lg:hidden ${
         footerVisible
           ? "pointer-events-none translate-y-full"

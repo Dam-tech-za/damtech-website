@@ -3,6 +3,9 @@ import { Inter } from "next/font/google";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics, AnalyticsNoScript } from "@/components/Analytics";
 import { ConditionalSiteShell } from "@/components/ConditionalSiteShell";
+import { PageShellBottom, PageShellTop } from "@/components/PageShell";
+import { SiteTracking } from "@/components/SiteTracking";
+import { TrackingGate } from "@/components/TrackingGate";
 import { SEOJsonLd } from "@/components/SEOJsonLd";
 import {
   createLocalBusinessSchema,
@@ -16,7 +19,7 @@ const inter = Inter({
   subsets: ["latin"],
   variable: "--font-inter",
   display: "swap",
-  weight: ["400", "500", "600", "700", "800"],
+  // Variable font: one ~48 KB latin file instead of five preloaded static weights.
 });
 
 export const metadata: Metadata = createRootMetadata();
@@ -37,8 +40,27 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col font-sans">
         <AnalyticsNoScript />
         <SEOJsonLd data={globalSchemas} />
-        <ConditionalSiteShell>{children}</ConditionalSiteShell>
-        <Analytics />
+        <ConditionalSiteShell
+          beforeMain={
+            <>
+              <a href="#main-content" className="skip-link">
+                Skip to main content
+              </a>
+              <PageShellTop />
+            </>
+          }
+          afterMain={
+            <>
+              <PageShellBottom />
+              <TrackingGate>
+                <Analytics />
+                <SiteTracking />
+              </TrackingGate>
+            </>
+          }
+        >
+          {children}
+        </ConditionalSiteShell>
         <SpeedInsights />
       </body>
     </html>

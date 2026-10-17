@@ -6,6 +6,7 @@ import { SiteSection } from "@/components/SiteSection";
 import { SimpleQuoteForm } from "@/components/SimpleQuoteForm";
 import { resolveCatalogueSelectionFromParams } from "@/lib/catalogue";
 import { createPageMetadata, PAGE_SEO } from "@/lib/pages";
+import { normaliseServiceOption } from "@/lib/form";
 import {
   LazyCTA as CTA,
   LazyInternalServiceLinks as InternalServiceLinks,
@@ -22,6 +23,8 @@ type QuotePageProps = {
 export default async function QuotePage({ searchParams }: QuotePageProps) {
   const params = await searchParams;
   const catalogueLine = resolveCatalogueSelectionFromParams(params);
+  const serviceParam = Array.isArray(params.service) ? params.service[0] : params.service;
+  const defaultService = serviceParam ? (normaliseServiceOption(serviceParam) ?? "") : "";
 
   return (
     <>
@@ -34,6 +37,7 @@ export default async function QuotePage({ searchParams }: QuotePageProps) {
 
       <Hero
         compact
+        showActions={false}
         eyebrow={catalogueLine ? "Invoice request" : "Free quote"}
         title={
           catalogueLine ? "Request an invoice for a supply-only kit" : seo.h1
@@ -54,6 +58,7 @@ export default async function QuotePage({ searchParams }: QuotePageProps) {
           <SimpleQuoteForm
             sourcePage="/quote"
             catalogueLine={catalogueLine}
+            defaultService={defaultService}
           />
           <QuoteTrustPanel />
         </div>

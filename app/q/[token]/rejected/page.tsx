@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 export default async function PublicQuoteRejectedPage({ params }: PageProps) {
   const { token } = await params;
   return (
-    <main className="public-quote">
+    <div className="public-quote">
       <h1>Quotation declined</h1>
       <p>
         We have notified Damtech. If you asked for a revision, the team will
@@ -20,6 +20,6 @@ export default async function PublicQuoteRejectedPage({ params }: PageProps) {
       <p>
         <Link href={`/q/${token}/`}>Return to quotation</Link>
       </p>
-    </main>
+    </div>
   );
 }

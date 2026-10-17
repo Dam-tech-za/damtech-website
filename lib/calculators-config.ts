@@ -644,7 +644,7 @@ export const CALCULATORS: CalculatorConfig[] = [
     ],
     resultHelp:
       "Waterproofing area estimates support early material planning for torch-on and bitumen systems.",
-    relatedServiceHref: "/bitumen-waterproofing",
+    relatedServiceHref: "/waterproofing",
     relatedServiceLabel: "View waterproofing services",
   },
   {

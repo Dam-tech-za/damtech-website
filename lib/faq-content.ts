@@ -18,7 +18,7 @@ export const FAQ_CATEGORIES: readonly FaqCategory[] = [
       {
         question: "What are dam liners?",
         answer:
-          "Dam liners are flexible geomembrane or membrane sheets installed inside earth dams, ponds and reservoirs to reduce seepage. In South Africa, dam liners and dam linings usually refer to the same waterproofing work — HDPE, PVC or bitumen torch-on systems supplied and installed by a contractor such as Damtech.",
+          "Dam liners are flexible geomembrane or membrane sheets installed inside earth dams, ponds and reservoirs to reduce seepage. In South Africa, dam liners and dam linings usually refer to the same waterproofing work: HDPE, PVC or bitumen torch-on systems supplied and installed by a contractor such as Damtech.",
       },
       {
         question: "What are dam linings?",
@@ -50,17 +50,17 @@ export const FAQ_CATEGORIES: readonly FaqCategory[] = [
       {
         question: "How long do HDPE dam liners last?",
         answer:
-          "Correctly installed UV-stable HDPE dam liners typically perform 20–30 years on agricultural dams, depending on thickness, exposure, water chemistry, anchoring quality and whether livestock or machinery contact the liner. Damtech confirms the relevant supplier specifications for each quoted system. Maintenance inspections help catch edge wear or outlet issues early.",
+          "Correctly installed UV-stable HDPE dam liners typically perform for 20–30 years on agricultural dams (a typical range, not a guarantee), depending on thickness, UV exposure, water chemistry, anchoring quality and whether livestock or machinery contact the liner. Damtech confirms the relevant supplier specifications for each quoted system. Maintenance inspections help catch edge wear or outlet issues early.",
       },
       {
-        question: "Hoe lank hou ’n HDPE damvoering?",
+        question: "Hoe lank hou ’n HDPE-damvoering?",
         answer:
-          "’n Goed geïnstalleerde UV-stabiele HDPE damvoering hou gewoonlik 20–30 jaar op tipiese plaasdamme, afhangende van dikte, blootstelling, waterchemie en hoe die dam gebruik word. Onderhoud en gereelde inspeksies help om probleme vroeg op te spoor.",
+          "’n Goed geïnstalleerde UV-stabiele HDPE-damvoering presteer gewoonlik 20–30 jaar op tipiese plaasdamme (’n tipiese reeks, nie ’n waarborg nie), afhangende van dikte, blootstelling, waterchemie en hoe die dam gebruik word. Onderhoud en gereelde inspeksies help om probleme vroeg op te spoor.",
       },
       {
-        question: "Wat is die verskil tussen HDPE en PVC damvoering?",
+        question: "Wat is die verskil tussen HDPE- en PVC-damvoering?",
         answer:
-          "HDPE is stywer en meer UV-bestand — ideaal vir groter aardamme en mynpoele. PVC is buigbaarder en word dikwels op kleiner damme en staaldamme gebruik. Damtech beveel die regte materiaal aan nadat ons die dam, grond en gebruik beoordeel het.",
+          "HDPE is stywer en meer UV-bestand — ideaal vir groter aardamme en mynpoele. PVC is buigbaarder en word dikwels op kleiner damme en staaltenks gebruik. Damtech beveel die regte materiaal aan nadat ons die dam, grond en gebruik beoordeel het.",
       },
     ],
   },
@@ -83,7 +83,7 @@ export const FAQ_CATEGORIES: readonly FaqCategory[] = [
       {
         question: "What causes paint to flake off or make bubbles?",
         answer:
-          "Common causes include trapped moisture beneath the coating, poor surface preparation, incompatible paints, application issues and underlying cracks or deteriorating substrates. The waterproofing membrane layer — not paint alone — must be addressed for lasting leak prevention.",
+          "Common causes include moisture trapped beneath the coating, poor surface preparation, incompatible paints, application issues and underlying cracks or deteriorating substrates. The waterproofing membrane layer — not paint alone — must be addressed for lasting leak prevention.",
       },
     ],
   },
@@ -100,12 +100,12 @@ export const FAQ_CATEGORIES: readonly FaqCategory[] = [
       {
         question: "How long does it take to install a zinc reservoir?",
         answer:
-          "Installation time depends on tank size, site access and base preparation. A standard corrugated steel reservoir often takes several days once civils are ready, including assembly, lining and commissioning. Remote sites may need extra lead time for transport.",
+          "Installation time depends on tank size, site access and base preparation. A standard corrugated steel reservoir often takes several days once the base is ready, including assembly, lining and commissioning. Remote sites may need extra lead time for transport.",
       },
       {
         question: "What is the lifespan of a zinc reservoir?",
         answer:
-          "A well-built galvanised steel reservoir with proper PVC lining and maintenance can last 20–30 years or more. Lifespan depends on water chemistry, roof protection, base stability and scheduled inspections.",
+          "A well-built galvanised steel reservoir with proper PVC lining and maintenance can typically last 20–30 years, although this is not a guarantee. Lifespan depends on water chemistry, roof protection, base stability and scheduled inspections.",
       },
     ],
   },
@@ -117,7 +117,7 @@ export const FAQ_CATEGORIES: readonly FaqCategory[] = [
       {
         question: "Can Damtech repair a leaking farm dam?",
         answer:
-          "Yes. Damtech inspects liners, outlets and embankments and recommends patch repairs, section relining or full relining depending on liner condition, UV degradation and the cost of repeated call-outs versus replacement.",
+          "Yes. Damtech inspects liners, outlets and embankments and recommends patch repairs, section relining or full relining, depending on liner condition, UV degradation and the cost of repeated call-outs versus replacement.",
       },
       {
         question: "When should a leaking dam be repaired?",
