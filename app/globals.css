@@ -75,6 +75,11 @@
 
   html {
     scroll-padding-top: calc(var(--header-height) + 0.75rem);
+    /*
+     * The native scrollbar stays hidden so content never loses width or shifts
+     * when it appears (classic Windows scrollbars reserve layout space). A slim
+     * rounded overlay indicator is drawn by <OverlayScrollbar> instead.
+     */
     scrollbar-width: none;
     -ms-overflow-style: none;
   }
@@ -176,6 +181,53 @@
 }
 
 @layer components {
+  /*
+   * Minimal overlay scrollbar indicator (see components/OverlayScrollbar.tsx).
+   * Floats over the content on the right so it never reserves layout width.
+   */
+  .overlay-scrollbar {
+    position: fixed;
+    top: 6px;
+    bottom: 6px;
+    right: 3px;
+    width: 10px;
+    z-index: 60;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.25s ease;
+  }
+  .overlay-scrollbar[data-visible="true"] {
+    opacity: 1;
+  }
+  .overlay-scrollbar__thumb {
+    position: absolute;
+    right: 0;
+    width: 5px;
+    min-height: 32px;
+    border-radius: 999px;
+    background-color: rgba(148, 163, 184, 0.45);
+    pointer-events: auto;
+    cursor: grab;
+    transition:
+      width 0.15s ease,
+      background-color 0.15s ease;
+  }
+  .overlay-scrollbar__thumb:hover {
+    width: 7px;
+    background-color: rgba(100, 116, 139, 0.6);
+  }
+  .overlay-scrollbar[data-active="true"] .overlay-scrollbar__thumb {
+    width: 7px;
+    background-color: rgba(71, 85, 105, 0.75);
+    cursor: grabbing;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .overlay-scrollbar,
+    .overlay-scrollbar__thumb {
+      transition: none;
+    }
+  }
+
   /* Keyboard users: first focusable element jumps past the header navigation. */
   .skip-link {
     position: absolute;

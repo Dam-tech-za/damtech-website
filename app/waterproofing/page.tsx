@@ -230,13 +230,26 @@ export default function WaterproofingPage() {
       />
       <SiteSection>
         <RelatedPageLinks
-          heading="Related services"
+          heading="Home waterproofing services"
           links={[
-            { href: "/torch-on-dam-lining/", label: "Torch-on dam lining" },
-            { href: "/dam-liners/", label: "Dam liners" },
-            { href: QUOTE_HREF, label: "Request a written quote" },
-            { href: "/faq/", label: "Waterproofing and dam lining FAQ" },
-            { href: "/contact/", label: "Contact Damtech" },
+            { href: "/roof-waterproofing/", label: "Roof waterproofing" },
+            {
+              href: "/foundation-waterproofing/",
+              label: "Foundation & damp-proofing",
+            },
+            { href: "/waterproofing-pretoria/", label: "Waterproofing in Pretoria" },
+            {
+              href: "/waterproofing-overstrand/",
+              label: "Waterproofing in the Overstrand",
+            },
+            {
+              href: "/torch-on-waterproofing/",
+              label: "Torch-on waterproofing guide",
+            },
+            {
+              href: "/waterproofing-membranes-and-coatings/",
+              label: "Membranes vs coatings guide",
+            },
           ]}
         />
       </SiteSection>

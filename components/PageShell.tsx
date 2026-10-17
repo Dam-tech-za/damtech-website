@@ -1,6 +1,7 @@
 import { Footer } from "./Footer";
 import { Header } from "./Header";
 import { MobileStickyCta } from "./MobileStickyCta";
+import { OverlayScrollbar } from "./OverlayScrollbar";
 import { RouteScrollReset } from "./RouteScrollReset";
 import { ScrollToTop } from "./ScrollToTop";
 
@@ -22,6 +23,7 @@ export function PageShellBottom() {
       <RouteScrollReset />
       <ScrollToTop />
       <MobileStickyCta />
+      <OverlayScrollbar />
     </>
   );
 }
