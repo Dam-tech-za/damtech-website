@@ -26,6 +26,7 @@ const RESERVED = new Set([
   "agricultural-water-storage",
   "bitumen-waterproofing-services-and-more",
   "bitumen-waterproofing",
+  "waterproofing",
   "blog",
   "calculators",
   "category",

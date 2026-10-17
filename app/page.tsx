@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { HomeTrustWarrantySection } from "@/components/HomeTrustWarrantySection";
 import { HomeServicesSection } from "@/components/HomeServicesSection";
 import { HomeProcessProjectsSection } from "@/components/HomeProcessProjectsSection";
@@ -15,6 +16,12 @@ export default function HomePage() {
       <PageSeo breadcrumbs={[{ name: "Home", path: "/" }]} />
 
       <HomeHero />
+
+      <p className="border-b bg-white px-4 py-3 text-center text-sm sm:text-base">
+        <Link href="/waterproofing/" className="link-row font-semibold">
+          Leaking roof or damp walls? We waterproof homes too
+        </Link>
+      </p>
 
       <HomeTrustWarrantySection />
 

@@ -424,7 +424,7 @@ export const PROJECT_CASE_STUDIES: ProjectCaseStudy[] = [
       ),
     ],
     relatedServices: [
-      { href: "/bitumen-waterproofing", label: "Bitumen Waterproofing" },
+      { href: "/torch-on-dam-lining", label: "Torch-On Dam Lining" },
       { href: "/limpopo-dam-liners", label: "Limpopo Dam Linings" },
       { href: "/dam-liners", label: "Dam Linings" },
     ],
@@ -548,7 +548,7 @@ export const PROJECT_CASE_STUDIES: ProjectCaseStudy[] = [
       ),
     ],
     relatedServices: [
-      { href: "/bitumen-waterproofing", label: "Bitumen Waterproofing" },
+      { href: "/torch-on-dam-lining", label: "Torch-On Dam Lining" },
       { href: "/dam-repair-services", label: "Leaking Dam Repair" },
       { href: "/calculators", label: "Waterproofing Area Calculator" },
       { href: "/quote", label: "Request a Similar Quote" },
@@ -605,7 +605,7 @@ export const PROJECT_CASE_STUDIES: ProjectCaseStudy[] = [
       ),
     ],
     relatedServices: [
-      { href: "/bitumen-waterproofing", label: "Bitumen Waterproofing" },
+      { href: "/torch-on-dam-lining", label: "Torch-On Dam Lining" },
       { href: "/reservoir-lining", label: "Reservoir Lining" },
       { href: "/calculators", label: "Waterproofing Area Calculator" },
       { href: "/quote", label: "Request a Similar Quote" },
@@ -677,7 +677,7 @@ export const PROJECT_CASE_STUDIES: ProjectCaseStudy[] = [
     ],
     relatedServices: [
       { href: "/dam-liners", label: "Explore dam lining services" },
-      { href: "/bitumen-waterproofing", label: "View Damtech’s bitumen waterproofing services" },
+      { href: "/torch-on-dam-lining", label: "Torch-On Dam Lining" },
       { href: "/torch-on-dam-lining", label: "Torch-On Dam Lining" },
       { href: "/calculators", label: "Use the dam lining area calculator" },
       { href: "/quote", label: "Request a similar quote" },

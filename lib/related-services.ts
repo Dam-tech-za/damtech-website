@@ -33,7 +33,7 @@ export const RELATED_SERVICE_LINKS: readonly RelatedServiceLink[] = [
     Icon: ReservoirIcon,
   },
   {
-    href: "/bitumen-waterproofing",
+    href: "/waterproofing",
     label: "Waterproofing",
     Icon: DropletIcon,
   },

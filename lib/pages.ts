@@ -8,7 +8,7 @@ export type StaticPageKey =
   | "services"
   | "dam-liners"
   | "steel-tanks"
-  | "bitumen"
+  | "waterproofing"
   | "faq"
   | "contact"
   | "blog"
@@ -29,7 +29,7 @@ export type PageSeoEntry = {
 
 export const PAGE_SEO: Record<StaticPageKey, PageSeoEntry> = {
   home: {
-    title: "Dam Liners & Steel Water Tanks | Damtech South Africa",
+    title: "Dam Liners, Steel Water Tanks & Waterproofing | Damtech South Africa",
     description:
       "Damtech installs HDPE and PVC dam liners, corrugated steel water tanks and bitumen waterproofing for farms, mines and estates across South Africa. Free quotes and site inspections.",
     path: "/",
@@ -71,13 +71,13 @@ export const PAGE_SEO: Record<StaticPageKey, PageSeoEntry> = {
     serviceName: "Corrugated Steel Water Tank Supply",
     image: IMAGE_PATHS.tulbaghWesternCapeSteelWaterTankProject,
   },
-  bitumen: {
-    title: "Bitumen Waterproofing South Africa | Torch-On Systems | Damtech",
+  waterproofing: {
+    title: "Waterproofing Pretoria & Gauteng | Roofs, Damp, Leaks | Damtech",
     description:
-      "Torch-on, self-adhesive and liquid bitumen waterproofing for roofs, foundations, reservoirs and retaining walls. Waterproofing contractors serving all of South Africa.",
-    path: "/bitumen-waterproofing",
-    h1: "Waterproofing Services for Long-Term Protection",
-    serviceName: "Bitumen Waterproofing",
+      "Roof and home waterproofing in Pretoria and Gauteng. Flat roofs, parapets, damp walls, balconies, showers and leak detection. Free assessment and written quote.",
+    path: "/waterproofing",
+    h1: "Roof & Home Waterproofing in Pretoria and Gauteng",
+    serviceName: "Home waterproofing",
     image: IMAGE_PATHS.bitumenTorchOnWaterproofingDamtech,
   },
   faq: {
@@ -232,7 +232,7 @@ export const CONTACT_SERVICES = [
   {
     title: "Bitumen Waterproofing",
     description: "Roof, foundation and retaining wall waterproofing solutions.",
-    href: "/bitumen-waterproofing",
+    href: "/waterproofing",
   },
   {
     title: "Leak Repair & Maintenance",

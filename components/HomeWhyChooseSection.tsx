@@ -37,7 +37,7 @@ const RELATED_SERVICE_LINKS_HOME = RELATED_SERVICE_LINKS.filter((link) =>
     "/dam-liners",
     "/hdpe-dam-lining",
     "/steel-water-storage-tanks",
-    "/bitumen-waterproofing",
+    "/waterproofing",
     "/services",
     "/dam-repair-services",
     "/reservoir-lining",

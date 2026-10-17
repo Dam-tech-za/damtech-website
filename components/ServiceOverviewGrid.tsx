@@ -20,7 +20,7 @@ export type ServiceOverviewItem = {
 const ICON_BY_HREF: Record<string, ComponentType<SVGProps<SVGSVGElement>>> = {
   "/dam-liners": LayersIcon,
   "/steel-water-storage-tanks": ReservoirIcon,
-  "/bitumen-waterproofing": DropletIcon,
+  "/waterproofing": DropletIcon,
   "/dam-repair-services": WrenchIcon,
   "/reservoir-lining": ReservoirIcon,
   "/agricultural-water-storage": ReservoirIcon,

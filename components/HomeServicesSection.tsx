@@ -27,9 +27,9 @@ const SERVICE_CARDS = [
     id: "waterproofing",
     title: "Waterproofing",
     description:
-      "Bitumen, torch-on and maintenance waterproofing systems designed to protect buildings, reservoirs and water-retaining structures.",
-    linkLabel: "Learn more about waterproofing services",
-    href: "/bitumen-waterproofing",
+      "Roof, damp and leak waterproofing for homes in Pretoria and Gauteng. Free assessment and written quote.",
+    linkLabel: "See home waterproofing",
+    href: "/waterproofing",
     Icon: DropletIcon,
     featured: true,
   },

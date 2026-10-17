@@ -19,13 +19,6 @@ export const STEEL_TANKS_SCHEMA_OFFERS = [
   "Reservoir leak repair and relining",
 ] as const;
 
-export const BITUMEN_SCHEMA_OFFERS = [
-  "Torch-on bitumen waterproofing",
-  "Self-adhesive membrane installation",
-  "Liquid bitumen waterproofing",
-  "Roof and foundation leak repair",
-] as const;
-
 export const SERVICES_HUB_SCHEMA_OFFERS = [
   "HDPE dam lining installation",
   "Corrugated steel water tank installation",
@@ -144,79 +137,6 @@ export const DAM_LINERS_CONTENT = {
     { href: "/steel-water-storage-tanks", label: "Steel Water Tanks" },
     { href: "/projects", label: "Project Case Studies" },
     { href: "/faq", label: "Dam Linings FAQ" },
-  ],
-};
-
-export const BITUMEN_CONTENT = {
-  intro:
-    "Damtech offers bitumen torch-on waterproofing, leak prevention and maintenance waterproofing services for water-retaining structures and commercial properties across South Africa. Heavy summer storms, temperature swings and years of UV exposure take a toll on roofs, slabs and retaining structures — bitumen remains one of the most dependable ways to stop water ingress on concrete, metal and masonry when installed by trained applicators.",
-  sections: [
-    {
-      heading: "Waterproofing Contractors for Farms & Commercial Properties",
-      paragraphs: [
-        "Damtech installs bitumen waterproofing for agricultural buildings, packhouses, commercial stores and water-retaining structures across South Africa. Property managers and farm owners typically call us when roofs, foundations or reservoir walls start showing damp, blistering membranes or active leaks after summer storms.",
-        "We assess the substrate first, then recommend torch-on, self-adhesive or liquid systems that match access constraints, fire-safety rules on site and the remaining life of the structure — so waterproofing work fits around harvest, production or tenant schedules.",
-      ],
-    },
-    {
-      heading: "Where Bitumen Waterproofing Is Used",
-      paragraphs: [
-        "We apply torch-on, self-adhesive and liquid bitumen systems on flat concrete slab roofs, metal roof laps and flashings, basement and foundation walls, retaining walls, and water-retaining structures including reservoirs and canals. On farms and commercial sites, common jobs include leaking store roofs, damp rising through foundation walls, and reservoir repairs where a flexible membrane outperforms rigid coatings.",
-      ],
-    },
-    {
-      heading: "How Bitumen Membranes Perform in Local Conditions",
-      paragraphs: [
-        "Modified bitumen sheets are designed to flex with structural movement and resist ponding water on flat roofs. Torch-on installation melts the underside of the membrane so it bonds to the primed substrate — critical on concrete where adhesion failures cause the blisters and peeling many property owners describe. Self-adhesive variants suit confined areas where open flame is restricted.",
-        "Liquid bitumen coatings help for detailing around pipes, corners and irregular surfaces before wider membrane runs are laid. In high-UV zones we recommend protected membranes or appropriate surface finishes where the system will be exposed long term.",
-      ],
-    },
-    {
-      heading: "Leak Repair and Preventative Maintenance",
-      paragraphs: [
-        "Not every roof or wall needs a full strip-and-replace. We inspect first — checking for failed laps, blocked outlets, cracked parapets and trapped moisture under old paint — then propose repair or overlay options that match the budget and remaining life of the structure. Preventative maintenance programmes include scheduled inspections and spot repairs before minor leaks become structural damage or stock losses.",
-        "For agricultural and industrial clients, fixing a leaking roof before maize season or production ramps up avoids downtime and protects equipment stored underneath.",
-      ],
-    },
-    {
-      heading: "Bitumen vs Paint-Only or DIY Solutions",
-      paragraphs: [
-        "Acrylic roof paints can work as a reflective top coat on sound substrates but rarely fix active leaks on their own. Bubbles and flaking usually mean moisture is moving beneath the coating. Bitumen membranes address the waterproofing layer itself; they are not a cosmetic cover-up. Our technicians are trained in surface preparation, primer selection and lap widths — steps that determine whether a system lasts five years or twenty.",
-      ],
-    },
-  ] satisfies ServiceSection[],
-  faqs: [
-    {
-      question: "Can you waterproof an existing roof without removing the whole structure?",
-      answer:
-        "In many cases yes. We assess the substrate, remove failed sections where needed, and apply torch-on or self-adhesive membranes over prepared concrete or metal. Severely saturated or structurally unsound decks may need partial rebuild before waterproofing.",
-    },
-    {
-      question: "Is torch-on waterproofing safe on farm buildings?",
-      answer:
-        "Torch-on is applied by certified technicians with fire precautions and appropriate permits where required. For grain stores, workshops and livestock shelters we plan access and hot-work safety around your operations.",
-    },
-    {
-      question: "How long does bitumen waterproofing last?",
-      answer:
-        "Quality torch-on systems on well-prepared substrates commonly deliver 15–20 years of service. Exposure, traffic on the roof and maintenance frequency affect actual lifespan. We include material warranty support and can schedule inspections.",
-    },
-    {
-      question: "Do you waterproof reservoir walls and floors?",
-      answer:
-        "Yes. Bitumen torch-on is often used on cement reservoirs and canal linings where a bonded membrane is required. For large earth dams we may recommend HDPE instead — see our dam linings service.",
-    },
-  ] satisfies ServiceFaqItem[],
-  relatedLinks: [
-    {
-      href: "/calculators/#waterproofing-area",
-      label: "Estimate waterproofing area → Waterproofing Area Calculator",
-    },
-    { href: "/torch-on-dam-lining", label: "Torch-On Dam Lining" },
-    { href: "/dam-liners", label: "Dam Liners & Dam Lining Services" },
-    { href: "/faq", label: "Waterproofing FAQ" },
-    { href: "/projects", label: "Recent Projects" },
-    { href: "/quote", label: "Request a Waterproofing Quote" },
   ],
 };
 
@@ -380,11 +300,11 @@ export const SERVICES_OVERVIEW_CARDS = [
     cta: "Steel tank sizes and prices",
   },
   {
-    title: "Bitumen Waterproofing",
+    title: "Home waterproofing",
     description:
-      "Torch-on, self-adhesive and liquid systems for roofs, foundations, retaining walls and reservoirs.",
-    href: "/bitumen-waterproofing",
-    cta: "Waterproofing services",
+      "Roofs, flat roofs, parapets, damp walls, balconies and showers for homes in Pretoria and Gauteng.",
+    href: "/waterproofing",
+    cta: "Home waterproofing",
   },
   {
     title: "Leaking Dam Repair & Maintenance",

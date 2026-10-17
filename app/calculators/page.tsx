@@ -104,7 +104,7 @@ export default async function CalculatorsPage({ searchParams }: PageProps) {
               href: "/steel-water-storage-tanks/#popular-tank-sizes",
               label: "Steel water tank sizes and prices",
             },
-            { href: "/bitumen-waterproofing", label: "Waterproofing" },
+            { href: "/waterproofing", label: "Waterproofing" },
             { href: "/dam-repair-services", label: "Leaking Dam Repair" },
             { href: "/reservoir-lining", label: "Reservoir Lining" },
             {

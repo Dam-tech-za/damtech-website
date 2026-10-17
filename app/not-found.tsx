@@ -13,7 +13,7 @@ export const metadata = createMetadata({
 const QUICK_LINKS = [
   { href: "/dam-liners", label: "Dam Linings" },
   { href: "/steel-water-storage-tanks", label: "Steel Water Tanks" },
-  { href: "/bitumen-waterproofing", label: "Bitumen Waterproofing" },
+  { href: "/waterproofing", label: "Waterproofing" },
   { href: "/projects", label: "Projects" },
 ] as const;
 

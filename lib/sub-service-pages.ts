@@ -261,9 +261,16 @@ export const TORCH_ON_DAM_LINING_PAGE: SubServicePageConfig = {
       ],
     },
     {
+      heading: "Cement reservoirs, canals and farm dams",
+      paragraphs: [
+        "Bitumen torch-on is often used on cement reservoir walls and floors, and on canal linings, where a bonded membrane is required. On farms that includes cement dams and irrigation canals after the concrete is cleaned, primed and dried. A sheet geomembrane cannot anchor to a vertical rigid wall on its own.",
+        "Reservoir repairs are quoted when a flexible bonded membrane will outperform a rigid coating. Large earth dams stay on HDPE. A property with both a cement reservoir and an earth dam is specified as two jobs, not one membrane type for both.",
+      ],
+    },
+    {
       heading: "Application and Safety",
       paragraphs: [
-        "Torch-on work is carried out by trained technicians with fire precautions and hot-work planning around active farms and industrial yards. Surfaces are cleaned, primed and dried before membrane runs; overlaps and penetrations are torched to full bond. For roofs and foundations using the same technology, see our bitumen waterproofing service.",
+        "Torch-on work is carried out by trained technicians with fire precautions and hot-work planning around active farms and industrial yards. Surfaces are cleaned, primed and dried before membrane runs; overlaps and penetrations are torched to full bond. House roofs, damp walls and balconies are quoted on our home waterproofing page, not as dam lining.",
       ],
     },
   ],
@@ -279,9 +286,14 @@ export const TORCH_ON_DAM_LINING_PAGE: SubServicePageConfig = {
         "Large earth dams are usually lined with HDPE geomembrane. Torch-on is reserved for rigid concrete, gunite or canal surfaces where heat-bonded adhesion is required.",
     },
     {
+      question: "Do you waterproof cement reservoir walls and canal linings?",
+      answer:
+        "Yes. Bitumen torch-on is used on cement reservoirs and canal linings where a bonded membrane is required. Large earth dams are lined with HDPE instead — see our dam linings service.",
+    },
+    {
       question: "How does torch-on dam lining relate to roof waterproofing?",
       answer:
-        "The same modified bitumen technology applies to flat roofs and dam walls. Our bitumen waterproofing team handles both — one point of contact for membranes on your property.",
+        "House roofs, damp walls and balconies are quoted as home waterproofing in Pretoria and Gauteng. Cement dams, canals and rigid reservoirs stay on this torch-on dam lining service.",
     },
   ],
   relatedLinks: [
@@ -291,7 +303,7 @@ export const TORCH_ON_DAM_LINING_PAGE: SubServicePageConfig = {
     },
     { href: "/dam-liners", label: "All Dam Lining Types" },
     { href: "/hdpe-dam-lining", label: "HDPE Dam Lining" },
-    { href: "/bitumen-waterproofing", label: "Bitumen Waterproofing" },
+    { href: "/waterproofing/", label: "Home waterproofing" },
     { href: "/services", label: "All Services" },
   ],
   projectDetailMatch: /Bitumen/i,

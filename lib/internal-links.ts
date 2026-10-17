@@ -105,10 +105,10 @@ const SERVICE_PAGES: readonly InternalServiceLink[] = [
       "Corrugated steel reservoirs — supply, installation and leak repair across South Africa.",
   },
   {
-    href: "/bitumen-waterproofing/",
-    label: "Bitumen Waterproofing",
+    href: "/waterproofing/",
+    label: "Home waterproofing",
     description:
-      "Torch-on membranes and waterproofing for roofs, reservoirs and leak repair.",
+      "Roof, damp and leak waterproofing for homes in Pretoria and Gauteng.",
   },
   {
     href: "/agricultural-water-storage/",

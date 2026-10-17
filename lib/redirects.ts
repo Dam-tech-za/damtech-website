@@ -31,19 +31,27 @@ export const redirects: Redirect[] = [
   { source: "/contact-us", destination: "/contact/", permanent: true },
   {
     source: "/bitumen-waterproofing-services-and-more",
-    destination: "/bitumen-waterproofing/",
-    permanent: true,
+    destination: "/waterproofing/",
+    statusCode: 301,
   },
   {
     source: "/bitumen-waterproofing-services-and-more/",
-    destination: "/bitumen-waterproofing/",
-    permanent: true,
+    destination: "/waterproofing/",
+    statusCode: 301,
+  },
+  {
+    source: "/bitumen-waterproofing",
+    destination: "/waterproofing/",
+    statusCode: 301,
+  },
+  {
+    source: "/bitumen-waterproofing/",
+    destination: "/waterproofing/",
+    statusCode: 301,
   },
   // Short URL aliases
   { source: "/steel-tanks", destination: "/steel-water-storage-tanks/", permanent: true },
   { source: "/steel-tanks/", destination: "/steel-water-storage-tanks/", permanent: true },
-  { source: "/waterproofing", destination: "/bitumen-waterproofing/", permanent: true },
-  { source: "/waterproofing/", destination: "/bitumen-waterproofing/", permanent: true },
   // Trailing-slash variants
   { source: "/linings/", destination: "/dam-liners/", permanent: true },
   { source: "/hdpe-linings/", destination: "/hdpe-dam-lining/", permanent: true },

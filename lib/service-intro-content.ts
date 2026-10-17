@@ -132,7 +132,7 @@ export const TORCH_ON_DAM_LINING_INTRO: ServiceIntroConfig = {
   primaryCta: { label: "Request a torch-on quote", href: "/quote" },
   secondaryCta: {
     label: "View waterproofing services",
-    href: "/bitumen-waterproofing",
+    href: "/waterproofing",
   },
   image: SITE_IMAGES.bitumen.image,
   imageAlt:
