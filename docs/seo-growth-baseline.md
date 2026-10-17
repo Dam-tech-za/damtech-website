@@ -1,6 +1,6 @@
 # SEO & Lead-Generation Baseline (October 2026)
 
-Source of truth for measuring the October 2026 optimisation work. All figures below come from the GA4 "Reports snapshot" export supplied by the owner (property *Damtech Website*, 19 Sep – 16 Oct 2026, 28 days). No Search Console, keyword-tool or ranking data was available in this session, so none is quoted.
+Source of truth for measuring the October 2026 optimisation work. All figures below come from the GA4 "Reports snapshot" export supplied by the owner (property *Damtech Website*, 19 Sep – 16 Oct 2026, 28 days). A Search Console export (last 3 months) was added during the session and is summarised in §1b. No keyword-volume tool was available, so no search volumes are quoted.
 
 ## 1. Verified GA4 baseline (19 Sep – 16 Oct 2026)
 
@@ -27,6 +27,28 @@ Source of truth for measuring the October 2026 optimisation work. All figures be
 2. **Custom dataLayer events never reached GA4.** The site already pushed `simple_quote_submitted` and catalogue ecommerce events, but none appear in the event list → the GTM container has no tag forwarding custom events.
 3. **An event literally named "Google Analytics Tag" fired 971 times** (about once per session). This points to a misconfigured GA4 event tag in GTM. It inflates event counts and should be removed or renamed.
 4. **Singapore traffic (≈15% of users)** with no matching business reason; likely crawlers. Consider a GA4 data filter / segment.
+
+
+## 1b. Search Console baseline (web search, last 3 months to 14 Oct 2026)
+
+From the owner's Search Console export (`google_analytics/*.csv`, not committed).
+
+| Period | Clicks | Impressions | CTR | Avg position |
+|---|---|---|---|---|
+| 15–31 Jul 2026 | 105 | 3 596 | 2.92% | 20.4 |
+| Aug 2026 | 285 | 12 025 | 2.37% | 18.6 |
+| Sep 2026 | 493 | 16 312 | 3.02% | 9.5 |
+| 1–14 Oct 2026 | 268 | 8 714 | 3.08% | 8.4 |
+
+Organic clicks are already trending up (Sep ≈ 1.7× Aug). Mobile: 682 clicks at avg position 6.6; desktop: 458 clicks at position 19.4. South Africa = 1 032 of 1 151 clicks. Product snippets: 179 clicks / 6 510 impressions.
+
+**Top pages by clicks:** `/steel-water-storage-tanks/` 257 · `/` 178 · 100 000 L tank 68 · 10 000 L fish pond 68 · 10 000 L tank 64 · `/dam-liners/` 61 · livestock trough 40 · `/hdpe-dam-lining/` 37 · `/dam-repair-services/` 35.
+
+**Opportunities seen in the data**
+- High impressions, low CTR at page-one positions: "water tanks for sale" (1 401 impr, pos 6.6, 0.21% CTR), "water trough" (484, pos 5.4), "dam liner" (298, pos 8.7), "fish pond for sale" (274, pos 8.2). Much of the "water tanks for sale" demand is likely for plastic tanks; track CTR on the steel tank page rather than chase it.
+- Regional dam-liner pages rank poorly on average (Pretoria 32.8, Johannesburg 30.1, Limpopo 28.2) — they need real local proof (projects, photos) more than more text.
+- Non-www URLs (`https://dam-tech.co.za/…`) still receive impressions (e.g. 783 for the non-www steel tanks page at position 37). `vercel.json` already 301s them to www; monitor until they drop out.
+- `/bitumen-waterproofing/` had 411 impressions / 8 clicks (avg pos 9.2); it now 301-redirects to `/waterproofing/`. Watch `/waterproofing/` impressions for "bitumen waterproofing" (127 impr, pos 26) and "waterproofing company betty's bay" (pos 1) after deployment.
 
 ## 2. What the site now sends (implemented this session)
 
@@ -60,7 +82,7 @@ Until this is done, the new events are visible in GTM Preview / the browser data
 
 ## 4. Keyword-to-page map
 
-Search volumes, difficulty and rankings are **not** included: no verified keyword data source was available. Map is based on search intent and existing page content; validate with Search Console queries once the property has 28+ days of data after deployment.
+Search volumes and difficulty are **not** included: no verified keyword-volume source was available. Current positions are in §1b. Map is based on search intent and existing page content; validate with Search Console queries once the property has 28+ days of data after deployment.
 
 | Intent / query family | Primary page | Supporting pages |
 |---|---|---|

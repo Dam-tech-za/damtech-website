@@ -50,7 +50,7 @@ const SECTIONS = [
     heading: "Flat roofs and parapets",
     paragraphs: [
       "Flat concrete roofs and box gutters hold water when outlets block or the falls are too flat. Parapet walls crack at the corners, and water then runs down inside the plaster.",
-      "We prepare the slab, open failed laps, and waterproof the parapet upstands, flashings and outlets so rain is carried off the roof instead of into the wall.",
+      "We prepare the slab, open failed laps, and waterproof the parapet upstands, flashings and outlets so rain is carried off the roof instead of into the wall. Depending on the roof, that may be a torch-on bitumen membrane or a liquid-applied system; the written quote names the system and why it suits your roof.",
     ],
   },
   {
