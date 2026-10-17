@@ -188,6 +188,19 @@ export const SERVICES_DROPDOWN_LINKS: NavLink[] = [
   { href: "/western-cape-dam-liners", label: "Western Cape Dam Liners" },
 ];
 
+/** Waterproofing header dropdown — the residential & commercial pathway. */
+export const WATERPROOFING_DROPDOWN_LINKS: NavLink[] = [
+  { href: "/roof-waterproofing", label: "Roof Waterproofing" },
+  { href: "/foundation-waterproofing", label: "Foundation & Damp-Proofing" },
+  { href: "/waterproofing-pretoria", label: "Waterproofing in Pretoria" },
+  { href: "/waterproofing-overstrand", label: "Waterproofing in the Overstrand" },
+  { href: "/torch-on-waterproofing", label: "Torch-On Waterproofing" },
+  {
+    href: "/waterproofing-membranes-and-coatings",
+    label: "Membranes vs Coatings",
+  },
+];
+
 /** @deprecated Prefer SERVICES_DROPDOWN_LINKS (Dam Liners hub is included there). */
 export const DAM_LINERS_DROPDOWN_LINKS: NavLink[] = SERVICES_DROPDOWN_LINKS.filter(
   (link) =>
@@ -223,7 +236,13 @@ export const HEADER_NAV_ITEMS: HeaderNavItem[] = [
     hubLabel: null,
     children: SERVICES_DROPDOWN_LINKS,
   },
-  { type: "link", href: "/waterproofing", label: "Waterproofing" },
+  {
+    type: "dropdown",
+    label: "Waterproofing",
+    href: "/waterproofing",
+    hubLabel: "Home waterproofing overview",
+    children: WATERPROOFING_DROPDOWN_LINKS,
+  },
   { type: "link", href: "/projects", label: "Projects" },
   { type: "link", href: "/calculators", label: "Calculators" },
   { type: "link", href: "/blog", label: "Blog" },
@@ -246,7 +265,6 @@ export const FOOTER_SERVICE_LINKS: NavLink[] = [
   { href: "/pvc-dam-lining", label: "PVC Dam Lining" },
   { href: "/torch-on-dam-lining", label: "Torch-On Dam Lining" },
   { href: "/steel-water-storage-tanks", label: "Steel Water Tanks & Prices" },
-  { href: "/waterproofing", label: "Waterproofing" },
   { href: "/reservoir-lining", label: "Reservoir Lining" },
   { href: "/dam-repair-services", label: "Leaking Dam Repair" },
   { href: "/dam-lining-cost-south-africa", label: "Dam Lining Cost Guide" },
@@ -254,6 +272,15 @@ export const FOOTER_SERVICE_LINKS: NavLink[] = [
   { href: "/mining-dam-liners", label: "Mining Dam Liners" },
   { href: "/agricultural-water-storage", label: "Agricultural Water Storage" },
   { href: "/western-cape-dam-liners", label: "Western Cape Dam Liners" },
+];
+
+/** Residential & commercial waterproofing — footer pathway. */
+export const FOOTER_WATERPROOFING_LINKS: NavLink[] = [
+  { href: "/waterproofing", label: "Home Waterproofing" },
+  { href: "/roof-waterproofing", label: "Roof Waterproofing" },
+  { href: "/foundation-waterproofing", label: "Foundation & Damp-Proofing" },
+  { href: "/waterproofing-pretoria", label: "Waterproofing in Pretoria" },
+  { href: "/waterproofing-overstrand", label: "Waterproofing in the Overstrand" },
 ];
 
 export const FOOTER_COMPANY_LINKS: NavLink[] = [
@@ -319,6 +346,12 @@ export const INDEXABLE_STATIC_PATHS = [
   "/dam-liners",
   "/steel-water-storage-tanks",
   "/waterproofing",
+  "/roof-waterproofing",
+  "/foundation-waterproofing",
+  "/waterproofing-pretoria",
+  "/waterproofing-overstrand",
+  "/torch-on-waterproofing",
+  "/waterproofing-membranes-and-coatings",
   "/faq",
   "/blog",
   "/contact",

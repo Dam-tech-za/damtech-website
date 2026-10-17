@@ -16,10 +16,10 @@ Session date: 17 October 2026. Branch: `feat/residential-waterproofing`. Detaile
 
 ## Commits
 
-1. `4f49858` Move waterproofing hub to /waterproofing with residential focus (owner WIP) — owner's uncommitted work, unchanged.
-2. `1971b31` Static rendering, lead tracking, residential waterproofing and SEO fixes.
-3. `bca4613` Security hardening, Next.js 16.4.2, content accuracy and faster fonts.
-4. Documentation commit (this file and the three other reports).
+1. `b36fd7a` Move waterproofing hub to /waterproofing with residential focus (owner WIP) — owner's uncommitted work, unchanged.
+2. `01a61bf` Static rendering, lead tracking, residential waterproofing and SEO fixes.
+3. `69c80c7` Security hardening, Next.js 16.4.2, content accuracy and faster fonts.
+4. `44622a9` Documentation (this file and the three other reports); `eacf1a9` Search Console baseline and waterproofing copy.
 
 ## Routes reviewed
 
@@ -100,6 +100,6 @@ Local TTFB excludes the removed Supabase auth round-trip (no Supabase here), so 
 - Add `server-only` guards to service-role modules (`lib/supabase/admin.ts`, `lib/email/config.ts`, `lib/auth/audit.ts`); `SendQuoteDialog` (admin, client) imports `lib/email/config`.
 - Detailed RFQ wizard (`/calculators/` quote preparation) does not yet send attribution.
 - Meta Pixel `PageView` fires only on full page loads, not client-side navigations.
-- Hidden page scrollbar (`html { scrollbar-width: none }`) is a design choice that reduces orientation for mouse users; consider restoring.
+- Page scrollbar: replaced the fully hidden scrollbar with a minimal rounded overlay indicator (`components/OverlayScrollbar.tsx`) that floats on the right without reserving layout width, so content never shifts.
 - Owner confirmations listed in `docs/site-audit.md` (tank capacities, case-study areas, technical claims).
 - Residential photography (see `docs/image-requirements.md`).

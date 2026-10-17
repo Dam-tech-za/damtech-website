@@ -1,0 +1,358 @@
+# ----------------------------------------
+# Reports snapshot
+# Account: Damtech Analytics 
+# Property: Damtech Website
+# ----------------------------------------
+#  
+# Start date: 20260919
+# End date: 20261016
+Nth day,Active users
+0000,18
+0001,20
+0002,27
+0003,32
+0004,30
+0005,23
+0006,25
+0007,16
+0008,17
+0009,25
+0010,28
+0011,31
+0012,35
+0013,28
+0014,14
+0015,28
+0016,27
+0017,39
+0018,32
+0019,21
+0020,62
+0021,19
+0022,31
+0023,46
+0024,32
+0025,39
+0026,37
+0027,30
+
+# Start date: 20260919
+# End date: 20261016
+Nth day,New users
+0000,18
+0001,20
+0002,25
+0003,28
+0004,28
+0005,24
+0006,23
+0007,16
+0008,13
+0009,21
+0010,26
+0011,29
+0012,30
+0013,27
+0014,13
+0015,26
+0016,24
+0017,38
+0018,27
+0019,17
+0020,61
+0021,18
+0022,31
+0023,40
+0024,26
+0025,37
+0026,35
+0027,28
+
+# Start date: 20260919
+# End date: 20261016
+Nth day,Average engagement time per active user
+0000,45.333333333333336
+0001,56.2
+0002,35.629629629629626
+0003,83.6875
+0004,51.43333333333333
+0005,71
+0006,59.64
+0007,41.3125
+0008,32.705882352941174
+0009,65.76
+0010,67.25
+0011,89.74193548387096
+0012,173.28571428571428
+0013,57.714285714285715
+0014,9.571428571428571
+0015,197.89285714285714
+0016,55.03703703703704
+0017,103.48717948717949
+0018,44.90625
+0019,74.57142857142857
+0020,22.887096774193548
+0021,83.3157894736842
+0022,48.193548387096776
+0023,61.91304347826087
+0024,94.15625
+0025,32.05128205128205
+0026,41.270270270270274
+0027,67.76666666666667
+
+# Start date: 20260919
+# End date: 20261016
+Nth day,Total revenue
+0000,0
+0001,0
+0002,0
+0003,0
+0004,0
+0005,0
+0006,0
+0007,0
+0008,0
+0009,0
+0010,0
+0011,0
+0012,0
+0013,0
+0014,0
+0015,0
+0016,0
+0017,0
+0018,0
+0019,0
+0020,0
+0021,0
+0022,0
+0023,0
+0024,0
+0025,0
+0026,0
+0027,0
+
+#  
+# Start date: 20260919
+# End date: 20261016
+Language,Returning users
+English,105
+
+# Where do your new users come from?
+# Start date: 20260919
+# End date: 20261016
+First user primary channel group (Default channel group),New users
+Organic Search,475
+Direct,254
+AI Assistant,20
+
+#  
+# Start date: 20260919
+# End date: 20261016
+Session primary channel group (Default channel group),Sessions
+Organic Search,616
+Direct,261
+AI Assistant,22
+Unassigned,8
+
+#  
+# Start date: 20260919
+# End date: 20261016
+Country ID,Active users
+AE,1
+AO,1
+AU,1
+BG,1
+BW,3
+CN,6
+DE,5
+FR,1
+GB,4
+GH,1
+HK,1
+ID,1
+IE,1
+KE,1
+LS,1
+LY,1
+MU,1
+MW,1
+MZ,1
+NA,3
+NG,1
+NL,5
+NZ,1
+QA,1
+SA,1
+SG,120
+SO,1
+SZ,7
+TZ,3
+US,21
+VN,1
+ZA,517
+ZM,4
+ZW,9
+
+# Start date: 20260919
+# End date: 20261016
+Country,Active users
+ZA,517
+SG,120
+US,21
+ZW,9
+SZ,7
+CN,6
+DE,5
+
+# How are active users trending?
+# Start date: 20260919
+# End date: 20261016
+Nth day,30 days,7 days,1 day
+0000,799,206,18
+0001,791,198,20
+0002,799,184,27
+0003,803,188,32
+0004,803,183,30
+0005,798,173,23
+0006,800,169,25
+0007,798,167,16
+0008,754,164,17
+0009,752,160,25
+0010,764,158,28
+0011,767,159,31
+0012,775,169,35
+0013,768,174,28
+0014,757,171,14
+0015,753,184,28
+0016,764,183,27
+0017,784,195,39
+0018,775,193,32
+0019,766,179,21
+0020,801,212,62
+0021,797,216,19
+0022,804,222,31
+0023,811,241,46
+0024,811,235,32
+0025,811,243,39
+0026,821,258,37
+0027,818,227,30
+
+#  
+# Start date: 20260919
+# End date: 20261016
+Page title and screen class,Views
+Steel Water Tanks for Sale South Africa | Sizes & Prices | Damtech,287
+Dam Liners & Steel Water Tanks | Damtech South Africa,193
+Contact Damtech | Dam Linings & Water Storage Quotes,106
+100 000L Water Tank Price South Africa | Damtech,92
+Dam Lining & Water Storage Calculators | Damtech South Africa,78
+10 000L Water Tank Price South Africa | Damtech,73
+Dam Liners & Dam Lining Services South Africa | Damtech,61
+10 000L Fish Pond for Sale South Africa | Damtech,60
+Request a Free Quote | Dam Linings & Waterproofing | Damtech,55
+20 000L Water Tank Price South Africa | Damtech,54
+Livestock Water Trough for Cattle | R4 999 | Damtech,51
+HDPE Dam Lining | Geomembrane Installation South Africa | Damtech,41
+Dam Lining & Water Storage Projects | Damtech,40
+Reservoir Lining & Relining South Africa | Damtech,34
+50 000L Steel Water Tank Price South Africa | Damtech,32
+PVC Dam Lining & Liners South Africa | Damtech,27
+"Damtech Services | Dam Linings, Waterproofing & Water Storage",20
+Leaking Dam Repair & Liner Repairs | Damtech South Africa,20
+Bitumen Waterproofing South Africa | Torch-On Systems | Damtech,16
+Tulbagh Steel Water Tank Project | Damtech,15
+15 000L Fish Farming Pond South Africa | Damtech,14
+Dam Lining Cost South Africa | HDPE & PVC Pricing Factors | Damtech,14
+Quote request received | Damtech | Damtech,13
+Western Cape Dam Liners & Dam Lining Services | Damtech,11
+"Dam Linings Johannesburg | HDPE, PVC & Reservoir Solutions | Damtech",10
+Torch-On Dam Lining for Cement Dams | Damtech South Africa,10
+Dam Linings Limpopo | Farm & Game Reserve Lining | Damtech,9
+Dam Linings Mpumalanga | HDPE & Steel Water Tanks | Damtech,9
+HDPE Dam Lining Stellenbosch Project | Damtech South Africa,9
+5 Essential Water-Saving Hacks for South African Farm Dams to Combat… | Damtech,8
+About Damtech | Dam Linings & Waterproofing Contractors South Africa,8
+Dam Liner & Waterproofing FAQ | Damtech,8
+How to Manage Farm Dam Water Levels During Prolonged Droughts in Sout… | Damtech,8
+Cost-Benefit Analysis of Upgrading to Corrugated Steel Reservoirs for… | Damtech,7
+"Dam Linings Pretoria | HDPE, PVC & Water Storage | Damtech",7
+Dam Liner & Water Storage Guides | Damtech Blog,6
+Farm Dam Linings | HDPE & PVC South Africa | Damtech,6
+Farm Dam Leak Diagnosis and Repair Guide for South Africa | Damtech,5
+Choosing the Best Dam Lining Solutions to Prevent Seepage in Sandy an… | Damtech,4
+Place your order | Damtech | Damtech,4
+Powerful Strategies to Optimise Borehole and Farm Dam Water Integrati… | Damtech,4
+Thank You | Damtech,4
+The Importance of Proper Dam Liners: 5-WAYS HDPE Protects Your Invest… | Damtech,4
+Torch-On Bitumen Concrete Dam Project | Damtech,4
+Agricultural Water Storage Solutions | Damtech South Africa,3
+Centurion HDPE Dam Lining Project | Damtech South Africa,3
+Cost-Effective Strategies for Integrating Borehole Water with Farm Da… | Damtech,3
+Grabouw HDPE Dam Lining Project | Damtech South Africa,3
+Mining Dam Linings & Process Water Containment | Damtech,3
+The Role of Vegetation Management Around Reservoirs to Prevent Liner… | Damtech,3
+Critical Water Storage Tips to Overcome Borehole Water Shortages Duri… | Damtech,2
+Dam Liner & Water Storage Guides | Damtech Blog — Page 2,2
+Effective Strategies to Prevent Costly Farm Dam Liner Failures in Sou… | Damtech,2
+Hoedspruit Bitumen Torch-On Waterproofing Project | Damtech,2
+How to Optimise Farm Dam Water Quality to Prevent Livestock Illnesses… | Damtech,2
+How to Protect Your Farm Dam from Contamination During South Africa’s… | Damtech,2
+Maximising Irrigation Efficiency with Proper Reservoir Maintenance | Damtech,2
+Order placed | Damtech | Damtech,2
+Proven Leak Repair Solutions for Corrugated Steel Reservoirs to Boost… | Damtech,2
+Assessing the Environmental Impact of Different Dam Lining Materials… | Damtech,1
+Dam Liner & Water Storage Guides | Damtech Blog — Page 3,1
+Damtech Administration | Damtech,1
+How Seasonal Rainfall Patterns Influence Dam Design and Reservoir Cap… | Damtech,1
+North West Game Lodge Dam Lining Project | Damtech,1
+The Best Practices for Repairing Leaks in Corrugated Steel Reservoirs… | Damtech,1
+Understanding the Impact of Soil Types on Dam Liner Selection and Lon… | Damtech,1
+Worcester Bitumen Earth Dam Project | Damtech,1
+
+#  
+# Start date: 20260919
+# End date: 20261016
+Event name,Event count
+page_view,1585
+Google Analytics Tag,971
+session_start,909
+first_visit,749
+user_engagement,341
+scroll,237
+form_start,61
+click,25
+
+# What are your top performing key events?
+# Start date: 20260919
+# End date: 20261016
+Event name,Key events
+
+
+# Where does your average 120d value come from?
+# Start date: 20260919
+# End date: 20261016
+First user primary channel group (Default channel group),Average 120d value
+
+
+# How does activity on your platforms compare?
+# Start date: 20260919
+# End date: 20261016
+Platform,Key events
+
+
+# How well do you retain your users?
+# Start date: 20260830
+# End date: 20261010
+Date,Week 0,Week 1,Week 2,Week 3,Week 4,Week 5
+30 Aug - 5 Sept,171,8,4,2,1
+6 Sept - 12 Sept,177,2,0,0,0
+13 Sept - 19 Sept,198,5,2,1,-1
+20 Sept - 26 Sept,160,4,2,-1,-1
+27 Sept - 3 Oct,159,4,-1,-1,-1
+4 Oct - 10 Oct,207,-1,-1,-1,-1
+
+#  
+# Start date: 20260919
+# End date: 20261016
+Item name,Items purchased

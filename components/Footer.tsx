@@ -3,6 +3,7 @@ import {
   FOOTER_COMPANY_LINKS,
   FOOTER_REGION_LINKS,
   FOOTER_SERVICE_LINKS,
+  FOOTER_WATERPROOFING_LINKS,
   formatOfficeAddressLines,
   OFFICES,
   phoneTel,
@@ -38,10 +39,23 @@ export function Footer() {
 
         <div>
           <p className="text-sm font-semibold uppercase tracking-wide text-white">
-            Services
+            Water Storage &amp; Dam Linings
           </p>
           <ul className="mt-4 grid gap-2">
             {FOOTER_SERVICE_LINKS.map((link) => (
+              <li key={link.href}>
+                <Link href={link.href} scroll={true} className="text-sm hover:text-white">
+                  {link.label}
+                </Link>
+              </li>
+            ))}
+          </ul>
+
+          <p className="mt-6 text-sm font-semibold uppercase tracking-wide text-white">
+            Waterproofing
+          </p>
+          <ul className="mt-4 grid gap-2">
+            {FOOTER_WATERPROOFING_LINKS.map((link) => (
               <li key={link.href}>
                 <Link href={link.href} scroll={true} className="text-sm hover:text-white">
                   {link.label}
