@@ -22,11 +22,16 @@ export async function submitInfoResponseAction(
     redirect(`/quote/info/${token}/?error=${encodeURIComponent("Too many attempts.")}`);
   }
 
+  // Bound customer-supplied answers: at most 40 fields, short keys, 2 000 chars each.
+  const MAX_FIELDS = 40;
+  const MAX_VALUE_LENGTH = 2000;
   const responses: Record<string, string> = {};
   for (const [key, value] of formData.entries()) {
-    if (key.startsWith("field_")) {
-      responses[key.slice(6)] = String(value);
-    }
+    if (!key.startsWith("field_")) continue;
+    const field = key.slice(6);
+    if (!/^[a-zA-Z0-9_.-]{1,80}$/.test(field)) continue;
+    if (Object.keys(responses).length >= MAX_FIELDS) break;
+    responses[field] = String(value).slice(0, MAX_VALUE_LENGTH);
   }
 
   const assetUpdates: Array<{
@@ -41,7 +46,8 @@ export async function submitInfoResponseAction(
     for (const [key, value] of formData.entries()) {
       if (!key.startsWith(prefix)) continue;
       const field = key.slice(prefix.length);
-      const raw = String(value).trim();
+      if (!/^[a-zA-Z0-9_.-]{1,80}$/.test(field)) continue;
+      const raw = String(value).trim().slice(0, 2000);
       if (!raw) continue;
       const asNum = Number(raw);
       patches[field] = Number.isFinite(asNum) && raw !== "" ? asNum : raw;

@@ -126,7 +126,8 @@ describe("pingSupabaseDatabase", () => {
 
     assert.equal(result.ok, false);
     if (!result.ok) assert.equal(result.category, "timeout");
-    assert.ok(result.latencyMs >= 20);
+    // setTimeout can fire ~1 ms early relative to Date.now(); allow timer jitter.
+    assert.ok(result.latencyMs >= 15);
     assert.ok(result.latencyMs < DEFAULT_KEEPALIVE_TIMEOUT_MS);
   });
 

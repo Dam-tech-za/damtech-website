@@ -5,6 +5,7 @@ import { Analytics, AnalyticsNoScript } from "@/components/Analytics";
 import { ConditionalSiteShell } from "@/components/ConditionalSiteShell";
 import { PageShellBottom, PageShellTop } from "@/components/PageShell";
 import { SiteTracking } from "@/components/SiteTracking";
+import { TrackingGate } from "@/components/TrackingGate";
 import { SEOJsonLd } from "@/components/SEOJsonLd";
 import {
   createLocalBusinessSchema,
@@ -18,7 +19,7 @@ const inter = Inter({
   subsets: ["latin"],
   variable: "--font-inter",
   display: "swap",
-  weight: ["400", "500", "600", "700", "800"],
+  // Variable font: one ~48 KB latin file instead of five preloaded static weights.
 });
 
 export const metadata: Metadata = createRootMetadata();
@@ -51,8 +52,10 @@ export default function RootLayout({
           afterMain={
             <>
               <PageShellBottom />
-              <Analytics />
-              <SiteTracking />
+              <TrackingGate>
+                <Analytics />
+                <SiteTracking />
+              </TrackingGate>
             </>
           }
         >

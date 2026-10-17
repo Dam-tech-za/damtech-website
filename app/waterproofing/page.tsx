@@ -17,7 +17,10 @@ import {
   SearchIcon,
 } from "@/components/icons/StrokeIcons";
 import type { ProcessStep } from "@/lib/process-steps";
-import type { ServiceFaqItem, ServiceSection } from "@/lib/service-pages-content";
+import type {
+  ServiceFaqItem,
+  ServiceSection,
+} from "@/lib/service-pages-content";
 import { createFaqPageSchema, createServiceSchema } from "@/lib/seo";
 import { whatsAppUrl } from "@/lib/site";
 import { WARRANTY_PUBLIC } from "@/lib/warranty";
@@ -26,7 +29,8 @@ const seo = PAGE_SEO.waterproofing;
 
 export const metadata = createPageMetadata(seo);
 
-const AREA = "Pretoria and Gauteng; Betty's Bay, Kleinmond, Hermanus and Gansbaai (Overstrand, Western Cape)";
+const AREA =
+  "Pretoria and Gauteng; Betty's Bay, Kleinmond, Hermanus and Gansbaai (Overstrand, Western Cape)";
 
 const QUOTE_HREF = "/quote/?service=Roof+%2F+home+waterproofing";
 
@@ -224,16 +228,18 @@ export default function WaterproofingPage() {
         heading="FAQs"
         intro="Straight answers for homeowners. Dam lining and steel tanks are quoted separately."
       />
-      <RelatedPageLinks
-        heading="Related services"
-        links={[
-          { href: "/torch-on-dam-lining/", label: "Torch-on dam lining" },
-          { href: "/dam-liners/", label: "Dam liners" },
-          { href: QUOTE_HREF, label: "Request a written quote" },
-          { href: "/faq/", label: "Waterproofing and dam lining FAQ" },
-          { href: "/contact/", label: "Contact Damtech" },
-        ]}
-      />
+      <SiteSection>
+        <RelatedPageLinks
+          heading="Related services"
+          links={[
+            { href: "/torch-on-dam-lining/", label: "Torch-on dam lining" },
+            { href: "/dam-liners/", label: "Dam liners" },
+            { href: QUOTE_HREF, label: "Request a written quote" },
+            { href: "/faq/", label: "Waterproofing and dam lining FAQ" },
+            { href: "/contact/", label: "Contact Damtech" },
+          ]}
+        />
+      </SiteSection>
     </>
   );
 }

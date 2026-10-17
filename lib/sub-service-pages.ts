@@ -54,14 +54,14 @@ export const HDPE_DAM_LINING_PAGE: SubServicePageConfig = {
   heroDescription:
     "Durable HDPE geomembrane solutions for large earth dams, farm reservoirs and mining ponds — supplied and installed by Damtech across South Africa.",
   intro:
-    "High-density polyethylene (HDPE) is the preferred geomembrane for large farm dams, irrigation storage and mining containment in South Africa. Its low permeability, UV resistance and weldable seams create a continuous barrier that stops seepage through sandy soils and fractured clay — protecting water you cannot afford to lose during droughts or load-shedding.",
+    "High-density polyethylene (HDPE) is the preferred geomembrane for large farm dams, irrigation storage and mining containment in South Africa. Its low permeability, UV resistance and weldable seams create a continuous barrier that greatly reduces seepage through sandy soils and fractured clay, protecting water you cannot afford to lose during droughts or load-shedding.",
   benefits: [
-    "Near-zero seepage when welded and anchored correctly",
-    "UV-stabilised grades rated for exposed South African conditions",
+    "Very low seepage when welded and anchored correctly",
+    "UV-stabilised grades formulated for exposed South African conditions",
     "1 mm, 1.5 mm and 2 mm options for depth and puncture risk",
-    "Heat-welded seams stronger than the parent sheet",
+    "Heat-welded seams designed to match the strength of the parent sheet",
     "20–30 year typical service life on agricultural dams (conditions apply)",
-    "Supplier-backed material warranty where applicable",
+    "Supplier-backed material warranty where stated in the quotation",
   ],
   specsHeading: "HDPE liner specifications",
   specs: [
@@ -69,22 +69,22 @@ export const HDPE_DAM_LINING_PAGE: SubServicePageConfig = {
     { label: "Best applications", value: "Earth dams, mining ponds, irrigation storage" },
     { label: "Typical service life", value: "Typically 20–30 years*" },
     { label: "Seam method", value: "Hot-wedge or extrusion welding" },
-    { label: "Warranty", value: "Supplier-backed on qualifying materials" },
+    { label: "Warranty", value: "Supplier-backed on qualifying materials, where stated in the quotation" },
   ],
   sections: [
     {
       id: "hdpe-benefits",
       heading: "Why HDPE for Farm and Mining Dams",
       paragraphs: [
-        "HDPE geomembrane outperforms clay sealing and paint-on coatings on permeable soils. It tolerates settlement better than rigid systems, resists most agricultural water chemistry, and can be patched or extended when dams are enlarged. On mining and industrial sites, thicker 1.5 mm and 2 mm sheets handle puncture risk where maintenance traffic or rocky subgrades are present.",
-        "Compared to PVC, HDPE is stiffer and more puncture-resistant — the right choice when dam surface area is measured in thousands of square metres and downtime from leaks is costly.",
+        "On permeable soils, HDPE geomembrane is generally more effective than clay sealing or paint-on coatings. It tolerates settlement better than rigid systems, resists most agricultural water chemistry, and can be patched or extended when dams are enlarged. On mining and industrial sites, thicker 1.5 mm and 2 mm sheets are used where maintenance traffic or rocky subgrades increase puncture risk.",
+        "Compared to PVC, HDPE is stiffer and more resistant to UV and chemical attack, and is available in heavier thicknesses — usually the better choice when the dam surface area is measured in thousands of square metres and downtime from leaks is costly.",
       ],
     },
     {
       id: "hdpe-process",
       heading: "Our HDPE Installation Process",
       paragraphs: [
-        "We start with site assessment: dam dimensions, batter slopes, inlet/outlet positions and soil conditions. The subgrade is cleared of rock, graded and compacted; geotextile underlay is used on stony ground. Liner panels are laid, field-welded and vacuum- or air-tested at seams before anchor trenches are backfilled.",
+        "We start with site assessment: dam dimensions, batter slopes, inlet/outlet positions and soil conditions. The subgrade is cleared of rock, graded and compacted; geotextile underlay is used on stony ground. Liner panels are laid and field-welded, and seams are tested (air-pressure or vacuum, depending on the weld type) before anchor trenches are backfilled.",
         "Pipe penetrations, overflow structures and crest anchoring are detailed to manufacturer standards. After flooding, we inspect high-stress zones and document as-built panel layout for your maintenance records.",
       ],
     },
@@ -93,12 +93,12 @@ export const HDPE_DAM_LINING_PAGE: SubServicePageConfig = {
     {
       question: "What thickness HDPE liner do I need for my farm dam?",
       answer:
-        "Most farm dams use 1 mm or 1.5 mm HDPE depending on depth, slope and whether livestock access the water. Deeper dams, mining ponds or rocky subgrades often warrant 1.5 mm or 2 mm. We recommend thickness after measuring your dam — not from a catalogue default.",
+        "Most farm dams use 1 mm or 1.5 mm HDPE depending on depth, slope and whether livestock access the water. Deeper dams, mining ponds or rocky subgrades often warrant 1.5 mm or 2 mm. We recommend thickness after assessing your dam, not from a catalogue default.",
     },
     {
       question: "How long does HDPE dam lining last?",
       answer:
-        "Correctly installed UV-stable HDPE typically performs 20–30 years on agricultural dams, depending on thickness, exposure, water chemistry, anchoring quality and whether animals or machinery contact the liner. Damtech confirms the relevant supplier specifications for each quoted system.",
+        "Correctly installed UV-stable HDPE typically performs for 20–30 years on agricultural dams, depending on thickness, UV exposure, water chemistry, anchoring quality and whether animals or machinery contact the liner. This is a typical range, not a guarantee. Damtech confirms the relevant supplier specifications for each quoted system.",
     },
     {
       question: "Can HDPE line an existing earth dam?",
@@ -108,7 +108,7 @@ export const HDPE_DAM_LINING_PAGE: SubServicePageConfig = {
     {
       question: "Is HDPE better than PVC for large dams?",
       answer:
-        "For large earth dams and mining ponds, HDPE is usually preferred because of puncture resistance and lower permeability. PVC suits smaller ponds and steel tanks where flexibility and cost per square metre matter more.",
+        "For large earth dams and mining ponds, HDPE is usually preferred because of its UV and chemical resistance and the heavier thicknesses available. PVC suits smaller ponds and steel tanks where flexibility and cost per square metre matter more.",
     },
   ],
   relatedLinks: [
@@ -134,7 +134,7 @@ export const PVC_DAM_LINING_PAGE: SubServicePageConfig = {
   slug: "pvc-dam-lining",
   title: "PVC Dam Lining & Liners South Africa | Damtech",
   description:
-    "Flexible PVC dam liners for ponds, steel tanks and small reservoirs. Supply and installation across South Africa with practical advice on liner choice.",
+    "Flexible PVC dam liners for ponds, steel tanks and small reservoirs. Supply and installation across South Africa, with practical advice on liner choice.",
   h1: "PVC Dam Lining",
   image: IMAGE_PATHS.hdpeDamLiningEarthDam,
   serviceName: "PVC Dam Lining",
@@ -150,34 +150,34 @@ export const PVC_DAM_LINING_PAGE: SubServicePageConfig = {
   heroDescription:
     "PVC geomembrane for ponds, steel reservoirs and smaller dams where flexibility, handling ease and value per square metre are priorities.",
   intro:
-    "PVC liners are a practical choice for smaller farm ponds, ornamental dams, steel tank interiors and cement reservoirs where HDPE’s stiffness is unnecessary. Reinforced PVC at 550–850 gsm balances flexibility with tear resistance — well suited to sites with moderate UV exposure and controlled livestock access.",
+    "PVC liners are a practical choice for smaller farm ponds, ornamental dams, steel tank interiors and cement reservoirs where HDPE’s stiffness is unnecessary. Reinforced PVC at 550–850 gsm balances flexibility with tear resistance and is well suited to sites with moderate UV exposure and controlled livestock access.",
   benefits: [
     "Flexible sheet conforms to irregular pond shapes",
     "Lower cost per m² on smaller surface areas",
     "Common choice for steel tank and pond lining",
     "Heat-welded or adhesive seams on prepared substrates",
-    "10–15 year typical service life with correct installation (conditions apply)",
-    "Compatible with many agricultural water uses",
+    "10–15 year typical service life with correct installation (conditions apply; not a guarantee)",
+    "Suitable for many agricultural water uses (confirm for drinking water)",
   ],
   specs: [
     { label: "Weight grades", value: "550 gsm, 750 gsm and 850 gsm" },
     { label: "Best applications", value: "Ponds, steel tanks, small reservoirs" },
     { label: "Typical service life", value: "Typically 10–15 years*" },
     { label: "Seam method", value: "Heat welding or adhesive bonding" },
-    { label: "Warranty", value: "Supplier-backed on qualifying materials" },
+    { label: "Warranty", value: "Supplier-backed on qualifying materials, where stated in the quotation" },
   ],
   sections: [
     {
       heading: "Where PVC Liners Work Best",
       paragraphs: [
-        "PVC excels on compact sites: lined steel reservoirs, nursery ponds, estate water features and farm dams under roughly 2 000 m² where crews can handle lighter rolls. It is also used inside corrugated tanks as the standard 850 gsm lining included on Damtech steel reservoir builds.",
+        "PVC works best on compact sites: lined steel reservoirs, nursery ponds, estate water features and farm dams under roughly 2 000 m², where crews can handle lighter rolls. It is also the standard 850 gsm lining included on Damtech steel reservoir builds.",
         "For large earth dams with rocky subgrades or heavy UV exposure, we usually recommend HDPE instead — see our HDPE dam lining page for comparison.",
       ],
     },
     {
       heading: "PVC Installation Approach",
       paragraphs: [
-        "Subgrade preparation matches HDPE projects: smooth, debris-free and compacted surfaces. Seams are welded or bonded per manufacturer spec; penetrations and crest anchors are sealed before fill. We advise on cover soil or shade where long-term UV exposure would otherwise shorten liner life.",
+        "Subgrade preparation matches HDPE projects: smooth, debris-free and compacted surfaces. Seams are welded or bonded to the manufacturer’s specification; penetrations and crest anchors are sealed before fill. We advise on cover soil or shade where long-term UV exposure would otherwise shorten liner life.",
       ],
     },
   ],
@@ -185,12 +185,12 @@ export const PVC_DAM_LINING_PAGE: SubServicePageConfig = {
     {
       question: "When should I choose PVC instead of HDPE?",
       answer:
-        "PVC suits smaller ponds, steel tanks and cement reservoirs where flexibility matters and puncture loads are moderate. Large farm or mining earth dams usually warrant HDPE for puncture and UV performance.",
+        "PVC suits smaller ponds, steel tanks and cement reservoirs where flexibility matters and puncture loads are moderate. Large farm or mining earth dams usually warrant HDPE for its UV and chemical resistance and heavier thicknesses.",
     },
     {
       question: "What PVC weight do steel tanks use?",
       answer:
-        "Damtech steel reservoirs include an 850 gsm PVC liner and bidem floor sheet as standard. Tell us if water is for human consumption so we can confirm suitability.",
+        "Damtech steel reservoirs include an 850 gsm PVC liner and bidem floor sheet as standard. Tell us if the water is for human consumption so we can confirm suitability.",
     },
     {
       question: "Can PVC line an existing pond?",
@@ -221,7 +221,7 @@ export const TORCH_ON_DAM_LINING_PAGE: SubServicePageConfig = {
   slug: "torch-on-dam-lining",
   title: "Torch-On Dam Lining for Cement Dams | Damtech South Africa",
   description:
-    "Bitumen torch-on dam lining heat-bonded to cement and rigid dam surfaces. Repair leaking concrete dams and canals with Damtech's torch-on systems.",
+    "Bitumen torch-on dam lining heat-bonded to cement and rigid dam surfaces. Repair leaking concrete dams and canals with Damtech’s torch-on systems.",
   h1: "Torch-On Dam Lining",
   image: IMAGE_PATHS.bitumenTorchOnWaterproofingDamtech,
   serviceName: "Torch-On Dam Lining",
@@ -237,13 +237,13 @@ export const TORCH_ON_DAM_LINING_PAGE: SubServicePageConfig = {
   heroDescription:
     "Torch-on bitumen membranes for cement dams, canals and rigid reservoirs — bonded waterproofing where HDPE sheet lining is not the right fit.",
   intro:
-    "Torch-on bitumen lining bonds to prepared concrete, gunite and rigid dam structures through heat-welded laps — ideal for cement farm dams, canals and older reservoirs where a sheet geomembrane cannot anchor to earth batters alone. Damtech applicators prime substrates, lay modified bitumen membranes and detail penetrations for a continuous waterproof barrier.",
+    "Torch-on bitumen lining bonds to prepared concrete, gunite and rigid dam structures through heat-welded laps — ideal for cement farm dams, canals and older reservoirs where a sheet geomembrane cannot anchor to earth batters alone. Damtech applicators prime substrates, lay modified bitumen membranes and detail penetrations to form a continuous waterproof layer.",
   benefits: [
     "Strong adhesion to prepared concrete and gunite",
-    "Effective for localized leak repair and full relines",
+    "Suitable for localised leak repair and full relines",
     "3 mm and 4 mm membranes for depth and traffic loads",
-    "Heat-welded laps reduce seam failure risk",
-    "15–20 year typical service life on well-prepared substrates (conditions apply)",
+    "Heat-bonded laps, correctly detailed, reduce the risk of seam failure",
+    "15–20 year typical service life on well-prepared substrates (conditions apply; not a guarantee)",
     "Suitable for canals, rigid tanks and cement dams",
   ],
   specs: [
@@ -270,7 +270,7 @@ export const TORCH_ON_DAM_LINING_PAGE: SubServicePageConfig = {
     {
       heading: "Application and Safety",
       paragraphs: [
-        "Torch-on work is carried out by trained technicians with fire precautions and hot-work planning around active farms and industrial yards. Surfaces are cleaned, primed and dried before membrane runs; overlaps and penetrations are torched to full bond. House roofs, damp walls and balconies are quoted on our home waterproofing page, not as dam lining.",
+        "Torch-on work is carried out by trained technicians, with fire precautions and hot-work planning around active farms and industrial yards. Surfaces are cleaned, primed and dried before the membrane is laid; overlaps and penetrations are torched to achieve a full bond. House roofs, damp walls and balconies are quoted on our home waterproofing page, not as dam lining.",
       ],
     },
   ],
@@ -278,7 +278,7 @@ export const TORCH_ON_DAM_LINING_PAGE: SubServicePageConfig = {
     {
       question: "Can torch-on lining fix a leaking cement dam?",
       answer:
-        "Often yes, after the substrate is assessed for soundness and moisture. Failed sections may be removed before new membrane is torched in place. Severely cracked structures may need structural repair first.",
+        "Often, once the substrate has been assessed for soundness and moisture. Failed sections may be removed before new membrane is torched in place, and severely cracked structures may need structural repair first.",
     },
     {
       question: "Is torch-on suitable for earth dams?",
@@ -317,7 +317,7 @@ export const DAM_REPAIR_SERVICES_PAGE: SubServicePageConfig = {
   slug: "dam-repair-services",
   title: "Leaking Dam Repair & Liner Repairs | Damtech South Africa",
   description:
-    "Leaking farm dam? Damtech finds and repairs liner punctures, failed seams and seepage on earth dams, cement dams and reservoirs. Free assessment.",
+    "Leaking farm dam? Damtech assesses and repairs liner punctures, failed seams and seepage on earth dams, cement dams and reservoirs. Free assessment where applicable.",
   h1: "Leaking Dam Repair Services",
   image: IMAGE_PATHS.damLiningMaintenanceInspection1,
   serviceName: "Leaking Dam Repair",
@@ -333,7 +333,7 @@ export const DAM_REPAIR_SERVICES_PAGE: SubServicePageConfig = {
   heroDescription:
     "Practical repair for leaking farm dams, failed geomembrane liners and water storage systems — assessed on site before we recommend patch, overlay or full reline.",
   intro:
-    "A leaking dam wastes water you cannot replace mid-season and often signals liner puncture, failed seams, crest settlement or outlet detail problems. Damtech inspects earth dams, lined reservoirs and rigid structures across South Africa, then recommends repair methods that match the failure — not a one-size-fits-all reline when a welded HDPE patch will hold.",
+    "A leaking dam wastes water you cannot replace mid-season and often signals liner puncture, failed seams, crest settlement or outlet detail problems. Damtech inspects earth dams, lined reservoirs and rigid structures across South Africa, then recommends repair methods that match the failure — not a one-size-fits-all reline when a welded HDPE patch will do.",
   benefits: [
     "On-site or photo-based leak assessment",
     "HDPE patch welding for localised punctures",
@@ -354,15 +354,15 @@ export const DAM_REPAIR_SERVICES_PAGE: SubServicePageConfig = {
       id: "leak-signs",
       heading: "Signs Your Dam Is Leaking",
       paragraphs: [
-        "Wet patches below the wall, unexplained water-level drop after rain, or muddy seepage on batters often point to liner failure or porous subgrade — not evaporation alone. On lined dams, bubbles under the membrane, exposed edges at the crest or animal damage at drinking points are common culprits. Steel and concrete reservoirs may leak at panel joints, rusted outlets or failed internal PVC lining.",
-        "Early inspection is cheaper than emergency relining during peak irrigation. Log water levels over several still days without inflow or use to separate evaporation from seepage.",
+        "Wet patches below the wall, an unexplained drop in water level after rain, or muddy seepage on batters often point to liner failure or a porous subgrade, not evaporation alone. On lined dams, bubbles under the membrane, exposed edges at the crest and animal damage at drinking points are common culprits. Steel and concrete reservoirs may leak at panel joints, rusted outlets or failed internal PVC lining.",
+        "Early inspection is usually cheaper than emergency relining during peak irrigation. Log water levels over several still days without inflow or use to help separate evaporation from seepage.",
       ],
     },
     {
       id: "causes",
       heading: "Causes of Dam Lining Failure",
       paragraphs: [
-        "UV embrittlement on crest rolls left exposed, hoof traffic on unprotected batters, rocky subgrades without geotextile, and poor seam welding during original install are frequent causes on HDPE systems. PVC ponds fail at folds and penetrations. Torch-on membranes delaminate when moisture was trapped beneath the substrate or flashings were omitted at parapets.",
+        "UV embrittlement of exposed crest rolls, hoof traffic on unprotected batters, rocky subgrades without geotextile and poor seam welding during the original installation are frequent causes of failure on HDPE systems. PVC ponds fail at folds and penetrations. Torch-on membranes delaminate when moisture was trapped beneath the substrate or flashings were omitted at parapets.",
       ],
     },
     {
@@ -376,14 +376,14 @@ export const DAM_REPAIR_SERVICES_PAGE: SubServicePageConfig = {
       id: "patching",
       heading: "HDPE Patching and Relining",
       paragraphs: [
-        "Patch repairs use compatible HDPE sheet and extrusion or hot-air welding with vacuum or spark testing on critical seams. Full relines follow the same preparation standards as new installs: dewatering, subgrade repair, geotextile where needed, anchor trenches and outlet boots detailed to spec.",
+        "Patch repairs use compatible HDPE sheet and extrusion or hot-air welding, with vacuum or air-pressure testing on critical seams where practical. Full relines follow the same preparation standards as new installs: dewatering, subgrade repair, geotextile where needed, anchor trenches and outlet boots detailed to spec.",
       ],
     },
     {
       id: "maintenance",
       heading: "Maintenance Inspections",
       paragraphs: [
-        "Annual crest walks, outlet checks and silt management extend liner life. We offer inspection visits before planting or calving seasons and document findings with photos for insurance or farm records.",
+        "Annual crest walks, outlet checks and silt management help extend liner life. We offer inspection visits before planting or calving seasons and document findings with photos for insurance or farm records.",
       ],
     },
   ],
@@ -396,12 +396,12 @@ export const DAM_REPAIR_SERVICES_PAGE: SubServicePageConfig = {
     {
       question: "How quickly can you respond to an urgent leak?",
       answer:
-        "Call us with photos and location — we prioritise farms losing irrigation water mid-season and can often mobilise patch crews within days depending on province and crew availability.",
+        "Call us with photos and your location. We prioritise farms losing irrigation water mid-season; response time depends on location and crew availability.",
     },
     {
       question: "Do you repair steel tank liners too?",
       answer:
-        "Yes. Failed PVC lining inside corrugated tanks, rusted outlets and panel leaks are within scope. See our reservoir lining page for steel and concrete options.",
+        "Yes. Failed PVC lining inside corrugated tanks, corroded outlets and panel leaks are within scope. See our reservoir lining page for steel and concrete options.",
     },
   ],
   relatedLinks: [
@@ -437,7 +437,7 @@ export const RESERVOIR_LINING_PAGE: SubServicePageConfig = {
   slug: "reservoir-lining",
   title: "Reservoir Lining & Relining South Africa | Damtech",
   description:
-    "Reline leaking concrete, brick and corrugated steel reservoirs with PVC, HDPE or bitumen systems. Damtech restores water-tight storage across South Africa.",
+    "Reline leaking concrete, brick and corrugated steel reservoirs with PVC, HDPE or bitumen systems. Damtech restores watertight storage across South Africa.",
   h1: "Reservoir Lining Contractors",
   image: IMAGE_PATHS.tulbaghWesternCapeSteelWaterTankProject,
   serviceName: "Reservoir Lining",
@@ -453,7 +453,7 @@ export const RESERVOIR_LINING_PAGE: SubServicePageConfig = {
   heroDescription:
     "Line or reline steel, concrete and farm reservoirs with PVC, HDPE or bitumen systems matched to structure, water chemistry and how the reservoir is used.",
   intro:
-    "Reservoirs take many forms in South Africa — corrugated galvanised steel tanks on farms, concrete farm dams, process ponds at mines and flat-roofed storage on commercial sites. Each substrate needs a different lining approach. Damtech supplies and installs PVC inside steel tanks, HDPE on prepared earth reservoirs, and torch-on bitumen where rigid concrete walls must be bonded waterproof.",
+    "Reservoirs take many forms in South Africa: corrugated galvanised steel tanks on farms, concrete farm dams, process ponds at mines and concrete storage on commercial sites. Each substrate needs a different lining approach. Damtech supplies and installs PVC inside steel tanks, HDPE on prepared earth reservoirs, and torch-on bitumen where rigid concrete walls must be bonded waterproof.",
   benefits: [
     "PVC lining standard on Damtech steel tank builds",
     "HDPE for large earth and process reservoirs",
@@ -481,7 +481,7 @@ export const RESERVOIR_LINING_PAGE: SubServicePageConfig = {
       id: "steel",
       heading: "Steel Reservoirs",
       paragraphs: [
-        "Corrugated galvanised tanks from Damtech include PVC lining, columns, inlet/outlet and overflow as standard. Relining replaces failed PVC without scrapping sound steel — common when outlets corrode or lining ages past weld integrity at the floor seam.",
+        "Corrugated galvanised tanks from Damtech include PVC lining, columns, inlet/outlet and overflow as standard. Relining replaces failed PVC without scrapping sound steel. It is common when outlets corrode or when the lining has aged to the point that seams, particularly at the floor, begin to fail.",
       ],
     },
     {
@@ -495,7 +495,7 @@ export const RESERVOIR_LINING_PAGE: SubServicePageConfig = {
       id: "comparison",
       heading: "PVC, HDPE and Bitumen Comparison",
       paragraphs: [
-        "Choose PVC for tank interiors and compact ponds; HDPE for hectares-scale lining; bitumen where heat-bonded adhesion to concrete is mandatory. We inspect first rather than defaulting to one catalogue product.",
+        "Choose PVC for tank interiors and compact ponds; HDPE for lining areas measured in hectares; bitumen where heat-bonded adhesion to concrete is required. We inspect first rather than defaulting to one catalogue product.",
       ],
     },
     {
@@ -563,14 +563,14 @@ export const DAM_LINING_COST_PAGE: SubServicePageConfig = {
   heroDescription:
     "Dam lining cost depends on liner type, dam size, site access and preparation — not a single price per square metre. Here is what drives your quote.",
   intro:
-    "Clients often ask for a ballpark dam lining price before sharing dam dimensions or photos. Honest quoting in South Africa requires understanding surface area, liner grade, subgrade condition, access for equipment and whether outlets and anchor trenches need rework. Damtech provides tailored quotes after assessment — this page explains the factors so you know what to prepare.",
+    "Clients often ask for a ballpark dam lining price before sharing dam dimensions or photos. An accurate quote requires an understanding of surface area, liner grade, subgrade condition, access for equipment and whether outlets and anchor trenches need rework. Damtech provides tailored quotes after assessment; this page explains the factors so you know what to prepare.",
   benefits: [
     "Quote based on site-specific assessment",
     "Material matched to use — not cheapest roll",
     "Preparation scope included in writing",
     "Thickness options explained (1–2 mm HDPE)",
     "Travel and mobilisation quoted upfront",
-    "No published guesswork that misleads budgets",
+    "No generic price-per-m² figures that can mislead budgets",
   ],
   specs: [
     { label: "Primary drivers", value: "Area, liner type, thickness, access" },
@@ -584,42 +584,42 @@ export const DAM_LINING_COST_PAGE: SubServicePageConfig = {
       id: "factors",
       heading: "What Affects Dam Lining Cost?",
       paragraphs: [
-        "Surface area is the starting point, but steep batters, rocky subgrades, remote access and existing water in the dam all change crew days and material waste. Outlet penetrations, anchor trenches and crest protection add detail work beyond plain field sheet. Labour and freight to Limpopo differ from a Gauteng farm 40 km from Pretoria.",
+        "Surface area is the starting point, but steep batters, rocky subgrades, remote access and existing water in the dam all change crew days and material waste. Outlet penetrations, anchor trenches and crest protection add detail work beyond plain field sheet. Labour and freight to a remote site in Limpopo will differ from a Gauteng farm 40 km from Pretoria.",
       ],
     },
     {
       id: "materials",
       heading: "HDPE vs PVC vs Bitumen Cost Factors",
       paragraphs: [
-        "HDPE costs more per roll but often wins on large dams because of lifespan and seepage control. PVC lowers material cost on small ponds and tank linings where rolls are manageable. Bitumen torch-on is priced on prepared concrete area and detail complexity — not comparable directly to m² HDPE on earth.",
+        "HDPE material can cost more per roll, but it is often chosen for large dams for its UV resistance, longevity and low seepage. PVC can lower material cost on small ponds and tank linings where rolls are manageable. Bitumen torch-on is priced on prepared concrete area and detail complexity — not comparable directly to m² HDPE on earth.",
       ],
     },
     {
       id: "preparation",
       heading: "Dam Size and Surface Preparation",
       paragraphs: [
-        "A smooth, compacted subgrade with geotextile costs less to line than a rocky batter that needs padding and hand finishing. Dewatering, silt removal and crest regrading are often the hidden scope items in cheap quotes that fail mid-project.",
+        "A smooth, compacted subgrade with geotextile costs less to line than a rocky batter that needs padding and hand finishing. Dewatering, silt removal and crest regrading are often the scope items left out of low quotes, which then cause cost overruns mid-project.",
       ],
     },
     {
       id: "access",
       heading: "Access, Slopes and Anchor Trenches",
       paragraphs: [
-        "Narrow farm roads, crane reach for steel coils, and 1:1 batters slow production versus shallow farm dams with good perimeter access. Anchor trenches at the crest must be specified and included — cutting them shallow is a common reason liners pull out under full head.",
+        "Narrow farm roads, limited loader or crane reach for heavy liner rolls, and steep batters slow production compared with gently sloped dams that have good perimeter access. Anchor trenches at the crest must be specified and included; shallow trenches are a common reason liners pull loose under wind uplift or load.",
       ],
     },
     {
       id: "cheap-fails",
       heading: "Why Cheap Lining Fails",
       paragraphs: [
-        "Under-specified thickness, skipped geotextile, poor welding and no outlet boots produce leaks within seasons — then relining costs more than doing it properly once. We quote for inspectable workmanship, not the lowest m² number on paper.",
+        "Under-specified thickness, skipped geotextile, poor welding and missing outlet boots can cause leaks within a few seasons, after which relining costs more than doing the job properly once. We quote for inspectable workmanship, not the lowest m² figure on paper.",
       ],
     },
     {
       id: "accurate-quote",
       heading: "How to Request an Accurate Quote",
       paragraphs: [
-        "Send dam length and width (or surface m²), photos of batters and crest, intended use, province and whether the dam holds water now. Use our quote form or call — we respond within one business day with next steps for site visit or detailed estimate.",
+        "Send dam length and width (or surface m²), photos of batters and crest, intended use, province and whether the dam holds water now. Use our quote form or call us, and we will confirm the next steps: a site visit or a detailed estimate.",
       ],
     },
   ],
@@ -632,12 +632,12 @@ export const DAM_LINING_COST_PAGE: SubServicePageConfig = {
     {
       question: "Is HDPE always more expensive than PVC?",
       answer:
-        "HDPE material can cost more per m², but on large dams the total project cost must include lifespan, seepage savings and preparation — PVC is not always cheaper overall.",
+        "HDPE material can cost more per m², but on large dams the total project cost should take lifespan, seepage savings and preparation into account, so PVC is not always cheaper overall.",
     },
     {
       question: "Does site visit cost extra?",
       answer:
-        "Many assessments are included in our quoting process. Remote sites may include travel in the quote — we state this upfront.",
+        "Many assessments are included in our quoting process. Remote sites may include travel in the quote, and we state this upfront.",
     },
   ],
   relatedLinks: [
@@ -654,7 +654,7 @@ export const DAM_LINING_COST_PAGE: SubServicePageConfig = {
   sectionCtaTitle: "Need a Dam Lining Cost Estimate?",
   ctaTitle: "Request a Tailored Dam Lining Quote",
   ctaDescription:
-    "Share dam dimensions, photos and location — we will provide an accurate quote based on your site.",
+    "Share dam dimensions, photos and location — we will provide a quote based on your site.",
 };
 
 export const SUB_SERVICE_PAGES: SubServicePageConfig[] = [

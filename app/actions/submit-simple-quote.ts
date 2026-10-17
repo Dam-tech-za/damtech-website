@@ -80,6 +80,18 @@ export async function submitSimpleQuote(
   }
 
   if (parsed.isSpam) {
+    // Bots that trip the honeypot are still recorded for review, but only within
+    // the public rate limit so they cannot flood the rfqs/customers tables.
+    const spamLimit = await limitPublicRfqSubmit(await headers());
+    if (!spamLimit.success) {
+      return {
+        success: true,
+        deliveryMode: "normal",
+        rfqNumber: "RFQ-RECEIVED",
+        uploadToken: "spam",
+        notificationStatus: "sent",
+      };
+    }
     await createRfqFromPublicSubmission({
       data: parsed.data,
       calculator: null,

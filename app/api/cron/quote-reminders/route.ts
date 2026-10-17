@@ -1,3 +1,4 @@
+import { authorizeCronRequest } from "@/lib/cron/authorize-cron";
 import { NextResponse } from "next/server";
 import { createServiceRoleClient } from "@/lib/supabase/admin";
 import { sendInternalQuoteNotification } from "@/lib/quotes/email";
@@ -50,9 +51,7 @@ const REMINDERS: ReminderSpec[] = [
 ];
 
 export async function GET(request: Request) {
-  const secret = process.env.CRON_SECRET?.trim();
-  const auth = request.headers.get("authorization");
-  if (!secret || auth !== `Bearer ${secret}`) {
+  if (!authorizeCronRequest(request).ok) {
     return NextResponse.json({ ok: false, error: "Unauthorised" }, { status: 401 });
   }
 

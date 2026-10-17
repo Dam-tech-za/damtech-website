@@ -37,6 +37,7 @@ export default async function QuotePage({ searchParams }: QuotePageProps) {
 
       <Hero
         compact
+        showActions={false}
         eyebrow={catalogueLine ? "Invoice request" : "Free quote"}
         title={
           catalogueLine ? "Request an invoice for a supply-only kit" : seo.h1

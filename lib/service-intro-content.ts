@@ -15,7 +15,7 @@ export const DAM_LININGS_INTRO: ServiceIntroConfig = {
   description:
     "Damtech supplies and installs dam linings for earth dams, reservoirs and water storage across South Africa. Correctly specified systems help reduce seepage and protect stored water for farms, mines, game lodges and commercial properties.",
   trustPoints: [
-    { label: "Certified liner materials", icon: "check" },
+    { label: "Specified liner materials", icon: "check" },
     { label: "Installed by experienced teams", icon: "shield" },
     { label: "Suitable for agricultural storage", icon: "droplet" },
   ],
@@ -56,7 +56,7 @@ export const STEEL_TANKS_INTRO: ServiceIntroConfig = {
   eyebrow: "STEEL WATER TANKS",
   heading: "Fixed-price corrugated steel reservoir kits",
   description:
-    "Reliable above-ground water storage for farms, estates and commercial sites. Choose a VAT-inclusive supply-only kit sized for your water requirements.",
+    "Reliable above-ground water storage for farms, estates and commercial sites. Choose a VAT-inclusive, supply-only kit sized for your water requirements.",
   trustPoints: [
     { label: "VAT-inclusive pricing", icon: "check" },
     { label: "Durable galvanised steel", icon: "shield" },
@@ -74,7 +74,7 @@ export const STEEL_TANKS_INTRO: ServiceIntroConfig = {
   imageAlt:
     "Corrugated steel water reservoir installed for farm water storage in South Africa",
   ribbonFacts: [
-    "10 000L–500 000L+",
+    "10 000 L–500 000 L+",
     "Supply-only kits",
     "Installation & Delivery Available",
   ],
@@ -86,11 +86,11 @@ export const HDPE_DAM_LINING_INTRO: ServiceIntroConfig = {
   eyebrow: "HDPE DAM LINING",
   heading: "HDPE dam lining for long-term water storage",
   description:
-    "HDPE dam linings provide durable geomembrane protection for earth dams, irrigation reservoirs and mining ponds. Welded seams and UV-stable grades help reduce seepage across South African sites.",
+    "HDPE dam linings provide durable geomembrane protection for earth dams, irrigation reservoirs and mining ponds. Welded seams and UV-stable grades help reduce seepage on South African sites.",
   trustPoints: [
     { label: "UV-stable grades", icon: "check" },
     { label: "Welded seams", icon: "shield" },
-    { label: "Low seepage performance", icon: "droplet" },
+    { label: "Low-seepage design", icon: "droplet" },
   ],
   primaryCta: { label: "Request an HDPE dam lining quote", href: "/quote" },
   secondaryCta: {

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Hero } from "@/components/Hero";
 import { SiteSection } from "@/components/SiteSection";
+import { QuoteSuccessUpload } from "@/components/QuoteSuccessUpload";
 
 export const metadata: Metadata = {
   title: { absolute: "Quote request received | Damtech" },
@@ -15,13 +16,8 @@ type PageProps = {
 export default async function QuoteSuccessPage({ searchParams }: PageProps) {
   const params = await searchParams;
   const rfqNumber = params.ref || "your request";
-  const uploadToken = params.upload;
   const isInvoiceRequest = params.flow === "invoice";
-  const showUpload =
-    Boolean(uploadToken) &&
-    uploadToken !== "spam" &&
-    Boolean(params.ref) &&
-    params.ref !== "RFQ-RECEIVED";
+  const showUpload = Boolean(params.ref) && params.ref !== "RFQ-RECEIVED";
 
   return (
     <>
@@ -49,14 +45,7 @@ export default async function QuoteSuccessPage({ searchParams }: PageProps) {
           before issuing a quote.
         </p>
         {showUpload ? (
-          <p>
-            <Link
-              className="btn btn--md btn--primary"
-              href={`/quote/${encodeURIComponent(params.ref!)}/upload/?token=${encodeURIComponent(uploadToken!)}`}
-            >
-              Upload photos or drawings
-            </Link>
-          </p>
+          <QuoteSuccessUpload rfqNumber={params.ref!} legacyToken={params.upload} />
         ) : null}
         <p>
           <Link href="/">Return home</Link>

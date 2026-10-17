@@ -2,12 +2,9 @@
 
 import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
+import { isAdminSurfacePath } from "@/lib/analytics/private-paths";
 
-/** Admin and auth routes use their own chrome and are excluded from public analytics. */
-export function isAdminSurfacePath(pathname: string | null | undefined): boolean {
-  if (!pathname) return false;
-  return pathname.startsWith("/admin") || pathname.startsWith("/auth");
-}
+export { isAdminSurfacePath };
 
 /**
  * Chooses between the public marketing chrome and the bare admin/auth chrome.

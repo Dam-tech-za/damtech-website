@@ -1,5 +1,11 @@
+import type { Metadata } from "next";
 import { getPublicInfoRequest } from "@/lib/rfq/info-request";
 import { submitInfoResponseAction } from "@/app/actions/submit-info-response";
+
+export const metadata: Metadata = {
+  title: { absolute: "Information request | Damtech" },
+  robots: { index: false, follow: false },
+};
 
 type PageProps = {
   params: Promise<{ token: string }>;

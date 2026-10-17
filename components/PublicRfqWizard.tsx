@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState, useSyncExternalStore, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { trackLeadSubmitted } from "@/lib/analytics/events";
+import { rememberRfqSuccess } from "@/components/QuoteSuccessUpload";
 import { submitPublicRfqAction } from "@/app/actions/submit-public-rfq";
 import { PROVINCE_OPTIONS } from "@/lib/form";
 import {
@@ -463,16 +464,8 @@ export function PublicRfqWizard({
         rfqNumber: result.rfqNumber,
       });
       sessionStorage.removeItem(DRAFT_KEY);
-      sessionStorage.setItem(
-        "damtech.rfqSuccess",
-        JSON.stringify({
-          rfqNumber: result.rfqNumber,
-          uploadToken: result.uploadToken,
-        }),
-      );
-      router.push(
-        `/quote/success/?ref=${encodeURIComponent(result.rfqNumber)}&upload=${encodeURIComponent(result.uploadToken)}`,
-      );
+      rememberRfqSuccess(result.rfqNumber, result.uploadToken);
+      router.push(`/quote/success/?ref=${encodeURIComponent(result.rfqNumber)}`);
     });
   }
 

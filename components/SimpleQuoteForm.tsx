@@ -30,6 +30,7 @@ import {
 import { phoneTel, siteConfig, whatsAppUrl } from "@/lib/site";
 import { appendLeadAttribution } from "@/lib/analytics/attribution-client";
 import { trackLeadSubmitted } from "@/lib/analytics/events";
+import { rememberRfqSuccess } from "@/components/QuoteSuccessUpload";
 
 type SimpleQuoteFormProps = {
   title?: string;
@@ -164,10 +165,9 @@ export function SimpleQuoteForm({
         submittedLine,
         String(formData.get("serviceRequired") ?? ""),
       );
-      const params = new URLSearchParams({
-        ref: result.rfqNumber,
-        upload: result.uploadToken,
-      });
+      // Upload token travels via sessionStorage, never the URL (analytics records URLs).
+      rememberRfqSuccess(result.rfqNumber, result.uploadToken);
+      const params = new URLSearchParams({ ref: result.rfqNumber });
       if (isInvoiceRequest) params.set("flow", "invoice");
       router.push(`/quote/success/?${params.toString()}`);
     });

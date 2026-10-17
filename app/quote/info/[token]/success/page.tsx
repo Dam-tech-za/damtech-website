@@ -1,4 +1,10 @@
+import type { Metadata } from "next";
 import Link from "next/link";
+
+export const metadata: Metadata = {
+  title: { absolute: "Information request | Damtech" },
+  robots: { index: false, follow: false },
+};
 
 type PageProps = {
   params: Promise<{ token: string }>;

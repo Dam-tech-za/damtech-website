@@ -44,17 +44,17 @@ export const LOCAL_LANDING_PAGES: LocalLandingPage[] = [
     image: IMAGE_PATHS.hdpeDamLiningEarthDam,
     serviceName: "Dam Lining Installation — Pretoria",
     intro:
-      "Pretoria sits on the Highveld at roughly 1,300 m elevation — a city where thunderstorms can dump summer rain in hours, yet winter days stay dry for weeks. That pattern favours farm dams and estate ponds as storage, but iron-rich soils around Bronkhorstspruit and clay-loam belts near the Apies catchment often seep unless lined. Peri-urban smallholdings along the N1 and R21 corridor increasingly rely on boreholes with municipal supply as backup, which makes on-site retention a practical priority rather than an optional upgrade.",
+      "Pretoria sits on the Highveld at roughly 1 300 m above sea level, a city where thunderstorms can dump summer rain in hours, yet winter stays dry for weeks. That pattern favours farm dams and estate ponds as storage, but iron-rich soils around Bronkhorstspruit and clay-loam belts near the Apies catchment often seep unless lined. Peri-urban smallholdings along the N1 and R21 corridor increasingly rely on boreholes with municipal supply as backup, which makes on-site retention a practical priority rather than an optional upgrade.",
     climate:
       "Tshwane receives most rainfall between October and March, with frequent afternoon convection and hail risk on exposed embankments. Mean annual precipitation is moderate by national standards, but evaporation on open dams remains significant through hot September and October before the rains. Frost is occasional on low-lying paddocks west of the city, which can stress unprotected outlet pipes and floating intake lines if not planned during installation.",
     soil:
-      "North and east of Pretoria, reddish-brown Hutton-derived soils and shallow clay over weathered granite are common on smallholdings. These soils shrink and swell seasonally — liner anchor trenches must accommodate slight ground movement without stressing HDPE at the crest. Rocky quartzite outcrops appear on ridges around the Magaliesberg fringe; there geotextile underlay and careful benching before liner deployment are standard Damtech practice.",
+      "North and east of Pretoria, reddish-brown Hutton-form soils and shallow clay over weathered granite are common on smallholdings. These soils shrink and swell seasonally — liner anchor trenches must allow for slight ground movement without stressing the HDPE at the crest. Rocky quartzite outcrops appear on ridges around the Magaliesberg fringe; there geotextile underlay and careful benching before liner deployment are standard Damtech practice.",
     irrigation:
       "Centre-pivot and hose-irrigation blocks on maize, vegetables and turf farms west of Pretoria need dependable summer reserves when borehole yield dips. Estate landscaping and equestrian properties irrigate from balancing dams that must hold water between municipal restriction periods. Where electricity is interrupted, stored volume — not instantaneous pump rate — determines whether irrigation schedules survive load-shedding.",
     sectors:
       "Agriculture on the city fringe includes mixed livestock, hay production and emerging berry tunnels. Game breeding and wildlife estates north of Pretoria line drinking dams for eland, wildebeest and cattle. Commercial clients include nurseries, light industrial yards with dust-suppression needs, and schools or lodges with fire-water reserves. Mining is less dominant here than on the West Rand, but quarry and borrow-pit water management still appears on the urban edge.",
     waterStorage:
-      "Clients typically need to capture storm runoff in earth dams, retain borehole water through dry winters, and reduce dependence on Rand Water restrictions. HDPE lining stops seepage through porous embankments; corrugated steel tanks suit tight sites where a dam footprint is impossible. Concrete reservoir waterproofing protects stored water quality where tanks or canals feed irrigation networks.",
+      "Clients typically need to capture storm runoff in earth dams, retain borehole water through dry winters, and reduce dependence on Rand Water restrictions. HDPE lining stops seepage through porous embankments; corrugated steel tanks suit tight sites where a dam footprint is impossible. Waterproofing concrete reservoirs and canals helps prevent leakage where they feed irrigation networks.",
     services: [
       "HDPE and PVC dam lining supply and installation",
       "Corrugated steel tanks for compact peri-urban sites",
@@ -107,21 +107,21 @@ export const LOCAL_LANDING_PAGES: LocalLandingPage[] = [
       "HDPE and PVC dam linings, reservoir lining, steel water tanks and waterproofing for farms, mines and commercial properties in Johannesburg and Gauteng.",
     h1: "Dam Linings in Johannesburg",
     heroDescription:
-      "Johannesburg, the West Rand and East Rand rely on Damtech for dam linings, steel reservoir farms and waterproofing where municipal pressure, mining landscapes and industrial compliance intersect.",
+      "Johannesburg, the West Rand and the East Rand rely on Damtech for dam linings, steel tank farms and waterproofing where municipal pressure, mining landscapes and industrial compliance intersect.",
     image: IMAGE_PATHS.tulbaghWesternCapeSteelWaterTankProject,
     serviceName: "Dam Lining Installation — Johannesburg",
     intro:
       "Johannesburg’s water story is defined by demand exceeding local supply, legacy mining landscapes and development pushing agriculture and industry onto the same dolomitic fringe. Properties on the West Rand near Krugersdorp and Randfontein often store process and irrigation water on disturbed ground. On the East Rand, logistics hubs and agribusiness packhouses need tanks and lined ponds where space is measured in metres, not hectares.",
     climate:
-      "The Witwatersrand Highveld shares Pretoria’s summer-rain pattern but urban heat island effects raise evaporation on open dams near Roodepoort and Alberton. Sudden hailstorms can damage unroofed steel tanks if access for maintenance is neglected. Winter is dry; springs that feed minor catchments run low by August, so stored volume carried over from summer storms matters for winter irrigation.",
+      "The Witwatersrand Highveld shares Pretoria’s summer-rain pattern but urban heat island effects raise evaporation on open dams near Roodepoort and Alberton. Hailstorms can damage roof sheeting and fittings on steel tanks, so maintenance access should be planned. Winter is dry; springs that feed minor catchments run low by August, so stored volume carried over from summer storms matters for winter irrigation.",
     soil:
       "Dolomitic compartments underlie large parts of the West Rand — sinkhole risk and groundwater sensitivity mean some sites cannot use earth dams at all, pushing clients toward steel tanks on engineered pads. Deep sandy soils near the Vaal fringe drain quickly without lining. Mine tailings footprints require geotextile protection and compacted subgrades before any geomembrane is laid; sharp metalliferous gravel must not contact HDPE directly.",
     irrigation:
       "Maize and vegetable farms on the city’s outskirts irrigate from dams that must survive municipal throttling. Nurseries and turf farms on the East Rand run tight schedules — a seeping dam mid-season forces expensive borehole hours. Industrial irrigation is less common, but dust suppression on mine stockpiles and construction sites uses stored water on timed sprays that cannot afford pump downtime.",
     sectors:
-      "Mining support services, aggregate quarries and coal-related logistics dominate lined containment demand west of Johannesburg. Agribusiness — poultry, piggeries and mixed cropping — lines farm dams and installs steel backup tanks. Commercial estates, schools and warehouses waterproof flat roofs and line fire reservoirs. Game farms on the urban edge share livestock and wildlife watering needs similar to Bushveld properties but on smaller, more regulated footprints.",
+      "Mining support services and aggregate quarries dominate lined containment demand west of Johannesburg. Agribusiness — poultry, piggeries and mixed cropping — lines farm dams and installs steel backup tanks. Commercial estates, schools and warehouses waterproof flat roofs and line fire reservoirs. Game farms on the urban edge share livestock and wildlife watering needs similar to Bushveld properties but on smaller, more regulated footprints.",
     waterStorage:
-      "Stored water buffers Rand Water restrictions, supports dust suppression when boreholes are shared across shifts, and provides fire reserves where municipal pressure is weak at ridge-top developments. Multi-tank steel farms allow phased expansion as yards grow. HDPE-lined process dams help operators manage stormwater and recycle wash water without uncontrolled seepage toward dolomitic aquifers.",
+      "Stored water buffers Rand Water restrictions, supports dust suppression when boreholes are shared across shifts, and provides fire reserves where municipal pressure is weak at ridge-top developments. Multi-tank steel farms allow phased expansion as yards grow. HDPE-lined process dams help operators manage stormwater and recycle wash water while reducing seepage toward dolomitic aquifers.",
     services: [
       "HDPE lining for earth and process dams on disturbed ground",
       "Steel tank farms for industrial and agricultural yards",
@@ -137,7 +137,7 @@ export const LOCAL_LANDING_PAGES: LocalLandingPage[] = [
       {
         question: "Are steel tanks better on dolomitic land where dams are restricted?",
         answer:
-          "Often yes. Tanks on engineered sand bases reduce groundwater interaction compared with excavated earth dams. We help size tanks against daily use and refill rates.",
+          "Often yes. Tanks on engineered bases involve less excavation and groundwater interaction than earth dams, although any structure on dolomitic ground still needs a geotechnical (dolomite stability) assessment. We help size tanks against daily use and refill rates.",
       },
       {
         question: "Do you waterproof industrial roofs on the East Rand?",
@@ -180,7 +180,7 @@ export const LOCAL_LANDING_PAGES: LocalLandingPage[] = [
     intro:
       "Limpopo stretches from misty Letaba citrus valleys to hot Bushveld game reserves along the Kruger western fence. Rainfall varies sharply: Tzaneen can record generous summer totals while Hoedspruit and the Olifants valley see prolonged dry spells. Farm dams and lodge reservoirs are the backbone of irrigation and wildlife water — unlined basins in sandy granite soils can lose water faster than managers realise until borehole bills spike.",
     climate:
-      "Lowveld districts endure high summer temperatures often above 35 °C, driving evaporation on open dams. Rainfall is strongly seasonal; October to March carries most annual volume, yet multi-week dry gaps mid-season are normal. Frost is rare in the valley but foothill farms above Tzaneen see occasional cold snaps that affect pipe layouts. UV exposure on exposed liner crests is intense — material selection and cover where possible matter on multi-year performance.",
+      "Lowveld districts endure high summer temperatures, often above 35 °C, driving evaporation on open dams. Rainfall is strongly seasonal; October to March carries most annual volume, yet multi-week dry gaps mid-season are normal. Frost is rare in the valley but foothill farms above Tzaneen see occasional cold snaps that affect pipe layouts. UV exposure on liner crests is intense, so material selection and, where possible, cover soil matter for multi-year performance.",
     soil:
       "Granite sands dominate much of the Bushveld, with low natural cohesion and high permeability without lining. Basalt plains near Phalaborwa and alluvial pockets along the Letaba and Olifants rivers offer different subgrade preparation needs. Game paths along dam toes compact soils but also expose liner edges — anchor design and rock-fill protection zones are routine on lodge projects.",
     irrigation:
@@ -188,7 +188,7 @@ export const LOCAL_LANDING_PAGES: LocalLandingPage[] = [
     sectors:
       "Fruit export estates, cattle ranching, game tourism and hunting lodges form the core client base. Phalaborwa-area mining and smelter support services require process-water containment adjacent to agricultural land. Emerging irrigation schemes along canal networks line balancing dams to reduce losses before water reaches pivot points.",
     waterStorage:
-      "Lodge operators need reliable wildlife water holes and fire reserves through drought years that suppress tourism grazing. Farmers need every pumped litre from the Crocodile and Olifants catchments retained for packout schedules. Cement dams on older citrus farms often suit bitumen torch-on refurbishment; new earth storage on sandy ranches typically moves to HDPE.",
+      "Lodge operators need reliable wildlife water holes and fire reserves through drought years that suppress tourism grazing. Farmers need every pumped litre from the Letaba and Olifants catchments retained for packing and export schedules. Cement dams on older citrus farms often suit bitumen torch-on refurbishment; new earth storage on sandy ranches typically moves to HDPE.",
     services: [
       "HDPE earth dam lining for farms and lodges",
       "Bitumen torch-on refurbishment of cement dams",
@@ -246,7 +246,7 @@ export const LOCAL_LANDING_PAGES: LocalLandingPage[] = [
     climate:
       "Highveld sites see summer thunderstorms, winter frost and moderate evaporation. Lowveld districts mirror Limpopo heat with higher humidity near sugar mills. Forestry catchments in Sabie and Graskop receive orographic rain but soils drain quickly on slopes — storage dams at valley toes must hold through dry August weeks when fire risk peaks in pine stands.",
     soil:
-      "Coal-mining disturbed ground around eMalahleni requires engineered pads and geotextile before HDPE deployment — subsidence and acid-forming shales are site-specific risks assessed before quoting. Highveld sandy loams suit farm dams when lined. Lowveld granite sands seep freely. Forestry roads and skid sites generate sediment that must be kept off liner subgrades during construction.",
+      "Coal-mining disturbed ground around eMalahleni requires engineered pads and geotextile before HDPE deployment — subsidence and acid-forming shales are site-specific risks assessed before quoting. Highveld sandy loams suit farm dams when lined, and Lowveld granite sands seep freely. Forestry roads and skid sites generate sediment that must be kept off liner subgrades during construction.",
     irrigation:
       "Sugar-cane farms irrigate from farm dams and canal offtakes — seepage directly reduces tonnes per hectare when ratoon stress hits in dry cycles. Forestry irrigation is less intensive but nursery and fire-fighting reserves need reliable ponds. Mine plants use stored water for wash bays, coal suppression and boiler make-up; interrupted supply stops shifts.",
     sectors:
@@ -278,7 +278,7 @@ export const LOCAL_LANDING_PAGES: LocalLandingPage[] = [
       {
         question: "Are steel tanks suitable when mine leases prohibit new earthworks?",
         answer:
-          "Modular tanks on compacted bases are often the fastest compliant option. Capacities scale in 60 kL steps and similar standard sizes.",
+          "Modular tanks on compacted bases are often the fastest compliant option. Tank capacities are matched to your storage requirement.",
       },
     ],
     relatedProjects: [
@@ -315,7 +315,7 @@ export const LOCAL_LANDING_PAGES: LocalLandingPage[] = [
     sectors:
       "Wine and juice grapes, deciduous fruit, olives, livestock and equine properties dominate lining demand. Rural lifestyle estates line ornamental and fire dams. Packhouses and cold stores occasionally need waterproofed roofs and lined balancing ponds — secondary to farm dam work but part of integrated site water plans.",
     waterStorage:
-      "The economic case for HDPE is retaining licensed winter allocation inside the dam footprint. Damtech has completed large installations in Stellenbosch and Grabouw documented in our projects section — farmers use those references when sizing expectations for their own catchments.",
+      "The economic case for HDPE is retaining licensed winter allocation inside the dam footprint. Damtech has completed large installations in Stellenbosch and Grabouw, documented in our projects section, which farmers can use as references when planning for their own catchments.",
     services: [
       "Large-area HDPE farm dam lining",
       "PVC lining for ponds and estate water features",
@@ -389,7 +389,7 @@ export const LOCAL_LANDING_PAGES: LocalLandingPage[] = [
     image: IMAGE_PATHS.grabouwHdpeDamLiningAfter,
     serviceName: "Farm Dam Lining Installation",
     intro:
-      "A farm dam is often the largest capital asset on a property after land itself — yet many remain unlined on soils that were never watertight. South African producers face municipal cost pressure, load-shedding that stops borehole pumps mid-irrigation, and drought cycles that make every megalitre in January worth more than the same megalitre in June. Lining is how you keep winter rain and borehole top-up available for cattle, pivots and packhouses without rebuilding the entire embankment.",
+      "A farm dam is often one of the most valuable assets on a property after the land itself, yet many remain unlined on soils that were never watertight. South African producers face municipal cost pressure, load-shedding that stops borehole pumps mid-irrigation, and drought cycles that make every megalitre in January worth more than the same megalitre in June. Lining is how you keep winter rain and borehole top-up available for cattle, pivots and packhouses without rebuilding the entire embankment.",
     climate:
       "No single climate applies nationally. Summer-rainfall maize areas lose water to seepage before autumn planting moisture is secured. Winter-rainfall Cape farms bank licensed winter inflow for six dry months. Bushveld properties see evaporation and wildlife traffic simultaneously. Liner spec must match sun exposure, frost risk at altitude, and whether the dam dries completely each year or holds a permanent pool.",
     soil:
@@ -410,7 +410,7 @@ export const LOCAL_LANDING_PAGES: LocalLandingPage[] = [
       {
         question: "How much water can a farm dam lining save?",
         answer:
-          "Savings depend on soil permeability and dam size. Lining removes most seepage losses — often the biggest controllable loss after evaporation on sandy or fissured dams.",
+          "Savings depend on soil permeability and dam size. Lining can remove most seepage losses, which are often the biggest controllable loss after evaporation on sandy or fissured dams.",
       },
       {
         question: "Can existing farm dams be lined without rebuilding?",
@@ -454,7 +454,7 @@ export const LOCAL_LANDING_PAGES: LocalLandingPage[] = [
     intro:
       "Mining and quarrying move earth, expose groundwater paths and concentrate water in dams that were never part of the original landscape. Whether coal on the Mpumalanga Highveld, platinum on the Bushveld or aggregate in Gauteng, operators store process water, storm runoff and sometimes attenuation volumes that cannot be allowed to seep unchecked. HDPE geomembrane is the default barrier — but thickness, underlay and leak detection must follow site-specific review, not catalogue defaults.",
     climate:
-      "Highveld mines see summer storm peaks that can overtop poorly sized freeboard if silt has reduced capacity. Lowveld operations face heat and UV on exposed geomembrane until cover soil or ballast is placed. Dry seasons stress recycling circuits — every cubic metre lost to seepage is another megalitre pumped or trucked in.",
+      "Highveld mines see summer storm peaks that can overtop poorly sized freeboard if silt has reduced capacity. Lowveld operations face heat and UV on exposed geomembrane until cover soil or ballast is placed. Dry seasons stress recycling circuits — every cubic metre lost to seepage has to be replaced with pumped or trucked-in make-up water.",
     soil:
       "Disturbed overburden settles for years; liner subgrades must be compacted lifts, not scraped spoil. Acid-generating material and metalliferous fines require separation from liner contact — geotextile and sometimes bentonite amended layers appear in engineer specs. Rocky cuttings demand cushion geotextile to prevent puncture during settlement.",
     irrigation:
@@ -530,7 +530,7 @@ export const LOCAL_LANDING_PAGES: LocalLandingPage[] = [
     sectors:
       "Fruit, wine, sugar, grain, livestock and game operations all use different withdrawal rates but share the need for predictable storage. Agribusiness with multiple titles may centralise storage in one lined dam and distribute via pipelines. Emerging farmers consolidating smallholdings often upgrade one shared dam before adding tanks at each homestead.",
     waterStorage:
-      "Damtech helps clients sequence projects: line the primary dam first, add steel backup where drinking or household security matters, waterproof cement reservoirs feeding tunnels, and maintain roofs before summer leaks ruin stored hay. Our regional pages cover Western Cape, Limpopo and Gauteng specifics; our projects show real farm and industrial outcomes.",
+      "Damtech helps clients sequence projects: line the primary dam first, add steel backup where drinking or household security matters, waterproof cement reservoirs feeding tunnels, and maintain roofs before summer leaks ruin stored hay. Our regional pages cover Western Cape, Limpopo and Gauteng specifics, and our projects page shows completed farm and industrial work.",
     services: [
       "HDPE farm dam lining",
       "Corrugated steel irrigation reservoirs",
@@ -573,15 +573,15 @@ export const LOCAL_LANDING_PAGES: LocalLandingPage[] = [
       { href: "/calculators", label: "Plan water storage with Damtech’s calculators" },
       {
         href: "/steel-water-storage-tanks/20000-litre-water-tank/",
-        label: "20 000L steel water tank for farms",
+        label: "20 000 L steel water tank for farms",
       },
       {
         href: "/steel-water-storage-tanks/50000-litre-water-tank/",
-        label: "50 000L agricultural water tank",
+        label: "50 000 L agricultural water tank",
       },
       {
         href: "/steel-water-storage-tanks/100000-litre-water-tank/",
-        label: "100 000L bulk farm water tank",
+        label: "100 000 L bulk farm water tank",
       },
       {
         href: "/steel-water-storage-tanks/livestock-water-trough/",
