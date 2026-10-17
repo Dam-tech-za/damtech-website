@@ -16,17 +16,17 @@ export default async function PublicInfoRequestPage({
 
   if (!loaded.ok) {
     return (
-      <main className="section section--narrow">
+      <div className="section section--narrow">
         <h1>Information request</h1>
         <p>{loaded.error}</p>
-      </main>
+      </div>
     );
   }
 
   const { view } = loaded;
 
   return (
-    <main className="section section--narrow">
+    <div className="section section--narrow">
       <h1>Additional information for {view.rfqNumber}</h1>
       <p>
         Damtech needs a few details to continue your quotation. Internal notes
@@ -153,6 +153,6 @@ export default async function PublicInfoRequestPage({
           Submit
         </button>
       </form>
-    </main>
+    </div>
   );
 }

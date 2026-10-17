@@ -10,6 +10,8 @@ import {
 } from "@/lib/calculator-rfq-prefill";
 import { PROVINCE_OPTIONS, SERVICE_OPTIONS } from "@/lib/form";
 import { phoneTel, siteConfig, whatsAppUrl } from "@/lib/site";
+import { appendLeadAttribution } from "@/lib/analytics/attribution-client";
+import { trackLeadSubmitted } from "@/lib/analytics/events";
 
 type FormSectionProps = {
   title: string;
@@ -92,11 +94,16 @@ export function FormSection({
 
     const form = event.currentTarget;
     const formData = new FormData(form);
+    appendLeadAttribution(formData);
 
     startTransition(async () => {
       const result = await submitLead(formData, sourcePage);
 
       if (result.success) {
+        trackLeadSubmitted({
+          form: "contact_form",
+          service: String(formData.get("serviceRequired") ?? ""),
+        });
         if (result.deliveryMode === "fallback") {
           router.push(
             `/thank-you/?fallback=1&incident=${encodeURIComponent(result.incidentId)}`,

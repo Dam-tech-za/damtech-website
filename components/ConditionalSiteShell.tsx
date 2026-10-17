@@ -1,25 +1,45 @@
-import { headers } from "next/headers";
+"use client";
+
+import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
-import { PageShell } from "@/components/PageShell";
+
+/** Admin and auth routes use their own chrome and are excluded from public analytics. */
+export function isAdminSurfacePath(pathname: string | null | undefined): boolean {
+  if (!pathname) return false;
+  return pathname.startsWith("/admin") || pathname.startsWith("/auth");
+}
 
 /**
- * Marketing shell for public pages. Admin and auth routes render without
- * the public header/footer so the internal portal has its own chrome.
+ * Chooses between the public marketing chrome and the bare admin/auth chrome.
+ *
+ * This is a client component on purpose: reading request headers in the root
+ * layout forced every public page into dynamic (per-request) rendering. Using
+ * `usePathname()` keeps marketing pages statically renderable, while admin and
+ * auth routes still render without the public header, footer and tracking.
+ * The public chrome is rendered on the server and passed in as slots.
  */
-export async function ConditionalSiteShell({
+export function ConditionalSiteShell({
   children,
+  beforeMain,
+  afterMain,
 }: {
   children: ReactNode;
+  beforeMain: ReactNode;
+  afterMain: ReactNode;
 }) {
-  const headerList = await headers();
-  const pathname = headerList.get("x-damtech-pathname") ?? "";
+  const pathname = usePathname();
 
-  const isAdminSurface =
-    pathname.startsWith("/admin") || pathname.startsWith("/auth");
-
-  if (isAdminSurface) {
+  if (isAdminSurfacePath(pathname)) {
     return <main className="flex-1">{children}</main>;
   }
 
-  return <PageShell>{children}</PageShell>;
+  return (
+    <>
+      {beforeMain}
+      <main id="main-content" className="flex-1 pb-[4.5rem] lg:pb-0">
+        {children}
+      </main>
+      {afterMain}
+    </>
+  );
 }

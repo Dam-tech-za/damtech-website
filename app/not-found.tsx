@@ -19,7 +19,7 @@ const QUICK_LINKS = [
 
 export default function NotFound() {
   return (
-    <main className="content-wrap flex min-h-[50vh] flex-col items-center justify-center text-center">
+    <div className="content-wrap flex min-h-[50vh] flex-col items-center justify-center text-center">
       <p className="text-sm font-semibold uppercase tracking-[0.08em] text-body">
         404
       </p>
@@ -62,6 +62,6 @@ export default function NotFound() {
           {siteConfig.phone}
         </a>
       </p>
-    </main>
+    </div>
   );
 }

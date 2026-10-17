@@ -4,7 +4,7 @@ import { Hero } from "@/components/Hero";
 import { SiteSection } from "@/components/SiteSection";
 
 export const metadata: Metadata = {
-  title: "Quote request received | Damtech",
+  title: { absolute: "Quote request received | Damtech" },
   robots: { index: false, follow: false },
 };
 

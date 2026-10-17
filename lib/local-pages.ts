@@ -37,7 +37,7 @@ export const LOCAL_LANDING_PAGES: LocalLandingPage[] = [
     slug: "pretoria-dam-liners",
     title: "Dam Linings Pretoria | HDPE, PVC & Water Storage | Damtech",
     description:
-      "Damtech provides HDPE and PVC dam linings, waterproofing, steel water tanks and reservoir lining for farms, estates and commercial properties in Pretoria and Gauteng.",
+      "HDPE and PVC dam linings, reservoir lining, steel water tanks and waterproofing for farms, estates and commercial properties in Pretoria and Gauteng.",
     h1: "Dam Linings in Pretoria",
     heroDescription:
       "Serving Pretoria, Centurion, Hammanskraal and the greater Tshwane metro with HDPE dam linings, reservoir repairs and steel water tanks for farms, estates and commercial sites.",
@@ -102,9 +102,9 @@ export const LOCAL_LANDING_PAGES: LocalLandingPage[] = [
   },
   {
     slug: "johannesburg-dam-liners",
-    title: "Dam Linings Johannesburg | HDPE, PVC & Reservoir Solutions | Damtech",
+    title: "Dam Linings Johannesburg | HDPE, PVC & Reservoirs | Damtech",
     description:
-      "Damtech provides HDPE and PVC dam linings, waterproofing, steel water tanks and reservoir lining for farms, mines and commercial properties in Johannesburg and Gauteng.",
+      "HDPE and PVC dam linings, reservoir lining, steel water tanks and waterproofing for farms, mines and commercial properties in Johannesburg and Gauteng.",
     h1: "Dam Linings in Johannesburg",
     heroDescription:
       "Johannesburg, the West Rand and East Rand rely on Damtech for dam linings, steel reservoir farms and waterproofing where municipal pressure, mining landscapes and industrial compliance intersect.",
@@ -298,7 +298,7 @@ export const LOCAL_LANDING_PAGES: LocalLandingPage[] = [
     slug: "western-cape-dam-liners",
     title: "Western Cape Dam Liners & Dam Lining Services | Damtech",
     description:
-      "Damtech supplies and installs HDPE, PVC and torch-on dam liners for farms, estates and water storage projects across the Western Cape. Request a site-specific quote.",
+      "HDPE, PVC and torch-on dam liners supplied and installed for farms, estates and water storage projects across the Western Cape. Request a site quote.",
     h1: "Dam Liners & Dam Linings in the Western Cape",
     heroDescription:
       "Wine, fruit and livestock farms from the Boland to the Overberg rely on Damtech dam linings to keep scarce summer water in farm dams for irrigation and stock.",

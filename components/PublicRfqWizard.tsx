@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState, useSyncExternalStore, useTransition } from "react";
 import { useRouter } from "next/navigation";
+import { trackLeadSubmitted } from "@/lib/analytics/events";
 import { submitPublicRfqAction } from "@/app/actions/submit-public-rfq";
 import { PROVINCE_OPTIONS } from "@/lib/form";
 import {
@@ -456,6 +457,11 @@ export function PublicRfqWizard({
         return;
       }
 
+      trackLeadSubmitted({
+        form: "detailed_rfq",
+        service: [draft.servicesRequested].flat().join(", "),
+        rfqNumber: result.rfqNumber,
+      });
       sessionStorage.removeItem(DRAFT_KEY);
       sessionStorage.setItem(
         "damtech.rfqSuccess",

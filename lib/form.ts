@@ -5,6 +5,7 @@ export const SERVICE_OPTIONS = [
   "Fish pond / aquaculture tank",
   "Livestock water trough",
   "Bitumen waterproofing",
+  "Roof / home waterproofing",
   "Dam leak repair",
   "Reservoir repair",
   "Water storage consultation",

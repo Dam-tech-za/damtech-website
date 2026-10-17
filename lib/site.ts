@@ -11,17 +11,17 @@ export const siteConfig = {
   name: "Damtech",
   domain: resolveSiteOrigin(),
   defaultTitle:
-    "Dam Liners, Steel Water Tanks & Waterproofing | Damtech South Africa",
+    "Dam Liners, Steel Water Tanks & Waterproofing | Damtech",
   defaultDescription:
-    "Damtech installs HDPE and PVC dam liners, corrugated steel water tanks and bitumen waterproofing for farms, mines and estates across South Africa. Free quotes and site inspections.",
+    "HDPE and PVC dam liners, corrugated steel water tanks and waterproofing for farms, mines, businesses and homes across South Africa. Free quotes from Damtech.",
   defaultOgDescription:
-    "Damtech installs HDPE and PVC dam liners, corrugated steel water tanks and bitumen waterproofing for farms, mines and estates across South Africa. Free quotes and site inspections.",
+    "HDPE and PVC dam liners, corrugated steel water tanks and waterproofing for farms, mines, businesses and homes across South Africa. Free quotes from Damtech.",
   defaultOgTitle:
-    "Dam Liners, Steel Water Tanks & Waterproofing | Damtech South Africa",
+    "Dam Liners, Steel Water Tanks & Waterproofing | Damtech",
   defaultTwitterTitle:
-    "Dam Liners, Steel Water Tanks & Waterproofing | Damtech South Africa",
+    "Dam Liners, Steel Water Tanks & Waterproofing | Damtech",
   defaultTwitterDescription:
-    "Damtech installs HDPE and PVC dam liners, corrugated steel water tanks and bitumen waterproofing for farms, mines and estates across South Africa. Free quotes and site inspections.",
+    "HDPE and PVC dam liners, corrugated steel water tanks and waterproofing for farms, mines, businesses and homes across South Africa. Free quotes from Damtech.",
   phone: "+27 82 853 1026",
   email: "info@dam-tech.co.za",
   location: "South Africa",
@@ -181,8 +181,10 @@ export const SERVICES_DROPDOWN_LINKS: NavLink[] = [
   { href: "/steel-water-storage-tanks", label: "Steel Water Tanks & Prices" },
   { href: "/reservoir-lining", label: "Reservoir Lining" },
   { href: "/dam-repair-services", label: "Leaking Dam Repair" },
+  { href: "/dam-lining-cost-south-africa", label: "Dam Lining Cost Guide" },
   { href: "/farm-dam-liners", label: "Farm Dam Liners" },
   { href: "/mining-dam-liners", label: "Mining Dam Liners" },
+  { href: "/agricultural-water-storage", label: "Agricultural Water Storage" },
   { href: "/western-cape-dam-liners", label: "Western Cape Dam Liners" },
 ];
 
@@ -247,8 +249,10 @@ export const FOOTER_SERVICE_LINKS: NavLink[] = [
   { href: "/waterproofing", label: "Waterproofing" },
   { href: "/reservoir-lining", label: "Reservoir Lining" },
   { href: "/dam-repair-services", label: "Leaking Dam Repair" },
+  { href: "/dam-lining-cost-south-africa", label: "Dam Lining Cost Guide" },
   { href: "/farm-dam-liners", label: "Farm Dam Liners" },
   { href: "/mining-dam-liners", label: "Mining Dam Liners" },
+  { href: "/agricultural-water-storage", label: "Agricultural Water Storage" },
   { href: "/western-cape-dam-liners", label: "Western Cape Dam Liners" },
 ];
 

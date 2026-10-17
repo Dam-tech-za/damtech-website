@@ -7,7 +7,7 @@ import { createServiceRoleClient } from "@/lib/supabase/admin";
 import { createHash } from "node:crypto";
 
 export const metadata: Metadata = {
-  title: "Upload RFQ documents | Damtech",
+  title: { absolute: "Upload RFQ documents | Damtech" },
   robots: { index: false, follow: false },
 };
 

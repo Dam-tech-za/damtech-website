@@ -3,7 +3,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { getSupabaseAnonKey, getSupabaseUrl } from "@/lib/supabase/env";
 
 /**
- * Next.js 16 Proxy — session refresh + lightweight admin gate.
+ * Next.js 16 Proxy — session refresh + lightweight admin gate (admin/auth routes only).
  * Full authorisation still runs in Server Components via requireAdmin() and RLS.
  */
 export async function proxy(request: NextRequest) {
@@ -87,11 +87,10 @@ function isProtectedAdminPath(pathname: string): boolean {
 }
 
 export const config = {
-  matcher: [
-    /*
-     * Match all paths except static assets and Next internals.
-     * Admin auth refresh runs site-wide so cookies stay fresh.
-     */
-    "/((?!_next/static|_next/image|favicon.ico|images/|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico)$).*)",
-  ],
+  /*
+   * Only admin and auth routes need the Supabase session refresh. Running the
+   * proxy on public marketing pages added a Supabase auth round-trip to every
+   * page request and slowed time-to-first-byte for visitors.
+   */
+  matcher: ["/admin", "/admin/:path*", "/auth/:path*"],
 };

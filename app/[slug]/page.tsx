@@ -59,7 +59,14 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: Props) {
   const { slug } = await params;
   const post = getPostBySlug(slug);
-  if (!post) return {};
+  if (!post || RESERVED.has(slug)) {
+    // Unknown slugs render the 404 page — never inherit the homepage title/canonical.
+    return {
+      title: { absolute: "Page Not Found | Damtech" },
+      robots: { index: false, follow: true },
+      alternates: { canonical: null },
+    };
+  }
 
   return createMetadata({
     title: post.metaTitle || post.title,

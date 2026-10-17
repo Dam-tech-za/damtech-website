@@ -3,6 +3,8 @@ import { Inter } from "next/font/google";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics, AnalyticsNoScript } from "@/components/Analytics";
 import { ConditionalSiteShell } from "@/components/ConditionalSiteShell";
+import { PageShellBottom, PageShellTop } from "@/components/PageShell";
+import { SiteTracking } from "@/components/SiteTracking";
 import { SEOJsonLd } from "@/components/SEOJsonLd";
 import {
   createLocalBusinessSchema,
@@ -37,8 +39,25 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col font-sans">
         <AnalyticsNoScript />
         <SEOJsonLd data={globalSchemas} />
-        <ConditionalSiteShell>{children}</ConditionalSiteShell>
-        <Analytics />
+        <ConditionalSiteShell
+          beforeMain={
+            <>
+              <a href="#main-content" className="skip-link">
+                Skip to main content
+              </a>
+              <PageShellTop />
+            </>
+          }
+          afterMain={
+            <>
+              <PageShellBottom />
+              <Analytics />
+              <SiteTracking />
+            </>
+          }
+        >
+          {children}
+        </ConditionalSiteShell>
         <SpeedInsights />
       </body>
     </html>

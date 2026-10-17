@@ -7,7 +7,7 @@ import { OrderFormViewAnalytics } from "@/components/order/OrderAnalytics";
 import { resolveOrderSelectionFromParams } from "@/lib/orders";
 
 export const metadata: Metadata = {
-  title: "Place your order | Damtech",
+  title: { absolute: "Place your order | Damtech" },
   description:
     "Order a fixed-price supply-only kit and receive an invoice from DamTech. Payment is made against the invoice after your order has been confirmed.",
   robots: { index: false, follow: false, nocache: true },

@@ -176,6 +176,24 @@
 }
 
 @layer components {
+  /* Keyboard users: first focusable element jumps past the header navigation. */
+  .skip-link {
+    position: absolute;
+    left: 1rem;
+    top: -10rem;
+    z-index: 100;
+    border-radius: var(--radius-button);
+    background: var(--color-navy-dark);
+    color: #fff;
+    font-weight: 600;
+    padding: 0.75rem 1rem;
+  }
+  .skip-link:focus {
+    top: 1rem;
+    outline: 2px solid var(--color-accent-blue-light);
+    outline-offset: 2px;
+  }
+
   .btn {
     @apply inline-flex items-center justify-center gap-2 whitespace-nowrap font-semibold shadow-sm transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 disabled:pointer-events-none disabled:opacity-60;
     border-radius: var(--radius-button);
@@ -4113,6 +4131,27 @@
 
   .prose a {
     @apply font-medium text-water underline underline-offset-2 hover:text-navy;
+  }
+
+  /* Legacy blog tables: scroll inside the article instead of widening the page on phones. */
+  .prose table {
+    display: block;
+    max-width: 100%;
+    overflow-x: auto;
+    border-collapse: collapse;
+    margin: 1.5rem 0;
+    font-size: 0.9375rem;
+  }
+  .prose th,
+  .prose td {
+    border: 1px solid var(--border-subtle);
+    padding: 0.5rem 0.75rem;
+    text-align: left;
+    vertical-align: top;
+  }
+  .prose th {
+    background: #f1f5f9;
+    font-weight: 600;
   }
 
   .prose strong {

@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Hero } from "@/components/Hero";
 import { PageSeo } from "@/components/PageSeo";
 import { ProcessStepsSection } from "@/components/ProcessStepsSection";
@@ -18,12 +19,18 @@ import {
 import type { ProcessStep } from "@/lib/process-steps";
 import type { ServiceFaqItem, ServiceSection } from "@/lib/service-pages-content";
 import { createFaqPageSchema, createServiceSchema } from "@/lib/seo";
+import { whatsAppUrl } from "@/lib/site";
+import { WARRANTY_PUBLIC } from "@/lib/warranty";
 
 const seo = PAGE_SEO.waterproofing;
 
 export const metadata = createPageMetadata(seo);
 
-const AREA = "Pretoria and Gauteng";
+const AREA = "Pretoria and Gauteng; Betty's Bay, Kleinmond, Hermanus and Gansbaai (Overstrand, Western Cape)";
+
+const QUOTE_HREF = "/quote/?service=Roof+%2F+home+waterproofing";
+
+const WARRANTY_SUMMARY = `${WARRANTY_PUBLIC.bullets[0]}, plus ${WARRANTY_PUBLIC.bullets[1].charAt(0).toLowerCase()}${WARRANTY_PUBLIC.bullets[1].slice(1)}.`;
 
 const SECTIONS = [
   {
@@ -66,6 +73,14 @@ const SECTIONS = [
       "We check the roof, walls, balconies and plumbing penetrations, and we tell you if the leak is a waterproofing failure or something a plumber should fix first. Leak detection is part of the assessment, not a separate priced product on this page.",
     ],
   },
+  {
+    id: "overstrand",
+    heading: "Waterproofing in Betty's Bay, Kleinmond, Hermanus and Gansbaai",
+    paragraphs: [
+      "Damtech also works from Betty's Bay in the Western Cape, so we assess and waterproof homes in Betty's Bay, Kleinmond, Hermanus, Gansbaai and the surrounding Overstrand.",
+      "Coastal houses fail differently from Highveld houses. Most rain falls in winter, often driven sideways by strong wind, and salt air corrodes metal flashings, fixings and gutters. Wind-driven rain frequently enters through parapets, window heads and wall junctions rather than the roof covering, so we inspect the walls and flashings as well as the roof before recommending a system.",
+    ],
+  },
 ] satisfies ServiceSection[];
 
 const PROCESS_STEPS: readonly ProcessStep[] = [
@@ -74,7 +89,7 @@ const PROCESS_STEPS: readonly ProcessStep[] = [
     step: 1,
     title: "Tell us about the leak",
     description:
-      "Phone, WhatsApp or the quote form. Say where the house is in Pretoria or Gauteng, and send photos of the stain, roof or damp wall.",
+      "Phone, WhatsApp or the quote form. Tell us where the house is and send photos of the stain, roof or damp wall.",
     Icon: FileTextIcon,
   },
   {
@@ -98,7 +113,7 @@ const PROCESS_STEPS: readonly ProcessStep[] = [
     step: 4,
     title: "Waterproofing and handover",
     description:
-      "We prepare the surface, install the system, and leave the area weather-tight. Warranty: 10-year manufacturer's material warranty where stated, plus 12 months workmanship.",
+      "We prepare the surface, install the agreed system and leave the area weather-tight. Warranty terms are confirmed in your written quote.",
     Icon: CheckCircleIcon,
   },
 ];
@@ -108,6 +123,11 @@ const FAQS: ServiceFaqItem[] = [
     question: "Do you waterproof homes in Pretoria and Gauteng?",
     answer:
       "Yes. We waterproof houses, townhouses and small residential buildings in Pretoria, Centurion, Johannesburg and the rest of Gauteng. Farm dams and cement reservoirs are a separate service.",
+  },
+  {
+    question: "Do you work in Hermanus and the Overstrand?",
+    answer:
+      "Yes. From our Betty's Bay base we assess and waterproof homes in Betty's Bay, Kleinmond, Hermanus, Gansbaai and nearby Overstrand towns.",
   },
   {
     question: "Can you stop a leaking roof without rebuilding it?",
@@ -131,8 +151,7 @@ const FAQS: ServiceFaqItem[] = [
   },
   {
     question: "What warranty do you give?",
-    answer:
-      "10-year manufacturer's material warranty where stated, plus 12 months workmanship.",
+    answer: `${WARRANTY_SUMMARY} Coverage, exclusions and maintenance requirements are confirmed in your written quote.`,
   },
 ];
 
@@ -167,12 +186,23 @@ export default function WaterproofingPage() {
       />
       <Hero
         compact
-        showActions={false}
-        eyebrow="Pretoria · Gauteng · Homes"
+        eyebrow="Homes · Pretoria · Gauteng · Overstrand"
         title={seo.h1}
-        description="We waterproof leaking roofs, flat roofs, parapets, damp walls, balconies and showers for homeowners in Pretoria and Gauteng. Ask for a free assessment and written quote."
+        description="We waterproof leaking roofs, flat roofs, parapets, damp walls, balconies and showers for homeowners in Pretoria and Gauteng, and in Betty's Bay to Gansbaai in the Overstrand. Ask for a free assessment and written quote."
         breadcrumbs={breadcrumbs}
-      />
+      >
+        <Link href={QUOTE_HREF} className="hero-btn-primary w-full sm:w-auto">
+          Request a free assessment
+        </Link>
+        <a
+          href={whatsAppUrl}
+          className="hero-btn-secondary w-full sm:w-auto"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          WhatsApp photos of the leak
+        </a>
+      </Hero>
       <ServiceProseSections sections={SECTIONS} />
       <ProcessStepsSection
         steps={PROCESS_STEPS}
@@ -182,11 +212,11 @@ export default function WaterproofingPage() {
       <SiteSection>
         <SectionCta
           title="Book a free assessment"
-          description="Tell us about the leaking roof or damp wall. We will arrange a free assessment and written quote for your home in Pretoria or Gauteng. Warranty: 10-year manufacturer's material warranty where stated, plus 12 months workmanship."
-          primaryHref="/quote/"
+          description={`Tell us about the leaking roof or damp wall and we will arrange a free assessment and written quote. ${WARRANTY_SUMMARY}`}
+          primaryHref={QUOTE_HREF}
           primaryLabel="Request a written quote"
-          secondaryHref="/torch-on-dam-lining/"
-          secondaryLabel="Cement dam lining"
+          secondaryHref="/contact/"
+          secondaryLabel="Call or email Damtech"
         />
       </SiteSection>
       <ServiceFaqSection
@@ -199,7 +229,8 @@ export default function WaterproofingPage() {
         links={[
           { href: "/torch-on-dam-lining/", label: "Torch-on dam lining" },
           { href: "/dam-liners/", label: "Dam liners" },
-          { href: "/quote/", label: "Request a written quote" },
+          { href: QUOTE_HREF, label: "Request a written quote" },
+          { href: "/faq/", label: "Waterproofing and dam lining FAQ" },
           { href: "/contact/", label: "Contact Damtech" },
         ]}
       />

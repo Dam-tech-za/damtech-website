@@ -28,6 +28,8 @@ import {
   TIMEFRAME_OPTIONS,
 } from "@/lib/form";
 import { phoneTel, siteConfig, whatsAppUrl } from "@/lib/site";
+import { appendLeadAttribution } from "@/lib/analytics/attribution-client";
+import { trackLeadSubmitted } from "@/lib/analytics/events";
 
 type SimpleQuoteFormProps = {
   title?: string;
@@ -36,6 +38,8 @@ type SimpleQuoteFormProps = {
   submitLabel?: string;
   id?: string;
   catalogueLine?: CatalogueLineSnapshot | null;
+  /** Preselects the service dropdown (e.g. from `/quote/?service=…`). Must be a SERVICE_OPTIONS value. */
+  defaultService?: string;
 };
 
 function Field({
@@ -66,6 +70,7 @@ function Field({
 function pushQuoteAnalytics(
   rfqNumber: string,
   catalogueLine?: CatalogueLineSnapshot | null,
+  service?: string,
 ) {
   if (typeof window === "undefined") return;
   const w = window as Window & {
@@ -80,11 +85,14 @@ function pushQuoteAnalytics(
     rfq_number: rfqNumber,
   });
   if (catalogueLine) {
+    // Catalogue requests already send generate_lead with ecommerce item data.
     const item = buildCatalogueAnalyticsFromLine(catalogueLine);
     pushCatalogueAnalytics(CATALOGUE_ANALYTICS_EVENTS.generateLead, item, {
       rfq_number: rfqNumber,
     });
+    return;
   }
+  trackLeadSubmitted({ form: "simple_quote", service, rfqNumber });
 }
 
 export function SimpleQuoteForm({
@@ -94,11 +102,12 @@ export function SimpleQuoteForm({
   submitLabel = "Request a Free Quote",
   id = "simple-quote-form",
   catalogueLine = null,
+  defaultService = "",
 }: SimpleQuoteFormProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
-  const [service, setService] = useState(catalogueLine?.rfqService ?? "");
+  const [service, setService] = useState(catalogueLine?.rfqService ?? defaultService);
   const [formStartedAt] = useState(() => Date.now());
   const [submissionId] = useState(() => crypto.randomUUID());
   const isInvoiceRequest = Boolean(catalogueLine);
@@ -109,7 +118,9 @@ export function SimpleQuoteForm({
       service === "Dam leak repair" ||
       service === "Reservoir repair";
     const tank = service === "Steel water tank";
-    const waterproof = service === "Bitumen waterproofing";
+    const waterproof =
+      service === "Bitumen waterproofing" ||
+      service === "Roof / home waterproofing";
     return { lining, tank, waterproof };
   }, [service]);
 
@@ -123,6 +134,7 @@ export function SimpleQuoteForm({
     setError(null);
     const form = event.currentTarget;
     const formData = new FormData(form);
+    appendLeadAttribution(formData);
 
     startTransition(async () => {
       const result = await submitSimpleQuote(formData, sourcePage);
@@ -147,7 +159,11 @@ export function SimpleQuoteForm({
               ),
             }
           : null;
-      pushQuoteAnalytics(result.rfqNumber, submittedLine);
+      pushQuoteAnalytics(
+        result.rfqNumber,
+        submittedLine,
+        String(formData.get("serviceRequired") ?? ""),
+      );
       const params = new URLSearchParams({
         ref: result.rfqNumber,
         upload: result.uploadToken,

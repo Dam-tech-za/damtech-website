@@ -36,7 +36,7 @@ export type SubServicePageConfig = {
 
 export const HDPE_DAM_LINING_PAGE: SubServicePageConfig = {
   slug: "hdpe-dam-lining",
-  title: "HDPE Dam Lining | Geomembrane Installation South Africa | Damtech",
+  title: "HDPE Dam Lining South Africa | Geomembrane | Damtech",
   description:
     "HDPE geomembrane dam lining in 1 mm–2 mm for farm dams, irrigation reservoirs and mining ponds. Welded seams, tested joints and installation across South Africa.",
   h1: "HDPE Dam Lining",
@@ -317,7 +317,7 @@ export const DAM_REPAIR_SERVICES_PAGE: SubServicePageConfig = {
   slug: "dam-repair-services",
   title: "Leaking Dam Repair & Liner Repairs | Damtech South Africa",
   description:
-    "Leaking farm dam? Damtech finds and repairs liner punctures, failed seams and seepage on earth dams, cement dams and reservoirs across South Africa. Free assessment.",
+    "Leaking farm dam? Damtech finds and repairs liner punctures, failed seams and seepage on earth dams, cement dams and reservoirs. Free assessment.",
   h1: "Leaking Dam Repair Services",
   image: IMAGE_PATHS.damLiningMaintenanceInspection1,
   serviceName: "Leaking Dam Repair",
@@ -545,9 +545,9 @@ export const RESERVOIR_LINING_PAGE: SubServicePageConfig = {
 
 export const DAM_LINING_COST_PAGE: SubServicePageConfig = {
   slug: "dam-lining-cost-south-africa",
-  title: "Dam Lining Cost South Africa | HDPE & PVC Pricing Factors",
+  title: "Dam Lining Cost South Africa | What Affects Price",
   description:
-    "Understand dam lining cost factors in South Africa, including liner type, dam size, site preparation, thickness, access and installation requirements. Request a tailored quote.",
+    "What drives dam lining cost in South Africa: liner type and thickness, dam size, site preparation, access and installation. Request a tailored quote.",
   h1: "Dam Lining Cost in South Africa",
   image: IMAGE_PATHS.hdpeLinedFarmReservoirCattle,
   serviceName: "Dam Lining Cost Guidance",

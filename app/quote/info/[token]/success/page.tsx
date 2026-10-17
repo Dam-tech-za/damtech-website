@@ -7,7 +7,7 @@ type PageProps = {
 export default async function PublicInfoSuccessPage({ params }: PageProps) {
   await params;
   return (
-    <main className="section section--narrow">
+    <div className="section section--narrow">
       <h1>Thank you</h1>
       <p>
         Your information has been received. A Damtech estimator will continue
@@ -16,6 +16,6 @@ export default async function PublicInfoSuccessPage({ params }: PageProps) {
       <p>
         <Link href="/">Return home</Link>
       </p>
-    </main>
+    </div>
   );
 }

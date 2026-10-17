@@ -6,7 +6,7 @@ import { shortIncidentRef } from "@/lib/rfq/submission-result";
 import { phoneTel, siteConfig, whatsAppUrl } from "@/lib/site";
 
 export const metadata: Metadata = {
-  title: "Order received via backup channel | Damtech",
+  title: { absolute: "Order received via backup channel | Damtech" },
   robots: { index: false, follow: false },
 };
 
