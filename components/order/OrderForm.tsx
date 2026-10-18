@@ -1,5 +1,6 @@
 "use client";
 
+import { checkRequiredFields } from "@/lib/form-required";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
@@ -78,6 +79,11 @@ export function OrderForm({ snapshot }: { snapshot: OrderPriceSnapshot }) {
     if (isPending) return;
     setError(null);
     const form = event.currentTarget;
+    const missing = checkRequiredFields(form);
+    if (missing) {
+      setError(missing);
+      return;
+    }
     const formData = new FormData(form);
     startTransition(async () => {
       const result = await submitCatalogueOrder(formData);
@@ -197,9 +203,9 @@ export function OrderForm({ snapshot }: { snapshot: OrderPriceSnapshot }) {
             </Field>
             <Field
               id="phone"
-              label="South African mobile number"
+              label="Phone number"
               required
-              hint="International formatting is accepted."
+              hint="South African mobile or landline; international numbers with + are also accepted."
             >
               <input
                 id="phone"

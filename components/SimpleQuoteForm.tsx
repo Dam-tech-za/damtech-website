@@ -1,5 +1,6 @@
 "use client";
 
+import { checkRequiredFields } from "@/lib/form-required";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
@@ -156,6 +157,11 @@ export function SimpleQuoteForm({
     event.preventDefault();
     setError(null);
     const form = event.currentTarget;
+    const missing = checkRequiredFields(form);
+    if (missing) {
+      setError(missing);
+      return;
+    }
     const formData = new FormData(form);
     appendLeadAttribution(formData);
 

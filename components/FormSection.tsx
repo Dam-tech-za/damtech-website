@@ -1,5 +1,6 @@
 "use client";
 
+import { checkRequiredFields } from "@/lib/form-required";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState, useTransition, type ReactNode } from "react";
 import { submitLead } from "@/app/actions/submit-lead";
@@ -92,6 +93,11 @@ export function FormSection({
     setError(null);
 
     const form = event.currentTarget;
+    const missing = checkRequiredFields(form);
+    if (missing) {
+      setError(missing);
+      return;
+    }
     const formData = new FormData(form);
     appendLeadAttribution(formData);
 

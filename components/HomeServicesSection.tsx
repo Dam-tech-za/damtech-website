@@ -114,7 +114,7 @@ export function HomeServicesSection() {
                 {card.image ? (
                   <Image
                     src={card.image.image}
-                    alt=""
+                    alt={card.image.alt}
                     fill
                     loading="lazy"
                     sizes="(max-width: 767px) 100vw, 33vw"
