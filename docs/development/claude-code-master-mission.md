@@ -46,3 +46,6 @@ Full live crawl (153 URLs), old-vs-new SEO comparison, GSC/GA4 analysis, keyword
 6. Consider `display: "optional"` for Archivo to remove font-swap CLS (brand trade-off).
 
 Restart: `git checkout claude/project-thread-mfiulx && npm run build && npx next start -p 3100`; SEO check: `node scripts/seo-snapshot.mjs http://127.0.0.1:3100 after.json && node scripts/seo-snapshot.mjs --diff docs/seo/snapshots/baseline.json after.json`.
+
+## Admin reconstruction (18 Oct 2026, branch claude/project-thread-s3q680)
+Navigation, save feedback, enquiry/order workflow fixes and a live "Needs attention" overview. Commits c9d698a, ebf8668, ebca3ec, 9badf84. Report: `docs/admin-completion-report.md`; defects: `docs/admin-audit.md`; tests: `docs/admin-test-results.md`. Not deployed. Authenticated click-through still blocked on a test login + Supabase branch. Advisor fix drafted, not applied: `docs/admin/proposed-advisor-fixes.sql`.

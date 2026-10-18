@@ -34,7 +34,7 @@ A temporary page outside `/admin` (deleted before commit, never pushed) rendered
 | Save: "Saving…" while pending, then "Status changed to Reviewing." | Pass |
 | Failed save: message announced as an alert, typed text kept | Pass |
 | Status select keeps the saved value after success | Pass |
-| Layout at 1440 / 768 / 390 px | Screenshots in `docs/design/screenshots/admin/` (the public header/footer around them are an artefact of the temporary page) |
+| Layout at 1440 / 768 / 390 px | Screenshots in `docs/design/screenshots/admin/` (local only, that folder is gitignored; sent to the owner in the project thread). The public header/footer around them are an artefact of the temporary page. |
 | Console errors from admin components | None (only local-only Vercel Speed Insights 404 and Meta Pixel bot-blocking noise from the public shell) |
 
 ## Not executed — blocked
