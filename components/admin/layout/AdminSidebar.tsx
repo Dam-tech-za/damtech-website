@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { AdminNavItem, AdminNavItemId } from "@/lib/auth/types";
+import { activeNavItemId, groupNavItems } from "@/lib/admin/navigation";
 
 type AdminSidebarProps = {
   items: AdminNavItem[];
@@ -7,31 +8,6 @@ type AdminSidebarProps = {
   collapsed?: boolean;
   onToggleCollapse?: () => void;
 };
-
-type NavGroup = {
-  id: string;
-  label: string;
-  itemIds: AdminNavItemId[];
-};
-
-const NAV_GROUPS: NavGroup[] = [
-  { id: "overview", label: "Overview", itemIds: ["dashboard"] },
-  {
-    id: "sales",
-    label: "Sales",
-    itemIds: ["rfqs", "quotes", "customers"],
-  },
-  {
-    id: "estimating",
-    label: "Estimating",
-    itemIds: ["pricing", "project-templates", "suppliers"],
-  },
-  {
-    id: "administration",
-    label: "Administration",
-    itemIds: ["settings", "audit"],
-  },
-];
 
 function NavIcon({ id }: { id: AdminNavItemId }) {
   const common = {
@@ -60,6 +36,13 @@ function NavIcon({ id }: { id: AdminNavItemId }) {
         <svg {...common}>
           <path d="M7 3h8l4 4v14H7V3Z" stroke="currentColor" strokeWidth="1.7" />
           <path d="M15 3v4h4M10 13h6M10 17h4" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
+        </svg>
+      );
+    case "orders":
+      return (
+        <svg {...common}>
+          <path d="M4 8l8-4 8 4v8l-8 4-8-4V8Z" stroke="currentColor" strokeWidth="1.7" strokeLinejoin="round" />
+          <path d="M4 8l8 4 8-4M12 12v8" stroke="currentColor" strokeWidth="1.7" strokeLinejoin="round" />
         </svg>
       );
     case "customers":
@@ -108,27 +91,15 @@ function NavIcon({ id }: { id: AdminNavItemId }) {
   }
 }
 
-function isActive(pathname: string, href: string): boolean {
-  if (href === "/admin/") {
-    return pathname === "/admin" || pathname === "/admin/";
-  }
-  return (
-    pathname === href ||
-    pathname === href.replace(/\/$/, "") ||
-    pathname.startsWith(href)
-  );
-}
-
 function SidebarLink({
   item,
-  pathname,
+  active,
   collapsed,
 }: {
   item: AdminNavItem;
-  pathname: string;
+  active: boolean;
   collapsed: boolean;
 }) {
-  const active = isActive(pathname, item.href);
 
   return (
     <li>
@@ -186,7 +157,7 @@ export function AdminSidebar({
   collapsed = false,
   onToggleCollapse,
 }: AdminSidebarProps) {
-  const byId = new Map(items.map((item) => [item.id, item]));
+  const activeId = activeNavItemId(pathname, items);
 
   return (
     <aside
@@ -225,17 +196,13 @@ export function AdminSidebar({
               <SidebarLink
                 key={item.id}
                 item={item}
-                pathname={pathname}
+                active={item.id === activeId}
                 collapsed
               />
             ))}
           </ul>
         ) : (
-          NAV_GROUPS.map((group) => {
-            const groupItems = group.itemIds
-              .map((id) => byId.get(id))
-              .filter((item): item is AdminNavItem => Boolean(item));
-            if (!groupItems.length) return null;
+          groupNavItems(items).map(({ group, items: groupItems }) => {
             return (
               <div key={group.id} className="admin-sidebar__group">
                 <p className="admin-sidebar__group-label">{group.label}</p>
@@ -244,7 +211,7 @@ export function AdminSidebar({
                     <SidebarLink
                       key={item.id}
                       item={item}
-                      pathname={pathname}
+                      active={item.id === activeId}
                       collapsed={false}
                     />
                   ))}

@@ -37,27 +37,27 @@ const NAV_ACCESS: Record<AdminNavItemId, readonly AdminRole[]> = {
 export const ADMIN_NAV_ITEMS: AdminNavItem[] = [
   {
     id: "dashboard",
-    label: "Dashboard",
+    label: "Overview",
     href: "/admin/",
-    description: "Operations overview",
+    description: "What needs attention",
   },
   {
     id: "rfqs",
-    label: "RFQs",
+    label: "Enquiries",
     href: "/admin/rfqs/",
-    description: "Incoming enquiries",
+    description: "Website quote requests (RFQs)",
   },
   {
     id: "quotes",
-    label: "Quotes",
+    label: "Quotations",
     href: "/admin/quotes/",
-    description: "Draft and sent",
+    description: "Draft and sent quotes",
   },
   {
     id: "orders",
     label: "Orders",
     href: "/admin/orders/",
-    description: "Catalogue kit orders",
+    description: "Online tank kit orders",
   },
   {
     id: "customers",
@@ -73,7 +73,7 @@ export const ADMIN_NAV_ITEMS: AdminNavItem[] = [
   },
   {
     id: "project-templates",
-    label: "Project Templates",
+    label: "Project templates",
     href: "/admin/pricing/project-templates/",
     description: "Reusable estimating content",
   },
@@ -91,7 +91,7 @@ export const ADMIN_NAV_ITEMS: AdminNavItem[] = [
   },
   {
     id: "audit",
-    label: "Audit Log",
+    label: "Audit log",
     href: "/admin/audit/",
     description: "Change history",
   },

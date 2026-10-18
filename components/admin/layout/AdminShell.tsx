@@ -7,6 +7,7 @@ import {
   readSidebarCollapsedPreference,
   writeSidebarCollapsedPreference,
 } from "@/lib/admin/sidebar-preference";
+import { adminBreadcrumbs, adminPageTitle } from "@/lib/admin/navigation";
 import { AdminHeader } from "./AdminHeader";
 import { AdminMobileSidebar } from "./AdminMobileSidebar";
 import { AdminSidebar } from "./AdminSidebar";
@@ -15,10 +16,7 @@ import { AdminMain, AdminMainContent } from "./AdminMain";
 type AdminShellProps = {
   profile: AdminProfile;
   navItems: AdminNavItem[];
-  title: string;
-  breadcrumbs: { label: string; href?: string }[];
   children: ReactNode;
-  showHeaderTitle?: boolean;
 };
 
 const SIDEBAR_STORE_KEY = "damtech-admin-sidebar-store";
@@ -54,12 +52,14 @@ function getSidebarCollapsedServerSnapshot() {
 export function AdminShell({
   profile,
   navItems,
-  title,
-  breadcrumbs,
   children,
-  showHeaderTitle = false,
 }: AdminShellProps) {
+  // Derived on the client: the layout does not re-render on navigation, so
+  // server-computed breadcrumbs would go stale after the first page.
   const pathname = usePathname() || "/admin/";
+  const title = adminPageTitle(pathname);
+  const breadcrumbs = adminBreadcrumbs(pathname);
+  const showHeaderTitle = pathname === "/admin" || pathname === "/admin/";
   const collapsed = useSyncExternalStore(
     subscribeSidebarPreference,
     getSidebarCollapsedSnapshot,

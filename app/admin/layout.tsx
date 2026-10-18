@@ -22,46 +22,6 @@ export const metadata: Metadata = {
 
 const PUBLIC_ADMIN_PREFIXES = ["/admin/login", "/admin/unauthorised"];
 
-function breadcrumbsFromPath(pathname: string): { label: string; href?: string }[] {
-  const crumbs: { label: string; href?: string }[] = [{ label: "Admin", href: "/admin/" }];
-  const rest = pathname.replace(/^\/admin\/?/, "").replace(/\/$/, "");
-  if (!rest) return crumbs;
-
-  const segments = rest.split("/").filter(Boolean);
-  const labels: Record<string, string> = {
-    rfqs: "RFQs",
-    quotes: "Quotes",
-    orders: "Orders",
-    customers: "Customers",
-    pricing: "Pricing",
-    import: "CSV Import",
-    history: "Import History",
-    materials: "Materials",
-    labour: "Labour",
-    travel: "Travel & Delivery",
-    services: "Services & Installation",
-    equipment: "Equipment & Site Costs",
-    "tank-models": "Tank Models",
-    "project-templates": "Project Templates",
-    review: "Price Review",
-    new: "New Quote",
-    edit: "Edit Quote",
-    preview: "Preview",
-    estimating: "Estimating Rules",
-  };
-
-  let path = "/admin";
-  segments.forEach((segment, index) => {
-    path += `/${segment}`;
-    const label = labels[segment] ?? segment.replace(/-/g, " ");
-    const entry: { label: string; href?: string } = { label };
-    if (index < segments.length - 1) entry.href = `${path}/`;
-    crumbs.push(entry);
-  });
-
-  return crumbs;
-}
-
 export default async function AdminLayout({
   children,
 }: {
@@ -93,38 +53,12 @@ export default async function AdminLayout({
     redirect("/admin/unauthorised/");
   }
 
-  const title = titleFromPath(pathname);
-  const breadcrumbs = breadcrumbsFromPath(pathname);
-
   return (
     <AdminShell
       profile={admin.profile}
       navItems={getNavItemsForRole(admin.profile.role)}
-      title={title}
-      breadcrumbs={breadcrumbs}
-      showHeaderTitle={pathname === "/admin" || pathname === "/admin/"}
     >
       {children}
     </AdminShell>
   );
-}
-
-function titleFromPath(pathname: string): string {
-  if (pathname === "/admin" || pathname === "/admin/") return "Dashboard";
-  const segment = pathname.replace(/^\/admin\/?/, "").split("/")[0];
-  if (!segment) return "Dashboard";
-  const labels: Record<string, string> = {
-    rfqs: "RFQs",
-    quotes: "Quotes",
-    orders: "Orders",
-    customers: "Customers",
-    pricing: "Pricing",
-    settings: "Settings",
-    audit: "Audit Log",
-  };
-  if (labels[segment]) return labels[segment];
-  return segment
-    .split("-")
-    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
-    .join(" ");
 }
