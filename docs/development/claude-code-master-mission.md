@@ -1,6 +1,6 @@
 # Claude Code master mission — live ledger
 
-Owner brief: `docs/development/owner-master-mission-2026-10-18.md`. Branch: `claude/project-thread-mfiulx` (from `main` @ 8d1acc8). Nothing deployed to production.
+Owner brief: `docs/development/owner-master-mission-2026-10-18.md`. Branch: `claude/project-thread-mfiulx` (from `main` @ 8d1acc8). **Deployed to production 18 Oct 2026** (owner approved): merge `0f2db92` on `main`. See `docs/development/release-verification.md`.
 
 ## Takeover findings (18 Oct 2026)
 - Cowork bundle (`_claude_transfer/damtech-optimisation.bundle`, head 1ffa0ce) and change archive (`damtech-all-changes.tgz`, 88 files) are **already fully contained in `main`** (byte-identical / ancestor content). Status: *verified integrated*. No Cowork work at risk.
@@ -34,7 +34,7 @@ Owner brief: `docs/development/owner-master-mission-2026-10-18.md`. Branch: `cla
 - Lighthouse not installed; lab probe used instead.
 
 ## Next exact actions
-1. Open draft PR (compare link) and get owner review of the Vercel preview.
+1. Monitor the first live enquiries in the admin (email + province now required; Enquiry source panel).
 2. Admin: with test credentials/`.env.local`, click through RFQ inbox + detail (check the new Enquiry source panel) using a non-production residential test enquiry; draft (not apply) the advisor-fix migration.
 3. Lighthouse (mobile + desktop, 5 runs) on preview vs production.
 4. Remaining polish: calculator widget internals, product detail body, blog index cards. Owner to say whether the footer wordmark should also go.
