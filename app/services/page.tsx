@@ -1,4 +1,5 @@
 import { Hero } from "@/components/Hero";
+import { SITE_IMAGES } from "@/lib/images";
 
 import { PageSeo } from "@/components/PageSeo";
 
@@ -101,9 +102,8 @@ export default function ServicesPage() {
 
 
       <Hero
-
         compact
-
+        image={SITE_IMAGES.torchOnConcreteDam}
         eyebrow="Nationwide contractor"
 
         title={seo.h1}

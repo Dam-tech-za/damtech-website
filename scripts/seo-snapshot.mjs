@@ -36,13 +36,13 @@ async function snapshot(baseUrl, outFile) {
 
   for (const path of paths) {
     const page = await desktop.newPage();
-    const response = await page.goto(`${base}${path}`, { waitUntil: "domcontentloaded" });
+    const response = await page.goto(`${base}${path}`, { waitUntil: "networkidle" });
     const data = await page.evaluate(extractPage);
     data.status = response?.status() ?? 0;
     await page.close();
 
     const mPage = await mobile.newPage();
-    await mPage.goto(`${base}${path}`, { waitUntil: "domcontentloaded" });
+    await mPage.goto(`${base}${path}`, { waitUntil: "networkidle" });
     data.mobileVisibleText = await mPage.evaluate(visibleText);
     data.desktopVisibleText = data.visibleText;
     delete data.visibleText;

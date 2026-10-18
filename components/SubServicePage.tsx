@@ -67,6 +67,7 @@ export function SubServicePage({ page }: SubServicePageProps) {
 
       <Hero
         compact
+        image={fallbackImage}
         eyebrow={page.heroEyebrow}
         title={page.h1}
         description={page.heroDescription}

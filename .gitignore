@@ -48,3 +48,4 @@ next-env.d.ts
 docs/design/screenshots/
 scripts/_*.tmp.*
 _claude_transfer/
+.baseline-src/

@@ -15,6 +15,7 @@ import {
 } from "@/lib/seo";
 import "./globals.css";
 import "./brand.css";
+import "./brand-pages.css";
 
 const inter = Inter({
   subsets: ["latin"],
