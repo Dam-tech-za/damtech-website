@@ -1658,6 +1658,9 @@ body:has(.dt-hero) .site-header-spacer {
   text-decoration: none;
   font-size: 0.92rem;
   transition: color 0.2s var(--dt-ease);
+  /* ≥24 px tap height (WCAG 2.5.8) for phone/email links on touch screens */
+  display: inline-block;
+  padding-block: 0.1875rem;
 }
 
 .dt-footer__list a:hover,
