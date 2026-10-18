@@ -209,3 +209,51 @@ test.describe("calculator hub", () => {
     await expect(daily).toHaveValue("");
   });
 });
+
+test.describe("follow-up fixes (owner test report 18 Oct)", () => {
+  test("bare /order/ link goes to the tank catalogue instead of 'Kit not found'", async ({ page }) => {
+    await page.goto("/order/");
+    await expect(page).toHaveURL(/\/steel-water-storage-tanks\/$/);
+  });
+
+  test("404 has one robots tag and no canonical", async ({ page }) => {
+    await page.goto("/definitely-not-a-damtech-page/");
+    await page.waitForLoadState("networkidle");
+    await expect(page.locator('meta[name="robots"]')).toHaveCount(1);
+    await expect(page.locator('link[rel="canonical"]')).toHaveCount(0);
+  });
+
+  test("noindex utility pages no longer declare the home page as canonical", async ({ page }) => {
+    await page.goto("/quote/success/");
+    const canonicals = await page
+      .locator('link[rel="canonical"]')
+      .evaluateAll((links) => links.map((l) => l.getAttribute("href")));
+    for (const c of canonicals) expect(c).not.toMatch(/dam-tech\.co\.za\/$/);
+  });
+
+  test("share images are 1200×630 JPEGs under 300 KB", async ({ page, request }) => {
+    await page.goto("/");
+    const og = await page.locator('meta[property="og:image"]').getAttribute("content");
+    expect(og).toMatch(/\/og\/.+\.jpg$/);
+    const res = await request.get(new URL(og!).pathname);
+    expect(res.headers()["content-type"]).toBe("image/jpeg");
+    expect((await res.body()).length).toBeLessThan(300 * 1024);
+  });
+
+  test("contact form lists every missing required field at once (no submit)", async ({ page }) => {
+    await page.goto("/contact/");
+    const form = page.locator("form").filter({ has: page.locator('input[name="email"]') }).first();
+    await form.locator('button[type="submit"]').click();
+    const alert = page.getByText(/Please complete these fields:/);
+    await expect(alert).toBeVisible();
+    await expect(alert).toContainText("Name");
+    await expect(alert).toContainText("Email");
+    await expect(alert).toContainText("Province");
+    await expect(form.locator('[name="name"]')).toBeFocused();
+  });
+
+  test("sitemap gives every URL a lastmod", async ({ request }) => {
+    const xml = await (await request.get("/sitemap.xml")).text();
+    expect((xml.match(/<url>/g) ?? []).length).toBe((xml.match(/<lastmod>/g) ?? []).length);
+  });
+});

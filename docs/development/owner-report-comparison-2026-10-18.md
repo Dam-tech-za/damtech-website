@@ -1,0 +1,30 @@
+# Owner test report vs audit — comparison and actions (18 Oct 2026)
+
+The owner tested the live forms with real submissions and ran an external SEO/regional report. Each point was checked against code or the live site, then fixed, planned or explained.
+
+| Owner finding | Verified? | Action | Status |
+|---|---|---|---|
+| `/contact/` shows success but sends no email | **Yes** — `app/actions/submit-lead.ts` saved the RFQ but never called the email senders (simple quote and wizard did) | Shared `lib/rfq/notify-public-rfq.ts` (moved verbatim from the simple-quote action) now used by both simple quote and contact; guard test `lib/rfq/contact-notify.test.ts` | Implemented, unit-tested; live email needs deploy |
+| RFQ-2026-00038, -00043, -00046, -00050 missing from info@ | Consistent with the contact-form bug (those RFQs were saved without email). **Not confirmed**: database reads are blocked for this session | Owner: open each in Admin → RFQs and check "Enquiry source" = `/contact/`; reply to any genuine customers | Blocked (DB access) |
+| Cancel test order DT-20261018-8VW2JHQC | — | Normal path: Admin → Orders → open the order → Status = **cancelled** → Update status (no delete). Not done here: no admin login and DB writes blocked | Owner action |
+| CSP blocks GA hits and Meta Pixel | **Yes for GA4**: hits to `analytics.google.com/g/collect` and `www.google.co.za/ads/ga-audiences` were refused (bare host not covered by `*.analytics.google.com`) | `next.config.ts`: added `analytics.google.com`, `www.google.co.za`, `*.facebook.com` (img/connect) and `www.facebook.com` frame. Local check: 0 CSP violations, GA hits reach the network | Implemented, tested locally |
+| Meta Pixel lost | Pixel script and config load with no CSP violation; no PageView beacon seen in headless Chrome (likely bot detection) | Verify in Meta Events Manager after deploy | Not verifiable here |
+| Forms show missing fields one at a time; email asked before name | Yes — server returns one error, email checked first | `lib/form-required.ts`: before sending, simple quote, contact and order forms list every missing/invalid required field in form order and focus the first. Server checks unchanged | Implemented, e2e-tested |
+| Order phone label vs help text | Yes | Label "Phone number"; hint "South African mobile or landline; international numbers with + are also accepted." (matches server rule) | Implemented |
+| No call-back form, property type, "How did you hear about us?" | Yes (features absent) | Plan P2-7 — needs DB columns and admin display; not built in this pass | Planned |
+| `/order/` broken | `/order/` without `?sku=` showed "Kit not found" and inherited canonical `/` | Bare `/order/` redirects to `/steel-water-storage-tanks/`; root-level canonical removed so noindex utility pages no longer claim `/` | Implemented, e2e-tested |
+| Share images 1.7–2.8 MB | Yes (WebP originals up to 4032×3024) | `scripts/build-og-images.mjs` writes 1200×630 JPEG copies to `public/og/` (56–174 KB). Originals in `public/images/` untouched | Implemented, e2e-tested |
+| 16 images with no alt | They had `alt=""` (decorative duplicates) | Home service tiles and product thumbnails now use their real alt text | Implemented |
+| `/contact/` skips a heading level | Yes in server HTML: the H2 form heading renders client-side, leaving H1 → H3 | "Prefer to talk first?" is now an H2 (wording unchanged) | Implemented |
+| 5 titles / 12 descriptions too long or short | Audit found 4 titles (61–66 chars; 2 legal pages 23–24) and 3 descriptions (161–165) outside common limits | **Not changed**: all within or within a few characters of Google's pixel limit, the longest is the top-traffic tank page, and `lib/seo.ts` records a standing decision not to shorten approved metas. Revisit only with SERP evidence of truncation harm | Explained |
+| lastmod on only 22/75 sitemap URLs | Yes | `PAGES_LAST_MODIFIED` (18 Oct 2026) on all non-blog entries; posts keep their own dates. Must be bumped on real content changes, never set to build time | Implemented |
+| 404 had two robots tags | Yes (layout + `[slug]` metadata) and a canonical on some 404s | One robots tag, no canonical | Implemented, e2e-tested |
+| Mobile LCP 3.2 s, mostly GTM | Measured locally (4× CPU, 1.6 Mbps): LCP 1.88 s with tags vs 1.86 s with tags blocked — tags don't delay LCP; they add ~410 ms TBT and ~720 KB JS | GTM stays `afterInteractive`. Lazy-loading it would drop early-bounce sessions from attribution (standing rule: don't weaken attribution for lab scores) with no LCP gain. Lighthouse's 3.2 s is simulated throttling | Explained |
+| Betty's Bay not in any H1 | Yes | `/waterproofing-overstrand/` H1 → "Waterproofing in Betty's Bay, Hermanus and the Overstrand" (title already led with Betty's Bay) | Implemented |
+| Blog links to 2 dead outside pages | Yes (csir, agrisa among 6) | Fixed in the first audit commit | Implemented |
+| Schema has no street address | Correct and intended: no walk-in premises | No change (adding a street address would contradict the service-area policy) | Explained |
+| Opening hours (Google profiles say Mon–Sat 06:00–18:00) | Site schema says Mon–Sun 09:00–17:00 | Left unchanged pending owner confirmation | Owner decision |
+| ~2 reviews per GBP, ~6 linking sites | Consistent with audit | See `docs/seo/04-local-seo-recommendations.md` L1–L5, L8 | Owner actions |
+| Overstrand: one page for six towns; Kleinmond not ranking; "Cape Town" once | Partly — one-page coverage was a deliberate anti-doorway choice | Plan P2-8: town pages only where Damtech can add unique substance (projects, local conditions); draft Hermanus and Kleinmond first; do not publish without owner review. Do not target Cape Town without verified Cape Town service | Planned |
+| Western Cape dam lining ranks only via `/dam-liners/` | `/western-cape-dam-liners/` exists (pos ~22 in GSC) | Plan P2-9: strengthen internal links from WC project pages and `/dam-liners/` to it | Planned |
+| `/pretoria-dam-liners/` not ranking; no Gauteng steel-tank visibility | GSC pos ~33 | Plan P2-9 (same approach); steel tanks per L4 | Planned |

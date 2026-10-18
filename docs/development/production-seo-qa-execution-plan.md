@@ -24,6 +24,15 @@ No P0 issue was found: all 75 sitemap URLs return 200 with unchanged SEO, every 
 | P3-4 | P3 | Content | Name residential systems and warranties precisely | Owner confirms products | — | — | blocked (owner) |
 | P3-5 | P3 | Backlinks | Supplier/press/association links (L4, L8) | Owner outreach | — | — | owner action |
 
+| P0-1 | P0 | `app/actions/submit-lead.ts`, new `lib/rfq/notify-public-rfq.ts` | Owner test: `/contact/` saved RFQs but sent no info@ or customer email (likely RFQ-2026-00038/43/46/50) | Contact action now calls the shared notifier used by the quote form | Low; revert commit | `lib/rfq/contact-notify.test.ts`; live check after deploy | tested — deploy pending |
+| P1-7 | P1 | `next.config.ts` CSP | GA4 hits to `analytics.google.com` and `www.google.co.za` blocked by CSP | Allow those hosts (+ `*.facebook.com`) | Low | local CSP check: 0 violations | tested — deploy pending |
+| P1-8 | P1 | `app/order/page.tsx`, `lib/seo.ts`, `app/not-found.tsx`, `app/[slug]/page.tsx` | Bare `/order/` dead end; utility pages inherited canonical `/`; 404 had 2 robots tags | Redirect bare `/order/`; remove root canonical; single robots, no canonical on 404 | Low | e2e follow-up tests; SEO diff 0 unintended changes | tested — deploy pending |
+| P2-7 | P2 | forms + `rfqs` schema + admin | No call-back form, property type or "How did you hear about us?" | Add optional fields (DB migration on a branch first) and show in admin | Needs approved migration | — | planned |
+| P2-8 | P2 | new residential town pages | Overstrand single page; Kleinmond/Hermanus visibility | Draft Hermanus + Kleinmond pages with unique local substance; owner review before publishing | Doorway-page risk if thin | — | planned |
+| P2-9 | P2 | internal links | `/western-cape-dam-liners/`, `/pretoria-dam-liners/` rank page 3+ | Add contextual links from matching project pages and hubs | Low | SEO diff | planned |
+## Follow-up execution (owner test report)
+P0-1 → P1-7 → P1-8 → share images, alt text, contact heading, order phone wording, all-fields validation, sitemap lastmod, Overstrand H1. Details: `docs/development/owner-report-comparison-2026-10-18.md`. Gates: `tsc` clean, `eslint` 0 errors, `npm test` 332/332, `next build` OK, Playwright 41/41, SEO diff vs live: only the two intended heading changes (`/contact/` H3→H2, `/waterproofing-overstrand/` H1).
+
 ## Execution order used
 P1-1 → P1-2 → P1-3 → P2-1 → P2-2 → P1-4 (tests written alongside), then full gates: `tsc`, `eslint` (0 errors), `npm test` (329/329 + new), `next build`, Playwright 35/35, SEO snapshot diff vs live (0 differences on 75 routes).
 

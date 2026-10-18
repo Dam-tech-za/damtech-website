@@ -2,6 +2,9 @@
 
 18 Oct 2026. Branch `claude/project-thread-7zqlsd`. Production remains on `main` @ `4ce56eb` until the owner approves a merge.
 
+## Follow-up (owner test report, same day)
+Contact form emails fixed; GA4 CSP fixed; `/order/` redirect; 404 and canonical clean-up; 1200×630 share images; alt text; all-missing-fields validation; sitemap lastmod; Betty's Bay H1. Comparison table: `docs/development/owner-report-comparison-2026-10-18.md`. Still blocked: RFQ look-up and test-order cancel (no DB/admin access).
+
 ## Owner summary
 - **Route coverage:** 153 / 153 discovered URLs audited in a real browser (75 sitemap pages, 85 Search Console URLs, legacy redirects, internal links, private/utility routes). 114 rendered pages, 35 redirects, 11 not-found (10 real + 1 deliberate test), 3 assets/feeds, 1 admin. Exclusions: admin pages behind login (no test account).
 - **SEO preservation:** live site vs the pre-redesign site — 0 differences in titles, descriptions, canonicals, robots, headings, structured data or internal links across all 75 pages. All 85 Search Console URLs accounted for; the 10 that returned 404 (0 clicks) now redirect. WordPress-era copy is not verifiable (Internet Archive offline).
