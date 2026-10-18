@@ -189,6 +189,27 @@ export const SITE_IMAGES = {
     IMAGE_PATHS.westernCapeDamLiningHero,
     IMAGE_ALTS[IMAGE_PATHS.westernCapeDamLiningHero],
   ),
+  /** Full-bleed homepage hero: crew lining an earth dam (4032 px original). */
+  homeHeroInstall: siteImage(
+    hdpeDamLiningEarthDam,
+    IMAGE_PATHS.hdpeDamLiningEarthDam,
+    "Damtech crew installing an HDPE dam lining in a large earth dam basin",
+  ),
+  villiersdorpLining: siteImage(
+    villiersdorpWesternCapeHdpeDamLining8230m2,
+    IMAGE_PATHS.villiersdorpWesternCapeHdpeDamLining8230m2,
+    IMAGE_ALTS[IMAGE_PATHS.villiersdorpWesternCapeHdpeDamLining8230m2],
+  ),
+  worcesterLining: siteImage(
+    worcesterWesternCapeBitumenEarthDamLining15000m2,
+    IMAGE_PATHS.worcesterWesternCapeBitumenEarthDamLining15000m2,
+    IMAGE_ALTS[IMAGE_PATHS.worcesterWesternCapeBitumenEarthDamLining15000m2],
+  ),
+  torchOnConcreteDam: siteImage(
+    torchOnConcreteDam18mTzaneen,
+    IMAGE_PATHS.torchOnConcreteDam18mTzaneen,
+    IMAGE_ALTS[IMAGE_PATHS.torchOnConcreteDam18mTzaneen],
+  ),
   homeDamLiner: siteImage(
     hdpeDamLiningFieldInstallation,
     IMAGE_PATHS.hdpeDamLiningFieldInstallation,

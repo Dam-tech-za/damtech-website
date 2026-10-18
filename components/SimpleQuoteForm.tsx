@@ -68,6 +68,28 @@ function Field({
   );
 }
 
+function ProvinceSelect({ id, disabled }: { id: string; disabled: boolean }) {
+  return (
+    <select
+      id={id}
+      name="province"
+      className="form-input"
+      required
+      disabled={disabled}
+      defaultValue=""
+    >
+      <option value="" disabled>
+        Select province
+      </option>
+      {PROVINCE_OPTIONS.map((province) => (
+        <option key={province} value={province}>
+          {province}
+        </option>
+      ))}
+    </select>
+  );
+}
+
 function pushQuoteAnalytics(
   rfqNumber: string,
   catalogueLine?: CatalogueLineSnapshot | null,
@@ -229,11 +251,12 @@ export function SimpleQuoteForm({
         </Field>
 
         <div className="grid gap-6 sm:grid-cols-2">
-          <Field id={`${id}-email`} label="Email">
+          <Field id={`${id}-email`} label="Email" required>
             <input
               id={`${id}-email`}
               name="email"
               type="email"
+              required
               autoComplete="email"
               className="form-input"
               disabled={isPending}
@@ -250,9 +273,6 @@ export function SimpleQuoteForm({
             />
           </Field>
         </div>
-        <p className="text-xs text-subtle">
-          Provide at least one of email or phone so we can respond.
-        </p>
 
         {catalogueLine ? <RfqProductSummary line={catalogueLine} /> : null}
 
@@ -294,26 +314,16 @@ export function SimpleQuoteForm({
           )}
         </Field>
 
+        {isInvoiceRequest ? null : (
+          <Field id={`${id}-province`} label="Province" required>
+            <ProvinceSelect id={`${id}-province`} disabled={isPending} />
+          </Field>
+        )}
+
         {isInvoiceRequest ? (
           <div className="grid gap-6 sm:grid-cols-2">
             <Field id={`${id}-province`} label="Province" required>
-              <select
-                id={`${id}-province`}
-                name="province"
-                className="form-input"
-                required
-                disabled={isPending}
-                defaultValue=""
-              >
-                <option value="" disabled>
-                  Select province
-                </option>
-                {PROVINCE_OPTIONS.map((province) => (
-                  <option key={province} value={province}>
-                    {province}
-                  </option>
-                ))}
-              </select>
+              <ProvinceSelect id={`${id}-province`} disabled={isPending} />
             </Field>
             <Field id={`${id}-town`} label="Town / project location" required>
               <input
@@ -393,25 +403,6 @@ export function SimpleQuoteForm({
                 disabled={isPending}
               />
             </Field>
-
-            {isInvoiceRequest ? null : (
-              <Field id={`${id}-province`} label="Province">
-                <select
-                  id={`${id}-province`}
-                  name="province"
-                  className="form-input"
-                  disabled={isPending}
-                  defaultValue=""
-                >
-                  <option value="">Select province</option>
-                  {PROVINCE_OPTIONS.map((province) => (
-                    <option key={province} value={province}>
-                      {province}
-                    </option>
-                  ))}
-                </select>
-              </Field>
-            )}
 
             {isInvoiceRequest ? null : (
             <div className="grid gap-6 sm:grid-cols-2">

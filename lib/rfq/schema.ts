@@ -1,7 +1,6 @@
 import { z } from "zod";
 import {
   MATERIAL_PREFERENCE_OPTIONS,
-  PROVINCE_OPTIONS,
   SERVICE_OPTIONS,
   TIMEFRAME_OPTIONS,
   normaliseServiceOption,
@@ -14,6 +13,7 @@ import { RFQ_STATUSES, type RfqStatus } from "./statuses";
 import { softParseProjectSize } from "./soft-size-parse";
 import type { EnquiryChannel } from "./enquiry-channel";
 import { parseLeadAttribution, type LeadAttribution } from "@/lib/analytics/attribution";
+import { checkRequiredRfqContact } from "./contact-requirements";
 
 export { RFQ_STATUSES, type RfqStatus };
 export {
@@ -184,22 +184,10 @@ export function parsePublicRfqFormData(
     }
   }
 
-  if (!raw.phone && !raw.email) {
-    return {
-      ok: false,
-      error: "Please provide a phone number or email address so we can reach you.",
-    };
-  }
-
-  if (raw.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(raw.email)) {
-    return { ok: false, error: "Please enter a valid email address." };
-  }
-
-  if (
-    raw.province &&
-    !(PROVINCE_OPTIONS as readonly string[]).includes(raw.province)
-  ) {
-    raw.province = "";
+  // Email and province are compulsory on every public RFQ; phone is optional.
+  const contactProblem = checkRequiredRfqContact(raw);
+  if (contactProblem) {
+    return { ok: false, error: contactProblem.message };
   }
 
   if (
@@ -219,12 +207,6 @@ export function parsePublicRfqFormData(
   }
 
   if (catalogueLine) {
-    if (!raw.province) {
-      return {
-        ok: false,
-        error: "Please select the province for delivery so we can calculate transport.",
-      };
-    }
     if (!raw.town) {
       return {
         ok: false,

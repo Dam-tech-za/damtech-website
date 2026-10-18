@@ -78,7 +78,6 @@ export function FormSection({
 
   const hasOptionalPrefill = Boolean(
     prefill?.company ||
-      prefill?.province ||
       prefill?.projectSize ||
       prefill?.projectLocation,
   );
@@ -183,11 +182,12 @@ export function FormSection({
         </Field>
 
         <div className="grid gap-6 sm:grid-cols-2">
-          <Field id={`${id}-email`} label="Email">
+          <Field id={`${id}-email`} label="Email" required>
             <input
               id={`${id}-email`}
               name="email"
               type="email"
+              required
               autoComplete="email"
               className="form-input"
               disabled={isPending}
@@ -205,10 +205,6 @@ export function FormSection({
           </Field>
         </div>
 
-        <p className="text-xs text-subtle">
-          Provide at least one of email or phone so we can respond.
-        </p>
-
         <Field id={`${id}-service`} label="Service required" required>
           <select
             id={`${id}-service`}
@@ -224,6 +220,26 @@ export function FormSection({
             {SERVICE_OPTIONS.map((service) => (
               <option key={service} value={service}>
                 {service}
+              </option>
+            ))}
+          </select>
+        </Field>
+
+        <Field id={`${id}-province`} label="Province" required>
+          <select
+            id={`${id}-province`}
+            name="province"
+            className="form-input"
+            required
+            disabled={isPending}
+            defaultValue={prefill?.province ?? ""}
+          >
+            <option value="" disabled>
+              Select province
+            </option>
+            {PROVINCE_OPTIONS.map((province) => (
+              <option key={province} value={province}>
+                {province}
               </option>
             ))}
           </select>
@@ -255,7 +271,7 @@ export function FormSection({
             <span className="flex items-center justify-between gap-3">
               <span>Optional project details</span>
               <span className="text-sm font-normal text-subtle group-open:hidden">
-                Company, province, size, location
+                Company, size, location
               </span>
               <span className="hidden text-sm font-normal text-subtle group-open:inline">
                 Hide details
@@ -273,23 +289,6 @@ export function FormSection({
                 disabled={isPending}
                 defaultValue={prefill?.company ?? ""}
               />
-            </Field>
-
-            <Field id={`${id}-province`} label="Province">
-              <select
-                id={`${id}-province`}
-                name="province"
-                className="form-input"
-                disabled={isPending}
-                defaultValue={prefill?.province ?? ""}
-              >
-                <option value="">Select province</option>
-                {PROVINCE_OPTIONS.map((province) => (
-                  <option key={province} value={province}>
-                    {province}
-                  </option>
-                ))}
-              </select>
             </Field>
 
             <div className="grid gap-6 sm:grid-cols-2">

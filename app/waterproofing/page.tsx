@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Hero } from "@/components/Hero";
+import { ResidentialEnquiryCard } from "@/components/ResidentialWaterproofingPage";
 import { PageSeo } from "@/components/PageSeo";
 import { ProcessStepsSection } from "@/components/ProcessStepsSection";
 import { SectionCta } from "@/components/SectionCta";
@@ -189,7 +190,8 @@ export default function WaterproofingPage() {
         ]}
       />
       <Hero
-        compact
+        tone="blue"
+        aside={<ResidentialEnquiryCard areaServed={AREA} quoteHref={QUOTE_HREF} />}
         eyebrow="Homes · Pretoria · Gauteng · Overstrand"
         title={seo.h1}
         description="We waterproof leaking roofs, flat roofs, parapets, damp walls, balconies and showers for homeowners in Pretoria and Gauteng, and in Betty's Bay to Gansbaai in the Overstrand. Ask for a free assessment and written quote."

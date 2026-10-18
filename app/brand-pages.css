@@ -1,0 +1,951 @@
+/*
+ * Damtech brand layer — inner-page templates (page hero, sections, prose,
+ * FAQ, inline CTA, process band, related links). Unlayered so it overrides
+ * the legacy @layer components rules in globals.css. Tokens: brand.css.
+ */
+
+/* Page hero ---------------------------------------------------------- */
+
+.dt-page-hero {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background: var(--dt-cream);
+  color: var(--dt-ink);
+}
+
+.dt-page-hero__inner {
+  position: relative;
+  display: grid;
+  gap: 2.5rem;
+  padding-block: clamp(3rem, 7vw, 6.5rem) clamp(3rem, 6vw, 5.5rem);
+}
+
+.dt-page-hero--compact .dt-page-hero__inner {
+  padding-block: clamp(2.5rem, 5vw, 4.5rem) clamp(2.5rem, 4.5vw, 4rem);
+}
+
+@media (min-width: 1024px) {
+  .dt-page-hero--with-aside .dt-page-hero__inner {
+    grid-template-columns: minmax(0, 1.55fr) minmax(19rem, 0.8fr);
+    align-items: end;
+    gap: 4rem;
+  }
+}
+
+.dt-page-hero__crumbs {
+  margin-bottom: 1.75rem;
+}
+
+.dt-page-hero__eyebrow {
+  margin: 0 0 1.1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--dt-blue);
+}
+
+.dt-page-hero__eyebrow::before {
+  content: "";
+  flex-shrink: 0;
+  width: 1.75rem;
+  height: 2px;
+  background: currentColor;
+}
+
+.dt-page-hero__title {
+  margin: 0;
+  max-width: 18ch;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-variation-settings: "wdth" 112;
+  font-size: var(--dt-size-xl);
+  line-height: 0.98;
+  letter-spacing: -0.03em;
+  text-wrap: balance;
+  color: inherit;
+}
+
+.dt-page-hero__description {
+  margin: 1.5rem 0 0;
+  max-width: 40rem;
+  font-size: clamp(1.02rem, 1.2vw, 1.2rem);
+  line-height: 1.65;
+  color: var(--dt-stone);
+}
+
+.dt-page-hero__actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 2rem;
+}
+
+@media (min-width: 640px) {
+  .dt-page-hero__actions {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+}
+
+.dt-page-hero--cream {
+  border-bottom: 1px solid var(--dt-line);
+}
+
+.dt-page-hero--blue {
+  background: var(--dt-blue);
+  color: var(--dt-white);
+}
+
+.dt-page-hero--blue::after {
+  /* Waterline: a cyan band along the base of the colour block. */
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 10px;
+  background: var(--dt-cyan);
+}
+
+.dt-page-hero--ink {
+  background: var(--dt-ink);
+  color: var(--dt-white);
+}
+
+.dt-page-hero--blue .dt-page-hero__eyebrow {
+  color: var(--dt-white);
+}
+
+.dt-page-hero--ink .dt-page-hero__eyebrow,
+.dt-page-hero--photo .dt-page-hero__eyebrow {
+  color: var(--dt-cyan);
+}
+
+.dt-page-hero--blue .dt-page-hero__description,
+.dt-page-hero--ink .dt-page-hero__description,
+.dt-page-hero--photo .dt-page-hero__description {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.dt-page-hero--photo {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  min-height: min(78svh, 46rem);
+  background: var(--dt-ink);
+  color: var(--dt-white);
+}
+
+.dt-page-hero--photo.dt-page-hero--compact {
+  min-height: min(64svh, 40rem);
+}
+
+.dt-page-hero__media {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+}
+
+.dt-page-hero__scrim {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, rgba(7, 19, 29, 0.3) 0%, rgba(7, 19, 29, 0.35) 35%, rgba(7, 19, 29, 0.7) 65%, rgba(7, 19, 29, 0.94) 100%),
+    linear-gradient(90deg, rgba(7, 19, 29, 0.5) 0%, rgba(7, 19, 29, 0) 65%);
+}
+
+.dt-page-hero--photo .dt-page-hero__inner {
+  width: 100%;
+}
+
+.dt-page-hero--photo .dt-page-hero__title {
+  text-shadow: 0 2px 30px rgba(7, 19, 29, 0.35);
+}
+
+/* Hero buttons — legacy class names kept so page-level actions need no churn. */
+.dt-page-hero .hero-btn-primary,
+.dt-page-hero .hero-btn-secondary {
+  min-height: 3.5rem;
+  padding: 0.9rem 1.6rem;
+  border: 2px solid transparent;
+  border-radius: var(--dt-radius);
+  box-shadow: none;
+  font-weight: 700;
+  transition:
+    background-color 0.2s var(--dt-ease),
+    color 0.2s var(--dt-ease),
+    transform 0.2s var(--dt-ease);
+}
+
+.dt-page-hero .hero-btn-primary:hover,
+.dt-page-hero .hero-btn-secondary:hover {
+  transform: translateY(-2px);
+}
+
+.dt-page-hero--cream .hero-btn-primary {
+  background: var(--dt-ink);
+  color: var(--dt-white);
+}
+
+.dt-page-hero--cream .hero-btn-primary:hover {
+  background: var(--dt-blue);
+}
+
+.dt-page-hero--cream .hero-btn-secondary {
+  background: transparent;
+  border-color: var(--dt-ink);
+  color: var(--dt-ink);
+}
+
+.dt-page-hero--cream .hero-btn-secondary:hover {
+  background: var(--dt-ink);
+  color: var(--dt-white);
+}
+
+.dt-page-hero--ink .hero-btn-primary,
+.dt-page-hero--photo .hero-btn-primary {
+  background: var(--dt-blue);
+  color: var(--dt-white);
+}
+
+.dt-page-hero--ink .hero-btn-primary:hover,
+.dt-page-hero--photo .hero-btn-primary:hover {
+  background: var(--dt-blue-deep);
+}
+
+/* On the blue colour block the primary action is white with blue text. */
+.dt-page-hero--blue .hero-btn-primary {
+  background: var(--dt-white);
+  color: var(--dt-blue);
+}
+
+.dt-page-hero--blue .hero-btn-primary:hover {
+  background: var(--dt-cream);
+  color: var(--dt-blue-deep);
+}
+
+.dt-page-hero--blue .hero-btn-secondary,
+.dt-page-hero--ink .hero-btn-secondary,
+.dt-page-hero--photo .hero-btn-secondary {
+  background: transparent;
+  border-color: rgba(255, 255, 255, 0.75);
+  color: var(--dt-white);
+}
+
+.dt-page-hero--blue .hero-btn-secondary:hover,
+.dt-page-hero--ink .hero-btn-secondary:hover,
+.dt-page-hero--photo .hero-btn-secondary:hover {
+  background: var(--dt-white);
+  color: var(--dt-ink);
+}
+
+/* Residential enquiry card */
+.dt-enquiry-card {
+  padding: 1.75rem;
+  border-radius: var(--dt-radius-lg);
+  background: var(--dt-cream);
+  color: var(--dt-ink);
+  box-shadow: 0 30px 60px rgba(7, 19, 29, 0.25);
+}
+
+.dt-enquiry-card__label {
+  margin: 0 0 1.25rem;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-variation-settings: "wdth" 112;
+  font-size: 1.35rem;
+  line-height: 1.1;
+}
+
+.dt-enquiry-card__areas {
+  display: grid;
+  gap: 0.25rem;
+  margin: 0 0 1.25rem;
+  font-size: 0.92rem;
+  line-height: 1.5;
+  color: var(--dt-charcoal);
+}
+
+.dt-enquiry-card__areas-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--dt-blue);
+}
+
+.dt-enquiry-card__list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 2px solid var(--dt-ink);
+}
+
+.dt-enquiry-card__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  min-height: 3.25rem;
+  border-bottom: 1px solid var(--dt-line);
+  color: var(--dt-stone);
+  font-size: 0.9rem;
+  text-decoration: none;
+  transition:
+    color 0.2s var(--dt-ease),
+    padding 0.25s var(--dt-ease);
+}
+
+.dt-enquiry-card__row strong {
+  color: var(--dt-ink);
+  font-size: 1rem;
+}
+
+.dt-enquiry-card__row:hover {
+  padding-left: 0.4rem;
+}
+
+.dt-enquiry-card__row:hover strong {
+  color: var(--dt-blue);
+}
+
+/* Sections ---------------------------------------------------------- */
+
+.site-section {
+  padding-block: clamp(4rem, 8vw, 7rem);
+}
+
+.site-section--muted {
+  background: var(--dt-cream);
+  border-block: 0;
+}
+
+.site-section__inner {
+  max-width: 90rem;
+  padding-inline: clamp(1.25rem, 4vw, 4rem);
+}
+
+.page-section-header {
+  max-width: 52rem;
+}
+
+.page-section-header__eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.75rem;
+  letter-spacing: 0.16em;
+  color: var(--dt-blue);
+}
+
+.page-section-header__eyebrow::before {
+  content: "";
+  flex-shrink: 0;
+  width: 1.75rem;
+  height: 2px;
+  background: currentColor;
+}
+
+.page-section-header--center .page-section-header__eyebrow {
+  justify-content: center;
+}
+
+.page-section-header__title {
+  font-family: var(--font-display);
+  font-variation-settings: "wdth" 110;
+  font-size: var(--dt-size-lg);
+  line-height: 1.02;
+  letter-spacing: -0.025em;
+  color: var(--dt-ink);
+}
+
+.page-section-header__divider {
+  display: none;
+}
+
+.page-section-header__intro {
+  margin-top: 1.25rem;
+  font-size: 1.05rem;
+  color: var(--dt-stone);
+}
+
+.page-section-header--light .page-section-header__title {
+  color: var(--dt-white);
+}
+
+.page-section-header--light .page-section-header__eyebrow {
+  color: var(--dt-cyan);
+}
+
+/* Prose sections: editorial rows (heading left, copy right), not stacked cards. */
+.site-prose-sections {
+  gap: 0;
+  border-top: 2px solid var(--dt-ink);
+}
+
+.site-prose-card {
+  padding: clamp(2rem, 4vw, 3.25rem) 0;
+  border: 0;
+  border-bottom: 1px solid var(--dt-line);
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.site-prose-card .page-section-header__title {
+  font-size: var(--dt-size-md);
+}
+
+.site-prose-card__text {
+  font-size: 1.04rem;
+  line-height: 1.75;
+  color: var(--dt-charcoal);
+}
+
+@media (min-width: 1024px) {
+  .site-prose-card {
+    display: grid;
+    grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+    column-gap: 4.5rem;
+    align-items: start;
+  }
+
+  .site-prose-card > .page-section-header {
+    grid-row: 1 / span 20;
+  }
+
+  .site-prose-card > :not(.page-section-header) {
+    grid-column: 2;
+  }
+
+  .site-prose-card > .site-prose-card__text:first-of-type {
+    margin-top: 0;
+  }
+}
+
+/* FAQ */
+.site-faq-list {
+  gap: 0;
+  border-top: 2px solid var(--dt-ink);
+}
+
+.site-faq-item {
+  border: 0;
+  border-bottom: 1px solid var(--dt-line);
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.site-faq-item:hover {
+  box-shadow: none;
+  transform: none;
+}
+
+.site-faq-item__question {
+  padding: 1.35rem 0;
+  font-family: var(--font-display);
+  font-variation-settings: "wdth" 106;
+  font-size: clamp(1.05rem, 1.3vw, 1.25rem);
+  font-weight: 700;
+  color: var(--dt-ink);
+}
+
+.site-faq-item__question::after {
+  width: 2.25rem;
+  height: 2.25rem;
+  background: var(--dt-ink);
+  color: var(--dt-white);
+}
+
+.site-faq-item[open] .site-faq-item__question::after {
+  background: var(--dt-cyan);
+  color: var(--dt-ink);
+}
+
+.site-faq-item__answer {
+  padding: 0 3.5rem 1.5rem 0;
+  font-size: 1rem;
+  line-height: 1.7;
+  color: var(--dt-charcoal);
+}
+
+/* Inline CTA (SectionCta) → ink block with a cyan ring */
+.home-final-cta__card--inline {
+  position: relative;
+  overflow: hidden;
+  padding: clamp(2.25rem, 5vw, 4rem);
+  border: 0;
+  border-radius: var(--dt-radius-lg);
+  background: var(--dt-ink);
+  color: var(--dt-white);
+  box-shadow: none;
+}
+
+.home-final-cta__card--inline::after {
+  content: "";
+  position: absolute;
+  right: -5rem;
+  bottom: -5rem;
+  width: 16rem;
+  height: 16rem;
+  border-radius: 50%;
+  border: 2.5rem solid var(--dt-cyan);
+  pointer-events: none;
+}
+
+.home-final-cta__title--inline {
+  position: relative;
+  max-width: 22ch;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-variation-settings: "wdth" 112;
+  font-size: var(--dt-size-lg);
+  line-height: 1.02;
+  letter-spacing: -0.025em;
+  color: var(--dt-white);
+}
+
+.home-final-cta__card--inline .home-final-cta__intro {
+  position: relative;
+  max-width: 40rem;
+  margin: 1.25rem 0 1.75rem;
+  color: var(--color-body-gray);
+  font-size: 1.05rem;
+  line-height: 1.7;
+}
+
+.home-final-cta__card--inline .home-final-cta__actions {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.home-final-cta__card--inline .btn-primary {
+  background: var(--dt-blue);
+  color: var(--dt-white);
+}
+
+.home-final-cta__card--inline .btn-primary:hover {
+  background: var(--dt-blue-deep);
+}
+
+.home-final-cta__card--inline .btn-secondary {
+  background: transparent;
+  border: 2px solid rgba(255, 255, 255, 0.7);
+  color: var(--dt-white);
+}
+
+/* Generic buttons */
+.btn-primary,
+.btn-secondary {
+  min-height: 3rem;
+  padding-inline: 1.4rem;
+  border-radius: var(--dt-radius);
+  box-shadow: none;
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.btn-primary {
+  background-color: var(--dt-blue);
+}
+
+.btn-primary:hover {
+  background-color: var(--dt-blue-deep);
+}
+
+.btn-secondary {
+  background-color: var(--dt-ink);
+  border: 2px solid var(--dt-ink);
+  color: var(--dt-white);
+}
+
+.btn-secondary:hover {
+  background-color: var(--dt-ink-3);
+  border-color: var(--dt-ink-3);
+}
+
+/* Process steps on inner pages (ProcessStepsSection) → dark numbered band */
+.site-section:has(.home-process-projects__process) {
+  background: var(--dt-ink);
+  border-block: 0;
+}
+
+.home-process-projects__process .home-process-projects__decor {
+  display: none;
+}
+
+.home-process-projects__process .home-process-projects__eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.75rem;
+  letter-spacing: 0.16em;
+  color: var(--dt-cyan);
+}
+
+.home-process-projects__process .home-process-projects__eyebrow::before {
+  content: "";
+  width: 1.75rem;
+  height: 2px;
+  background: currentColor;
+}
+
+.home-process-projects__process .home-process-projects__title {
+  font-family: var(--font-display);
+  font-variation-settings: "wdth" 112;
+  font-size: var(--dt-size-lg);
+  line-height: 1.02;
+  color: var(--dt-white);
+}
+
+.home-process-projects__process .home-process-projects__divider,
+.home-process-projects__process .home-process-projects__step-icon-wrap {
+  display: none;
+}
+
+.home-process-projects__process .home-process-projects__intro {
+  color: var(--color-body-gray);
+}
+
+.home-process-projects__process .home-process-projects__steps {
+  gap: 0;
+  border-top: 1px solid var(--dt-line-dark);
+}
+
+.home-process-projects__process .home-process-projects__step {
+  height: 100%;
+  padding: 2rem 1.75rem 2rem 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.home-process-projects__process .home-process-projects__step-number {
+  width: auto;
+  height: auto;
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-variation-settings: "wdth" 125;
+  font-size: clamp(3rem, 5vw, 4.5rem);
+  line-height: 0.85;
+  color: transparent;
+  -webkit-text-stroke: 1.5px var(--dt-cyan);
+}
+
+.home-process-projects__process .home-process-projects__step-title {
+  margin-top: 1.25rem;
+  font-size: 1.25rem;
+  color: var(--dt-white);
+}
+
+.home-process-projects__process .home-process-projects__step-text {
+  color: var(--color-body-gray);
+}
+
+.home-process-projects__process .home-process-projects__step-note {
+  color: var(--dt-cyan);
+}
+
+/* Related links (RelatedServicesGrid) → typographic index rows */
+.home-why-choose__links {
+  gap: 0;
+  border-top: 2px solid var(--dt-ink);
+}
+
+.home-why-choose__link-card {
+  min-height: 4.25rem;
+  padding: 1rem 0.25rem;
+  border: 0;
+  border-bottom: 1px solid var(--dt-line);
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  color: var(--dt-ink);
+  transition:
+    padding 0.3s var(--dt-ease),
+    color 0.2s var(--dt-ease);
+}
+
+.home-why-choose__link-card:hover {
+  padding-left: 0.85rem;
+  background: transparent;
+  box-shadow: none;
+  transform: none;
+  color: var(--dt-blue);
+}
+
+.home-why-choose__link-icon-wrap {
+  border-radius: var(--dt-radius);
+  background: var(--dt-cream);
+  color: var(--dt-blue);
+}
+
+.home-why-choose__link-label {
+  font-family: var(--font-display);
+  font-variation-settings: "wdth" 108;
+  font-weight: 700;
+  font-size: 1.08rem;
+  color: inherit;
+}
+
+/* Cards + intro copy */
+.card {
+  border-radius: var(--dt-radius-lg);
+  border-color: var(--dt-line);
+  box-shadow: none;
+}
+
+.card:hover {
+  border-color: var(--dt-ink);
+  box-shadow: none;
+}
+
+.site-overview__intro {
+  font-size: clamp(1.1rem, 1.5vw, 1.35rem);
+  line-height: 1.6;
+  color: var(--dt-charcoal);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dt-page-hero .hero-btn-primary,
+  .dt-page-hero .hero-btn-secondary,
+  .dt-enquiry-card__row,
+  .home-why-choose__link-card {
+    transition: none;
+  }
+}
+
+/* Breadcrumbs on dark/blue heroes: full white for contrast on vivid blue. */
+.dt-page-hero--blue .dt-page-hero__crumbs a,
+.dt-page-hero--ink .dt-page-hero__crumbs a,
+.dt-page-hero--photo .dt-page-hero__crumbs a {
+  color: var(--dt-white);
+  text-decoration: underline;
+  text-decoration-color: rgba(255, 255, 255, 0.45);
+  text-underline-offset: 3px;
+}
+
+.dt-page-hero--blue .dt-page-hero__crumbs span,
+.dt-page-hero--ink .dt-page-hero__crumbs span,
+.dt-page-hero--photo .dt-page-hero__crumbs span {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+/* Service intro band (ServiceIntroSection) — calm paper background. */
+.site-section.service-intro-section {
+  background: var(--dt-paper);
+}
+
+.site-section.service-intro-section::before {
+  display: none;
+}
+
+/* Blog article header — cream editorial masthead instead of a navy gradient. */
+.dt-article-hero {
+  padding-block: clamp(3rem, 7vw, 5.5rem) clamp(2.5rem, 5vw, 4rem);
+  background: var(--dt-cream);
+  border-bottom: 2px solid var(--dt-ink);
+  color: var(--dt-ink);
+}
+
+.dt-article-hero__title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-variation-settings: "wdth" 108;
+  font-size: clamp(2rem, 4vw, 3.6rem);
+  line-height: 1.04;
+  letter-spacing: -0.025em;
+  text-wrap: balance;
+}
+
+.dt-article-hero__meta {
+  margin: 1.5rem 0 0;
+  font-size: 0.9rem;
+  color: var(--dt-stone);
+}
+
+.dt-article-hero__author {
+  font-weight: 700;
+  color: var(--dt-ink);
+  text-decoration: underline;
+  text-decoration-color: var(--dt-cyan);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 3px;
+}
+
+/* Sidebar trust/contact cards share the inline CTA look but are narrow:
+   no decorative ring (it would sit under the list text). */
+.site-trust-panel__card::after,
+.home-final-cta__card--inline:not(:has(> .home-final-cta__actions))::after {
+  display: none;
+}
+
+.home-final-cta__card--inline > * {
+  position: relative;
+  z-index: 1;
+}
+.site-contact-aside .home-final-cta__card--inline::after { display: none; }
+
+/* Forms — quote, contact, calculators */
+.site-form-card {
+  border: 0;
+  border-top: 4px solid var(--dt-ink);
+  border-radius: 0 0 var(--dt-radius-lg) var(--dt-radius-lg);
+  background: var(--dt-paper);
+  box-shadow: none;
+}
+
+.form-input {
+  min-height: 3.1rem;
+  border: 1.5px solid #b8bfc6;
+  border-radius: var(--dt-radius);
+  background: var(--dt-white);
+  color: var(--dt-ink);
+  transition:
+    border-color 0.15s var(--dt-ease),
+    box-shadow 0.15s var(--dt-ease);
+}
+
+.form-input:hover {
+  border-color: var(--dt-stone);
+}
+
+.form-input:focus {
+  border-color: var(--dt-ink);
+  outline: none;
+  box-shadow: 0 0 0 3px var(--dt-cyan);
+}
+
+.form-input[aria-invalid="true"] {
+  border-color: #b42318;
+}
+
+.site-form-card label {
+  font-weight: 600;
+  color: var(--dt-ink);
+}
+
+/* Dark inline cards: list and body copy must read light on ink. */
+.home-final-cta__card--inline .site-trust-panel__item,
+.home-final-cta__card--inline li,
+.home-final-cta__card--inline p {
+  color: var(--color-body-gray);
+}
+
+.home-final-cta__card--inline strong {
+  color: var(--dt-white);
+}
+
+.home-final-cta__card--inline .site-trust-panel__icon {
+  color: var(--dt-cyan);
+}
+
+/* Light sidebar cards */
+.site-trust-panel__card.home-why-choose__card {
+  border: 1px solid var(--dt-line);
+  border-radius: var(--dt-radius-lg);
+  background: var(--dt-white);
+  box-shadow: none;
+}
+
+.site-trust-panel__card .home-why-choose__card-accent {
+  background: var(--dt-cyan);
+}
+
+/* Legacy card components used across inner pages (home-why-choose__card,
+   home-services__card): flat, hairline-bordered, top rule instead of soft shadows. */
+.home-why-choose__card,
+.home-services__card {
+  border: 1px solid var(--dt-line);
+  border-top: 3px solid var(--dt-ink);
+  border-radius: 0 0 var(--dt-radius-lg) var(--dt-radius-lg);
+  background: var(--dt-white);
+  box-shadow: none;
+}
+
+.home-why-choose__card:hover,
+.home-services__card:hover {
+  box-shadow: none;
+  transform: none;
+  border-top-color: var(--dt-blue);
+}
+
+.home-why-choose__card-title,
+.home-services__card-title {
+  font-family: var(--font-display);
+  font-variation-settings: "wdth" 108;
+  color: var(--dt-ink);
+}
+
+.home-why-choose__card-icon-wrap,
+.home-services__card-icon-wrap {
+  border-radius: var(--dt-radius);
+  background: var(--dt-cream);
+  color: var(--dt-blue);
+  box-shadow: none;
+}
+
+.home-why-choose__card-accent {
+  background: var(--dt-cyan);
+}
+
+
+/* Cards inside dark sections keep a dark surface so their light text stays readable. */
+.site-section--dark,
+.home-why-choose__trust {
+  background: var(--dt-ink);
+}
+
+.home-why-choose__trust .home-why-choose__divider {
+  background: var(--dt-cyan);
+}
+
+.home-why-choose__trust .home-why-choose__card,
+.site-section--dark .home-why-choose__card,
+.site-section--dark .home-services__card {
+  border-color: var(--dt-line-dark);
+  border-top-color: var(--dt-cyan);
+  background: var(--dt-ink-2);
+}
+
+.home-why-choose__trust .home-why-choose__card-title,
+.site-section--dark .home-why-choose__card-title,
+.site-section--dark .home-services__card-title {
+  color: var(--dt-white);
+}
+
+.home-why-choose__trust .home-why-choose__card-text,
+.site-section--dark .home-why-choose__card-text,
+.site-section--dark .home-services__card-text {
+  color: var(--color-body-gray);
+}
+
+.home-why-choose__trust .home-why-choose__card-icon-wrap,
+.site-section--dark .home-why-choose__card-icon-wrap,
+.site-section--dark .home-services__card-icon-wrap {
+  background: var(--dt-ink-3);
+  color: var(--dt-cyan);
+}
+
+/* Text links that used the old light-blue accent: brand blue on light surfaces. */
+.service-intro__secondary-link {
+  color: var(--dt-blue);
+}
+
+.service-intro__secondary-link:hover {
+  color: var(--dt-ink);
+}

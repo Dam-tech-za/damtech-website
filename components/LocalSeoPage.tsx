@@ -70,6 +70,7 @@ export function LocalSeoPage({ page }: LocalSeoPageProps) {
 
       <Hero
         compact
+        tone="ink"
         title={page.h1}
         description={page.heroDescription}
         eyebrow={page.serviceName}

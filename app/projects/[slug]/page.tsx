@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import { Hero } from "@/components/Hero";
+import { FEATURED_PROJECT_IMAGES } from "@/lib/images";
 import { PageSeo } from "@/components/PageSeo";
 import { ProjectDetailBody } from "@/components/ProjectDetailBody";
 import { createMetadata, createProjectCaseStudySchema } from "@/lib/seo";
@@ -44,6 +45,13 @@ export default async function ProjectDetailPage({ params }: Props) {
     { name: project.title, path: `/projects/${project.slug}` },
   ];
 
+  // This project's own site photograph, when one is registered as static image data.
+  const heroPhoto =
+    FEATURED_PROJECT_IMAGES[project.slug as keyof typeof FEATURED_PROJECT_IMAGES];
+  const heroImage = heroPhoto
+    ? { image: heroPhoto, alt: project.images[0]?.alt ?? project.title }
+    : undefined;
+
   return (
     <>
       <PageSeo
@@ -60,6 +68,8 @@ export default async function ProjectDetailPage({ params }: Props) {
 
       <Hero
         compact
+        tone="ink"
+        image={heroImage}
         eyebrow={project.location}
         title={project.h1}
         description={project.summary}

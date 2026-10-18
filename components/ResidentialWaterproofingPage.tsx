@@ -21,7 +21,7 @@ import {
   type ResidentialPageConfig,
 } from "@/lib/residential-waterproofing";
 import { WARRANTY_PUBLIC } from "@/lib/warranty";
-import { whatsAppUrl } from "@/lib/site";
+import { phoneTel, siteConfig, whatsAppUrl } from "@/lib/site";
 
 const WARRANTY_SUMMARY = `${WARRANTY_PUBLIC.bullets[0]}, plus ${WARRANTY_PUBLIC.bullets[1]
   .charAt(0)
@@ -65,11 +65,17 @@ export function ResidentialWaterproofingPage({
       <PageSeo breadcrumbs={breadcrumbs} schemas={schemas} />
 
       <Hero
-        compact
+        tone="blue"
         eyebrow={page.heroEyebrow}
         title={page.h1}
         description={page.heroDescription}
         breadcrumbs={breadcrumbs}
+        aside={
+          <ResidentialEnquiryCard
+            areaServed={page.areaServed}
+            quoteHref={quoteHref}
+          />
+        }
       >
         <Link href={quoteHref} className="hero-btn-primary w-full sm:w-auto">
           Request a free assessment
@@ -140,5 +146,49 @@ export function ResidentialWaterproofingPage({
         <RelatedPageLinks heading="Related services" links={page.related} />
       </SiteSection>
     </>
+  );
+}
+
+/** Hero side panel: the three ways to start a residential enquiry. */
+export function ResidentialEnquiryCard({
+  areaServed,
+  quoteHref,
+}: {
+  areaServed: string;
+  quoteHref: string;
+}) {
+  return (
+    <div className="dt-enquiry-card">
+      <p className="dt-enquiry-card__label">Free assessment · written quote</p>
+      <p className="dt-enquiry-card__areas">
+        <span className="dt-enquiry-card__areas-label">Areas we serve</span>
+        {areaServed}
+      </p>
+      <ul className="dt-enquiry-card__list">
+        <li>
+          <a href={`tel:${phoneTel}`} className="dt-enquiry-card__row">
+            <span>Call</span>
+            <strong>{siteConfig.phone}</strong>
+          </a>
+        </li>
+        <li>
+          <a
+            href={whatsAppUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="dt-enquiry-card__row"
+          >
+            <span>WhatsApp</span>
+            <strong>Send photos</strong>
+          </a>
+        </li>
+        <li>
+          <Link href={quoteHref} className="dt-enquiry-card__row">
+            <span>Online</span>
+            <strong>Quote form</strong>
+          </Link>
+        </li>
+      </ul>
+    </div>
   );
 }

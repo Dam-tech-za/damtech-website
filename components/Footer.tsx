@@ -13,139 +13,128 @@ import {
 
 export function Footer() {
   return (
-    <footer
-      id="site-footer"
-      className="mt-auto border-t border-slate-200 bg-navy pb-[4.5rem] text-slate-200 lg:pb-0"
-    >
-      <div className="site-container grid gap-10 py-12 sm:grid-cols-2 lg:grid-cols-4 lg:py-16">
-        <div className="sm:col-span-2 lg:col-span-1">
-          <p className="text-lg font-bold text-white">{siteConfig.name}</p>
-          <p className="mt-3 text-sm leading-relaxed text-slate-300">
-            {siteConfig.defaultDescription}
+    <footer id="site-footer" className="dt-footer pb-[4.5rem] lg:pb-0">
+      <div className="site-shell">
+        <div className="dt-footer__cta">
+          <p className="dt-footer__cta-title dt-display dt-display--lg">
+            Planning a dam, tank or waterproofing project?
           </p>
-          <p className="mt-6 text-sm font-semibold uppercase tracking-wide text-white">
-            Where we work
-          </p>
-          <ul className="mt-3 grid gap-2">
-            {FOOTER_REGION_LINKS.map((link) => (
-              <li key={link.href}>
-                <Link href={link.href} scroll={true} className="text-sm hover:text-white">
-                  {link.label}
-                </Link>
-              </li>
-            ))}
-          </ul>
+          <div className="dt-footer__cta-actions">
+            <Link href="/quote" className="dt-btn dt-btn--cyan dt-btn--lg">
+              Request a Free Quote
+            </Link>
+            <a href={whatsAppUrl} target="_blank" rel="noopener noreferrer" className="dt-btn dt-btn--ghost dt-btn--lg">
+              WhatsApp
+            </a>
+          </div>
         </div>
 
-        <div>
-          <p className="text-sm font-semibold uppercase tracking-wide text-white">
-            Water Storage &amp; Dam Linings
-          </p>
-          <ul className="mt-4 grid gap-2">
-            {FOOTER_SERVICE_LINKS.map((link) => (
-              <li key={link.href}>
-                <Link href={link.href} scroll={true} className="text-sm hover:text-white">
-                  {link.label}
-                </Link>
-              </li>
-            ))}
-          </ul>
-
-          <p className="mt-6 text-sm font-semibold uppercase tracking-wide text-white">
-            Waterproofing
-          </p>
-          <ul className="mt-4 grid gap-2">
-            {FOOTER_WATERPROOFING_LINKS.map((link) => (
-              <li key={link.href}>
-                <Link href={link.href} scroll={true} className="text-sm hover:text-white">
-                  {link.label}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        <div>
-          <p className="text-sm font-semibold uppercase tracking-wide text-white">
-            Company
-          </p>
-          <ul className="mt-4 grid gap-2">
-            {FOOTER_COMPANY_LINKS.map((link) => (
-              <li key={link.href}>
-                <Link href={link.href} scroll={true} className="text-sm hover:text-white">
-                  {link.label}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        <div>
-          <p className="text-sm font-semibold uppercase tracking-wide text-white">
-            Quote
-          </p>
-          <ul className="mt-4 space-y-2 text-sm">
-            <li>
-              <Link href="/quote" scroll={true} className="font-medium text-white hover:text-sky-200">
-                Request a Free Quote
-              </Link>
-            </li>
-            <li>
-              <a href={`tel:${phoneTel}`} className="hover:text-white">
-                {siteConfig.phone}
-              </a>
-            </li>
-            <li>
-              <a href={`mailto:${siteConfig.email}`} className="hover:text-white">
-                {siteConfig.email}
-              </a>
-            </li>
-            <li>
-              <a
-                href={whatsAppUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="hover:text-white"
-              >
-                WhatsApp
-              </a>
-            </li>
-          </ul>
-        </div>
-      </div>
-
-      <div className="border-t border-slate-700/60">
-        <div className="site-container flex flex-col gap-4 px-4 py-6 sm:flex-row sm:items-start sm:justify-between sm:px-6 lg:px-8">
+        <div className="dt-footer__grid">
           <div>
-            <p className="text-sm font-semibold text-white">Service areas</p>
-            <ul className="mt-2 space-y-3 text-sm text-slate-300">
-              {OFFICES.map((office) => (
-                <li key={office.id}>
-                  <p className="font-medium text-slate-200">{office.name}</p>
-                  {formatOfficeAddressLines(office).map((line) => (
-                    <p key={line} className="mt-0.5">
-                      {line}
-                    </p>
-                  ))}
-                  <a
-                    href={`tel:${office.phone.replace(/\s/g, "")}`}
-                    className="mt-1 inline-block hover:text-white"
-                  >
-                    {office.phone}
-                  </a>
+            <p className="dt-footer__brand">{siteConfig.name}</p>
+            <p className="dt-footer__about">{siteConfig.defaultDescription}</p>
+            <p className="dt-footer__heading">Where we work</p>
+            <ul className="dt-footer__list">
+              {FOOTER_REGION_LINKS.map((link) => (
+                <li key={link.href}>
+                  <Link href={link.href} scroll={true}>
+                    {link.label}
+                  </Link>
                 </li>
               ))}
             </ul>
-            <p className="mt-4 text-sm text-slate-300">
-              We operate from Western Cape and Gauteng bases and mobilise nationwide.
-              Clients are served on site — these are not walk-in offices.
-            </p>
           </div>
-          <p className="text-xs text-slate-300 sm:text-right">
-            &copy; {new Date().getFullYear()} {siteConfig.name}. All rights reserved.
+
+          <div>
+            <p className="dt-footer__heading">Water Storage &amp; Dam Linings</p>
+            <ul className="dt-footer__list">
+              {FOOTER_SERVICE_LINKS.map((link) => (
+                <li key={link.href}>
+                  <Link href={link.href} scroll={true}>
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div>
+            <p className="dt-footer__heading">Waterproofing</p>
+            <ul className="dt-footer__list">
+              {FOOTER_WATERPROOFING_LINKS.map((link) => (
+                <li key={link.href}>
+                  <Link href={link.href} scroll={true}>
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+            <p className="dt-footer__heading" style={{ marginTop: "2rem" }}>
+              Company
+            </p>
+            <ul className="dt-footer__list">
+              {FOOTER_COMPANY_LINKS.map((link) => (
+                <li key={link.href}>
+                  <Link href={link.href} scroll={true}>
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div>
+            <p className="dt-footer__heading">Quote</p>
+            <ul className="dt-footer__list">
+              <li>
+                <Link href="/quote" scroll={true} className="font-semibold">
+                  Request a Free Quote
+                </Link>
+              </li>
+              <li>
+                <a href={`tel:${phoneTel}`}>{siteConfig.phone}</a>
+              </li>
+              <li>
+                <a href={`mailto:${siteConfig.email}`}>{siteConfig.email}</a>
+              </li>
+              <li>
+                <a href={whatsAppUrl} target="_blank" rel="noopener noreferrer">
+                  WhatsApp
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div className="dt-footer__offices">
+          <p className="dt-footer__heading" style={{ gridColumn: "1 / -1", margin: 0 }}>
+            Service areas
+          </p>
+          {OFFICES.map((office) => (
+            <div key={office.id} className="dt-footer__office">
+              <p className="dt-footer__office-name">{office.name}</p>
+              {formatOfficeAddressLines(office).map((line) => (
+                <p key={line}>{line}</p>
+              ))}
+              <a href={`tel:${office.phone.replace(/\s/g, "")}`}>{office.phone}</a>
+            </div>
+          ))}
+          <p style={{ margin: 0 }}>
+            We operate from Western Cape and Gauteng bases and mobilise nationwide.
+            Clients are served on site — these are not walk-in offices.
           </p>
         </div>
+
+        <div className="dt-footer__legal">
+          <p>
+            &copy; {new Date().getFullYear()} {siteConfig.name}. All rights reserved.
+          </p>
+          <p>Dam linings · Steel reservoirs · Waterproofing</p>
+        </div>
       </div>
+      <p className="dt-footer__wordmark" aria-hidden>
+        Damtech
+      </p>
     </footer>
   );
 }

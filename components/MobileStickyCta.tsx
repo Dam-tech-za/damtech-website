@@ -7,6 +7,15 @@ import { phoneTel, whatsAppUrl } from "@/lib/site";
 /** Fixed mobile action bar — call, WhatsApp, quote. */
 export function MobileStickyCta() {
   const [footerVisible, setFooterVisible] = useState(false);
+  // Stay out of the way of the hero's own CTAs until the visitor scrolls on.
+  const [pastIntro, setPastIntro] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setPastIntro(window.scrollY > 480);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   useEffect(() => {
     const footer = document.getElementById("site-footer");
@@ -26,12 +35,12 @@ export function MobileStickyCta() {
   return (
     <div data-track-location="mobile_sticky_bar"
       className={`fixed inset-x-0 bottom-0 z-40 border-t border-slate-200 bg-white/95 px-2 py-2 shadow-[0_-4px_20px_rgba(15,23,42,0.08)] backdrop-blur transition-transform duration-200 ease-out sm:px-3 lg:hidden ${
-        footerVisible
+        footerVisible || !pastIntro
           ? "pointer-events-none translate-y-full"
           : "translate-y-0"
       }`}
       style={{ paddingBottom: "max(0.5rem, env(safe-area-inset-bottom))" }}
-      aria-hidden={footerVisible}
+      aria-hidden={footerVisible || !pastIntro}
       aria-label="Quick contact"
     >
       <div className="mx-auto flex max-w-lg gap-2">

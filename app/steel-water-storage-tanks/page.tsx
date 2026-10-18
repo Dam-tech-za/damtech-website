@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Hero } from "@/components/Hero";
+import { SITE_IMAGES } from "@/lib/images";
 
 import { ServiceIntroSection } from "@/components/ServiceIntroSection";
 import { STEEL_TANKS_INTRO } from "@/lib/service-intro-content";
@@ -221,9 +222,8 @@ export default function SteelTanksPage() {
 
 
       <Hero
-
         compact
-
+        image={SITE_IMAGES.steelTank}
         eyebrow="Fixed-price supply-only kits"
 
         title={seo.h1}

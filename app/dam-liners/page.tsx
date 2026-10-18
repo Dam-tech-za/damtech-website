@@ -1,4 +1,5 @@
 import { Hero } from "@/components/Hero";
+import { SITE_IMAGES } from "@/lib/images";
 import { PageSeo } from "@/components/PageSeo";
 import { SiteSection } from "@/components/SiteSection";
 import {
@@ -103,7 +104,7 @@ export default function DamLinersPage() {
       />
 
       <Hero
-        compact
+        image={SITE_IMAGES.homeDamLiner}
         eyebrow="HDPE · PVC · Bitumen"
         title={seo.h1}
         description="Damtech supplies and installs HDPE, PVC and torch-on dam liners for earth dams, reservoirs, ponds and water storage applications across South Africa."

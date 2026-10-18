@@ -232,9 +232,8 @@ export default function AboutPage() {
 
 
       <Hero
-
         compact
-
+        image={SITE_IMAGES.homeHeroInstall}
         eyebrow="More than 30 years of combined team experience"
 
         title={PAGE_SEO.about.h1}

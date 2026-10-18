@@ -1,12 +1,13 @@
 import Link from "next/link";
-import { HomeTrustWarrantySection } from "@/components/HomeTrustWarrantySection";
-import { HomeServicesSection } from "@/components/HomeServicesSection";
-import { HomeProcessProjectsSection } from "@/components/HomeProcessProjectsSection";
-import { HomeWhyChooseSection } from "@/components/HomeWhyChooseSection";
+import { ArrowRightIcon } from "@/components/icons/StrokeIcons";
+import { HomeFinalCtaSection } from "@/components/HomeFinalCtaSection";
 import { HomeHero } from "@/components/HomeHero";
+import { HomeProcessProjectsSection } from "@/components/HomeProcessProjectsSection";
+import { HomeServicesSection } from "@/components/HomeServicesSection";
+import { HomeTrustWarrantySection } from "@/components/HomeTrustWarrantySection";
+import { HomeWhyChooseSection } from "@/components/HomeWhyChooseSection";
 import { PageSeo } from "@/components/PageSeo";
 import { createPageMetadata, PAGE_SEO } from "@/lib/pages";
-import { LazyHomeFinalCtaSection as HomeFinalCtaSection } from "@/components/lazy";
 
 export const metadata = createPageMetadata(PAGE_SEO.home);
 
@@ -17,9 +18,10 @@ export default function HomePage() {
 
       <HomeHero />
 
-      <p className="border-b bg-white px-4 py-3 text-center text-sm sm:text-base">
-        <Link href="/waterproofing/" className="link-row font-semibold">
+      <p className="dt-band">
+        <Link href="/waterproofing/" className="dt-band__link">
           Leaking roof or damp walls? We waterproof homes too
+          <ArrowRightIcon className="dt-band__icon" aria-hidden />
         </Link>
       </p>
 

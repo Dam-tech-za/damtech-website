@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Hero } from "@/components/Hero";
+import { SITE_IMAGES } from "@/lib/images";
 import { PageSeo } from "@/components/PageSeo";
 import { ProjectsIndexClient } from "@/components/ProjectsIndexClient";
 import { SiteSection } from "@/components/SiteSection";
@@ -26,6 +27,7 @@ export default function ProjectsIndexPage() {
 
       <Hero
         compact
+        image={SITE_IMAGES.worcesterLining}
         eyebrow="Case studies"
         title={PROJECTS_INDEX_SEO.h1}
         description="Case studies from Damtech dam lining, waterproofing and water storage projects completed for South African clients."

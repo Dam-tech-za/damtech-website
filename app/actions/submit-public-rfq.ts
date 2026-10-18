@@ -22,6 +22,7 @@ import {
   rfqLogError,
 } from "@/lib/rfq/diagnostics";
 import { getRfqEmailConfig } from "@/lib/rfq/email/config";
+import { checkRequiredRfqContact } from "@/lib/rfq/contact-requirements";
 import { attemptDatabaseFallbackAfterPersistenceFailure } from "@/lib/fallback/after-persistence-failure";
 import { buildCalculatorRfqFallbackInput } from "@/lib/fallback/payloads";
 
@@ -54,25 +55,14 @@ export async function submitPublicRfqAction(
 
   const data = parsed.data;
 
-  if (!data.phone.trim() && !data.email.trim()) {
+  // Email and province are compulsory on every public RFQ; phone is optional.
+  const contactProblem = checkRequiredRfqContact(data);
+  if (contactProblem) {
     return {
       ok: false,
       code: "VALIDATION_ERROR",
-      message:
-        "Please provide a phone number or email address so we can reach you.",
-      fieldErrors: {
-        phone: ["Phone or email is required."],
-        email: ["Phone or email is required."],
-      },
-      incidentId,
-    };
-  }
-  if (data.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) {
-    return {
-      ok: false,
-      code: "VALIDATION_ERROR",
-      message: "Please enter a valid email address.",
-      fieldErrors: { email: ["Please enter a valid email address."] },
+      message: contactProblem.message,
+      fieldErrors: { [contactProblem.field]: [contactProblem.message] },
       incidentId,
     };
   }
