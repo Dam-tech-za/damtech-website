@@ -44,8 +44,8 @@ const TRUST_ITEMS = [
 ] as const;
 
 /**
- * Homepage hero — full-bleed site photograph (crew lining an earth dam) with an
- * oversized Damtech wordmark in the sky. On mobile the supporting copy and CTAs
+ * Homepage hero — full-bleed site photograph (crew lining an earth dam) with the
+ * headline anchored bottom-left. On mobile the supporting copy and CTAs
  * drop below the photo onto a light panel so the photograph stays visible.
  */
 export function HomeHero() {
@@ -70,9 +70,6 @@ export function HomeHero() {
           />
         </div>
         <div className="dt-hero__scrim" aria-hidden />
-        <p className="dt-hero__wordmark" aria-hidden>
-          Damtech
-        </p>
 
         <div className="dt-hero__headline site-shell">
           <p className="dt-hero__eyebrow">{HERO_EYEBROW}</p>

@@ -207,17 +207,26 @@
   color: var(--dt-white);
 }
 
-.dt-page-hero--blue .hero-btn-primary,
 .dt-page-hero--ink .hero-btn-primary,
 .dt-page-hero--photo .hero-btn-primary {
-  background: var(--dt-cyan);
-  color: var(--dt-ink);
+  background: var(--dt-blue);
+  color: var(--dt-white);
 }
 
-.dt-page-hero--blue .hero-btn-primary:hover,
 .dt-page-hero--ink .hero-btn-primary:hover,
 .dt-page-hero--photo .hero-btn-primary:hover {
-  background: #6fe0e2;
+  background: var(--dt-blue-deep);
+}
+
+/* On the blue colour block the primary action is white with blue text. */
+.dt-page-hero--blue .hero-btn-primary {
+  background: var(--dt-white);
+  color: var(--dt-blue);
+}
+
+.dt-page-hero--blue .hero-btn-primary:hover {
+  background: var(--dt-cream);
+  color: var(--dt-blue-deep);
 }
 
 .dt-page-hero--blue .hero-btn-secondary,
@@ -520,12 +529,12 @@
 }
 
 .home-final-cta__card--inline .btn-primary {
-  background: var(--dt-cyan);
-  color: var(--dt-ink);
+  background: var(--dt-blue);
+  color: var(--dt-white);
 }
 
 .home-final-cta__card--inline .btn-primary:hover {
-  background: #6fe0e2;
+  background: var(--dt-blue-deep);
 }
 
 .home-final-cta__card--inline .btn-secondary {

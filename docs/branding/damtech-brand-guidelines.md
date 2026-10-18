@@ -8,18 +8,20 @@ Infrastructure contractor, not SaaS. Big real site photographs, heavy expanded t
 ## Colour
 | Token | Hex | Use |
 |---|---|---|
-| `--dt-ink` | `#07131D` | Primary text, dark bands (process, footer), primary buttons on light |
-| `--dt-ink-2` | `#0E2231` | Secondary dark panels (warranty panel) |
-| `--dt-blue` | `#0B5FD9` | Brand blue: eyebrows, links, residential hero block, services index band |
-| `--dt-blue-deep` | `#0848A8` | Blue hover |
-| `--dt-cyan` | `#3FD0D4` | Water accent: primary CTA on dark/photo, rules, stroked numerals. **Text on cyan is always ink.** |
+| `--dt-ink` | `#031926` | Damtech navy: primary text, dark bands (process, footer), header CTA |
+| `--dt-ink-2` | `#0B2A3F` | Secondary dark panels (warranty panel) |
+| `--dt-blue` | `#026BC6` | Damtech logo blue: primary CTAs (white text), eyebrows, links, residential hero block, services index band, residential band |
+| `--dt-blue-deep` | `#025AA8` | Blue hover |
+| `--dt-sky` (alias `--dt-cyan`) | `#2B9FF3` | Damtech light blue accent: eyebrows/notes on dark, rules, stroked numerals, area chips. Text on it is always navy. |
 | `--dt-cream` | `#F5F0E7` | Warm light surface: header, proof/projects/CTA sections, page heroes |
 | `--dt-paper` | `#FBF9F4` | Quiet alternate surface |
 | `--dt-stone` | `#55606A` | Secondary text on light (≈5.3:1 on cream) |
 | `--dt-charcoal` | `#1F262D` | Body copy |
 | `--dt-line` / `--dt-line-dark` | 14% ink / 16% white | Hairline rules |
 
-Rules: white text only on ink, blue or a scrimmed photo. Cyan never carries white text. Don't stack two blue sections in a row; alternate cream / white / ink / blue. Legacy tokens (`--primary`, `--color-navy-dark`, …) are re-pointed to this palette so old templates inherit it.
+Rules: white text only on navy, brand blue or a scrimmed photo. The light accent never carries white text. On the blue colour block the primary button is white with blue text.
+
+**Owner decision (18 Oct 2026):** an earlier turquoise accent (`#3FD0D4`) and vivid blue (`#0B5FD9`) were rejected as too far from the Damtech brand; the palette now uses the established logo blue and navy. The oversized DAMTECH wordmark over the home hero was also removed at the owner's request. Don't stack two blue sections in a row; alternate cream / white / ink / blue. Legacy tokens (`--primary`, `--color-navy-dark`, …) are re-pointed to this palette so old templates inherit it.
 
 ## Type
 - **Display:** Archivo (Google Fonts, SIL OFL), variable weight + width (`wdth` 62–125) via `next/font` (`--font-archivo`). Headlines 800 weight at `wdth` 108–112; wordmarks 900 at `wdth` 125, uppercase.

@@ -7,13 +7,17 @@
 
 :root {
   /* Core palette */
-  --dt-ink: #07131d;
-  --dt-ink-2: #0e2231;
-  --dt-ink-3: #16334a;
-  --dt-blue: #0b5fd9;
-  --dt-blue-deep: #0848a8;
-  --dt-blue-soft: #dce8fb;
-  --dt-cyan: #3fd0d4;
+  /* Blues follow the established Damtech identity: logo blue #026BC6,
+     navy #031926 and the existing light accent #2B9FF3. */
+  --dt-ink: #031926;
+  --dt-ink-2: #0b2a3f;
+  --dt-ink-3: #143a55;
+  --dt-blue: #026bc6;
+  --dt-blue-deep: #025aa8;
+  --dt-blue-soft: #dbeaf8;
+  --dt-sky: #2b9ff3;
+  /* Legacy name kept for existing rules: the light brand accent, not turquoise. */
+  --dt-cyan: var(--dt-sky);
   --dt-cyan-deep: #0e8f96;
   --dt-cream: #f5f0e7;
   --dt-sand: #e9dfcc;
@@ -228,13 +232,14 @@ h3 {
   transform: translateX(3px);
 }
 
+/* Primary CTA: brand blue with white text (class name kept for markup stability). */
 .dt-btn--cyan {
-  background: var(--dt-cyan);
-  color: var(--dt-ink);
+  background: var(--dt-blue);
+  color: var(--dt-white);
 }
 .dt-btn--cyan:hover {
-  background: #6fe0e2;
-  color: var(--dt-ink);
+  background: var(--dt-blue-deep);
+  color: var(--dt-white);
 }
 
 .dt-btn--blue {
@@ -527,27 +532,6 @@ body:has(.dt-hero) .site-header-spacer {
     linear-gradient(180deg, rgba(7, 19, 29, 0) 38%, rgba(7, 19, 29, 0.55) 68%, rgba(7, 19, 29, 0.88) 100%);
 }
 
-.dt-hero__wordmark {
-  position: absolute;
-  top: calc(var(--header-height) + 0.5rem);
-  left: 0;
-  right: 0;
-  margin: 0;
-  z-index: -1;
-  text-align: center;
-  font-family: var(--font-display);
-  font-weight: 900;
-  font-variation-settings: "wdth" 125;
-  font-size: 15.2vw;
-  line-height: 0.8;
-  letter-spacing: -0.03em;
-  text-transform: uppercase;
-  color: var(--dt-ink);
-  opacity: 0.92;
-  user-select: none;
-  animation: dt-rise 1s var(--dt-ease) 0.1s both;
-}
-
 .dt-hero__headline {
   position: relative;
   padding-bottom: 2.25rem;
@@ -562,6 +546,7 @@ body:has(.dt-hero) .site-header-spacer {
   letter-spacing: 0.16em;
   line-height: 1.5;
   color: var(--dt-cyan);
+  text-shadow: 0 1px 12px rgba(3, 25, 38, 0.7);
 }
 
 .dt-hero__title {
@@ -795,7 +780,7 @@ body:has(.dt-hero) .site-header-spacer {
 /* Residential pathway band */
 .dt-band {
   margin: 0;
-  background: var(--dt-cyan);
+  background: var(--dt-blue);
   text-align: center;
 }
 
@@ -811,7 +796,7 @@ body:has(.dt-hero) .site-header-spacer {
   font-variation-settings: "wdth" 112;
   font-size: clamp(1rem, 1.6vw, 1.35rem);
   letter-spacing: -0.01em;
-  color: var(--dt-ink);
+  color: var(--dt-white);
   text-decoration: none;
 }
 
@@ -1757,7 +1742,6 @@ body:has(.dt-hero) .site-header-spacer {
 
 @media (prefers-reduced-motion: reduce) {
   .dt-hero__image,
-  .dt-hero__wordmark,
   .dt-hero__headline,
   .dt-hero__details {
     animation: none;
