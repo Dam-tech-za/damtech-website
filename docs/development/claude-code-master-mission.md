@@ -15,7 +15,8 @@ Owner brief: `docs/development/owner-master-mission-2026-10-18.md`. Branch: `cla
 | 3ef6712 | Ledger, before/after comparisons in `docs/design/compare/`. |
 | c548c9d | Blog article masthead → cream editorial; `scripts/perf-lab.mjs` lab probe. |
 | 8b78b55 | Admin RFQ detail "Enquiry source" panel (attribution was stored but only shown as raw JSON); brand, photography, SEO-diff, performance docs. |
-| (latest) | Admin audit, Cowork takeover audit, visual results, residential plan, release verification, owner action items; CLAUDE.md standing rules. |
+| c886c5b | Admin audit, Cowork takeover audit, visual results, residential plan, release verification, owner action items; CLAUDE.md standing rules. |
+| 5733871 | Polish: forms, sidebar/legacy cards, dark bands, focus ring, 320 px fix; contrast + overflow sweeps of all 75 routes. |
 
 ## Verification
 - `tsc` clean; `eslint` 0 errors (pre-existing warnings only); `npm test` 300/300; `next build` passes.
@@ -34,8 +35,8 @@ Owner brief: `docs/development/owner-master-mission-2026-10-18.md`. Branch: `cla
 1. Open draft PR (compare link) and get owner review of the Vercel preview.
 2. Admin: with test credentials/`.env.local`, click through RFQ inbox + detail (check the new Enquiry source panel) using a non-production residential test enquiry; draft (not apply) the advisor-fix migration.
 3. Lighthouse (mobile + desktop, 5 runs) on preview vs production.
-4. Polish remaining legacy pieces: calculator widgets, quote/contact form cards, product detail body, blog index cards; prune dead `home-*` CSS from `globals.css`.
-5. 768/1366 px screenshot sweep; keyboard/focus pass on header dropdowns and mobile menu.
+4. Remaining polish: calculator widget internals, product detail body, blog index cards; prune dead `home-*` CSS from `globals.css`.
+5. Screen-reader pass on header dropdown and mobile menu.
 6. Consider `display: "optional"` for Archivo to remove font-swap CLS (brand trade-off).
 
 Restart: `git checkout claude/project-thread-mfiulx && npm run build && npx next start -p 3100`; SEO check: `node scripts/seo-snapshot.mjs http://127.0.0.1:3100 after.json && node scripts/seo-snapshot.mjs --diff docs/seo/snapshots/baseline.json after.json`.

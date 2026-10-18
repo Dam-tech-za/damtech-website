@@ -10,7 +10,8 @@ Branch `claude/project-thread-mfiulx` from `main` @ 8d1acc8 (the commit producti
 | 3ef6712 | Mission ledger, before/after comparisons |
 | c548c9d | Blog article masthead; lab performance probe |
 | 8b78b55 | Admin "Enquiry source" panel; brand, photography, SEO, performance docs |
-| (latest) | Admin/takeover/results/release/owner docs, CLAUDE.md rules |
+| c886c5b | Admin/takeover/results/release/owner docs, CLAUDE.md rules |
+| 5733871 | Forms, sidebar cards, legacy card grids, dark bands, focus ring; 320 px fix |
 
 ## Checks run locally (Windows, production build)
 - `npx tsc --noEmit` — clean.
@@ -18,7 +19,9 @@ Branch `claude/project-thread-mfiulx` from `main` @ 8d1acc8 (the commit producti
 - `npm test` — 300/300 pass.
 - `npm run build` — passes, all 75 sitemap routes prerender.
 - SEO snapshot diff vs `main` — no regressions (see `docs/seo/seo-preservation-diff.md`).
-- 390 px overflow check on 17 key routes — none.
+- Overflow sweep of all 75 routes at 320 / 390 / 768 / 1366 px — none.
+- Automated text-contrast audit of all 75 routes — fixed every real failure; remaining hits are known false positives (text over photos / semi-transparent ribbons).
+- Keyboard: tab order through header and hero verified; brand focus ring on links, buttons and FAQ toggles.
 - Lab performance probe — see `docs/performance/benchmark-comparison.md`.
 
 ## Deployments
