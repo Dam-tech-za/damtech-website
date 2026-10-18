@@ -14,7 +14,7 @@ Branch `claude/project-thread-mfiulx` from `main` @ 8d1acc8 (the commit producti
 
 ## Checks run locally (Windows, production build)
 - `npx tsc --noEmit` — clean.
-- `npx eslint` — 0 errors (11 pre-existing warnings in admin/calculator files).
+- `npx eslint app components lib` — 0 errors, 35 pre-existing warnings (none in files changed on this branch).
 - `npm test` — 300/300 pass.
 - `npm run build` — passes, all 75 sitemap routes prerender.
 - SEO snapshot diff vs `main` — no regressions (see `docs/seo/seo-preservation-diff.md`).

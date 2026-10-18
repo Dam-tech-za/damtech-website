@@ -1062,6 +1062,7 @@ body:has(.dt-hero) .site-header-spacer {
 
 .dt-maintenance {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: 2.5rem;
   margin-top: clamp(4.5rem, 9vw, 8rem);
   padding-top: clamp(3rem, 6vw, 5rem);
@@ -1771,4 +1772,23 @@ body:has(.dt-hero) .site-header-spacer {
 
 .dt-nowrap {
   white-space: nowrap;
+}
+
+/* Very narrow phones (≤ 420 px): long button labels wrap instead of overflowing. */
+@media (max-width: 420px) {
+  .dt-btn {
+    white-space: normal;
+    text-align: center;
+  }
+}
+
+/* Focus ring: ink outline + cyan halo, visible on cream, white, blue and ink. */
+a:focus-visible,
+button:focus-visible,
+summary:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2px solid var(--dt-ink);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px var(--dt-cyan);
+  border-radius: 2px;
 }

@@ -570,11 +570,11 @@
   border-block: 0;
 }
 
-.site-section .home-process-projects__decor {
+.home-process-projects__process .home-process-projects__decor {
   display: none;
 }
 
-.site-section .home-process-projects__eyebrow {
+.home-process-projects__process .home-process-projects__eyebrow {
   display: flex;
   align-items: center;
   gap: 0.6rem;
@@ -583,14 +583,14 @@
   color: var(--dt-cyan);
 }
 
-.site-section .home-process-projects__eyebrow::before {
+.home-process-projects__process .home-process-projects__eyebrow::before {
   content: "";
   width: 1.75rem;
   height: 2px;
   background: currentColor;
 }
 
-.site-section .home-process-projects__title {
+.home-process-projects__process .home-process-projects__title {
   font-family: var(--font-display);
   font-variation-settings: "wdth" 112;
   font-size: var(--dt-size-lg);
@@ -598,21 +598,21 @@
   color: var(--dt-white);
 }
 
-.site-section .home-process-projects__divider,
-.site-section .home-process-projects__step-icon-wrap {
+.home-process-projects__process .home-process-projects__divider,
+.home-process-projects__process .home-process-projects__step-icon-wrap {
   display: none;
 }
 
-.site-section .home-process-projects__intro {
+.home-process-projects__process .home-process-projects__intro {
   color: var(--color-body-gray);
 }
 
-.site-section .home-process-projects__steps {
+.home-process-projects__process .home-process-projects__steps {
   gap: 0;
   border-top: 1px solid var(--dt-line-dark);
 }
 
-.site-section .home-process-projects__step {
+.home-process-projects__process .home-process-projects__step {
   height: 100%;
   padding: 2rem 1.75rem 2rem 0;
   border: 0;
@@ -621,7 +621,7 @@
   box-shadow: none;
 }
 
-.site-section .home-process-projects__step-number {
+.home-process-projects__process .home-process-projects__step-number {
   width: auto;
   height: auto;
   border-radius: 0;
@@ -636,17 +636,17 @@
   -webkit-text-stroke: 1.5px var(--dt-cyan);
 }
 
-.site-section .home-process-projects__step-title {
+.home-process-projects__process .home-process-projects__step-title {
   margin-top: 1.25rem;
   font-size: 1.25rem;
   color: var(--dt-white);
 }
 
-.site-section .home-process-projects__step-text {
+.home-process-projects__process .home-process-projects__step-text {
   color: var(--color-body-gray);
 }
 
-.site-section .home-process-projects__step-note {
+.home-process-projects__process .home-process-projects__step-note {
   color: var(--dt-cyan);
 }
 
@@ -776,4 +776,167 @@
   text-decoration-color: var(--dt-cyan);
   text-decoration-thickness: 2px;
   text-underline-offset: 3px;
+}
+
+/* Sidebar trust/contact cards share the inline CTA look but are narrow:
+   no decorative ring (it would sit under the list text). */
+.site-trust-panel__card::after,
+.home-final-cta__card--inline:not(:has(> .home-final-cta__actions))::after {
+  display: none;
+}
+
+.home-final-cta__card--inline > * {
+  position: relative;
+  z-index: 1;
+}
+.site-contact-aside .home-final-cta__card--inline::after { display: none; }
+
+/* Forms — quote, contact, calculators */
+.site-form-card {
+  border: 0;
+  border-top: 4px solid var(--dt-ink);
+  border-radius: 0 0 var(--dt-radius-lg) var(--dt-radius-lg);
+  background: var(--dt-paper);
+  box-shadow: none;
+}
+
+.form-input {
+  min-height: 3.1rem;
+  border: 1.5px solid #b8bfc6;
+  border-radius: var(--dt-radius);
+  background: var(--dt-white);
+  color: var(--dt-ink);
+  transition:
+    border-color 0.15s var(--dt-ease),
+    box-shadow 0.15s var(--dt-ease);
+}
+
+.form-input:hover {
+  border-color: var(--dt-stone);
+}
+
+.form-input:focus {
+  border-color: var(--dt-ink);
+  outline: none;
+  box-shadow: 0 0 0 3px var(--dt-cyan);
+}
+
+.form-input[aria-invalid="true"] {
+  border-color: #b42318;
+}
+
+.site-form-card label {
+  font-weight: 600;
+  color: var(--dt-ink);
+}
+
+/* Dark inline cards: list and body copy must read light on ink. */
+.home-final-cta__card--inline .site-trust-panel__item,
+.home-final-cta__card--inline li,
+.home-final-cta__card--inline p {
+  color: var(--color-body-gray);
+}
+
+.home-final-cta__card--inline strong {
+  color: var(--dt-white);
+}
+
+.home-final-cta__card--inline .site-trust-panel__icon {
+  color: var(--dt-cyan);
+}
+
+/* Light sidebar cards */
+.site-trust-panel__card.home-why-choose__card {
+  border: 1px solid var(--dt-line);
+  border-radius: var(--dt-radius-lg);
+  background: var(--dt-white);
+  box-shadow: none;
+}
+
+.site-trust-panel__card .home-why-choose__card-accent {
+  background: var(--dt-cyan);
+}
+
+/* Legacy card components used across inner pages (home-why-choose__card,
+   home-services__card): flat, hairline-bordered, top rule instead of soft shadows. */
+.home-why-choose__card,
+.home-services__card {
+  border: 1px solid var(--dt-line);
+  border-top: 3px solid var(--dt-ink);
+  border-radius: 0 0 var(--dt-radius-lg) var(--dt-radius-lg);
+  background: var(--dt-white);
+  box-shadow: none;
+}
+
+.home-why-choose__card:hover,
+.home-services__card:hover {
+  box-shadow: none;
+  transform: none;
+  border-top-color: var(--dt-blue);
+}
+
+.home-why-choose__card-title,
+.home-services__card-title {
+  font-family: var(--font-display);
+  font-variation-settings: "wdth" 108;
+  color: var(--dt-ink);
+}
+
+.home-why-choose__card-icon-wrap,
+.home-services__card-icon-wrap {
+  border-radius: var(--dt-radius);
+  background: var(--dt-cream);
+  color: var(--dt-blue);
+  box-shadow: none;
+}
+
+.home-why-choose__card-accent {
+  background: var(--dt-cyan);
+}
+
+
+/* Cards inside dark sections keep a dark surface so their light text stays readable. */
+.site-section--dark,
+.home-why-choose__trust {
+  background: var(--dt-ink);
+}
+
+.home-why-choose__trust .home-why-choose__divider {
+  background: var(--dt-cyan);
+}
+
+.home-why-choose__trust .home-why-choose__card,
+.site-section--dark .home-why-choose__card,
+.site-section--dark .home-services__card {
+  border-color: var(--dt-line-dark);
+  border-top-color: var(--dt-cyan);
+  background: var(--dt-ink-2);
+}
+
+.home-why-choose__trust .home-why-choose__card-title,
+.site-section--dark .home-why-choose__card-title,
+.site-section--dark .home-services__card-title {
+  color: var(--dt-white);
+}
+
+.home-why-choose__trust .home-why-choose__card-text,
+.site-section--dark .home-why-choose__card-text,
+.site-section--dark .home-services__card-text {
+  color: var(--color-body-gray);
+}
+
+.home-why-choose__trust .home-why-choose__card-icon-wrap,
+.site-section--dark .home-why-choose__card-icon-wrap,
+.site-section--dark .home-services__card-icon-wrap {
+  background: var(--dt-ink-3);
+  color: var(--dt-cyan);
+}
+
+/* Text links that used the old light-blue accent: brand blue on light surfaces. */
+.service-intro__secondary-link {
+  color: var(--dt-blue);
+}
+
+.service-intro__secondary-link:hover {
+  color: var(--dt-ink);
 }

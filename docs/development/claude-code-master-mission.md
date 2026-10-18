@@ -26,7 +26,7 @@ Owner brief: `docs/development/owner-master-mission-2026-10-18.md`. Branch: `cla
 
 ## Blocked / needs owner
 - **Admin click-through not done**: no local Supabase env and no test admin login; production DB reads were refused by the session's permission policy. Supabase security advisor (read-only) reports: 14 SECURITY DEFINER functions executable by `anon` (incl. `next_rfq_number`, `next_quote_number`, `rls_auto_enable`), mutable search_path on `set_updated_at`, leaked-password protection disabled. Fixing these needs an approved migration.
-- Residential pages have **no residential photography** — colour-block design used instead of stand-in photos. Shot list still to be written (`docs/branding/damtech-photography-requirements.md`).
+- Residential pages have **no residential photography** — colour-block design used instead of stand-in photos. Shot list: `docs/branding/damtech-photography-requirements.md`.
 - `gh` CLI not installed and no GitHub API access here, so the draft PR must be opened from the compare link.
 - Lighthouse not installed; lab probe used instead.
 
