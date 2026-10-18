@@ -2,6 +2,10 @@
 
 Owner brief: `docs/development/owner-master-mission-2026-10-18.md`. Branch: `claude/project-thread-mfiulx` (from `main` @ 8d1acc8). **Deployed to production 18 Oct 2026** (owner approved): merge `0f2db92` on `main`. See `docs/development/release-verification.md`.
 
+## Production audit (18 Oct 2026, branch `claude/project-thread-7zqlsd`)
+Full live crawl (153 URLs), old-vs-new SEO comparison, GSC/GA4 analysis, keyword map, calculator reference tests, public journey suite. Fixed: 10 GSC 404 redirects, quote-wizard submit validation, tap targets, 6 dead blog links, analytics-safe QA scripts. Not deployed yet. Records: `docs/development/production-final-verification.md`, plan `docs/development/production-seo-qa-execution-plan.md`, restart `docs/development/next-session.md`.
+
+
 ## Takeover findings (18 Oct 2026)
 - Cowork bundle (`_claude_transfer/damtech-optimisation.bundle`, head 1ffa0ce) and change archive (`damtech-all-changes.tgz`, 88 files) are **already fully contained in `main`** (byte-identical / ancestor content). Status: *verified integrated*. No Cowork work at risk.
 - Owner "old design" screenshots not present locally; `examples/` holds benchmark screenshots (Swell, Promax, Pomerleau). Grok report not present locally.
