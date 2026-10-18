@@ -49,3 +49,7 @@ docs/design/screenshots/
 scripts/_*.tmp.*
 _claude_transfer/
 .baseline-src/
+
+# Playwright / audit crawl artefacts
+/test-results/
+/playwright-report/

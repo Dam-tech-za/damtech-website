@@ -33,6 +33,8 @@ fs.mkdirSync(outDir, { recursive: true });
 const browser = await chromium.launch();
 for (const vp of viewports) {
   const ctx = await browser.newContext({ viewport: { width: vp.width, height: vp.height } });
+  // Never send analytics hits from audit runs (keeps production GA4/Meta clean).
+  await ctx.route(/googletagmanager|google-analytics|analytics\.google|doubleclick|facebook\.(net|com)|vercel-insights|speed-insights/, (r) => r.abort());
   for (const route of routes) {
     const page = await ctx.newPage();
     await page.goto(`${base}${route}`, { waitUntil: "networkidle" });

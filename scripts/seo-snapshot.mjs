@@ -32,6 +32,10 @@ async function snapshot(baseUrl, outFile) {
   const browser = await chromium.launch();
   const desktop = await browser.newContext({ viewport: { width: 1366, height: 900 } });
   const mobile = await browser.newContext({ viewport: { width: 390, height: 844 } });
+  // Never send analytics hits from audit runs (keeps production GA4/Meta clean).
+  const analytics = /googletagmanager|google-analytics|analytics\.google|doubleclick|facebook\.(net|com)|vercel-insights|speed-insights/;
+  await desktop.route(analytics, (r) => r.abort());
+  await mobile.route(analytics, (r) => r.abort());
   const result = { base, capturedAt: new Date().toISOString(), routes: {} };
 
   for (const path of paths) {
