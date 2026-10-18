@@ -10,6 +10,26 @@ import {
   type DashboardRecentRfq,
   type DashboardStageRow,
 } from "./types";
+import type { AttentionCounts } from "./attention";
+
+const UNAVAILABLE_ATTENTION: AttentionCounts = {
+  newEnquiries: null,
+  oldestNewSubmittedAt: null,
+  informationRequired: null,
+  siteMeasurement: null,
+  readyForQuote: null,
+  ordersAwaitingInvoice: null,
+  failedEmails: null,
+  failedEmailHref: null,
+  quotesAwaitingApproval: null,
+  quotesExpiringSoon: null,
+};
+
+type CountResult = { count: number | null; error: unknown };
+
+function countOrNull(result: CountResult): number | null {
+  return result.error ? null : (result.count ?? 0);
+}
 
 type DateWindow = {
   from: Date;
@@ -142,6 +162,9 @@ function activityLabel(action: string): string {
     pricing_updated: "Pricing updated",
     material_created: "Material price added",
     supplier_created: "Supplier added",
+    "order.status_changed": "Order status changed",
+    rfq_note_added: "Enquiry note added",
+    rfq_bulk_status_updated: "Enquiry statuses updated",
   };
   return map[action] || action.replaceAll("_", " ");
 }
@@ -154,6 +177,7 @@ function entityHref(
   if (entityType === "rfq") return `/admin/rfqs/${entityId}/`;
   if (entityType === "quote") return `/admin/quotes/${entityId}/`;
   if (entityType === "customer") return `/admin/customers/${entityId}/`;
+  if (entityType === "catalogue_order") return `/admin/orders/${entityId}/`;
   return null;
 }
 
@@ -167,6 +191,9 @@ function entityLabel(
   }
   if (afterData?.quote_number && typeof afterData.quote_number === "string") {
     return afterData.quote_number;
+  }
+  if (afterData?.order_reference && typeof afterData.order_reference === "string") {
+    return afterData.order_reference;
   }
   if (afterData?.name && typeof afterData.name === "string") {
     return afterData.name;
@@ -182,6 +209,8 @@ export async function getDashboardMetrics(
 ): Promise<DashboardMetrics> {
   const window = resolveWindow(rangeId);
   const empty: DashboardMetrics = {
+    loadError: true,
+    attention: UNAVAILABLE_ATTENTION,
     rangeId,
     rangeLabel: window.label,
     primary: {
@@ -226,6 +255,12 @@ export async function getDashboardMetrics(
       recentRfqsResult,
       activityResult,
       expiring,
+      oldestNew,
+      infoRequired,
+      siteMeasurement,
+      ordersAwaitingInvoice,
+      failedRfqEmails,
+      failedOrderEmails,
     ] = await Promise.all([
       supabase
         .from("rfqs")
@@ -285,7 +320,66 @@ export async function getDashboardMetrics(
         .eq("is_latest_revision", true)
         .gte("valid_until", today)
         .lte("valid_until", in7),
+      supabase
+        .from("rfqs")
+        .select("submitted_at")
+        .eq("status", "new")
+        .order("submitted_at", { ascending: true })
+        .limit(1),
+      supabase
+        .from("rfqs")
+        .select("*", { count: "exact", head: true })
+        .eq("status", "information_required"),
+      supabase
+        .from("rfqs")
+        .select("*", { count: "exact", head: true })
+        .eq("status", "site_measurement_required"),
+      supabase
+        .from("catalogue_orders")
+        .select("*", { count: "exact", head: true })
+        .eq("status", "pending_invoice"),
+      supabase
+        .from("rfq_communications")
+        .select("rfq_id", { count: "exact" })
+        .eq("status", "failed")
+        .order("created_at", { ascending: false })
+        .limit(1),
+      supabase
+        .from("catalogue_orders")
+        .select("id", { count: "exact" })
+        .neq("status", "cancelled")
+        .or("confirmation_email_status.eq.failed,internal_email_status.eq.failed")
+        .order("created_at", { ascending: false })
+        .limit(1),
     ]);
+
+    const newCount = stageRows.error
+      ? null
+      : (stageRows.data ?? []).filter((row) => row.status === "new").length;
+    const failedRfq = countOrNull(failedRfqEmails);
+    const failedOrders = countOrNull(failedOrderEmails);
+    const failedRfqId = failedRfqEmails.data?.[0]?.rfq_id as string | undefined;
+    const failedOrderId = failedOrderEmails.data?.[0]?.id as string | undefined;
+    const attention: AttentionCounts = {
+      newEnquiries: newCount,
+      oldestNewSubmittedAt: oldestNew.error
+        ? null
+        : ((oldestNew.data?.[0]?.submitted_at as string | undefined) ?? null),
+      informationRequired: countOrNull(infoRequired),
+      siteMeasurement: countOrNull(siteMeasurement),
+      readyForQuote: countOrNull(readyCount),
+      ordersAwaitingInvoice: countOrNull(ordersAwaitingInvoice),
+      failedEmails:
+        failedRfq === null || failedOrders === null ? null : failedRfq + failedOrders,
+      failedEmailHref: failedRfqId
+        ? `/admin/rfqs/${failedRfqId}/#rfq-communication`
+        : failedOrderId
+          ? `/admin/orders/${failedOrderId}/`
+          : null,
+      quotesAwaitingApproval: countOrNull(reviewCount),
+      quotesExpiringSoon: countOrNull(expiring),
+    };
+    const loadError = Boolean(newInPeriod.error || stageRows.error || recentRfqsResult.error);
 
     const stageOrder: Array<{ status: string; label: string }> = [
       { status: "new", label: "New" },
@@ -396,6 +490,8 @@ export async function getDashboardMetrics(
     const previous = newPrevious.count ?? 0;
 
     return {
+      loadError,
+      attention,
       rangeId,
       rangeLabel: window.label,
       primary: {

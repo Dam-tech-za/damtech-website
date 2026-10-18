@@ -1,3 +1,5 @@
+import type { AttentionCounts } from "./attention";
+
 export type DashboardRangeId =
   | "7d"
   | "30d"
@@ -60,6 +62,9 @@ export type DashboardActivityItem = {
 };
 
 export type DashboardMetrics = {
+  /** True when the main queries failed: figures below must not be trusted. */
+  loadError: boolean;
+  attention: AttentionCounts;
   rangeId: DashboardRangeId;
   rangeLabel: string;
   primary: {

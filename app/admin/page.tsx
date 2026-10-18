@@ -10,7 +10,13 @@ import { BreakdownPanel } from "@/components/admin/dashboard/BreakdownPanel";
 import { RecentActivity } from "@/components/admin/dashboard/RecentActivity";
 import { RecentRfqs } from "@/components/admin/dashboard/RecentRfqs";
 import { QuickActions } from "@/components/admin/dashboard/QuickActions";
-import { AdminInfoBanner, AdminPageHeader } from "@/components/admin/ui";
+import { AttentionPanel } from "@/components/admin/dashboard/AttentionPanel";
+import { buildAttentionItems } from "@/lib/admin/dashboard/attention";
+import {
+  AdminErrorState,
+  AdminInfoBanner,
+  AdminPageHeader,
+} from "@/components/admin/ui";
 
 type PageProps = {
   searchParams: Promise<{ range?: string | string[] }>;
@@ -21,20 +27,31 @@ export default async function AdminDashboardPage({ searchParams }: PageProps) {
   const params = await searchParams;
   const rangeId = parseDashboardRange(params.range);
   const metrics = await getDashboardMetrics(rangeId);
+  const attentionItems = buildAttentionItems(metrics.attention);
 
   return (
     <div className="admin-stack--page dash">
       <AdminPageHeader
-        title="Dashboard"
-        description="Operational overview of RFQs, quotes and estimating activity."
-        secondaryAction={{ href: "/admin/rfqs/", label: "View RFQs" }}
-        primaryAction={{ href: "/admin/quotes/new/", label: "New Quote" }}
+        title="Overview"
+        description="What needs attention first, then enquiry and quotation activity for the selected period."
+        secondaryAction={{ href: "/admin/quotes/new/", label: "New quotation" }}
+        primaryAction={{ href: "/admin/rfqs/", label: "Open enquiries" }}
         secondaryActions={<DashboardHeaderControls rangeId={rangeId} />}
       />
 
+      {metrics.loadError ? (
+        <AdminErrorState
+          title="Live figures could not be loaded."
+          message="The numbers below may be incomplete. Refresh the page in a moment; if it keeps happening, check System health under Settings."
+        />
+      ) : null}
+
+      <AttentionPanel items={attentionItems} />
+
       <AdminInfoBanner tone="muted">
-        Accepted quote value is not cash received. RFQ pipeline quantities are
-        provisional estimates.
+        Figures below cover {metrics.rangeLabel.toLowerCase()}. Accepted quote
+        value is not cash received, and pipeline quantities are provisional
+        estimates from customer and calculator input.
       </AdminInfoBanner>
 
       <PrimaryKpiGrid metrics={metrics} />
