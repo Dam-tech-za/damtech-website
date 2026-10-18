@@ -1,9 +1,16 @@
 # Production audit — final verification record
 
-18 Oct 2026. Branch `claude/project-thread-7zqlsd`. Production remains on `main` @ `4ce56eb` until the owner approves a merge.
+18 Oct 2026. Branch `claude/project-thread-7zqlsd`. **Deployed:** merged to `main` as `c1edab0` on the owner's go-ahead (14:37 SAST thread message) and live on www.dam-tech.co.za.
 
 ## Follow-up (owner test report, same day)
 Contact form emails fixed; GA4 CSP fixed; `/order/` redirect; 404 and canonical clean-up; 1200×630 share images; alt text; all-missing-fields validation; sitemap lastmod; Betty's Bay H1. Comparison table: `docs/development/owner-report-comparison-2026-10-18.md`. Still blocked: RFQ look-up and test-order cancel (no DB/admin access).
+
+## Live verification after deploy (18 Oct 2026)
+- Read-only Playwright suite against production: **38/38 passed** (offline-submit spec skipped by design).
+- SEO snapshot live-before vs live-after (75 routes): only the two intended heading changes (`docs/seo/snapshots/diff-live-after-deploy.md`).
+- Spot checks: GSC 404 URLs 308 to their targets; `/order/` → catalogue; 75/75 sitemap lastmod; one robots tag on 404; `/og/*.jpg` served; GA4 collect/audience requests pass CSP (0 violations, beacons aborted by the test so no hits recorded).
+- Not verified live: contact-form emails (no test submission sent; owner to confirm with the next real enquiry or a test of their own), Meta Pixel delivery (check Events Manager).
+- Rollback: Vercel Instant Rollback to the 4ce56eb deployment, or `git revert -m 1 c1edab0`.
 
 ## Owner summary
 - **Route coverage:** 153 / 153 discovered URLs audited in a real browser (75 sitemap pages, 85 Search Console URLs, legacy redirects, internal links, private/utility routes). 114 rendered pages, 35 redirects, 11 not-found (10 real + 1 deliberate test), 3 assets/feeds, 1 admin. Exclusions: admin pages behind login (no test account).
@@ -12,7 +19,7 @@ Contact form emails fixed; GA4 CSP fixed; `/order/` redirect; 404 and canonical 
 - **Forms / RFQs / calculators:** calculators PASS (18 hand-checked cases + edge cases, UI matches); form validation, bot guard and graceful failure PASS; one wizard validation defect found and fixed; end-to-end save → email → admin → upload **BLOCKED** (no test database/admin).
 - **Fixed:** GSC 404 redirects; quote-wizard submit check; 24 px tap targets; 6 dead blog links; QA scripts no longer send analytics hits.
 - **Performance:** unchanged this pass; lab figures in `docs/performance/benchmark-comparison.md`; field data blocked (Vercel API 403).
-- **Deployed:** not yet — awaiting owner go-ahead.
+- **Deployed:** `c1edab0` on `main`, verified live 18 Oct 2026.
 - **Owner inputs needed:** approve deploy; Supabase test branch + test admin; GBP and review link; confirm "free assessment", opening hours and warranty wording; calculator freeboard choice; GA4 bot filter; resubmit sitemap.
 
 ## Acceptance gates
