@@ -291,8 +291,12 @@ export function DeleteRfqDialog({
                 if (closing) return;
                 setClosing(true);
                 setError(null);
-                await updateRfqStatusAction(formData);
+                const result = await updateRfqStatusAction(null, formData);
                 setClosing(false);
+                if (!result?.ok) {
+                  setError(result?.message ?? "The enquiry could not be closed.");
+                  return;
+                }
                 handleClose();
                 onSuccess?.();
               }}

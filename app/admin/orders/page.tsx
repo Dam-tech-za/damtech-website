@@ -5,8 +5,14 @@ import { notFound } from "next/navigation";
 import { listCatalogueOrders } from "@/lib/orders/list";
 import { ORDER_STATUSES } from "@/lib/orders/types";
 import { formatZar } from "@/lib/estimating/money";
+import { orderStatusLabel } from "@/lib/admin/labels";
+import { Suspense } from "react";
 import {
+  AdminButton,
   AdminEmptyState,
+  AdminErrorState,
+  AdminListMemory,
+  AdminPagination,
   AdminFilterToolbar,
   AdminPageHeader,
   AdminPanel,
@@ -15,6 +21,18 @@ import {
   AdminStatusBadge,
   AdminTable,
 } from "@/components/admin/ui";
+
+function pageHref(
+  filters: { q?: string; status?: string },
+  page: number,
+): string {
+  const params = new URLSearchParams();
+  if (filters.q) params.set("q", filters.q);
+  if (filters.status) params.set("status", filters.status);
+  if (page > 1) params.set("page", String(page));
+  const query = params.toString();
+  return `/admin/orders/${query ? `?${query}` : ""}`;
+}
 
 type PageProps = {
   searchParams: Promise<{ q?: string; status?: string; page?: string }>;
@@ -30,8 +48,11 @@ export default async function AdminOrdersPage({ searchParams }: PageProps) {
     <div className="admin-stack--page">
       <AdminPageHeader
         title="Orders"
-        description="Fixed-price catalogue orders awaiting invoice, payment or delivery."
+        description="Fixed-price tank kit orders placed on the website. Orders are invoice-only; open an order to update its status or cancel it."
       />
+      <Suspense fallback={null}>
+        <AdminListMemory listPath="/admin/orders/" />
+      </Suspense>
       <AdminFilterToolbar>
         <form className="admin-filter-toolbar__form" method="get">
           <AdminSearchField
@@ -46,7 +67,7 @@ export default async function AdminOrdersPage({ searchParams }: PageProps) {
               <option value="">All statuses</option>
               {ORDER_STATUSES.map((status) => (
                 <option key={status} value={status}>
-                  {status.replaceAll("_", " ")}
+                  {orderStatusLabel(status)}
                 </option>
               ))}
             </AdminSelect>
@@ -57,8 +78,19 @@ export default async function AdminOrdersPage({ searchParams }: PageProps) {
         </form>
       </AdminFilterToolbar>
       <AdminPanel>
-        {result.rows.length === 0 ? (
-          <AdminEmptyState title="No orders" />
+        {result.error ? (
+          <AdminErrorState
+            title="Orders could not be loaded."
+            message="Refresh the page in a moment. If it keeps failing, check System health under Settings."
+          />
+        ) : result.rows.length === 0 ? (
+          <AdminEmptyState
+            title={
+              filters.q || filters.status
+                ? "No orders match these filters."
+                : "No orders yet."
+            }
+          />
         ) : (
           <AdminTable>
             <thead>
@@ -88,7 +120,10 @@ export default async function AdminOrdersPage({ searchParams }: PageProps) {
                   <td>{row.quantity}</td>
                   <td>{formatZar(Number(row.total_price_snapshot))}</td>
                   <td>
-                    <AdminStatusBadge status={row.status} />
+                    <AdminStatusBadge
+                      status={row.status}
+                      label={orderStatusLabel(row.status)}
+                    />
                   </td>
                   <td>{new Date(row.created_at).toLocaleString("en-ZA")}</td>
                   <td>
@@ -99,6 +134,32 @@ export default async function AdminOrdersPage({ searchParams }: PageProps) {
             </tbody>
           </AdminTable>
         )}
+        {!result.error && result.total > result.pageSize ? (
+          <AdminPagination
+            page={result.page}
+            pageSize={result.pageSize}
+            total={result.total}
+          >
+            {result.page > 1 ? (
+              <AdminButton
+                variant="secondary"
+                size="sm"
+                href={pageHref(filters, result.page - 1)}
+              >
+                Previous
+              </AdminButton>
+            ) : null}
+            {result.page * result.pageSize < result.total ? (
+              <AdminButton
+                variant="secondary"
+                size="sm"
+                href={pageHref(filters, result.page + 1)}
+              >
+                Next
+              </AdminButton>
+            ) : null}
+          </AdminPagination>
+        ) : null}
       </AdminPanel>
     </div>
   );

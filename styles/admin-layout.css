@@ -326,3 +326,144 @@
   min-width: 0;
   width: 100%;
 }
+
+/* ---------------------------------------------------------------
+   Admin reconstruction (Oct 2026): attention list, action feedback,
+   back links and grouped mobile menu.
+   --------------------------------------------------------------- */
+
+.dash-attention {
+  background: var(--admin-card-bg);
+  border: 1px solid var(--admin-border);
+  border-radius: var(--admin-radius-lg);
+  padding: var(--admin-space-5) var(--admin-space-6);
+}
+
+.dash-attention__title {
+  margin: 0 0 var(--admin-space-3);
+  font-size: 1rem;
+  font-weight: 650;
+  color: var(--admin-text);
+}
+
+.dash-attention__clear {
+  margin: 0;
+  color: var(--admin-text-muted);
+}
+
+.dash-attention__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--admin-space-2);
+}
+
+.dash-attention__item {
+  border-left: 3px solid var(--admin-primary);
+  border-radius: var(--admin-radius-sm);
+  background: #f7fafd;
+}
+
+.dash-attention__item--urgent {
+  border-left-color: var(--admin-danger);
+  background: #fdf5f5;
+}
+
+.dash-attention__item--unavailable {
+  border-left-color: var(--admin-warning);
+  background: #fdf9f2;
+}
+
+.dash-attention__link {
+  display: grid;
+  gap: 2px;
+  padding: var(--admin-space-3) var(--admin-space-4);
+  color: inherit;
+  text-decoration: none;
+  border-radius: var(--admin-radius-sm);
+}
+
+.dash-attention__link:hover .dash-attention__label {
+  text-decoration: underline;
+}
+
+.dash-attention__link:focus-visible {
+  outline: 2px solid var(--admin-focus-ring);
+  outline-offset: 2px;
+}
+
+.dash-attention__label {
+  font-weight: 600;
+  color: var(--admin-text);
+}
+
+.dash-attention__hint {
+  font-size: 0.8125rem;
+  color: var(--admin-text-muted);
+}
+
+.admin-action-message {
+  margin: var(--admin-space-1) 0 0;
+  min-height: 1.25rem;
+  font-size: 0.8125rem;
+  flex-basis: 100%;
+}
+
+.admin-action-message--idle:empty {
+  min-height: 0;
+  margin: 0;
+}
+
+.admin-action-message--pending {
+  color: var(--admin-text-muted);
+}
+
+.admin-action-message--success {
+  color: var(--admin-success);
+  font-weight: 600;
+}
+
+.admin-action-message--error {
+  color: var(--admin-danger);
+  font-weight: 600;
+}
+
+form[aria-busy="true"] {
+  cursor: progress;
+}
+
+.admin-back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--admin-space-1);
+  align-self: flex-start;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--admin-primary);
+  text-decoration: none;
+}
+
+.admin-back-link:hover {
+  text-decoration: underline;
+}
+
+.admin-mobile-nav__group + .admin-mobile-nav__group {
+  margin-top: var(--admin-space-4);
+}
+
+.admin-mobile-nav__group ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.admin-mobile-nav__group-label {
+  margin: 0 0 var(--admin-space-1);
+  padding: 0 0.85rem;
+  font-size: 0.65rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--admin-sidebar-muted);
+  font-weight: 600;
+}

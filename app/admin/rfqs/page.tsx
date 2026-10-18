@@ -19,7 +19,7 @@ import { RfqEmptyState } from "@/components/admin/rfqs/RfqEmptyState";
 import { RfqOnboardingNote } from "@/components/admin/rfqs/RfqOnboardingNote";
 import { RfqRefreshButton } from "@/components/admin/rfqs/RfqRefreshButton";
 import { RfqDeleteToast } from "@/components/admin/rfqs/RfqDeleteToast";
-import { AdminErrorState } from "@/components/admin/ui";
+import { AdminErrorState, AdminListMemory } from "@/components/admin/ui";
 
 type PageProps = {
   searchParams: Promise<RfqInboxFilters>;
@@ -66,6 +66,7 @@ export default async function AdminRfqsPage({ searchParams }: PageProps) {
 
       <Suspense fallback={null}>
         <RfqDeleteToast />
+        <AdminListMemory listPath="/admin/rfqs/" />
       </Suspense>
 
       <RfqStatusStrip counts={statusCounts} filters={filters} />
@@ -76,7 +77,7 @@ export default async function AdminRfqsPage({ searchParams }: PageProps) {
 
       {result.error ? (
         <AdminErrorState
-          title="RFQs could not be loaded."
+          title="Enquiries could not be loaded."
           message="Please retry shortly. If the problem continues, contact support."
         />
       ) : result.rows.length === 0 ? (

@@ -1,7 +1,15 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { requireAdmin } from "@/lib/auth/require-admin";
+import { unstable_rethrow } from "next/navigation";
+import { assertAdmin, requireAdmin } from "@/lib/auth/require-admin";
+import { orderStatusLabel } from "@/lib/admin/labels";
+import {
+  actionFailure,
+  actionSuccess,
+  describeActionError,
+  type AdminActionState,
+} from "@/lib/admin/action-state";
 import { canPerform } from "@/lib/auth/permissions";
 import { writeAuditLog } from "@/lib/auth/audit";
 import { createClient } from "@/lib/supabase/server";
@@ -15,32 +23,49 @@ import { resolveOrderableProduct } from "@/lib/orders/pricing";
 import type { PublicOrderFormInput } from "@/lib/orders/schema";
 import { ORDER_FULFILMENT_METHOD } from "@/lib/orders/types";
 
-export async function updateOrderStatusAction(formData: FormData): Promise<void> {
-  const admin = await requireAdmin({ permission: "manageOrders" });
+export async function updateOrderStatusAction(
+  _prev: AdminActionState,
+  formData: FormData,
+): Promise<AdminActionState> {
   const id = String(formData.get("id") ?? "");
   const status = String(formData.get("status") ?? "");
-  if (!id || !isOrderStatus(status)) return;
-  const existing = await getCatalogueOrder(id);
-  if (!existing) return;
+  if (!id || !isOrderStatus(status)) return actionFailure("Choose a valid status.");
 
-  const supabase = await createClient();
-  const { error } = await supabase
-    .from("catalogue_orders")
-    .update({ status, updated_at: new Date().toISOString() })
-    .eq("id", id);
-  if (error) return;
+  try {
+    const admin = await assertAdmin({ permission: "manageOrders" });
+    const existing = await getCatalogueOrder(id);
+    if (!existing) return actionFailure("This order no longer exists.");
+    if (existing.status === status) {
+      return actionSuccess(`Status is already ${orderStatusLabel(status)}.`);
+    }
 
-  await writeAuditLog({
-    actorUserId: admin.user.id,
-    actorEmail: admin.profile.email,
-    action: "order.status_changed",
-    entityType: "catalogue_order",
-    entityId: id,
-    beforeData: { status: existing.status },
-    afterData: { status },
-  });
-  revalidatePath(`/admin/orders/${id}/`);
-  revalidatePath("/admin/orders/");
+    const supabase = await createClient();
+    const { error } = await supabase
+      .from("catalogue_orders")
+      .update({ status, updated_at: new Date().toISOString() })
+      .eq("id", id);
+    if (error) {
+      console.error("[orders] status update failed:", error.message);
+      return actionFailure(describeActionError(error));
+    }
+
+    await writeAuditLog({
+      actorUserId: admin.user.id,
+      actorEmail: admin.profile.email,
+      action: "order.status_changed",
+      entityType: "catalogue_order",
+      entityId: id,
+      beforeData: { status: existing.status },
+      afterData: { status, order_reference: existing.order_reference },
+    });
+    revalidatePath("/admin/");
+    revalidatePath(`/admin/orders/${id}/`);
+    revalidatePath("/admin/orders/");
+    return actionSuccess(`Status changed to ${orderStatusLabel(status)}.`);
+  } catch (error) {
+    unstable_rethrow(error);
+    return actionFailure(describeActionError(error));
+  }
 }
 
 export async function resendOrderConfirmationAction(orderId: string) {

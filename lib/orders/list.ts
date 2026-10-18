@@ -44,7 +44,13 @@ export async function listCatalogueOrders(filters: {
   q?: string;
   status?: string;
   page?: string;
-}): Promise<{ rows: CatalogueOrderListRow[]; total: number; page: number; pageSize: number }> {
+}): Promise<{
+  rows: CatalogueOrderListRow[];
+  total: number;
+  page: number;
+  pageSize: number;
+  error: boolean;
+}> {
   const pageSize = 25;
   const page = Math.max(1, Number(filters.page) || 1);
   const supabase = await createClient();
@@ -72,13 +78,14 @@ export async function listCatalogueOrders(filters: {
   const { data, count, error } = await query;
   if (error) {
     console.error("[orders] list failed:", error.message);
-    return { rows: [], total: 0, page, pageSize };
+    return { rows: [], total: 0, page, pageSize, error: true };
   }
   return {
     rows: (data ?? []) as CatalogueOrderListRow[],
     total: count ?? 0,
     page,
     pageSize,
+    error: false,
   };
 }
 

@@ -16,8 +16,8 @@ export function RfqPageHeader({
 }: RfqPageHeaderProps) {
   return (
     <AdminPageHeader
-      title="RFQs"
-      description="Review incoming enquiries, contact customers and prepare requests for quotation."
+      title="Enquiries"
+      description="Every quote request and contact message from the website (RFQs). Open one to see the customer, site and request, then update its status as you follow up."
       secondaryActions={refreshSlot}
       secondaryAction={
         canExport
@@ -25,7 +25,7 @@ export function RfqPageHeader({
           : undefined
       }
       primaryAction={
-        canManage ? { href: "/quote/", label: "Create RFQ" } : undefined
+        canManage ? { href: "/quote/", label: "Add enquiry via website form" } : undefined
       }
     />
   );

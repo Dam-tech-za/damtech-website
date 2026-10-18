@@ -31,8 +31,17 @@ import { ResendRfqNotificationButton } from "@/components/admin/ResendRfqNotific
 import { RfqCatalogueLinePanel } from "@/components/admin/RfqCatalogueLinePanel";
 import { RfqDetailActions } from "@/components/admin/rfqs/RfqDetailActions";
 import { describeLeadSource } from "@/lib/analytics/attribution";
+import { RFQ_STATUS_LABELS } from "@/lib/admin/rfqs/rfq-inbox-types";
 import {
+  communicationStatusLabel,
+  communicationTypeLabel,
+  rfqEventLabel,
+} from "@/lib/admin/labels";
+import {
+  AdminActionForm,
+  AdminBackLink,
   AdminButton,
+  AdminSubmitButton,
   AdminCheckbox,
   AdminDateInput,
   AdminEmptyState,
@@ -210,6 +219,7 @@ export default async function AdminRfqDetailPage({
 
   return (
     <div className="admin-rfq-detail admin-stack--page">
+      <AdminBackLink listPath="/admin/rfqs/" label="Back to enquiries" />
       <AdminPageHeader
         title={rfq.rfq_number}
         description={headerDescription}
@@ -371,7 +381,7 @@ export default async function AdminRfqDetailPage({
               .slice(0, 12)
               .map((event) => (
                 <li key={event.id}>
-                  <strong>{event.event_type}</strong>
+                  <strong>{rfqEventLabel(event.event_type)}</strong>
                   <span className="admin-muted">
                     {" "}
                     · {new Date(event.created_at).toLocaleString("en-ZA")}
@@ -578,25 +588,31 @@ export default async function AdminRfqDetailPage({
         </AdminPanel>
 
         {canManage ? (
-          <AdminPanel title="Status, assignment & close">
-            <form action={updateRfqStatusAction} className="admin-inline-form">
+          <AdminPanel
+            title="Status, assignment & close"
+            description="Move the enquiry along as you work on it so the overview shows what still needs attention."
+          >
+            <AdminActionForm action={updateRfqStatusAction} className="admin-inline-form">
               <input type="hidden" name="rfqId" value={rfq.id} />
-              <AdminSelect name="status" defaultValue={rfq.status}>
+              <AdminSelect
+                name="status"
+                defaultValue={rfq.status}
+                aria-label="Enquiry status"
+              >
                 {RFQ_STATUSES.map((status) => (
                   <option key={status} value={status}>
-                    {status}
+                    {RFQ_STATUS_LABELS[status] ?? status}
                   </option>
                 ))}
               </AdminSelect>
-              <AdminButton type="submit" variant="primary">
-                Update status
-              </AdminButton>
-            </form>
-            <form action={assignRfqAction} className="admin-inline-form">
+              <AdminSubmitButton>Update status</AdminSubmitButton>
+            </AdminActionForm>
+            <AdminActionForm action={assignRfqAction} className="admin-inline-form">
               <input type="hidden" name="rfqId" value={rfq.id} />
               <AdminSelect
                 name="assignedTo"
                 defaultValue={rfq.assigned_to ?? ""}
+                aria-label="Assigned estimator"
               >
                 <option value="">Unassigned</option>
                 {(staff ?? []).map((person) => (
@@ -605,25 +621,25 @@ export default async function AdminRfqDetailPage({
                   </option>
                 ))}
               </AdminSelect>
-              <AdminButton type="submit" variant="secondary">
-                Assign estimator
-              </AdminButton>
-            </form>
+              <AdminSubmitButton variant="secondary">Assign estimator</AdminSubmitButton>
+            </AdminActionForm>
             <div className="admin-panel__actions">
-              <form action={updateRfqStatusAction}>
+              <AdminActionForm
+                action={updateRfqStatusAction}
+                confirmMessage={`Mark ${rfq.rfq_number} as spam? It will drop out of the open enquiries list.`}
+              >
                 <input type="hidden" name="rfqId" value={rfq.id} />
                 <input type="hidden" name="status" value="spam" />
-                <AdminButton type="submit" variant="secondary">
-                  Mark spam
-                </AdminButton>
-              </form>
-              <form action={updateRfqStatusAction}>
+                <AdminSubmitButton variant="secondary">Mark spam</AdminSubmitButton>
+              </AdminActionForm>
+              <AdminActionForm
+                action={updateRfqStatusAction}
+                confirmMessage={`Close ${rfq.rfq_number}? You can reopen it later by changing its status.`}
+              >
                 <input type="hidden" name="rfqId" value={rfq.id} />
                 <input type="hidden" name="status" value="closed" />
-                <AdminButton type="submit" variant="secondary">
-                  Close RFQ
-                </AdminButton>
-              </form>
+                <AdminSubmitButton variant="secondary">Close enquiry</AdminSubmitButton>
+              </AdminActionForm>
             </div>
           </AdminPanel>
         ) : null}
@@ -655,9 +671,9 @@ export default async function AdminRfqDetailPage({
                 rows={3}
                 placeholder="Message shown to the customer"
               />
-              <AdminButton type="submit" variant="primary">
+              <AdminSubmitButton pendingLabel="Creating link…">
                 Generate secure customer link
-              </AdminButton>
+              </AdminSubmitButton>
             </form>
             {(infoRequests ?? []).length ? (
               <ul className="admin-list">
@@ -675,7 +691,7 @@ export default async function AdminRfqDetailPage({
 
         {canManage ? (
           <AdminPanel id="rfq-site-measurement" title="Schedule site measurement">
-            <form
+            <AdminActionForm
               action={updateMeasurementScheduleAction}
               className="admin-stack-form"
             >
@@ -719,6 +735,7 @@ export default async function AdminRfqDetailPage({
                   type="number"
                   step="any"
                   name="travelKm"
+                  min="0"
                   defaultValue={rfq.measurement_travel_km ?? ""}
                 />
               </label>
@@ -733,10 +750,10 @@ export default async function AdminRfqDetailPage({
                 placeholder="Measurement notes"
                 defaultValue={rfq.measurement_notes ?? ""}
               />
-              <AdminButton type="submit" variant="secondary">
+              <AdminSubmitButton variant="secondary">
                 Save measurement schedule
-              </AdminButton>
-            </form>
+              </AdminSubmitButton>
+            </AdminActionForm>
           </AdminPanel>
         ) : null}
 
@@ -788,9 +805,9 @@ export default async function AdminRfqDetailPage({
                 value="1"
                 label="Acknowledge unresolved site-measurement requirements"
               />
-              <AdminButton type="submit" variant="primary">
+              <AdminSubmitButton pendingLabel="Preparing draft…">
                 Prepare quote / convert to draft
-              </AdminButton>
+              </AdminSubmitButton>
             </form>
             {rfq.status === "converted" ? (
               <form action={convertRfqAction} className="admin-inline-form">
@@ -817,7 +834,8 @@ export default async function AdminRfqDetailPage({
             <ul className="admin-list">
               {(communications ?? []).map((row) => (
                 <li key={row.id}>
-                  {row.communication_type} · {row.status}
+                  {communicationTypeLabel(row.communication_type)} ·{" "}
+                  {communicationStatusLabel(row.status)}
                   {row.recipient ? ` · ${row.recipient}` : ""} ·{" "}
                   {new Date(row.created_at).toLocaleString("en-ZA")}
                   {row.provider_error ? ` · ${row.provider_error}` : ""}
@@ -830,13 +848,22 @@ export default async function AdminRfqDetailPage({
         <AdminPanel title="Internal notes">
           <pre className="admin-notes">{rfq.internal_notes || "No notes yet."}</pre>
           {canManage ? (
-            <form action={addRfqNoteAction} className="admin-stack-form">
+            <AdminActionForm
+              action={addRfqNoteAction}
+              className="admin-stack-form"
+              resetOnSuccess
+            >
               <input type="hidden" name="rfqId" value={rfq.id} />
-              <AdminTextarea name="note" rows={3} required />
-              <AdminButton type="submit" variant="primary">
-                Add note
-              </AdminButton>
-            </form>
+              <AdminTextarea
+                name="note"
+                rows={3}
+                required
+                maxLength={5000}
+                aria-label="New internal note"
+                placeholder="Visible to admin users only"
+              />
+              <AdminSubmitButton>Add note</AdminSubmitButton>
+            </AdminActionForm>
           ) : null}
         </AdminPanel>
 

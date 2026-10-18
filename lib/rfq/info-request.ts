@@ -339,7 +339,19 @@ export async function updateMeasurementSchedule(input: {
     if (input.siteMeasurementRequired !== undefined) {
       patch.site_measurement_required = input.siteMeasurementRequired;
       if (input.siteMeasurementRequired) {
-        patch.status = "site_measurement_required";
+        // Only move early-stage enquiries; never pull an enquiry back from
+        // ready-for-quote, converted or closed when the schedule is re-saved.
+        const { data: current } = await supabase
+          .from("rfqs")
+          .select("status")
+          .eq("id", input.rfqId)
+          .maybeSingle();
+        if (
+          current &&
+          ["new", "reviewing", "information_required"].includes(String(current.status))
+        ) {
+          patch.status = "site_measurement_required";
+        }
       }
     }
     if (input.proposedDate !== undefined) {
