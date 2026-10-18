@@ -65,7 +65,9 @@ export async function generateMetadata({ params }: Props) {
     // Unknown slugs render the 404 page — never inherit the homepage title/canonical.
     return {
       title: { absolute: "Page Not Found | Damtech" },
-      robots: { index: false, follow: true },
+      // Next.js adds its own noindex to not-found responses; a second robots
+      // tag here only duplicated it.
+      robots: null,
       alternates: { canonical: null },
     };
   }

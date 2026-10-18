@@ -6,6 +6,7 @@ import {
   createShippingServiceSchema,
 } from "./catalogue/merchant-policies.ts";
 import { DEFAULT_OG_IMAGE, DEFAULT_OG_IMAGE_ALT, IMAGE_PATHS, altForImagePath } from "./images";
+import { OG_IMAGE_DERIVATIVES } from "./og-images.generated";
 import {
   BUSINESS_HOURS,
   BLOG_AUTHOR,
@@ -165,9 +166,19 @@ function resolveFullTitle(title: string, isHome: boolean): string {
   return `${trimTitle(pageTitle)} | ${siteConfig.name}`;
 }
 
+/**
+ * Share previews use a 1200×630 JPEG copy (public/og/, under 300 KB) when one
+ * exists: the 2–3 MB WebP originals often fail in WhatsApp/Facebook previews.
+ */
+export function ogImagePath(imagePath: string): string {
+  if (!OG_IMAGE_DERIVATIVES.has(imagePath)) return imagePath;
+  const name = imagePath.split("/").pop()!.replace(/\.[a-z0-9]+$/i, "");
+  return `/og/${name}.jpg`;
+}
+
 function buildOgImage(imagePath: string, alt?: string) {
   return {
-    url: absoluteAssetUrl(imagePath),
+    url: absoluteAssetUrl(ogImagePath(imagePath)),
     width: OG_IMAGE_WIDTH,
     height: OG_IMAGE_HEIGHT,
     alt: alt ?? altForImagePath(imagePath) ?? DEFAULT_OG_IMAGE_ALT,
@@ -185,9 +196,9 @@ export function createRootMetadata(): Metadata {
       template: `%s | ${siteConfig.name}`,
     },
     description: siteConfig.defaultDescription,
-    alternates: {
-      canonical: absoluteUrl("/"),
-    },
+    // No site-wide canonical: every indexable page sets its own via
+    // createMetadata(). A root canonical of "/" leaked onto noindex utility
+    // pages (/order/, /quote/success/ …) that set none.
     verification: {
       google: GOOGLE_SITE_VERIFICATION,
     },

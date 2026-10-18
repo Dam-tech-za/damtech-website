@@ -2,13 +2,23 @@ import Link from "next/link";
 import { createMetadata } from "@/lib/seo";
 import { phoneTel, siteConfig } from "@/lib/site";
 
-export const metadata = createMetadata({
+const baseMetadata = createMetadata({
   title: "Page Not Found",
   description:
     "The page you requested could not be found. Explore Damtech dam linings, steel water tanks and waterproofing services across South Africa.",
   path: "/404",
   noIndex: true,
 });
+
+// A 404 response must not declare a canonical URL, and Next.js already emits
+// its own `noindex` robots tag for not-found responses — omit ours so there is
+// a single robots directive.
+export const metadata = {
+  ...baseMetadata,
+  alternates: { canonical: null },
+  robots: null,
+  openGraph: { ...baseMetadata.openGraph, url: undefined },
+};
 
 const QUICK_LINKS = [
   { href: "/dam-liners", label: "Dam Linings" },

@@ -44,12 +44,22 @@ function dedupeSitemap(entries: MetadataRoute.Sitemap): MetadataRoute.Sitemap {
   });
 }
 
+/**
+ * Last significant update of the non-blog pages (service, location, product,
+ * project and index pages). 18 Oct 2026 = redesign release plus audit fixes.
+ * Bump this when page content changes site-wide; blog posts carry their own
+ * modified date. Never set it to the build time — Google ignores lastmod that
+ * changes on every deploy.
+ */
+export const PAGES_LAST_MODIFIED = new Date("2026-10-18T00:00:00+02:00");
+
 /** Build sitemap entries for all indexable routes (used by app/sitemap.ts). */
 export function buildSitemap(): MetadataRoute.Sitemap {
   const staticEntries: MetadataRoute.Sitemap = INDEXABLE_STATIC_PATHS.filter(
     (path) => !isDisallowedSitemapPath(path),
   ).map((path) => ({
     url: absoluteUrl(path),
+    lastModified: PAGES_LAST_MODIFIED,
     changeFrequency: staticChangeFrequency(path),
   }));
 
@@ -58,6 +68,7 @@ export function buildSitemap(): MetadataRoute.Sitemap {
       const schemaImages = getSchemaImageUrls(product.images);
       return {
         url: absoluteUrl(catalogueProductUrlPath(product)),
+        lastModified: PAGES_LAST_MODIFIED,
         changeFrequency: "monthly" as const,
         ...(schemaImages.length > 0 ? { images: schemaImages } : {}),
       };
@@ -66,6 +77,7 @@ export function buildSitemap(): MetadataRoute.Sitemap {
 
   const projectEntries: MetadataRoute.Sitemap = getProjectSlugs().map((slug) => ({
     url: absoluteUrl(`/projects/${slug}`),
+    lastModified: PAGES_LAST_MODIFIED,
     changeFrequency: "monthly" as const,
   }));
 
@@ -80,6 +92,7 @@ export function buildSitemap(): MetadataRoute.Sitemap {
     { length: Math.max(0, totalPages - 1) },
     (_, i) => ({
       url: absoluteUrl(`/blog/page/${i + 2}`),
+      lastModified: PAGES_LAST_MODIFIED,
       changeFrequency: "weekly" as const,
     }),
   );
