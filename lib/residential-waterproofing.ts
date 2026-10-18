@@ -401,7 +401,7 @@ const WATERPROOFING_OVERSTRAND: ResidentialPageConfig = {
   title: "Waterproofing Betty's Bay, Hermanus & Overstrand | Damtech",
   description:
     "Coastal home waterproofing in the Overstrand: Betty's Bay, Kleinmond, Hermanus and Gansbaai. Roof leaks, wind-driven rain and salt-exposed detail.",
-  h1: "Waterproofing in the Overstrand",
+  h1: "Waterproofing in Betty's Bay, Hermanus and the Overstrand",
   breadcrumbLabel: "Overstrand",
   heroEyebrow: "Betty's Bay · Kleinmond · Hermanus · Gansbaai",
   heroDescription:

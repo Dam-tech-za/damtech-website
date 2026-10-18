@@ -7,6 +7,7 @@ import { limitPublicRfqSubmit } from "@/lib/rate-limit/public-rfq";
 import { createRfqFromPublicSubmission } from "@/lib/rfq/create-from-public";
 import { parsePublicRfqFormData } from "@/lib/rfq/schema";
 import { customerMessageForCode } from "@/lib/rfq/submission-result";
+import { notifyNewPublicRfq } from "@/lib/rfq/notify-public-rfq";
 import { newIncidentId, rfqLogError } from "@/lib/rfq/diagnostics";
 import { attemptDatabaseFallbackAfterPersistenceFailure } from "@/lib/fallback/after-persistence-failure";
 import { buildContactFallbackInput } from "@/lib/fallback/payloads";
@@ -118,6 +119,15 @@ export async function submitLead(
       persistenceErrorCode = rfqResult.code;
     } else {
       rfqNumber = rfqResult.rfqNumber;
+      // The contact form previously saved the RFQ but sent no email to info@
+      // or to the customer. Use the same notifier as the quote form.
+      if (!rfqResult.idempotentReplay) {
+        await notifyNewPublicRfq({
+          rfqId: rfqResult.rfqId,
+          rfqNumber: rfqResult.rfqNumber,
+          parsed,
+        });
+      }
     }
   } else {
     persistenceErrorCode = "CONFIGURATION_ERROR";

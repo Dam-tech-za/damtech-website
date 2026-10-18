@@ -108,7 +108,7 @@ export function ProductGallery({
               >
                 <Image
                   src={image.src}
-                  alt=""
+                  alt={image.alt}
                   width={image.width}
                   height={image.height}
                   className="catalogue-gallery__thumb-image"

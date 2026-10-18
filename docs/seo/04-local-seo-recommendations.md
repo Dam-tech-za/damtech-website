@@ -1,0 +1,31 @@
+# 04 — Local and service SEO recommendations
+
+Evidence: GSC export (15 Jul–14 Oct 2026), live crawl 18 Oct 2026, keyword map `03-sa-service-local-keyword-map.csv`. Search-volume data is **not available**; priorities use GSC impressions, commercial intent and Damtech's actual operating areas. Competitor checks were done with a general web search engine (not google.co.za with South African location), so SERP notes are indicative only.
+
+Sources consulted for the checks below: [Heunis Steel](https://heunis.co.za/news?page=2), [Structa Prestank project report](https://m.engineeringnews.co.za/article/two-water-tanks-installed-at-water-treatment-plant-2019-07-05), [Procompare Pretoria listings](https://www.procompare.co.za/providers/maintexolent), [Jasmine Directory – waterproofing Pretoria](https://www.jasminedirectory.com/home-garden/decorating/detail,244124448,waterproofing-pretoria.html), [Overstrand Municipality quotations](https://old.overstrand.gov.za/en/documents/supply-chain-management/quotations-current-new/current-quotations/7819-quotation-document-sc-2126-2020-waterproofing-of-the-existing-concrete-deck-at-grotto-beach-ablution-block-hermanus).
+
+## Current state (verified)
+- Location coverage is already correct and not duplicated: one Pretoria/Centurion residential page (`/waterproofing-pretoria/`), one Overstrand residential page (`/waterproofing-overstrand/`), province dam-liner pages for Pretoria, Johannesburg, Limpopo, Mpumalanga and Western Cape. No doorway or per-town pages exist, and none should be added.
+- Overstrand copy correctly calls it the coastal Overberg in the Western Cape, "not a Cape Town suburb", and lists Betty's Bay, Kleinmond, Pringle Bay, Rooi-Els, Hermanus, Onrus, Vermont, Gansbaai, Stanford, De Kelders.
+- Pretoria copy names Tshwane suburbs (Garsfontein, Faerie Glen, Moreleta Park, Menlyn, Silver Lakes, Irene, Brooklyn, Hatfield, Montana) as service areas, and states "operating base, not a walk-in office".
+- `LocalBusiness` schema uses locality-level addresses (Betty's Bay, Pretoria) with no street address, no `aggregateRating` and no reviews. This matches the "no walk-in premises" policy.
+
+## Recommendations (ordered by expected lead value)
+| # | Recommendation | Why | Owner / code | Status |
+|---|---|---|---|---|
+| L1 | **Google Business Profile**: verify one service-area profile (no street address shown) covering Pretoria/Centurion/Tshwane and, if Google's guidelines allow a second genuine base, the Overstrand. Do not create a profile for a location without staff/operations there. | Pretoria residential SERPs are directory-led; a GBP is the main way to appear in the local pack. The `sameAs` list already includes two `share.google` links — confirm these are the real profiles. | Owner | Owner action |
+| L2 | **Review request workflow**: after each completed job, send the GBP review link by WhatsApp/email from the admin. No reviews or ratings markup on the site until there are real, attributable reviews. | Reviews drive local-pack ranking and CTR; fabricated or self-served rating markup breaks Google policy. | Owner (+ optional admin template later) | Recommendation |
+| L3 | **Residential proof**: publish 2–3 real residential case studies (Pretoria roof, Overstrand coastal roof/walls) with owner photos, system used, m² and warranty actually given. | Residential pages currently have no project evidence or photography (`docs/branding/damtech-photography-requirements.md`). | Owner supplies facts/photos; code ready (`/projects/[slug]`) | Blocked on content |
+| L4 | **Steel tank authority**: the biggest impression pool (10.7k) ranks 20–35 on generic steel-tank terms against manufacturers. Earn links from the actual tank manufacturer/supplier Damtech installs, agricultural co-ops, and project write-ups with capacities. | Content/structure is already good; the gap is authority. | Owner relationships | Recommendation |
+| L5 | **Consistent NAP across directories**: same name ("Damtech"), phone `+27 82 853 1026`, `info@dam-tech.co.za`, website, service-area description, on Procompare-type directories that rank for Pretoria waterproofing. Only directories you actually want leads from — no mass submissions. | These directories occupy Pretoria SERPs. | Owner | Recommendation |
+| L6 | **Name the residential systems** (e.g. which torch-on membrane, which liquid rubber) on `/torch-on-waterproofing/` and `/waterproofing-membranes-and-coatings/` once the owner confirms the products and supplier warranties. | Competitors cite systems; specificity builds trust. Not changed here because product claims need owner confirmation. | Owner confirms → code | Blocked on owner |
+| L7 | **Search Console hygiene**: resubmit the sitemap after the redesign; watch the 10 redirected 404s drop out; add the `dam-tech.co.za` domain property if only a URL-prefix property exists. | Faster recrawl after launch. | Owner | Owner action |
+| L8 | **Backlinks (white-hat only)**: supplier "where to buy/installers" pages, SA agricultural press project stories, farmer associations, municipal/engineering references where Damtech has done real work. No paid links, PBNs or mass directory submissions. | Authority for dam-liner and tank pages. | Owner | Recommendation |
+| L9 | **Afrikaans terms**: not recommended now. GSC shows no Afrikaans queries in the top 1 000 ("dam" queries are English); auto-translated pages would be thin. Revisit only with evidence. | Avoid thin content. | — | Excluded (with reason) |
+| L10 | **Do not add town pages** for Kleinmond/Hermanus/Gansbaai/Centurion separately; the single area pages already mention each town in context and rank #1 for the only measured Overstrand query. | Doorway-page risk; cannibalisation. | — | Excluded (with reason) |
+
+## Trust items needing owner confirmation (not changed)
+- "Free assessment" / "free on-site assessment" wording appears on residential pages for Pretoria and the Overstrand (`lib/residential-waterproofing.ts`). Confirm this is current policy within those service areas.
+- `openingHours` in `LocalBusiness` schema says Monday–Sunday 09:00–17:00. Confirm, or provide real hours.
+- "Up to 10 years supplier-backed material warranty where stated in the quotation, plus 12 months workmanship" — confirm still accurate.
+- LinkedIn profile slug is `dam-tec`; confirm it is Damtech's own page.

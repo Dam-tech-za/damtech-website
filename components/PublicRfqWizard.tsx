@@ -393,7 +393,7 @@ export function PublicRfqWizard({
     if (stage === 2 && draft.servicesRequested.length === 0) {
       return "Select at least one service.";
     }
-    if (draft.stage === 3) {
+    if (stage === 3) {
       if (!draft.assets.length) return "Add at least one dam, tank or reservoir.";
       for (const asset of draft.assets) {
         if (!asset.assetName.trim()) return "Each asset needs a name.";

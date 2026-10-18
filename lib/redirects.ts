@@ -283,6 +283,42 @@ export const redirects: Redirect[] = [
       "/essential-farm-dam-leak-repair-techniques-to-safeguard-your-water-storage-in-south-africa/",
     permanent: true,
   },
+  // Production audit 2026-10-18: malformed or mistyped URLs that Search Console
+  // reported (Jul–Oct 2026) and that returned 404. Each points at the one page
+  // it was clearly meant to reach.
+  {
+    source: "/10000-litre-fish-pond{/}?",
+    destination: "/steel-water-storage-tanks/10000-litre-fish-pond/",
+    permanent: true,
+  },
+  {
+    source: "/HDPE-Dam-Lining-Geomembrane-Installation-South-Africa-Damtech{/}?",
+    destination: "/hdpe-dam-lining/",
+    permanent: true,
+  },
+  {
+    // Relative links on third-party sites resolved against our domain, e.g.
+    // /dam-tech.co.za/hdpe-dam-lining/ — strip the duplicated host segment.
+    source: "/:host(dam-tech\\.co\\.za|dam-tech-co-za|www\\.dam-tech\\.co\\.za)/:path+",
+    destination: "/:path+/",
+    permanent: true,
+  },
+  {
+    source: "/how-to-manage-dam-water-levels-during-prolonged-droughts-in-south-africa{/}?",
+    destination:
+      "/how-to-manage-farm-dam-water-levels-during-prolonged-droughts-in-south-africa/",
+    permanent: true,
+  },
+  {
+    source: "/:prefix(steel-water-storage-tank|steel-water-storage-tangks|steel-storage-tanks|steel-water-storage-un-tanks){/}?",
+    destination: "/steel-water-storage-tanks/",
+    permanent: true,
+  },
+  {
+    source: "/:prefix(steel-water-storage-tank|steel-water-storage-tangks|steel-storage-tanks)/:slug",
+    destination: "/steel-water-storage-tanks/:slug/",
+    permanent: true,
+  },
 ];
 
 /**

@@ -1,15 +1,12 @@
 # SEO snapshot diff
 
-Before: `docs/seo/snapshots/baseline.json` · After: `docs/seo/snapshots/after.json`
-Routes compared: 75 · Findings: 5
-
-### `/`
-- text blocks missing (4): "Quality MaterialsHDPE & PVC LiningsQuality linings"; "Leak PreventionProven WaterproofingLeak prevention"; "Expert InstallationProfessional TeamExpert install"; "Built to EndureLong-Term PerformanceLong-term durability"
+Before: `docs/seo/snapshots/live-2026-10-18.json` · After: `docs/seo/snapshots/after.json`
+Routes compared: 75 · Findings: 4
 
 ### `/contact/`
-- text blocks missing (1): "Provide at least one of email or phone so we can respond."
-- text visible on mobile before but not after (1): "Provide at least one of email or phone so we can respond."
+- headings removed: "h3: Prefer to talk first?"
+- headings added: "h2: Prefer to talk first?"
 
-### `/quote/`
-- text blocks missing (1): "Provide at least one of email or phone so we can respond."
-- text visible on mobile before but not after (1): "Provide at least one of email or phone so we can respond."
+### `/waterproofing-overstrand/`
+- headings removed: "h1: Waterproofing in the Overstrand"
+- headings added: "h1: Waterproofing in Betty's Bay, Hermanus and the Overstrand"

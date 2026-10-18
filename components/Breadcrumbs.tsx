@@ -19,8 +19,8 @@ export function Breadcrumbs({
 
   const linkClass =
     variant === "dark"
-      ? "text-sky-200 hover:text-white"
-      : "text-water hover:text-navy";
+      ? "inline-block py-0.5 text-sky-200 hover:text-white"
+      : "inline-block py-0.5 text-water hover:text-navy";
   const currentClass =
     variant === "dark" ? "text-white/90" : "text-slate-600";
   const separatorClass =

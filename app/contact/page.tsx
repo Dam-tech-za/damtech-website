@@ -60,11 +60,11 @@ function ContactQuickActions() {
 
       <div className="home-final-cta__card home-final-cta__card--inline">
 
-        <h3 className="home-final-cta__title home-final-cta__title--inline">
+        <h2 className="home-final-cta__title home-final-cta__title--inline">
 
           Prefer to talk first?
 
-        </h3>
+        </h2>
 
         <p className="home-final-cta__intro">
 

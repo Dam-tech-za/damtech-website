@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { Hero } from "@/components/Hero";
 import { SiteSection } from "@/components/SiteSection";
 import { OrderForm } from "@/components/order/OrderForm";
@@ -19,6 +20,9 @@ type PageProps = {
 
 export default async function OrderPage({ searchParams }: PageProps) {
   const params = await searchParams;
+  // A bare /order/ link (no kit chosen) goes to the catalogue instead of a
+  // dead-end "Kit not found" page.
+  if (!params.sku) redirect("/steel-water-storage-tanks/");
   const snapshot = resolveOrderSelectionFromParams(params);
 
   if (!snapshot) {

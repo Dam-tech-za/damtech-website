@@ -38,6 +38,9 @@ for (const [profileName, p] of Object.entries(PROFILES)) {
     for (let i = 0; i < runs; i++) {
       const context = await browser.newContext({ viewport: p.viewport });
       const page = await context.newPage();
+      // Tags still load and execute (realistic cost) but their collection beacons are
+      // dropped so lab runs never register as real GA4/Meta/Vercel visits.
+      await page.route(/google-analytics\.com\/(g\/)?collect|analytics\.google\.com\/g\/collect|facebook\.com\/tr|doubleclick\.net\/(pagead|ccm)|vitals\.vercel-insights|\/_vercel\/speed-insights\/vitals/, (r) => r.abort());
       if (process.env.BLOCK_THIRD_PARTY) await page.route(/googletagmanager|google-analytics|facebook|doubleclick|vercel-insights|speed-insights/, (r) => r.abort());
       const cdp = await context.newCDPSession(page);
       await cdp.send("Network.enable");
