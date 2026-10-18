@@ -22,6 +22,8 @@ One finding, accepted:
 |---|---|---|
 | `/` | Hero trust strip no longer renders the duplicate mobile-only chip labels ("Quality linings", "Leak prevention", "Expert install", "Long-term durability") | The same four items still render their full title + detail ("Quality Materials — HDPE & PVC Linings", …) on all widths; the chips were a mobile duplicate. |
 
+| `/contact/` | Form hint "Provide at least one of email or phone so we can respond." removed | Owner request (18 Oct 2026): email and province are now compulsory on every RFQ form, so the hint no longer applies. |
+
 Additions (not regressions): decorative `DAMTECH` wordmarks (aria-hidden), a footer CTA line, "Roofs / Walls / Foundations" tile type (aria-hidden), the residential enquiry card (areas served, call/WhatsApp/quote), a "Damtech guide" eyebrow on blog articles.
 
 ## Note on the first run

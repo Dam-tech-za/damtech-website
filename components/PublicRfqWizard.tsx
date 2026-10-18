@@ -6,6 +6,7 @@ import { trackLeadSubmitted } from "@/lib/analytics/events";
 import { rememberRfqSuccess } from "@/components/QuoteSuccessUpload";
 import { submitPublicRfqAction } from "@/app/actions/submit-public-rfq";
 import { PROVINCE_OPTIONS } from "@/lib/form";
+import { checkRfqEmail, checkRfqProvince } from "@/lib/rfq/contact-requirements";
 import {
   ASSET_TYPE_LABELS,
   defaultMeasurementMethod,
@@ -379,14 +380,17 @@ export function PublicRfqWizard({
     }));
   }
 
-  function validateStage(): string | null {
-    if (draft.stage === 0) {
+  function validateStage(stage = draft.stage): string | null {
+    if (stage === 0) {
       if (!draft.name.trim()) return "Full name is required.";
-      if (!draft.phone.trim() && !draft.email.trim()) {
-        return "Provide a phone number or email address.";
-      }
+      const emailProblem = checkRfqEmail(draft.email);
+      if (emailProblem) return emailProblem.message;
     }
-    if (draft.stage === 2 && draft.servicesRequested.length === 0) {
+    if (stage === 1) {
+      const provinceProblem = checkRfqProvince(draft.province);
+      if (provinceProblem) return provinceProblem.message;
+    }
+    if (stage === 2 && draft.servicesRequested.length === 0) {
       return "Select at least one service.";
     }
     if (draft.stage === 3) {
@@ -410,6 +414,15 @@ export function PublicRfqWizard({
 
   function submit() {
     setError(null);
+    // Stages can be reached from the progress bar, so re-check the required steps.
+    for (const stage of [0, 1, 2, 3]) {
+      const problem = validateStage(stage);
+      if (problem) {
+        setError(problem);
+        setDraft((d) => ({ ...d, stage }));
+        return;
+      }
+    }
     startTransition(async () => {
       const result = await submitPublicRfqAction({
         name: draft.name,
@@ -532,7 +545,7 @@ export function PublicRfqWizard({
               />
             </label>
             <label>
-              Email
+              Email *
               <input
                 className="form-input"
                 type="email"
@@ -627,7 +640,7 @@ export function PublicRfqWizard({
               />
             </label>
             <label>
-              Province
+              Province *
               <select
                 className="form-input"
                 value={draft.province}
