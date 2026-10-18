@@ -27,3 +27,14 @@ Reading:
 1. **GTM container audit (owner/marketing access needed):** the container plus Pixel add ~720 KB JS. Remove unused tags, check whether GA4 is configured both as a GTM tag and elsewhere, and consider server-side tagging. This is the largest single lever and needs no site code change.
 2. If brand allows, set Archivo to `display: "optional"` to eliminate the font-swap CLS (first uncached visit may then show fallback headings).
 3. Re-measure with Lighthouse (mobile + desktop, 5 runs) on the Vercel preview and production once access allows.
+
+## Update 18 Oct 2026 (after palette change + dead-CSS prune, commit 9baf848)
+Main CSS bundle 37 KB → 32 KB gzip (286 unused legacy rules removed). Same mobile profile, median of 3:
+
+| Route | Before (main) LCP | Now LCP | Now CLS | Now TBT |
+|---|---|---|---|---|
+| `/` | 1936 ms | 1896 ms | 0 | 483 ms |
+| `/roof-waterproofing/` | 1680 ms | 1680 ms | 0.046 | 523 ms |
+| `/dam-liners/` | 1784 ms | 1904 ms | 0.034 | 490 ms |
+
+The first-screen regression is gone on the homepage and roof page; the dam liners page is ~120 ms slower because it now opens on a full photograph instead of text. TBT is still dominated by GTM + Meta Pixel.

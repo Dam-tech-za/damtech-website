@@ -17,6 +17,8 @@ Owner brief: `docs/development/owner-master-mission-2026-10-18.md`. Branch: `cla
 | 8b78b55 | Admin RFQ detail "Enquiry source" panel (attribution was stored but only shown as raw JSON); brand, photography, SEO-diff, performance docs. |
 | c886c5b | Admin audit, Cowork takeover audit, visual results, residential plan, release verification, owner action items; CLAUDE.md standing rules. |
 | 5733871 | Polish: forms, sidebar/legacy cards, dark bands, focus ring, 320 px fix; contrast + overflow sweeps of all 75 routes. |
+| 70eb0fb | **Owner feedback:** hero DAMTECH wordmark removed; palette back to logo blue #026BC6, navy #031926, light accent #2B9FF3 (turquoise and vivid blue rejected). |
+| 9baf848 | 286 dead legacy CSS rules pruned (CSS 37→32 KB gz), verified by full-page screenshot diff of all routes; mobile LCP back to baseline on / and roof page. |
 
 ## Verification
 - `tsc` clean; `eslint` 0 errors (pre-existing warnings only); `npm test` 300/300; `next build` passes.
@@ -35,7 +37,7 @@ Owner brief: `docs/development/owner-master-mission-2026-10-18.md`. Branch: `cla
 1. Open draft PR (compare link) and get owner review of the Vercel preview.
 2. Admin: with test credentials/`.env.local`, click through RFQ inbox + detail (check the new Enquiry source panel) using a non-production residential test enquiry; draft (not apply) the advisor-fix migration.
 3. Lighthouse (mobile + desktop, 5 runs) on preview vs production.
-4. Remaining polish: calculator widget internals, product detail body, blog index cards; prune dead `home-*` CSS from `globals.css`.
+4. Remaining polish: calculator widget internals, product detail body, blog index cards. Owner to say whether the footer wordmark should also go.
 5. Screen-reader pass on header dropdown and mobile menu.
 6. Consider `display: "optional"` for Archivo to remove font-swap CLS (brand trade-off).
 
