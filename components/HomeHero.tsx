@@ -5,7 +5,6 @@ import {
   CheckCircleIcon,
   CogIcon,
   DropletIcon,
-  FileTextIcon,
   PhoneIcon,
   ShieldCheckIcon,
 } from "@/components/icons/StrokeIcons";
@@ -22,115 +21,110 @@ const TRUST_ITEMS = [
     id: "materials",
     title: "Quality Materials",
     detail: "HDPE & PVC Linings",
-    chip: "Quality linings",
     Icon: ShieldCheckIcon,
   },
   {
     id: "leak",
     title: "Leak Prevention",
     detail: "Proven Waterproofing",
-    chip: "Leak prevention",
     Icon: DropletIcon,
   },
   {
     id: "installation",
     title: "Expert Installation",
     detail: "Professional Team",
-    chip: "Expert install",
     Icon: CogIcon,
   },
   {
     id: "endure",
     title: "Built to Endure",
     detail: "Long-Term Performance",
-    chip: "Long-term durability",
     Icon: CheckCircleIcon,
   },
 ] as const;
 
-/** Homepage hero — premium contractor layout with left-aligned conversion content. */
+/**
+ * Homepage hero — full-bleed site photograph (crew lining an earth dam) with an
+ * oversized Damtech wordmark in the sky. On mobile the supporting copy and CTAs
+ * drop below the photo onto a light panel so the photograph stays visible.
+ */
 export function HomeHero() {
-  const heroImage = SITE_IMAGES.homeHero;
+  const heroImage = SITE_IMAGES.homeHeroInstall;
 
   return (
     <section
-      className="home-hero"
+      className="dt-hero"
       aria-label="Dam lining and water storage solutions in the Western Cape"
     >
-      <div className="home-hero__media" aria-hidden>
-        <Image
-          src={heroImage.image}
-          alt={heroImage.alt}
-          title="Dam lining and water storage solutions in the Western Cape"
-          fill
-          priority
-          fetchPriority="high"
-          placeholder="blur"
-          sizes="100vw"
-          className="home-hero__image"
-        />
-      </div>
+      <div className="dt-hero__stage">
+        <div className="dt-hero__media" aria-hidden>
+          <Image
+            src={heroImage.image}
+            alt={heroImage.alt}
+            fill
+            priority
+            fetchPriority="high"
+            placeholder="blur"
+            sizes="100vw"
+            className="dt-hero__image"
+          />
+        </div>
+        <div className="dt-hero__scrim" aria-hidden />
+        <p className="dt-hero__wordmark" aria-hidden>
+          Damtech
+        </p>
 
-      <div className="home-hero__inner site-shell">
-        <div className="home-hero__copy">
-          <div className="home-hero__eyebrow-wrap">
-            <p className="home-hero__eyebrow hero-kicker">{HERO_EYEBROW}</p>
-            <span className="home-hero__eyebrow-accent" aria-hidden />
-          </div>
-
-          <h1 className="home-hero__title hero-h1">
-            <span className="home-hero__title-line">
-              Damtech <span className="home-hero__accent">Dam Lining</span>
+        <div className="dt-hero__headline site-shell">
+          <p className="dt-hero__eyebrow">{HERO_EYEBROW}</p>
+          <h1 className="dt-hero__title">
+            <span className="dt-hero__title-line">
+              Damtech <span className="dt-hero__accent">Dam Lining</span>
               {" "}&amp;{" "}
             </span>
-            <span className="home-hero__title-line">
+            <span className="dt-hero__title-line">
               Water Storage
-              <span className="home-hero__title-solutions"> Solutions</span>
+              <span> Solutions</span>
             </span>
-            <span className="home-hero__title-line">Built to Last</span>
+            <span className="dt-hero__title-line">Built to Last</span>
           </h1>
+        </div>
+      </div>
 
-          <p className="home-hero__description hero-subtext">{HERO_DESCRIPTION}</p>
+      <div className="dt-hero__details">
+        <div className="dt-hero__details-inner">
+          <p className="dt-hero__description">{HERO_DESCRIPTION}</p>
 
-          <div className="home-hero__actions">
-            <Link href="/quote" className="home-hero__btn home-hero__btn--primary">
-              <FileTextIcon className="home-hero__btn-icon" />
+          <div className="dt-hero__actions">
+            <Link href="/quote" className="dt-btn dt-btn--cyan dt-btn--lg">
               Request a Free Quote
+              <ArrowRightIcon className="dt-btn__icon" aria-hidden />
             </Link>
-            <Link href="/services" className="home-hero__btn home-hero__btn--secondary">
+            <Link href="/services" className="dt-btn dt-btn--ghost dt-btn--lg">
               View Our Services
-              <ArrowRightIcon className="home-hero__btn-icon" />
             </Link>
           </div>
 
-          <p className="home-hero__phone hero-phone-line">
-            <span className="home-hero__phone-icon-wrap" aria-hidden>
-              <PhoneIcon className="home-hero__phone-icon" />
-            </span>
+          <p className="dt-hero__phone">
+            <PhoneIcon className="dt-hero__phone-icon" aria-hidden />
             <span>
               Prefer to speak directly?{" "}
-              <a href={`tel:${phoneTel}`} className="home-hero__phone-link">
+              <a href={`tel:${phoneTel}`} className="dt-hero__phone-link">
                 {siteConfig.phone}
               </a>
             </span>
           </p>
         </div>
-
-        <ul className="home-hero__trust">
-          {TRUST_ITEMS.map((item) => (
-            <li key={item.id} className="home-hero__trust-item">
-              <span className="home-hero__trust-icon-wrap" aria-hidden>
-                <item.Icon className="home-hero__trust-icon" />
-              </span>
-              <span className="home-hero__trust-copy">
-                <span className="home-hero__trust-title">{item.title}</span>
-                <span className="home-hero__trust-detail">{item.detail}</span>
-              </span>
-              <span className="home-hero__trust-chip-label">{item.chip}</span>
-            </li>
-          ))}
-        </ul>
       </div>
+
+      <ul className="dt-hero__trust">
+        {TRUST_ITEMS.map((item) => (
+          <li key={item.id} className="dt-hero__trust-item">
+            <item.Icon className="dt-hero__trust-icon" aria-hidden />
+            <span className="dt-hero__trust-title">{item.title}</span>
+            <span className="dt-hero__trust-detail">{item.detail}</span>
+          </li>
+        ))}
+      </ul>
     </section>
   );
 }

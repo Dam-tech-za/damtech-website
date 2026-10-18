@@ -2,17 +2,24 @@ import Image from "next/image";
 import Link from "next/link";
 import {
   ArrowRightIcon,
-  DropletIcon,
-  LayersIcon,
   MessageIcon,
-  ReservoirIcon,
   SearchIcon,
   ShieldCheckIcon,
   WrenchIcon,
 } from "@/components/icons/StrokeIcons";
-import { SITE_IMAGES } from "@/lib/images";
+import { SITE_IMAGES, type SiteImage } from "@/lib/images";
 
-const SERVICE_CARDS = [
+type ServiceCard = {
+  id: string;
+  title: string;
+  description: string;
+  linkLabel: string;
+  href: string;
+  featured: boolean;
+  image: SiteImage | null;
+};
+
+const SERVICE_CARDS: readonly ServiceCard[] = [
   {
     id: "reservoirs",
     title: "Steel Reservoirs",
@@ -20,8 +27,8 @@ const SERVICE_CARDS = [
       "Fixed-price corrugated steel water tank kits for farms, estates, game lodges and commercial sites — VAT-inclusive supply-only prices.",
     linkLabel: "View steel tank sizes and prices",
     href: "/steel-water-storage-tanks/#popular-tank-sizes",
-    Icon: ReservoirIcon,
     featured: false,
+    image: SITE_IMAGES.steelTank,
   },
   {
     id: "waterproofing",
@@ -30,8 +37,9 @@ const SERVICE_CARDS = [
       "Roof, damp and leak waterproofing for homes in Pretoria and Gauteng. Free assessment and written quote.",
     linkLabel: "See home waterproofing",
     href: "/waterproofing",
-    Icon: DropletIcon,
     featured: true,
+    // No residential project photography yet — typographic tile, not a stand-in photo.
+    image: null,
   },
   {
     id: "dam-linings",
@@ -40,10 +48,10 @@ const SERVICE_CARDS = [
       "HDPE and PVC dam linings for earth dams, ponds, reservoirs and water storage applications requiring long-term leak prevention.",
     linkLabel: "Learn more about Dam linings",
     href: "/dam-liners",
-    Icon: LayersIcon,
     featured: false,
+    image: SITE_IMAGES.villiersdorpLining,
   },
-] as const;
+];
 
 const MAINTENANCE_CARDS = [
   {
@@ -75,118 +83,115 @@ const MAINTENANCE_CARDS = [
 const MAINTENANCE_ALT =
   "Waterproofing maintenance and inspection for leak prevention by Damtech";
 
-/** Homepage services + maintenance section — sits below the trust/warranty section. */
+/** Homepage service discovery — large photo tiles, then maintenance split. */
 export function HomeServicesSection() {
   const maintenanceImage = SITE_IMAGES.maintenance;
 
   return (
-    <section
-      className="home-services"
-      aria-labelledby="damtech-services-heading"
-    >
-      <span className="home-services__decor" aria-hidden />
-
-      <div className="home-services__inner">
-        <header className="home-services__header">
-          <p className="home-services__eyebrow">SERVICES</p>
-          <h2 id="damtech-services-heading" className="home-services__title">
-            What We Offer
-          </h2>
-          <span className="home-services__divider" aria-hidden />
-          <p className="home-services__intro">
+    <section className="dt-services" aria-labelledby="damtech-services-heading">
+      <div className="site-shell">
+        <header className="dt-split-header">
+          <div>
+            <p className="dt-eyebrow">SERVICES</p>
+            <h2 id="damtech-services-heading" className="dt-display dt-display--xl">
+              What We Offer
+            </h2>
+          </div>
+          <p className="dt-lede">
             Damtech provides practical water storage, waterproofing and dam
             lining solutions for farms, mines, game lodges and commercial
             properties across South Africa.
           </p>
         </header>
 
-        <ul className="home-services__cards">
+        <ul className="dt-services__tiles">
           {SERVICE_CARDS.map((card) => (
             <li
               key={card.id}
-              className={`home-services__card${
-                card.featured ? " home-services__card--featured" : ""
-              }`}
+              className={`dt-tile${card.featured ? " dt-tile--featured" : ""}`}
             >
-              {card.featured ? (
-                <span className="home-services__card-pill">OUR EXPERTISE</span>
-              ) : null}
-              <span className="home-services__card-icon-wrap" aria-hidden>
-                <card.Icon className="home-services__card-icon" />
-              </span>
-              <h3 className="home-services__card-title">{card.title}</h3>
-              <p className="home-services__card-text">{card.description}</p>
-              <Link href={card.href} className="home-services__card-link">
-                {card.linkLabel}
-                <ArrowRightIcon
-                  className="home-services__card-link-icon"
-                  aria-hidden
-                />
+              <Link href={card.href} className="dt-tile__media" tabIndex={-1} aria-hidden>
+                {card.image ? (
+                  <Image
+                    src={card.image.image}
+                    alt=""
+                    fill
+                    loading="lazy"
+                    sizes="(max-width: 767px) 100vw, 33vw"
+                    placeholder="blur"
+                    className="dt-cover dt-tile__image"
+                  />
+                ) : (
+                  <span className="dt-tile__type" aria-hidden>
+                    Roofs
+                    <br />
+                    Walls
+                    <br />
+                    Foundations
+                  </span>
+                )}
               </Link>
+              <div className="dt-tile__body">
+                {card.featured ? (
+                  <span className="dt-pill">OUR EXPERTISE</span>
+                ) : null}
+                <h3 className="dt-tile__title">{card.title}</h3>
+                <p className="dt-tile__text">{card.description}</p>
+                <Link href={card.href} className="dt-arrow-link">
+                  {card.linkLabel}
+                  <ArrowRightIcon className="dt-arrow-link__icon" aria-hidden />
+                </Link>
+              </div>
             </li>
           ))}
         </ul>
 
-        <div className="home-services__maintenance">
-          <div className="home-services__maintenance-copy">
-            <p className="home-services__eyebrow">MAINTENANCE</p>
-            <h3 className="home-services__maintenance-title">
-              Maintenance &amp; Aftercare
-            </h3>
-            <span className="home-services__divider" aria-hidden />
-            <p className="home-services__maintenance-intro">
+        <div className="dt-maintenance">
+          <div className="dt-maintenance__copy">
+            <p className="dt-eyebrow">MAINTENANCE</p>
+            <h3 className="dt-display dt-display--lg">Maintenance &amp; Aftercare</h3>
+            <p className="dt-maintenance__intro">
               Protect your property with waterproofing maintenance, inspections
               and repair services. Damtech helps identify leaks, prevent water
               damage and extend the life of dam linings, reservoirs and
               waterproofing systems.
             </p>
 
-            <ul className="home-services__maintenance-cards">
+            <ul className="dt-maintenance__grid">
               {MAINTENANCE_CARDS.map((item) => (
-                <li key={item.id} className="home-services__info-card">
-                  <span className="home-services__info-icon-wrap" aria-hidden>
-                    <item.Icon className="home-services__info-icon" />
-                  </span>
-                  <span className="home-services__info-copy">
-                    <h4 className="home-services__info-title">{item.title}</h4>
-                    <p className="home-services__info-text">{item.text}</p>
-                  </span>
+                <li key={item.id} className="dt-maintenance__item">
+                  <item.Icon className="dt-maintenance__icon" aria-hidden />
+                  <h4 className="dt-maintenance__title">{item.title}</h4>
+                  <p className="dt-maintenance__text">{item.text}</p>
                 </li>
               ))}
             </ul>
 
-            <Link href="/contact" className="home-services__cta">
+            <Link href="/contact" className="dt-btn dt-btn--ink">
               Contact Damtech for Maintenance
-              <ArrowRightIcon className="home-services__cta-icon" aria-hidden />
+              <ArrowRightIcon className="dt-btn__icon" aria-hidden />
             </Link>
           </div>
 
-          <figure className="home-services__maintenance-figure">
-            <div className="home-services__maintenance-image-frame">
-              <Image
-                src={maintenanceImage.image}
-                alt={MAINTENANCE_ALT}
-                fill
-                loading="lazy"
-                sizes="(max-width: 1023px) 100vw, 45vw"
-                placeholder="blur"
-                className="home-services__maintenance-image"
-              />
-              <div className="home-services__callout">
-                <span className="home-services__callout-icon-wrap" aria-hidden>
-                  <ShieldCheckIcon className="home-services__callout-icon" />
-                </span>
-                <span className="home-services__callout-copy">
-                  <span className="home-services__callout-title">
-                    Built to Protect. Backed by Care.
-                  </span>
-                  <span className="home-services__callout-text">
-                    Ongoing support and practical maintenance for long-term
-                    protection.
-                  </span>
-                </span>
-              </div>
-            </div>
+          <figure className="dt-maintenance__figure">
+            <Image
+              src={maintenanceImage.image}
+              alt={MAINTENANCE_ALT}
+              fill
+              loading="lazy"
+              sizes="(max-width: 1023px) 100vw, 45vw"
+              placeholder="blur"
+              className="dt-cover"
+            />
+            <figcaption className="dt-maintenance__callout">
+              <span className="dt-maintenance__callout-title">
+                Built to Protect. Backed by Care.
+              </span>
+              <span className="dt-maintenance__callout-text">
+                Ongoing support and practical maintenance for long-term
+                protection.
+              </span>
+            </figcaption>
           </figure>
         </div>
       </div>

@@ -66,7 +66,7 @@ export function MobileNav() {
       <button
         ref={triggerRef}
         type="button"
-        className="inline-flex h-12 w-12 items-center justify-center rounded-lg border border-slate-200 text-navy transition hover:border-water hover:text-water"
+        className="site-header__menu-btn inline-flex h-12 w-12 items-center justify-center rounded-lg border border-slate-200 text-navy transition hover:border-water hover:text-water"
         aria-expanded={open}
         aria-controls={panelId}
         aria-label={open ? "Close menu" : "Open menu"}

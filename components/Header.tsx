@@ -6,7 +6,7 @@ import { useEffect, useRef, useSyncExternalStore } from "react";
 import { DamtechLogo } from "@/components/DamtechLogo";
 import { MobileNav } from "@/components/MobileNav";
 import { isNavItemActive, ServicesNavDropdown } from "@/components/ServicesNavDropdown";
-import { HEADER_NAV_ITEMS } from "@/lib/site";
+import { HEADER_NAV_ITEMS, phoneTel, siteConfig } from "@/lib/site";
 
 const SCROLL_DELTA = 12;
 const REVEAL_AT_TOP_PX = 120;
@@ -111,6 +111,8 @@ export function Header() {
     getScrollSnapshot,
     getServerScrollSnapshot,
   );
+  // Homepage opens with a full-bleed photograph: the bar starts transparent over it.
+  const overlay = pathname === "/" && !scrolled;
 
   useEffect(() => {
     const header = headerRef.current;
@@ -134,7 +136,7 @@ export function Header() {
       ref={headerRef}
       className={`site-header fixed inset-x-0 top-0 z-50 border-b transition-[transform,box-shadow] duration-300 ease-[cubic-bezier(.2,.8,.2,1)] motion-reduce:transition-none ${
         visible ? "translate-y-0" : "-translate-y-full"
-      } ${scrolled ? "site-header--scrolled" : ""}`}
+      } ${scrolled ? "site-header--scrolled" : ""} ${overlay ? "site-header--overlay" : ""}`}
     >
       <div className="site-shell site-header__inner">
         <Link href="/" className="site-header__brand group">
@@ -174,6 +176,9 @@ export function Header() {
         </nav>
 
         <div className="site-header__actions">
+          <a href={`tel:${phoneTel}`} className="site-header__phone">
+            {siteConfig.phone}
+          </a>
           <Link href="/quote/" className="site-header__cta">
             Request a Quote
           </Link>
