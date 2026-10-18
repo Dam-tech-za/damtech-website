@@ -118,15 +118,16 @@ export default async function BlogPostPage({ params }: Props) {
       />
 
       <article>
-        <header className="-mt-[var(--header-height)] bg-gradient-to-br from-navy to-slate-800 pt-[calc(var(--header-height)+3rem)] pb-12 text-white sm:pt-[calc(var(--header-height)+3.5rem)] sm:pb-16">
+        <header className="dt-article-hero">
           <div className="site-container max-w-3xl">
-            <Breadcrumbs items={breadcrumbs} variant="dark" className="mb-4" />
-            <h1 className="text-3xl font-bold tracking-tight text-balance sm:text-4xl">
+            <Breadcrumbs items={breadcrumbs} variant="light" className="mb-6" />
+            <p className="dt-eyebrow">Damtech guide</p>
+            <h1 className="dt-article-hero__title">
               {post.title}
             </h1>
-            <p className="mt-4 text-sm text-slate-300">
+            <p className="dt-article-hero__meta">
               By{" "}
-              <Link href={BLOG_AUTHOR.path} className="font-medium text-sky-200 hover:text-white">
+              <Link href={BLOG_AUTHOR.path} className="dt-article-hero__author">
                 {BLOG_AUTHOR.name}
               </Link>
               <span className="mx-2" aria-hidden>

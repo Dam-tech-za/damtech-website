@@ -743,3 +743,37 @@
 .site-section.service-intro-section::before {
   display: none;
 }
+
+/* Blog article header — cream editorial masthead instead of a navy gradient. */
+.dt-article-hero {
+  padding-block: clamp(3rem, 7vw, 5.5rem) clamp(2.5rem, 5vw, 4rem);
+  background: var(--dt-cream);
+  border-bottom: 2px solid var(--dt-ink);
+  color: var(--dt-ink);
+}
+
+.dt-article-hero__title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-variation-settings: "wdth" 108;
+  font-size: clamp(2rem, 4vw, 3.6rem);
+  line-height: 1.04;
+  letter-spacing: -0.025em;
+  text-wrap: balance;
+}
+
+.dt-article-hero__meta {
+  margin: 1.5rem 0 0;
+  font-size: 0.9rem;
+  color: var(--dt-stone);
+}
+
+.dt-article-hero__author {
+  font-weight: 700;
+  color: var(--dt-ink);
+  text-decoration: underline;
+  text-decoration-color: var(--dt-cyan);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 3px;
+}
