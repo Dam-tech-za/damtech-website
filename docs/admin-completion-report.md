@@ -8,8 +8,8 @@ Branch: `claude/project-thread-s3q680` (from `main` at 48824f4).
 |---|---|
 | Implemented | Yes — navigation, feedback on saves, enquiry and order workflow fixes, "Needs attention" overview |
 | Tested | Type check, lint, 350 unit tests, production build, SEO regression (0 changes), signed-out access checks, browser checks of the new components |
-| Deployed | **No** — waiting for the owner's go-ahead |
-| Not verified | Authenticated click-through and save persistence against real data (no test login or non-production database) |
+| Deployed | **Yes**, 18 Oct 2026 on the owner's instruction: `main` fast-forwarded to 9787f49; Vercel preview and production deployments both Ready. Live checks: public pages 200, `/admin/*` redirects to login with `noindex`, SEO across 75 live routes shows only the two earlier intentional heading changes (contact, Overstrand). |
+| Not verified | Authenticated click-through and save persistence on production (needs the owner's login: see checks below) |
 
 ## Original defects
 Full list with evidence: `docs/admin-audit.md`. The ones that mattered most:
