@@ -30,6 +30,7 @@ import {
 import { ResendRfqNotificationButton } from "@/components/admin/ResendRfqNotificationButton";
 import { RfqCatalogueLinePanel } from "@/components/admin/RfqCatalogueLinePanel";
 import { RfqDetailActions } from "@/components/admin/rfqs/RfqDetailActions";
+import { describeLeadSource } from "@/lib/analytics/attribution";
 import {
   AdminButton,
   AdminCheckbox,
@@ -427,6 +428,35 @@ export default async function AdminRfqDetailPage({
           <h3 className="admin-subheading">General description</h3>
           <p className="admin-prose">{rfq.project_description}</p>
         </AdminPanel>
+
+        {(() => {
+          const sourceRows = describeLeadSource(
+            (rfq.simple_service_fields as { attribution?: unknown } | null)?.attribution,
+          );
+          return (
+            <AdminPanel
+              id="rfq-source"
+              title="Enquiry source"
+              description="First page the visitor landed on and how they reached the site (captured at submission)."
+              compact
+            >
+              {sourceRows.length ? (
+                <dl className="admin-dl">
+                  {sourceRows.map((row) => (
+                    <div key={row.label}>
+                      <dt>{row.label}</dt>
+                      <dd>{row.value}</dd>
+                    </div>
+                  ))}
+                </dl>
+              ) : (
+                <p className="admin-prose">
+                  No source recorded — older enquiry, manual entry or browser storage blocked.
+                </p>
+              )}
+            </AdminPanel>
+          );
+        })()}
 
         <RfqCatalogueLinePanel
           lines={

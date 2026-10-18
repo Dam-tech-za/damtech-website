@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import {
   buildFirstTouch,
+  describeLeadSource,
   parseLeadAttribution,
   sanitisePath,
   sanitiseReferrer,
@@ -65,5 +66,39 @@ describe("lead attribution", () => {
     assert.equal(sanitisePath("/contact/#form"), "/contact/");
     assert.equal(sanitiseReferrer("ftp://example.com/x"), "");
     assert.equal(sanitiseReferrer("https://www.bing.com/search?q=dam"), "https://www.bing.com/search");
+  });
+});
+
+describe("describeLeadSource", () => {
+  it("returns nothing for missing or malformed input", () => {
+    assert.deepEqual(describeLeadSource(undefined), []);
+    assert.deepEqual(describeLeadSource("x"), []);
+    assert.deepEqual(describeLeadSource([]), []);
+  });
+
+  it("describes a residential regional enquiry from a Google Ads click", () => {
+    const rows = describeLeadSource({
+      landing_page: "/waterproofing-overstrand/",
+      form_page: "/quote/",
+      referrer: "https://www.google.com/search",
+      utm_source: "google",
+      utm_medium: "cpc",
+      gclid: "abc",
+    });
+    assert.deepEqual(rows, [
+      { label: "First page visited", value: "/waterproofing-overstrand/" },
+      { label: "Region hint", value: "Overstrand, Western Cape (residential page)" },
+      { label: "Form submitted from", value: "/quote/" },
+      { label: "Came from", value: "https://www.google.com/search" },
+      { label: "Campaign", value: "google · cpc" },
+      { label: "Ad click", value: "Google Ads" },
+    ]);
+  });
+
+  it("marks direct traffic and skips a form page equal to the landing page", () => {
+    assert.deepEqual(describeLeadSource({ landing_page: "/quote/", form_page: "/quote/" }), [
+      { label: "First page visited", value: "/quote/" },
+      { label: "Came from", value: "Direct / unknown" },
+    ]);
   });
 });

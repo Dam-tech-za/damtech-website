@@ -114,3 +114,49 @@ export function buildFirstTouch(
   }
   return record;
 }
+
+/** Residential regional landing pages → the region an enquiry most likely came from. */
+const LANDING_REGION_HINTS: Record<string, string> = {
+  "/waterproofing-pretoria/": "Pretoria / Gauteng (residential page)",
+  "/waterproofing-overstrand/": "Overstrand, Western Cape (residential page)",
+  "/pretoria-dam-liners/": "Pretoria (dam liner page)",
+  "/johannesburg-dam-liners/": "Johannesburg (dam liner page)",
+  "/western-cape-dam-liners/": "Western Cape (dam liner page)",
+  "/limpopo-dam-liners/": "Limpopo (dam liner page)",
+  "/mpumalanga-dam-liners/": "Mpumalanga (dam liner page)",
+};
+
+export type LeadSourceRow = { label: string; value: string };
+
+/**
+ * Human-readable rows for the admin "Enquiry source" panel, built from the
+ * stored first-touch record. Unknown or empty input yields an empty list.
+ */
+export function describeLeadSource(input: unknown): LeadSourceRow[] {
+  if (!input || typeof input !== "object" || Array.isArray(input)) return [];
+  const a = input as LeadAttribution;
+  const rows: LeadSourceRow[] = [];
+  const withSlash = (p: string) => (p.endsWith("/") ? p : `${p}/`);
+
+  if (a.landing_page) {
+    rows.push({ label: "First page visited", value: a.landing_page });
+    const region = LANDING_REGION_HINTS[withSlash(a.landing_page)];
+    if (region) rows.push({ label: "Region hint", value: region });
+  }
+  if (a.form_page && a.form_page !== a.landing_page) {
+    rows.push({ label: "Form submitted from", value: a.form_page });
+  }
+  rows.push({ label: "Came from", value: a.referrer || "Direct / unknown" });
+
+  const campaign = [a.utm_source, a.utm_medium, a.utm_campaign].filter(Boolean).join(" · ");
+  if (campaign) rows.push({ label: "Campaign", value: campaign });
+  if (a.utm_term) rows.push({ label: "Keyword", value: a.utm_term });
+
+  const clicks = [
+    a.gclid || a.gbraid || a.wbraid ? "Google Ads" : "",
+    a.fbclid ? "Meta (Facebook/Instagram)" : "",
+  ].filter(Boolean);
+  if (clicks.length) rows.push({ label: "Ad click", value: clicks.join(", ") });
+
+  return rows;
+}
