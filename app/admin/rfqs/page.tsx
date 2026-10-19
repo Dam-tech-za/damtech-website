@@ -28,17 +28,16 @@ type PageProps = {
 export default async function AdminRfqsPage({ searchParams }: PageProps) {
   const admin = await requireAdmin();
   const filters = await searchParams;
-  const [result, statusCounts] = await Promise.all([
+  const supabase = await createClient();
+  const [result, statusCounts, { data: staff }] = await Promise.all([
     getRfqInbox(filters),
     getRfqStatusCounts(),
+    supabase
+      .from("admin_profiles")
+      .select("id, email, full_name")
+      .eq("is_active", true)
+      .order("email"),
   ]);
-
-  const supabase = await createClient();
-  const { data: staff } = await supabase
-    .from("admin_profiles")
-    .select("id, email, full_name")
-    .eq("is_active", true)
-    .order("email");
 
   const canExport = canPerform(admin.profile.role, "exportRfqs");
   const canManage = canPerform(admin.profile.role, "manageRfqs");

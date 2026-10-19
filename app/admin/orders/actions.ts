@@ -12,8 +12,8 @@ import {
 } from "@/lib/admin/action-state";
 import { canPerform } from "@/lib/auth/permissions";
 import { writeAuditLog } from "@/lib/auth/audit";
-import { createClient } from "@/lib/supabase/server";
 import { getCatalogueOrder } from "@/lib/orders/list";
+import { adminOrdersDb } from "@/lib/orders/admin-db";
 import { isOrderStatus } from "@/lib/orders/types";
 import {
   sendCustomerOrderConfirmation,
@@ -39,7 +39,7 @@ export async function updateOrderStatusAction(
       return actionSuccess(`Status is already ${orderStatusLabel(status)}.`);
     }
 
-    const supabase = await createClient();
+    const supabase = await adminOrdersDb({ manage: true });
     const { error } = await supabase
       .from("catalogue_orders")
       .update({ status, updated_at: new Date().toISOString() })

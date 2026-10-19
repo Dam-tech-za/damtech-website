@@ -11,6 +11,7 @@ import {
   type DashboardStageRow,
 } from "./types";
 import type { AttentionCounts } from "./attention";
+import { adminOrdersDb } from "@/lib/orders/admin-db";
 
 const UNAVAILABLE_ATTENTION: AttentionCounts = {
   newEnquiries: null,
@@ -236,6 +237,14 @@ export async function getDashboardMetrics(
 
   try {
     const supabase = await createClient();
+    // Orders are service-role only (see lib/orders/admin-db.ts); a role without
+    // order access gets "unavailable" for those two items, never fake zeros.
+    const ordersDb = await adminOrdersDb().catch(() => null);
+    const ordersUnavailable = Promise.resolve({
+      data: null,
+      count: null,
+      error: new Error("orders unavailable"),
+    });
     const fromIso = window.from.toISOString();
     const toIso = window.to.toISOString();
     const prevFromIso = window.previousFrom.toISOString();
@@ -334,17 +343,19 @@ export async function getDashboardMetrics(
         .from("rfqs")
         .select("*", { count: "exact", head: true })
         .eq("status", "site_measurement_required"),
-      supabase
-        .from("catalogue_orders")
-        .select("*", { count: "exact", head: true })
-        .eq("status", "pending_invoice"),
+      ordersDb
+        ? ordersDb
+            .from("catalogue_orders")
+            .select("*", { count: "exact", head: true })
+            .eq("status", "pending_invoice")
+        : ordersUnavailable,
       supabase
         .from("rfq_communications")
         .select("rfq_id", { count: "exact" })
         .eq("status", "failed")
         .order("created_at", { ascending: false })
         .limit(1),
-      supabase
+      (ordersDb ?? supabase)
         .from("catalogue_orders")
         .select("id", { count: "exact" })
         .neq("status", "cancelled")

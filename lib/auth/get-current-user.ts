@@ -1,3 +1,4 @@
+import { cache } from "react";
 import { createClient } from "@/lib/supabase/server";
 import type { AdminProfile, AdminRole } from "./types";
 import { ADMIN_ROLES } from "./types";
@@ -41,7 +42,11 @@ export type CurrentAdmin =
  * Returns the signed-in Supabase user plus active admin profile, or null.
  * Does not throw — callers decide how to redirect.
  */
-export async function getCurrentAdmin(): Promise<CurrentAdmin> {
+/**
+ * Cached per request: the layout, the page and every guarded action in one
+ * render share a single auth + profile lookup instead of repeating it.
+ */
+export const getCurrentAdmin = cache(async function getCurrentAdmin(): Promise<CurrentAdmin> {
   try {
     const supabase = await createClient();
     const {
@@ -77,10 +82,10 @@ export async function getCurrentAdmin(): Promise<CurrentAdmin> {
   } catch {
     return null;
   }
-}
+});
 
 /** Auth user only (may be unapproved). Used by login / unauthorised flows. */
-export async function getCurrentUser() {
+export const getCurrentUser = cache(async function getCurrentUser() {
   try {
     const supabase = await createClient();
     const {
@@ -96,4 +101,4 @@ export async function getCurrentUser() {
   } catch {
     return null;
   }
-}
+});

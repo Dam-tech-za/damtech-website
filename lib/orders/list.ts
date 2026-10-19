@@ -1,4 +1,4 @@
-import { createClient } from "@/lib/supabase/server";
+import { adminOrdersDb } from "./admin-db";
 import { isOrderStatus, type OrderStatus } from "./types.ts";
 
 export type CatalogueOrderListRow = {
@@ -53,7 +53,13 @@ export async function listCatalogueOrders(filters: {
 }> {
   const pageSize = 25;
   const page = Math.max(1, Number(filters.page) || 1);
-  const supabase = await createClient();
+  let supabase;
+  try {
+    supabase = await adminOrdersDb();
+  } catch (error) {
+    console.error("[orders] list access failed:", error instanceof Error ? error.message : error);
+    return { rows: [], total: 0, page, pageSize, error: true };
+  }
   let query = supabase
     .from("catalogue_orders")
     .select(
@@ -92,12 +98,19 @@ export async function listCatalogueOrders(filters: {
 export async function getCatalogueOrder(
   id: string,
 ): Promise<CatalogueOrderDetail | null> {
-  const supabase = await createClient();
+  let supabase;
+  try {
+    supabase = await adminOrdersDb();
+  } catch (error) {
+    console.error("[orders] detail access failed:", error instanceof Error ? error.message : error);
+    return null;
+  }
   const { data, error } = await supabase
     .from("catalogue_orders")
     .select("*")
     .eq("id", id)
     .maybeSingle();
+  if (error) console.error("[orders] detail failed:", error.message);
   if (error || !data) return null;
   return data as CatalogueOrderDetail;
 }
