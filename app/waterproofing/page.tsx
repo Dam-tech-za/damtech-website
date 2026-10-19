@@ -44,7 +44,7 @@ const SECTIONS = [
     heading: "Roof waterproofing",
     paragraphs: [
       "A leaking roof usually shows up after a Highveld storm: a stain on the ceiling, a drip into a cupboard, or water tracking along a beam. Damtech waterproofs house roofs in Pretoria and the rest of Gauteng, including tiled roofs, concrete slabs and metal sheets.",
-      "We look at the roof covering, flashings, outlets and any old coating before we recommend a repair or a new membrane. You get a free assessment and written quote. We do not publish a rate per square metre, because every roof is different.",
+      "We look at the roof covering, flashings, outlets and any old coating before we recommend a repair or a new membrane. You get a written quote; site assessments are free in Betty's Bay, and elsewhere we confirm the call-out fee first. We do not publish a rate per square metre, because every roof is different.",
     ],
   },
   {
@@ -68,7 +68,7 @@ const SECTIONS = [
     heading: "Balconies and showers",
     paragraphs: [
       "Balconies and shower floors leak into the room below when the membrane under the tiles has failed, or when the waste and door threshold were never sealed.",
-      "We inspect the screed, outlets and upstands. Where the tiles have to come up, we say so before any work starts. The same free assessment and written quote covers balconies, planters and shower floors.",
+      "We inspect the screed, outlets and upstands. Where the tiles have to come up, we say so before any work starts. The same assessment and written quote covers balconies, planters and shower floors.",
     ],
   },
   {
@@ -101,9 +101,9 @@ const PROCESS_STEPS: readonly ProcessStep[] = [
   {
     id: "assessment",
     step: 2,
-    title: "Free assessment",
+    title: "Site assessment",
     description:
-      "We inspect the roof, parapets, damp walls, balcony or shower and find where the water is getting in.",
+      "We inspect the roof, parapets, damp walls, balcony or shower and find where the water is getting in. Free in Betty's Bay; elsewhere we confirm the call-out fee before we visit.",
     Icon: SearchIcon,
   },
   {
@@ -111,7 +111,7 @@ const PROCESS_STEPS: readonly ProcessStep[] = [
     step: 3,
     title: "Written quote",
     description:
-      "You receive a free assessment and written quote that sets out the work, the system we recommend, and the warranty terms.",
+      "You receive a written quote that sets out the work, the system we recommend, and the warranty terms.",
     Icon: LayersIcon,
   },
   {
@@ -143,7 +143,7 @@ const FAQS: ServiceFaqItem[] = [
   {
     question: "What is the difference between a roof leak and rising damp?",
     answer:
-      "A roof leak usually appears after rain and can show high on a wall or ceiling. Rising damp sits low on the wall and stays damp in dry weather. We check both during the free assessment so the wrong repair is not quoted.",
+      "A roof leak usually appears after rain and can show high on a wall or ceiling. Rising damp sits low on the wall and stays damp in dry weather. We check both during the assessment so the wrong repair is not quoted.",
   },
   {
     question: "Do you waterproof balconies and showers?",
@@ -195,11 +195,11 @@ export default function WaterproofingPage() {
         aside={<ResidentialEnquiryCard areaServed={AREA} quoteHref={QUOTE_HREF} />}
         eyebrow="Homes · Pretoria · Gauteng · Overstrand"
         title={seo.h1}
-        description="We waterproof leaking roofs, flat roofs, parapets, damp walls, balconies and showers for homeowners in Pretoria and Gauteng, and in Betty's Bay to Gansbaai in the Overstrand. Ask for a free assessment and written quote."
+        description="We waterproof leaking roofs, flat roofs, parapets, damp walls, balconies and showers for homeowners in Pretoria and Gauteng, and in Betty's Bay to Gansbaai in the Overstrand. Send photos for a quote; site assessments are free in Betty's Bay."
         breadcrumbs={breadcrumbs}
       >
         <Link href={QUOTE_HREF} className="hero-btn-primary w-full sm:w-auto">
-          Request a free assessment
+          Request a quote
         </Link>
         <a
           href={whatsAppUrl}
@@ -219,8 +219,8 @@ export default function WaterproofingPage() {
       />
       <SiteSection>
         <SectionCta
-          title="Book a free assessment"
-          description={`Tell us about the leaking roof or damp wall and we will arrange a free assessment and written quote. ${WARRANTY_SUMMARY}`}
+          title="Request a quote or site assessment"
+          description={`Tell us about the leaking roof or damp wall and send photos. Site assessments are free in Betty's Bay; elsewhere we quote from your photos or confirm the call-out fee before a visit. ${WARRANTY_SUMMARY}`}
           primaryHref={QUOTE_HREF}
           primaryLabel="Request a written quote"
           secondaryHref="/contact/"

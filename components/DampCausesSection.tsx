@@ -106,10 +106,10 @@ export function DampCausesSection({ quoteHref }: { quoteHref: string }) {
         </figure>
 
         <div className="damp-causes__cta">
-          <p>Seeing any of these at home? Send us a photo and we will tell you what we think is causing it.</p>
+          <p>Seeing any of these at home? Send us a photo and we will tell you what we think is causing it. Site assessments are free in Betty&apos;s Bay.</p>
           <div className="damp-causes__actions">
             <Link href={quoteHref} className="dt-btn dt-btn--blue">
-              Book a free damp assessment
+              Request a damp-proofing quote
             </Link>
             <a
               href={whatsAppUrl}

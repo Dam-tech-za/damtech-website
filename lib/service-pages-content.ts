@@ -240,7 +240,7 @@ export const SERVICES_HUB_CONTENT = {
     {
       heading: "Leak Repair and Preventative Maintenance",
       paragraphs: [
-        "Leak call-outs and planned maintenance are part of keeping water assets and buildings dry. We document roof and dam conditions, prioritise safety-critical areas and quote transparently for repair versus replacement. Preventative programmes include free initial inspections on eligible roofs, standard bitumen touch-ups and reporting so you can budget for the next season.",
+        "Leak call-outs and planned maintenance are part of keeping water assets and buildings dry. We document roof and dam conditions, prioritise safety-critical areas and quote transparently for repair versus replacement. Preventative programmes include an initial inspection (free in Betty's Bay; call-out fee elsewhere), standard bitumen touch-ups and reporting so you can budget for the next season.",
         "On farms, a leaking store roof during maize delivery or a failed dam outlet before calving season costs more than the repair itself. Scheduling work in quieter months and fixing small laps before summer storms is usually the most cost-effective approach.",
       ],
     },

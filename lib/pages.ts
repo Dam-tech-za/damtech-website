@@ -74,7 +74,7 @@ export const PAGE_SEO: Record<StaticPageKey, PageSeoEntry> = {
   waterproofing: {
     title: "Waterproofing Pretoria & Gauteng | Roofs & Damp | Damtech",
     description:
-      "Roof and home waterproofing in Pretoria and Gauteng, and Betty's Bay to Gansbaai. Flat roofs, parapets, damp walls, balconies and leaks. Free assessment.",
+      "Roof and home waterproofing in Pretoria and Gauteng, and Betty's Bay to Gansbaai. Flat roofs, parapets, damp walls, balconies and leaks. Written quotes.",
     path: "/waterproofing",
     h1: "Roof & Home Waterproofing in Pretoria and Gauteng",
     serviceName: "Home waterproofing",
@@ -158,7 +158,7 @@ export const FAQ_ITEMS = [
   {
     question: "What is included in your preventative maintenance services?",
     answer:
-      "Our preventative maintenance services include a free inspection, standard preventative bitumen waterproofing and necessary repairs. We check for wear, leaks and potential future issues before they become significant problems.",
+      "Our preventative maintenance services include an inspection, standard preventative bitumen waterproofing and necessary repairs. We check for wear, leaks and potential future issues before they become significant problems.",
   },
   {
     question: "What causes paint to flake off or make bubbles?",

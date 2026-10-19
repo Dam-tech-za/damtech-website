@@ -64,9 +64,9 @@ export const RESIDENTIAL_PROCESS_STEPS: readonly ProcessStep[] = [
   {
     id: "assessment",
     step: 2,
-    title: "Free assessment",
+    title: "Site assessment",
     description:
-      "We inspect the roof, parapets, damp walls, balcony, foundation or retaining wall and find where the water is getting in.",
+      "We inspect the roof, parapets, damp walls, balcony, foundation or retaining wall and find where the water is getting in. Free in Betty's Bay; elsewhere we confirm the call-out fee before we visit.",
     Icon: SearchIcon,
   },
   {
@@ -74,7 +74,7 @@ export const RESIDENTIAL_PROCESS_STEPS: readonly ProcessStep[] = [
     step: 3,
     title: "Written quote",
     description:
-      "You receive a free assessment and written quote that sets out the work, the system we recommend, and the warranty terms.",
+      "You receive a written quote that sets out the work, the system we recommend, and the warranty terms.",
     Icon: LayersIcon,
   },
   {
@@ -103,7 +103,7 @@ const ROOF_WATERPROOFING: ResidentialPageConfig = {
   breadcrumbLabel: "Roof waterproofing",
   heroEyebrow: "Flat roofs · Parapets · Leak repair",
   heroDescription:
-    "We waterproof and repair leaking house roofs — flat concrete slabs, parapets and flashings, and selected tiled and metal roofs — in Pretoria, Gauteng and the Overstrand. Ask for a free assessment and written quote.",
+    "We waterproof and repair leaking house roofs — flat concrete slabs, parapets and flashings, and selected tiled and metal roofs — in Pretoria, Gauteng and the Overstrand. Send photos for a written quote.",
   intro:
     "Most roof leaks show up after the first heavy storm of the season: a stain on the ceiling, a drip into a cupboard, or water tracking along a beam. The right repair depends on the roof covering and where the water is really getting in, so we assess before we quote and we do not publish a rate per square metre — every roof is different.",
   sections: [
@@ -197,7 +197,7 @@ const ROOF_WATERPROOFING: ResidentialPageConfig = {
   ],
   areaServed: "Pretoria and Gauteng; Overstrand, Western Cape",
   quoteService: QUOTE_SERVICE,
-  ctaTitle: "Book a free roof assessment",
+  ctaTitle: "Request a roof waterproofing quote",
 };
 
 const FOUNDATION_WATERPROOFING: ResidentialPageConfig = {
@@ -210,7 +210,7 @@ const FOUNDATION_WATERPROOFING: ResidentialPageConfig = {
   breadcrumbLabel: "Foundation & damp-proofing",
   heroEyebrow: "Rising damp · Retaining walls · Below ground",
   heroDescription:
-    "We trace and treat damp and water ingress at the base of the house — rising damp, foundation and retaining walls, and below-ground areas — in Pretoria, Gauteng and the Overstrand. Free assessment and written quote.",
+    "We trace and treat damp and water ingress at the base of the house — rising damp, foundation and retaining walls, and below-ground areas — in Pretoria, Gauteng and the Overstrand. Send photos for a written quote.",
   intro:
     "Damp at the bottom of a wall is not always a roof leak. Rising damp, a failed damp-proof course, soil banked against the plaster, or water pushing through a retaining or foundation wall all look similar from inside. We first work out where the moisture is coming from, because the wrong repair on the wrong cause simply moves the problem.",
   sections: [
@@ -259,7 +259,7 @@ const FOUNDATION_WATERPROOFING: ResidentialPageConfig = {
     {
       question: "What is the difference between a roof leak and rising damp?",
       answer:
-        "A roof leak usually appears after rain and can show high on a wall or ceiling. Rising damp sits low on the wall, leaves a tide mark and salts, and stays damp in dry weather. We check both during the free assessment so the wrong repair is not quoted.",
+        "A roof leak usually appears after rain and can show high on a wall or ceiling. Rising damp sits low on the wall, leaves a tide mark and salts, and stays damp in dry weather. We check both during the assessment so the wrong repair is not quoted.",
     },
     {
       question: "Can you cure rising damp with a coating?",
@@ -299,7 +299,7 @@ const FOUNDATION_WATERPROOFING: ResidentialPageConfig = {
   ],
   areaServed: "Pretoria and Gauteng; Overstrand, Western Cape",
   quoteService: QUOTE_SERVICE,
-  ctaTitle: "Book a free damp assessment",
+  ctaTitle: "Request a damp-proofing quote",
 };
 
 // ---------------------------------------------------------------------------
@@ -311,12 +311,12 @@ const WATERPROOFING_PRETORIA: ResidentialPageConfig = {
   kind: "regional",
   title: "Waterproofing Contractors Pretoria & Centurion | Damtech",
   description:
-    "Home waterproofing in Pretoria, Centurion and the eastern suburbs: leaking roofs, flat roofs, parapets, damp walls and retaining walls. Free assessment.",
+    "Home waterproofing in Pretoria, Centurion and the eastern suburbs: leaking roofs, flat roofs, parapets, damp walls and retaining walls. Written quotes.",
   h1: "Waterproofing in Pretoria and Centurion",
   breadcrumbLabel: "Pretoria",
   heroEyebrow: "Pretoria · Centurion · Gauteng homes",
   heroDescription:
-    "Damtech waterproofs homes across Pretoria and Centurion — leaking roofs, flat concrete roofs, parapets, damp walls and retaining walls. Free assessment and written quote, from a business with a Gauteng base.",
+    "Damtech waterproofs homes across Pretoria and Centurion — leaking roofs, flat concrete roofs, parapets, damp walls and retaining walls. Send photos for a written quote, from a business with a Gauteng base.",
   intro:
     "Damtech works from a Pretoria base, so we assess and waterproof homes across Pretoria, Centurion and the surrounding Tshwane suburbs — including the eastern areas such as Garsfontein, Faerie Glen, Moreleta Park, Menlyn, Silver Lakes, Irene, Brooklyn, Hatfield and Montana. This is an operating base, not a walk-in office.",
   sections: [
@@ -341,7 +341,7 @@ const WATERPROOFING_PRETORIA: ResidentialPageConfig = {
       heading: "What we do for Pretoria homeowners",
       paragraphs: [
         "Roof waterproofing and leak repair on flat concrete, tiled and metal roofs; parapet, flashing and outlet detailing; damp-proofing and rising-damp treatment; and retaining and foundation wall waterproofing. We recommend a torch-on, liquid or coating system to suit each roof rather than applying one product everywhere.",
-        "Every job starts with a free on-site assessment and a written quote. We do not publish a rate per square metre because a Garsfontein flat roof, a Centurion townhouse parapet and a Moreleta Park retaining wall are genuinely different jobs.",
+        "Every job starts with photos or an on-site assessment (we confirm the call-out fee first) and a written quote. We do not publish a rate per square metre because a Garsfontein flat roof, a Centurion townhouse parapet and a Moreleta Park retaining wall are genuinely different jobs.",
       ],
     },
     {
@@ -376,7 +376,7 @@ const WATERPROOFING_PRETORIA: ResidentialPageConfig = {
     {
       question: "What does it cost?",
       answer:
-        "It depends on the roof or wall and the system needed, so we quote after a free assessment. Warranty terms — up to 10 years supplier-backed material warranty where stated, plus 12 months workmanship — are set out in the written quote.",
+        "It depends on the roof or wall and the system needed, so we quote from photos or after a site assessment. Warranty terms — up to 10 years supplier-backed material warranty where stated, plus 12 months workmanship — are set out in the written quote.",
     },
   ],
   related: [
@@ -390,9 +390,9 @@ const WATERPROOFING_PRETORIA: ResidentialPageConfig = {
   areaServed: "Pretoria and Gauteng",
   officeIds: ["pretoria"],
   quoteService: QUOTE_SERVICE,
-  ctaTitle: "Book a free assessment in Pretoria",
+  ctaTitle: "Request a quote in Pretoria",
   ctaDescription:
-    "Tell us about the leaking roof or damp wall and we will arrange a free assessment and written quote for your home in Pretoria or Centurion. Up to 10 years supplier-backed material warranty where stated in the quotation, plus 12 months workmanship.",
+    "Tell us about the leaking roof or damp wall and send photos. We quote from your photos or confirm the call-out fee before a site visit to your home in Pretoria or Centurion. Up to 10 years supplier-backed material warranty where stated in the quotation, plus 12 months workmanship.",
 };
 
 const WATERPROOFING_OVERSTRAND: ResidentialPageConfig = {
@@ -405,7 +405,7 @@ const WATERPROOFING_OVERSTRAND: ResidentialPageConfig = {
   breadcrumbLabel: "Overstrand",
   heroEyebrow: "Betty's Bay · Kleinmond · Hermanus · Gansbaai",
   heroDescription:
-    "Damtech waterproofs homes along the Overstrand coast from our Betty's Bay base — leaking roofs, wind-driven rain through walls, and salt-exposed flashings and gutters. Free assessment and written quote.",
+    "Damtech waterproofs homes along the Overstrand coast from our Betty's Bay base — leaking roofs, wind-driven rain through walls, and salt-exposed flashings and gutters. Free assessments in Betty's Bay and written quotes.",
   intro:
     "Damtech has an operating base at Betty's Bay in the Overstrand, the coastal part of the Overberg region in the Western Cape — not a Cape Town suburb. From there we assess and waterproof homes in Betty's Bay, Kleinmond, Pringle Bay, Rooi-Els, Hermanus, Onrus, Vermont, Gansbaai, Stanford and De Kelders. It is a service-area base, not a walk-in office.",
   sections: [
@@ -430,7 +430,7 @@ const WATERPROOFING_OVERSTRAND: ResidentialPageConfig = {
       heading: "What we do along the coast",
       paragraphs: [
         "Roof waterproofing and leak repair; parapet, flashing and junction detailing where wind-driven rain enters; damp-proofing of walls holding coastal moisture; and retaining and foundation wall waterproofing on the many sloped coastal stands.",
-        "Every job starts with a free on-site assessment and a written quote naming the system and warranty. We recommend the system to suit the house and its exposure rather than applying one product to every roof.",
+        "Every job starts with an on-site assessment (free in Betty's Bay; elsewhere we confirm the call-out fee first) and a written quote naming the system and warranty. We recommend the system to suit the house and its exposure rather than applying one product to every roof.",
       ],
     },
     {
@@ -483,9 +483,9 @@ const WATERPROOFING_OVERSTRAND: ResidentialPageConfig = {
   areaServed: "Overstrand, Western Cape",
   officeIds: ["western-cape"],
   quoteService: QUOTE_SERVICE,
-  ctaTitle: "Book a free assessment in the Overstrand",
+  ctaTitle: "Book an assessment in the Overstrand",
   ctaDescription:
-    "Tell us about the leaking roof or damp wall and we will arrange a free assessment and written quote for your home in Betty's Bay, Kleinmond, Hermanus, Gansbaai or nearby. Up to 10 years supplier-backed material warranty where stated in the quotation, plus 12 months workmanship.",
+    "Tell us about the leaking roof or damp wall. Assessments are free in Betty's Bay; for Kleinmond, Hermanus, Gansbaai and nearby we quote from photos or confirm the call-out fee before a visit. Up to 10 years supplier-backed material warranty where stated in the quotation, plus 12 months workmanship.",
 };
 
 // ---------------------------------------------------------------------------

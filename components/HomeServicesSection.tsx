@@ -34,7 +34,7 @@ const SERVICE_CARDS: readonly ServiceCard[] = [
     id: "waterproofing",
     title: "Roof & Home Waterproofing",
     description:
-      "Flat roof, torch-on and liquid membrane waterproofing, damp-proofing and leak repairs for homes in Pretoria, Centurion and the Overstrand. Free assessment and written quote.",
+      "Flat roof, torch-on and liquid membrane waterproofing, damp-proofing and leak repairs for homes in Pretoria, Centurion and the Overstrand. Free assessments in Betty's Bay; written quotes everywhere.",
     linkLabel: "See roof and home waterproofing",
     href: "/waterproofing",
     featured: true,

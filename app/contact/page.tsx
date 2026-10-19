@@ -387,7 +387,7 @@ export default function ContactPage() {
 
         title="Ready to get started?"
 
-        description="Submit the form above or call us — we arrange site inspections and free quotes across South Africa."
+        description="Submit the form above or call us — we quote across South Africa from your sizes and photos, and arrange site inspections where needed."
 
       />
 

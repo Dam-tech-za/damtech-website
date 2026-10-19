@@ -16,9 +16,9 @@ const PROCESS_STEPS = [
   {
     id: "inspection",
     step: 2,
-    title: "Free Site Inspection",
+    title: "Site Inspection",
     description:
-      "A Damtech specialist can visit your site to assess the area, application and project requirements.",
+      "A Damtech specialist can visit your site to assess the area, application and project requirements. Free in Betty's Bay; elsewhere we confirm the call-out fee first.",
     note: "Thorough. Practical. Honest.",
   },
   {

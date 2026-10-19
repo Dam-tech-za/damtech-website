@@ -317,7 +317,7 @@ export const DAM_REPAIR_SERVICES_PAGE: SubServicePageConfig = {
   slug: "dam-repair-services",
   title: "Leaking Dam Repair & Liner Repairs | Damtech South Africa",
   description:
-    "Leaking farm dam? Damtech assesses and repairs liner punctures, failed seams and seepage on earth dams, cement dams and reservoirs. Free assessment where applicable.",
+    "Leaking farm dam? Damtech assesses and repairs liner punctures, failed seams and seepage on earth dams, cement dams and reservoirs. Send photos for a quote.",
   h1: "Leaking Dam Repair Services",
   image: IMAGE_PATHS.damLiningMaintenanceInspection1,
   serviceName: "Leaking Dam Repair",
@@ -347,7 +347,7 @@ export const DAM_REPAIR_SERVICES_PAGE: SubServicePageConfig = {
     { label: "Liner systems", value: "HDPE, PVC, torch-on bitumen" },
     { label: "Typical causes", value: "UV damage, puncture, seam failure, settlement" },
     { label: "Service area", value: "Nationwide South Africa" },
-    { label: "First step", value: "Free assessment where applicable" },
+    { label: "First step", value: "Photos, then a quote or site visit" },
   ],
   sections: [
     {
@@ -577,7 +577,7 @@ export const DAM_LINING_COST_PAGE: SubServicePageConfig = {
     { label: "HDPE", value: "Typically specified 1–2 mm for farm dams" },
     { label: "PVC", value: "550–850 gsm for ponds and tanks" },
     { label: "Extras", value: "Geotextile, outlets, dewatering, rock fill" },
-    { label: "Next step", value: "Free quote with photos or site visit" },
+    { label: "Next step", value: "Free quote from photos; site visit on request" },
   ],
   sections: [
     {

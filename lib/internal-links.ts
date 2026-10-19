@@ -139,7 +139,7 @@ const SERVICE_PAGES: readonly InternalServiceLink[] = [
 const DEFAULT_POST_CTA: PostCtaConfig = {
   heading: "Need help with your water storage project?",
   description:
-    "Our team installs dam linings, steel tanks and waterproofing nationwide. Request a free quote or site inspection.",
+    "Our team installs dam linings, steel tanks and waterproofing nationwide. Request a free quote or a site inspection.",
   buttonText: "Request a Quote",
   buttonHref: "/quote/",
 };
@@ -250,7 +250,7 @@ export function getPostCta(post: BlogPost): PostCtaConfig {
     return {
       heading: "Need help choosing a dam lining?",
       description:
-        "We install HDPE, PVC and torch-on dam linings across South Africa — with free quotes and site inspections.",
+        "We install HDPE, PVC and torch-on dam linings across South Africa — with free quotes from your dimensions and site inspections on request.",
       buttonText: "Request a Quote",
       buttonHref: "/quote/",
     };

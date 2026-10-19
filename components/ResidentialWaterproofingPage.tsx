@@ -78,7 +78,7 @@ export function ResidentialWaterproofingPage({
         }
       >
         <Link href={quoteHref} className="hero-btn-primary w-full sm:w-auto">
-          Request a free assessment
+          Request a quote
         </Link>
         <a
           href={whatsAppUrl}
@@ -124,10 +124,10 @@ export function ResidentialWaterproofingPage({
 
       <SiteSection>
         <SectionCta
-          title={page.ctaTitle ?? "Book a free assessment"}
+          title={page.ctaTitle ?? "Request a quote or site assessment"}
           description={
             page.ctaDescription ??
-            `Tell us about the leak or damp problem and we will arrange a free assessment and written quote. ${WARRANTY_SUMMARY}`
+            `Tell us about the leak or damp problem and send photos. Site assessments are free in Betty's Bay; elsewhere we quote from your photos or confirm the call-out fee before a visit. ${WARRANTY_SUMMARY}`
           }
           primaryHref={quoteHref}
           primaryLabel="Request a written quote"
@@ -159,7 +159,7 @@ export function ResidentialEnquiryCard({
 }) {
   return (
     <div className="dt-enquiry-card">
-      <p className="dt-enquiry-card__label">Free assessment · written quote</p>
+      <p className="dt-enquiry-card__label">Written quote · free assessment in Betty&apos;s Bay</p>
       <p className="dt-enquiry-card__areas">
         <span className="dt-enquiry-card__areas-label">Areas we serve</span>
         {areaServed}
