@@ -66,7 +66,7 @@ export const RESIDENTIAL_PROCESS_STEPS: readonly ProcessStep[] = [
     step: 2,
     title: "Site assessment",
     description:
-      "We inspect the roof, parapets, damp walls, balcony, foundation or retaining wall and find where the water is getting in. Free in Betty's Bay; elsewhere we confirm the call-out fee before we visit.",
+      "We inspect the roof, parapets, damp walls, balcony, foundation or retaining wall and find where the water is getting in. Free in Rooi-Els, Pringle Bay, Betty's Bay and Kleinmond; elsewhere we confirm the call-out fee before we visit.",
     Icon: SearchIcon,
   },
   {
@@ -405,9 +405,9 @@ const WATERPROOFING_OVERSTRAND: ResidentialPageConfig = {
   breadcrumbLabel: "Overstrand",
   heroEyebrow: "Betty's Bay · Kleinmond · Hermanus · Gansbaai",
   heroDescription:
-    "Damtech waterproofs homes along the Overstrand coast from our Betty's Bay base — leaking roofs, wind-driven rain through walls, and salt-exposed flashings and gutters. Free assessments in Betty's Bay and written quotes.",
+    "Damtech waterproofs homes along the Overstrand coast from our Betty's Bay base — leaking roofs, wind-driven rain through walls, and salt-exposed flashings and gutters. Free assessments from Rooi-Els to Kleinmond and written quotes.",
   intro:
-    "Damtech has an operating base at Betty's Bay in the Overstrand, the coastal part of the Overberg region in the Western Cape — not a Cape Town suburb. From there we assess and waterproof homes in Betty's Bay, Kleinmond, Pringle Bay, Rooi-Els, Hermanus, Onrus, Vermont, Gansbaai, Stanford and De Kelders. It is a service-area base, not a walk-in office.",
+    "Damtech has an operating base at Betty's Bay in the Overstrand, the coastal part of the Overberg region in the Western Cape — not a Cape Town suburb. From there we assess and waterproof homes in Betty's Bay, Kleinmond, Pringle Bay, Rooi-Els, Hermanus, Onrus, Vermont, Gansbaai, Stanford and De Kelders, and inland to Grabouw and the Elgin valley. It is a service-area base, not a walk-in office.",
   sections: [
     {
       id: "coastal-climate",
@@ -430,7 +430,7 @@ const WATERPROOFING_OVERSTRAND: ResidentialPageConfig = {
       heading: "What we do along the coast",
       paragraphs: [
         "Roof waterproofing and leak repair; parapet, flashing and junction detailing where wind-driven rain enters; damp-proofing of walls holding coastal moisture; and retaining and foundation wall waterproofing on the many sloped coastal stands.",
-        "Every job starts with an on-site assessment (free in Betty's Bay; elsewhere we confirm the call-out fee first) and a written quote naming the system and warranty. We recommend the system to suit the house and its exposure rather than applying one product to every roof.",
+        "Every job starts with an on-site assessment (free in Rooi-Els, Pringle Bay, Betty's Bay and Kleinmond; elsewhere we confirm the call-out fee first) and a written quote naming the system and warranty. We recommend the system to suit the house and its exposure rather than applying one product to every roof.",
       ],
     },
     {
@@ -485,7 +485,7 @@ const WATERPROOFING_OVERSTRAND: ResidentialPageConfig = {
   quoteService: QUOTE_SERVICE,
   ctaTitle: "Book an assessment in the Overstrand",
   ctaDescription:
-    "Tell us about the leaking roof or damp wall. Assessments are free in Betty's Bay; for Kleinmond, Hermanus, Gansbaai and nearby we quote from photos or confirm the call-out fee before a visit. Up to 10 years supplier-backed material warranty where stated in the quotation, plus 12 months workmanship.",
+    "Tell us about the leaking roof or damp wall. Assessments are free in Rooi-Els, Pringle Bay, Betty's Bay and Kleinmond; for Hermanus, Gansbaai, Grabouw and further afield we quote from photos or confirm the call-out fee before a visit. Up to 10 years supplier-backed material warranty where stated in the quotation, plus 12 months workmanship.",
 };
 
 // ---------------------------------------------------------------------------

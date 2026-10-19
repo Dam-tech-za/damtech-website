@@ -18,7 +18,7 @@ const PROCESS_STEPS = [
     step: 2,
     title: "Site Inspection",
     description:
-      "A Damtech specialist can visit your site to assess the area, application and project requirements. Free in Betty's Bay; elsewhere we confirm the call-out fee first.",
+      "A Damtech specialist can visit your site to assess the area, application and project requirements. Free in Rooi-Els, Pringle Bay, Betty's Bay and Kleinmond; elsewhere we confirm the call-out fee first.",
     note: "Thorough. Practical. Honest.",
   },
   {

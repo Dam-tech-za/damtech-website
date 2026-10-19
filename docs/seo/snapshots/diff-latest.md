@@ -1,7 +1,7 @@
 # SEO snapshot diff
 
 Before: `docs/seo/snapshots/live-2026-10-18.json` · After: `docs/seo/snapshots/after.json`
-Routes compared: 75 · Findings: 52
+Routes compared: 75 · Findings: 54
 
 ### `/`
 - headings removed: "h3: Waterproofing", "h3: Free Site Inspection"
@@ -58,8 +58,8 @@ Routes compared: 75 · Findings: 52
 ### `/waterproofing-overstrand/`
 - headings removed: "h1: Waterproofing in the Overstrand", "h3: Free assessment", "h2: Book a free assessment in the Overstrand"
 - headings added: "h1: Waterproofing in Betty's Bay, Hermanus and the Overstrand", "h3: Site assessment", "h2: Book an assessment in the Overstrand"
-- text blocks missing (5): "Damtech waterproofs homes along the Overstrand coast from our Betty's Bay base — leaking r"; "Free assessment · written quote"; "Every job starts with a free on-site assessment and a written quote naming the system and "; "You receive a free assessment and written quote that sets out the work, the system we reco"; "Tell us about the leaking roof or damp wall and we will arrange a free assessment and writ"
-- text visible on mobile before but not after (5): "Damtech waterproofs homes along the Overstrand coast from our Betty's Bay base —"; "Free assessment · written quote"; "Every job starts with a free on-site assessment and a written quote naming the s"; "You receive a free assessment and written quote that sets out the work, the syst"; "Tell us about the leaking roof or damp wall and we will arrange a free assessmen"
+- text blocks missing (6): "Damtech waterproofs homes along the Overstrand coast from our Betty's Bay base — leaking r"; "Free assessment · written quote"; "Damtech has an operating base at Betty's Bay in the Overstrand, the coastal part of the Ov"; "Every job starts with a free on-site assessment and a written quote naming the system and "; "You receive a free assessment and written quote that sets out the work, the system we reco"; "Tell us about the leaking roof or damp wall and we will arrange a free assessment and writ"
+- text visible on mobile before but not after (6): "Damtech waterproofs homes along the Overstrand coast from our Betty's Bay base —"; "Free assessment · written quote"; "Damtech has an operating base at Betty's Bay in the Overstrand, the coastal part"; "Every job starts with a free on-site assessment and a written quote naming the s"; "You receive a free assessment and written quote that sets out the work, the syst"
 
 ### `/waterproofing-pretoria/`
 - description: "Home waterproofing in Pretoria, Centurion and the eastern suburbs: leaking roofs, flat roofs, parapets, damp walls and retaining walls. Free assessment." → "Home waterproofing in Pretoria, Centurion and the eastern suburbs: leaking roofs, flat roofs, parapets, damp walls and retaining walls. Written quotes."
@@ -71,10 +71,12 @@ Routes compared: 75 · Findings: 52
 - JSON-LD changed
 
 ### `/waterproofing/`
-- description: "Roof and home waterproofing in Pretoria and Gauteng, and Betty's Bay to Gansbaai. Flat roofs, parapets, damp walls, balconies and leaks. Free assessment." → "Roof and home waterproofing in Pretoria and Gauteng, and Betty's Bay to Gansbaai. Flat roofs, parapets, damp walls, balconies and leaks. Written quotes."
-- ogDescription: "Roof and home waterproofing in Pretoria and Gauteng, and Betty's Bay to Gansbaai. Flat roofs, parapets, damp walls, balconies and leaks. Free assessment." → "Roof and home waterproofing in Pretoria and Gauteng, and Betty's Bay to Gansbaai. Flat roofs, parapets, damp walls, balconies and leaks. Written quotes."
-- headings removed: "h3: Free assessment", "h2: Book a free assessment"
-- headings added: "h2: What causes rising damp and damp walls?", "h3: Rising damp and penetrating damp inside the house", "h3: Foundation and below-ground leaks", "h3: Site assessment", "h2: Request a quote or site assessment"
-- text blocks missing (7): "We waterproof leaking roofs, flat roofs, parapets, damp walls, balconies and showers for h"; "Free assessment · written quote"; "We look at the roof covering, flashings, outlets and any old coating before we recommend a"; "We inspect the screed, outlets and upstands. Where the tiles have to come up, we say so be"; "You receive a free assessment and written quote that sets out the work, the system we reco"; "Tell us about the leaking roof or damp wall and we will arrange a free assessment and writ"; "A roof leak usually appears after rain and can show high on a wall or ceiling. Rising damp"
-- text visible on mobile before but not after (6): "We waterproof leaking roofs, flat roofs, parapets, damp walls, balconies and sho"; "Free assessment · written quote"; "We look at the roof covering, flashings, outlets and any old coating before we r"; "We inspect the screed, outlets and upstands. Where the tiles have to come up, we"; "You receive a free assessment and written quote that sets out the work, the syst"
+- title: "Waterproofing Pretoria & Gauteng | Roofs & Damp | Damtech" → "Waterproofing Betty's Bay, Kleinmond & Grabouw | Damtech"
+- description: "Roof and home waterproofing in Pretoria and Gauteng, and Betty's Bay to Gansbaai. Flat roofs, parapets, damp walls, balconies and leaks. Free assessment." → "Roof, damp and leak waterproofing for homes in Betty's Bay, Kleinmond, Pringle Bay, Rooi-Els, Hermanus and Grabouw, plus Pretoria. Written quotes."
+- ogTitle: "Waterproofing Pretoria & Gauteng | Roofs & Damp | Damtech" → "Waterproofing Betty's Bay, Kleinmond & Grabouw | Damtech"
+- ogDescription: "Roof and home waterproofing in Pretoria and Gauteng, and Betty's Bay to Gansbaai. Flat roofs, parapets, damp walls, balconies and leaks. Free assessment." → "Roof, damp and leak waterproofing for homes in Betty's Bay, Kleinmond, Pringle Bay, Rooi-Els, Hermanus and Grabouw, plus Pretoria. Written quotes."
+- headings removed: "h1: Roof & Home Waterproofing in Pretoria and Gauteng", "h2: Waterproofing in Betty's Bay, Kleinmond, Hermanus and Gansbaai", "h3: Free assessment", "h2: Book a free assessment"
+- headings added: "h1: Roof & Home Waterproofing in Betty's Bay, Kleinmond and Grabouw", "h2: Waterproofing in Betty's Bay, Kleinmond, Pringle Bay and Grabouw", "h2: Waterproofing in Pretoria and Gauteng", "h2: What causes rising damp and damp walls?", "h3: Rising damp and penetrating damp inside the house", "h3: Foundation and below-ground leaks", "h3: Site assessment", "h2: Request a quote or site assessment"
+- text blocks missing (12): "Homes · Pretoria · Gauteng · Overstrand"; "We waterproof leaking roofs, flat roofs, parapets, damp walls, balconies and showers for h"; "Free assessment · written quote"; "Areas we servePretoria and Gauteng; Betty's Bay, Kleinmond, Hermanus and Gansbaai (Overstr"; "A leaking roof usually shows up after a Highveld storm: a stain on the ceiling, a drip int"; "We look at the roof covering, flashings, outlets and any old coating before we recommend a"; "We inspect the screed, outlets and upstands. Where the tiles have to come up, we say so be"; "Damtech also works from Betty's Bay in the Western Cape, so we assess and waterproof homes"
+- text visible on mobile before but not after (9): "Homes · Pretoria · Gauteng · Overstrand"; "We waterproof leaking roofs, flat roofs, parapets, damp walls, balconies and sho"; "Free assessment · written quote"; "A leaking roof usually shows up after a Highveld storm: a stain on the ceiling, "; "We look at the roof covering, flashings, outlets and any old coating before we r"
 - JSON-LD changed

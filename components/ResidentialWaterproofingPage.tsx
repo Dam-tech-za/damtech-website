@@ -127,7 +127,7 @@ export function ResidentialWaterproofingPage({
           title={page.ctaTitle ?? "Request a quote or site assessment"}
           description={
             page.ctaDescription ??
-            `Tell us about the leak or damp problem and send photos. Site assessments are free in Betty's Bay; elsewhere we quote from your photos or confirm the call-out fee before a visit. ${WARRANTY_SUMMARY}`
+            `Tell us about the leak or damp problem and send photos. Site assessments are free in Rooi-Els, Pringle Bay, Betty's Bay and Kleinmond; elsewhere we quote from your photos or confirm the call-out fee before a visit. ${WARRANTY_SUMMARY}`
           }
           primaryHref={quoteHref}
           primaryLabel="Request a written quote"
@@ -159,7 +159,7 @@ export function ResidentialEnquiryCard({
 }) {
   return (
     <div className="dt-enquiry-card">
-      <p className="dt-enquiry-card__label">Written quote · free assessment in Betty&apos;s Bay</p>
+      <p className="dt-enquiry-card__label">Written quote · free assessment Rooi-Els to Kleinmond</p>
       <p className="dt-enquiry-card__areas">
         <span className="dt-enquiry-card__areas-label">Areas we serve</span>
         {areaServed}

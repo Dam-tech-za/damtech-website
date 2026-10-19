@@ -106,7 +106,7 @@ export function DampCausesSection({ quoteHref }: { quoteHref: string }) {
         </figure>
 
         <div className="damp-causes__cta">
-          <p>Seeing any of these at home? Send us a photo and we will tell you what we think is causing it. Site assessments are free in Betty&apos;s Bay.</p>
+          <p>Seeing any of these at home? Send us a photo and we will tell you what we think is causing it. Site assessments are free in Rooi-Els, Pringle Bay, Betty&apos;s Bay and Kleinmond.</p>
           <div className="damp-causes__actions">
             <Link href={quoteHref} className="dt-btn dt-btn--blue">
               Request a damp-proofing quote
