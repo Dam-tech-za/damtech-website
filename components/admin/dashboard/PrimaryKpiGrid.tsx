@@ -69,45 +69,33 @@ export function PrimaryKpiGrid({ metrics }: PrimaryKpiGridProps) {
   return (
     <section className="dash-kpi-grid" aria-label="Primary metrics">
       <KpiCard
-        label="New RFQs"
+        label="Enquiries received"
         value={String(primary.newRfqs)}
-        hint={
-          primary.newRfqs === 0
-            ? "No activity in selected period"
-            : delta
-        }
-        href="/admin/rfqs/?status=new"
+        hint={primary.newRfqs === 0 ? "None in this period" : delta}
+        href="/admin/rfqs/"
         icon={<IconInbox />}
         empty={primary.newRfqs === 0}
       />
       <KpiCard
-        label="Ready for Quote"
+        label="Ready to quote"
         value={String(primary.readyForQuote)}
-        hint={
-          primary.readyForQuote === 0
-            ? "No activity in selected period"
-            : "Estimator queue"
-        }
+        hint="All open enquiries"
         href="/admin/rfqs/?status=ready_for_quote"
         icon={<IconQueue />}
         empty={primary.readyForQuote === 0}
       />
       <KpiCard
-        label="Quotes Awaiting Approval"
+        label="Quotations to approve"
         value={String(primary.awaitingApproval)}
-        hint={
-          primary.awaitingApproval === 0
-            ? "No activity in selected period"
-            : "Internal review"
-        }
+        hint="All open quotations"
         href="/admin/quotes/?status=internal_review"
         icon={<IconReview />}
         empty={primary.awaitingApproval === 0}
       />
       <KpiCard
-        label="Accepted Quote Value"
+        label="Accepted quotations"
         value={formatZar(primary.acceptedValue)}
-        hint="Not cash received"
+        hint="Value incl. VAT, not cash received"
         href="/admin/quotes/?status=accepted"
         icon={<IconValue />}
         empty={primary.acceptedValue === 0}

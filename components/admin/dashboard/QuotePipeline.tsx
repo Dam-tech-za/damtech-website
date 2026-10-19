@@ -14,11 +14,11 @@ export function QuotePipeline({ rows }: QuotePipelineProps) {
 
   return (
     <AdminPanel
-      title="Quote Pipeline"
+      title="Quotations"
       description="Latest revision counts and values"
       actions={
         <AdminButton href="/admin/quotes/" variant="link" size="sm">
-          Open quotes
+          View quotations
         </AdminButton>
       }
     >

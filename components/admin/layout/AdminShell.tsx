@@ -58,8 +58,9 @@ export function AdminShell({
   // server-computed breadcrumbs would go stale after the first page.
   const pathname = usePathname() || "/admin/";
   const title = adminPageTitle(pathname);
-  const breadcrumbs = adminBreadcrumbs(pathname);
-  const showHeaderTitle = pathname === "/admin" || pathname === "/admin/";
+  const crumbs = adminBreadcrumbs(pathname);
+  // On the Overview itself a lone "Overview" crumb only repeats the page title.
+  const breadcrumbs = crumbs.length > 1 ? crumbs : [];
   const collapsed = useSyncExternalStore(
     subscribeSidebarPreference,
     getSidebarCollapsedSnapshot,
@@ -94,7 +95,6 @@ export function AdminShell({
           fullName={profile.full_name}
           role={profile.role}
           avatarUrl={profile.avatar_url}
-          showTitle={showHeaderTitle}
           sidebarCollapsed={collapsed}
           onExpandSidebar={expandSidebar}
         />

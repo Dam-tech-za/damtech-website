@@ -6,7 +6,7 @@ import {
   DASHBOARD_RANGE_OPTIONS,
   type DashboardRangeId,
 } from "@/lib/admin/dashboard/types";
-import { AdminButton, AdminSelect } from "@/components/admin/ui";
+import { AdminSelect } from "@/components/admin/ui";
 
 type DashboardHeaderControlsProps = {
   rangeId: DashboardRangeId;
@@ -19,9 +19,8 @@ export function DashboardHeaderControls({
   const [pending, startTransition] = useTransition();
 
   return (
-    <>
-      <label className="dash-header__range">
-        <span className="dash-header__range-label">Date range</span>
+    <label className="dash-header__range">
+        <span className="sr-only">Date range</span>
         <AdminSelect
           className="dash-header__select"
           value={rangeId}
@@ -31,7 +30,6 @@ export function DashboardHeaderControls({
             const next = event.target.value as DashboardRangeId;
             startTransition(() => {
               router.push(`/admin/?range=${encodeURIComponent(next)}`);
-              router.refresh();
             });
           }}
         >
@@ -41,14 +39,6 @@ export function DashboardHeaderControls({
             </option>
           ))}
         </AdminSelect>
-      </label>
-      <AdminButton
-        variant="secondary"
-        disabled={pending}
-        onClick={() => startTransition(() => router.refresh())}
-      >
-        {pending ? "Refreshing…" : "Refresh"}
-      </AdminButton>
-    </>
+    </label>
   );
 }

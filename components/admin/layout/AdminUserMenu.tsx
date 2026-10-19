@@ -69,9 +69,8 @@ export function AdminUserMenu({
             </span>
           )}
           <span className="admin-user-menu__text">
-            <span className="admin-user-menu__name">{fullName || email}</span>
-            <span className="admin-user-menu__meta">
-              {role} · {email}
+            <span className="admin-user-menu__name" title={`${role} · ${email}`}>
+              {fullName || email}
             </span>
           </span>
           <span className="admin-user-menu__chevron" aria-hidden>

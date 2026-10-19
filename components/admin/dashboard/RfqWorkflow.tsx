@@ -21,11 +21,11 @@ export function RfqWorkflow({ stages }: RfqWorkflowProps) {
 
   return (
     <AdminPanel
-      title="RFQ Workflow"
-      description="Current pipeline by status"
+      title="Enquiries by status"
+      description="All open enquiries"
       actions={
         <AdminButton href="/admin/rfqs/" variant="link" size="sm">
-          View RFQs
+          View enquiries
         </AdminButton>
       }
     >

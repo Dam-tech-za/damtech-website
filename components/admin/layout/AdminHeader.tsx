@@ -58,7 +58,7 @@ export function AdminHeader({
           </AdminIconButton>
         ) : null}
         <div>
-          <AdminBreadcrumbs items={breadcrumbs} />
+          {breadcrumbs.length ? <AdminBreadcrumbs items={breadcrumbs} /> : null}
           {showTitle ? (
             <p className="admin-header__context">{title}</p>
           ) : null}

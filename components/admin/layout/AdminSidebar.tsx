@@ -108,15 +108,13 @@ function SidebarLink({
         className={`admin-sidebar__link${collapsed ? " admin-sidebar__link--icon-only" : ""}${active ? " is-active" : ""}`}
         aria-label={item.label}
         aria-current={active ? "page" : undefined}
+        title={collapsed ? undefined : item.description}
       >
         <span className="admin-sidebar__link-icon">
           <NavIcon id={item.id} />
         </span>
         {!collapsed ? (
-          <span className="admin-sidebar__link-text">
-            <span className="admin-sidebar__link-label">{item.label}</span>
-            <span className="admin-sidebar__link-hint">{item.description}</span>
-          </span>
+          <span className="admin-sidebar__link-label">{item.label}</span>
         ) : (
           <span className="admin-sidebar__tooltip">{item.label}</span>
         )}
