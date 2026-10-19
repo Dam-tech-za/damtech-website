@@ -40,6 +40,8 @@ import torchOnConcreteDam15mMpumalanga from "@/public/images/torch-on-bitumen-co
 import torchOnConcreteDam18mTzaneen from "@/public/images/torch-on-bitumen-concrete-round-dam-18m-255m2-tzaneen.webp";
 import westernCapeDamLiningHero from "@/public/images/western-cape-dam-lining-reservoir-damtech.webp";
 import flatRoofWaterproofingMembrane from "@/public/images/flat-roof-waterproofing-membrane.webp";
+import risingDampCausesDiagram from "@/public/images/rising-damp-causes-damp-walls-south-africa.webp";
+import foundationLeakPointsDiagram from "@/public/images/foundation-waterproofing-leak-points-diagram.webp";
 
 /** Stable public URLs for Open Graph, blog rewrites and JSON data. WebP only. */
 export const IMAGE_PATHS = {
@@ -75,6 +77,8 @@ export const IMAGE_PATHS = {
   tulbaghWesternCapeSteelWaterTankProject:
     "/images/corrugated-steel-water-tank-tulbagh-western-cape.webp",
   flatRoofWaterproofingMembrane: "/images/flat-roof-waterproofing-membrane.webp",
+  risingDampCausesDiagram: "/images/rising-damp-causes-damp-walls-south-africa.webp",
+  foundationLeakPointsDiagram: "/images/foundation-waterproofing-leak-points-diagram.webp",
   hdpeDamLiningAfterGeotextile: "/images/hdpe-dam-lining-after-geotextile.webp",
   hdpeDamLiningBeforeInstallation:
     "/images/hdpe-dam-lining-before-installation.webp",
@@ -133,6 +137,11 @@ export const IMAGE_ALTS: Record<ImagePath, string> = {
   [IMAGE_PATHS.tulbaghWesternCapeSteelWaterTankProject]:
     "Corrugated steel water tank installed in Tulbagh, Western Cape",
   // Representative roof photo supplied by the owner (Oct 2026); not a specific Damtech job or location.
+  // Explanatory diagrams supplied by the owner (Oct 2026); illustrations, not project photos.
+  [IMAGE_PATHS.risingDampCausesDiagram]:
+    "Diagram of the common causes of rising damp and damp walls in South African homes: failed or bridged damp-proof course, soil above the DPC, poor drainage, cracked plaster and leaking window sills, with peeling paint, mould and efflorescence inside",
+  [IMAGE_PATHS.foundationLeakPointsDiagram]:
+    "Diagram of common foundation leak points: failed waterproofing membrane, cracks in walls and floor slab, mortar joints, pipe penetrations, the floor-to-wall joint and water pressure from wet soil",
   [IMAGE_PATHS.flatRoofWaterproofingMembrane]:
     "Flat concrete roof waterproofed with overlapping reflective bitumen membrane sheets and a sealed parapet wall upstand",
   [IMAGE_PATHS.hdpeDamLiningAfterGeotextile]:
@@ -280,6 +289,16 @@ export const SITE_IMAGES = {
     IMAGE_PATHS.bitumenEarthDamWaterproofing2,
     "Completed bitumen torch-on waterproofing repair after Damtech installation",
     "After bitumen torch-on waterproofing",
+  ),
+  risingDampCauses: siteImage(
+    risingDampCausesDiagram,
+    IMAGE_PATHS.risingDampCausesDiagram,
+    IMAGE_ALTS[IMAGE_PATHS.risingDampCausesDiagram],
+  ),
+  foundationLeakPoints: siteImage(
+    foundationLeakPointsDiagram,
+    IMAGE_PATHS.foundationLeakPointsDiagram,
+    IMAGE_ALTS[IMAGE_PATHS.foundationLeakPointsDiagram],
   ),
   flatRoofWaterproofing: siteImage(
     flatRoofWaterproofingMembrane,

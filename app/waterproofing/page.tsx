@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { DampCausesSection } from "@/components/DampCausesSection";
 import { Hero } from "@/components/Hero";
 import { ResidentialEnquiryCard } from "@/components/ResidentialWaterproofingPage";
 import { PageSeo } from "@/components/PageSeo";
@@ -210,6 +211,7 @@ export default function WaterproofingPage() {
         </a>
       </Hero>
       <ServiceProseSections sections={SECTIONS} />
+      <DampCausesSection quoteHref={QUOTE_HREF} />
       <ProcessStepsSection
         steps={PROCESS_STEPS}
         title="How our process works"

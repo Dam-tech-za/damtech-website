@@ -1,7 +1,7 @@
 # SEO snapshot diff
 
 Before: `docs/seo/snapshots/live-2026-10-18.json` · After: `docs/seo/snapshots/after.json`
-Routes compared: 75 · Findings: 8
+Routes compared: 75 · Findings: 9
 
 ### `/`
 - headings removed: "h3: Waterproofing"
@@ -16,3 +16,6 @@ Routes compared: 75 · Findings: 8
 ### `/waterproofing-overstrand/`
 - headings removed: "h1: Waterproofing in the Overstrand"
 - headings added: "h1: Waterproofing in Betty's Bay, Hermanus and the Overstrand"
+
+### `/waterproofing/`
+- headings added: "h2: What causes rising damp and damp walls?", "h3: Rising damp and penetrating damp inside the house", "h3: Foundation and below-ground leaks"

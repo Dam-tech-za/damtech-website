@@ -949,3 +949,118 @@
 .service-intro__secondary-link:hover {
   color: var(--dt-ink);
 }
+
+/* Waterproofing page: damp cause diagrams (owner-supplied illustrations). */
+.damp-causes__header {
+  margin-inline: auto;
+  text-align: center;
+}
+
+.damp-causes__signs {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem;
+  margin: 1.75rem auto 0;
+  padding: 0;
+  list-style: none;
+  max-width: 56rem;
+}
+
+.damp-causes__signs li {
+  padding: 0.4rem 0.85rem;
+  border: 1px solid var(--dt-line);
+  border-radius: 999px;
+  background: var(--dt-white);
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--dt-ink);
+}
+
+.damp-causes__figure {
+  max-width: 68.75rem;
+  margin: clamp(2rem, 5vw, 3.5rem) auto 0;
+}
+
+.damp-causes__image {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: 1px solid var(--dt-line);
+  border-radius: 0.75rem;
+  background: var(--dt-white);
+}
+
+.damp-causes__figure figcaption {
+  max-width: 46rem;
+  margin: 1.25rem auto 0;
+  text-align: center;
+}
+
+.damp-causes__caption-title {
+  font-family: var(--font-display);
+  font-size: var(--dt-size-sm);
+  line-height: 1.15;
+  color: var(--dt-ink);
+}
+
+.damp-causes__figure figcaption p {
+  margin-top: 0.5rem;
+  font-size: 1rem;
+  line-height: 1.65;
+  color: var(--dt-charcoal);
+}
+
+.damp-causes__figure figcaption a {
+  color: var(--dt-blue);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.damp-causes__cta {
+  max-width: 46rem;
+  margin: clamp(2.5rem, 5vw, 3.5rem) auto 0;
+  text-align: center;
+}
+
+.damp-causes__cta > p {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--dt-ink);
+}
+
+.damp-causes__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.damp-causes__zoom {
+  position: relative;
+  display: block;
+}
+
+.damp-causes__zoom-hint {
+  position: absolute;
+  right: 0.6rem;
+  bottom: 0.6rem;
+  padding: 0.25rem 0.6rem;
+  border-radius: 999px;
+  background: rgba(3, 25, 38, 0.8);
+  color: var(--dt-white);
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+@media (min-width: 900px) {
+  .damp-causes__zoom-hint {
+    display: none;
+  }
+}
+
+.damp-causes__caption-title {
+  font-weight: 700;
+}
