@@ -32,14 +32,14 @@ const SERVICE_CARDS: readonly ServiceCard[] = [
   },
   {
     id: "waterproofing",
-    title: "Waterproofing",
+    title: "Roof & Home Waterproofing",
     description:
-      "Roof, damp and leak waterproofing for homes in Pretoria and Gauteng. Free assessment and written quote.",
-    linkLabel: "See home waterproofing",
+      "Flat roof, torch-on and liquid membrane waterproofing, damp-proofing and leak repairs for homes in Pretoria, Centurion and the Overstrand. Free assessment and written quote.",
+    linkLabel: "See roof and home waterproofing",
     href: "/waterproofing",
     featured: true,
-    // No residential project photography yet — typographic tile, not a stand-in photo.
-    image: null,
+    // Representative roof photo supplied by the owner; alt text stays generic (no job or location claimed).
+    image: SITE_IMAGES.flatRoofWaterproofing,
   },
   {
     id: "dam-linings",

@@ -39,6 +39,7 @@ import hdpeLinedFarmReservoirCattle from "@/public/images/hdpe-lined-farm-reserv
 import torchOnConcreteDam15mMpumalanga from "@/public/images/torch-on-bitumen-concrete-round-dam-15m-177m2-mpumalanga.webp";
 import torchOnConcreteDam18mTzaneen from "@/public/images/torch-on-bitumen-concrete-round-dam-18m-255m2-tzaneen.webp";
 import westernCapeDamLiningHero from "@/public/images/western-cape-dam-lining-reservoir-damtech.webp";
+import flatRoofWaterproofingMembrane from "@/public/images/flat-roof-waterproofing-membrane.webp";
 
 /** Stable public URLs for Open Graph, blog rewrites and JSON data. WebP only. */
 export const IMAGE_PATHS = {
@@ -73,6 +74,7 @@ export const IMAGE_PATHS = {
     "/images/villiersdorp-western-cape-hdpe-dam-lining-8230m2-2.webp",
   tulbaghWesternCapeSteelWaterTankProject:
     "/images/corrugated-steel-water-tank-tulbagh-western-cape.webp",
+  flatRoofWaterproofingMembrane: "/images/flat-roof-waterproofing-membrane.webp",
   hdpeDamLiningAfterGeotextile: "/images/hdpe-dam-lining-after-geotextile.webp",
   hdpeDamLiningBeforeInstallation:
     "/images/hdpe-dam-lining-before-installation.webp",
@@ -130,6 +132,9 @@ export const IMAGE_ALTS: Record<ImagePath, string> = {
     "HDPE dam lining field installation for a large water storage application in Villiersdorp, Western Cape",
   [IMAGE_PATHS.tulbaghWesternCapeSteelWaterTankProject]:
     "Corrugated steel water tank installed in Tulbagh, Western Cape",
+  // Representative roof photo supplied by the owner (Oct 2026); not a specific Damtech job or location.
+  [IMAGE_PATHS.flatRoofWaterproofingMembrane]:
+    "Flat concrete roof waterproofed with overlapping reflective bitumen membrane sheets and a sealed parapet wall upstand",
   [IMAGE_PATHS.hdpeDamLiningAfterGeotextile]:
     "HDPE dam lining after installation with geotextile protection on site",
   [IMAGE_PATHS.hdpeDamLiningBeforeInstallation]:
@@ -275,6 +280,11 @@ export const SITE_IMAGES = {
     IMAGE_PATHS.bitumenEarthDamWaterproofing2,
     "Completed bitumen torch-on waterproofing repair after Damtech installation",
     "After bitumen torch-on waterproofing",
+  ),
+  flatRoofWaterproofing: siteImage(
+    flatRoofWaterproofingMembrane,
+    IMAGE_PATHS.flatRoofWaterproofingMembrane,
+    IMAGE_ALTS[IMAGE_PATHS.flatRoofWaterproofingMembrane],
   ),
   steelTank: siteImage(
     tulbaghWesternCapeSteelWaterTankProject,
