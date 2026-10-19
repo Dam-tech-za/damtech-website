@@ -45,3 +45,13 @@ Full list with evidence: `docs/admin-audit.md`. The ones that mattered most:
 2. Overview shows "new enquiries not yet reviewed" with the oldest age.
 3. Open an enquiry, change its status to Reviewing, see the green confirmation, and use "Back to enquiries".
 4. On a phone, open the menu, tap a section, and confirm the menu closes.
+
+## Owner review fixes (19 Oct 2026)
+
+| Problem reported | Cause | Fix |
+|---|---|---|
+| Orders page "could not be loaded"; Overview order and email items unavailable | `catalogue_orders` grants only `service_role` (migration 20260813093808); the admin's own client got `permission denied` (confirmed with `set role authenticated`). Before 18 Oct the list silently showed "No orders". | `lib/orders/admin-db.ts`: admin auth + role check in server code, then the service-role client. No database change. Verified the same queries as `service_role` on production: 5 orders awaiting invoice, 0 failed emails. |
+| Admin slow | Functions ran in `iad1` (Washington) while Supabase is in `eu-west-1` (Ireland), so every query crossed the Atlantic; auth + profile were looked up twice per page; the inbox ran its staff query after the others; the range picker fetched the page twice. | `vercel.json` `regions: ["dub1"]`; `getCurrentAdmin`/`getCurrentUser` cached per request; inbox queries in parallel; single fetch on range change; `app/admin/loading.tsx` shows a skeleton immediately. |
+| Chunky, misaligned, not minimal | Large tokens, two-line nav items, stretched nav groups, user card with role and email, duplicate "Overview" crumb, stacked range label, info banner, quick-actions panel duplicating the menu. On screens under 1024 px the whole admin was squeezed into the hidden sidebar's 216 px column. | Single-line nav, 36 px controls (44 px on phones), slimmer header and user menu, aligned range select and button, banner and quick actions removed, empty pipeline hidden, plain labels, full-width layout below 1024 px. |
+
+Also: home page Waterproofing card now uses the owner-supplied roof photo (`public/images/flat-roof-waterproofing-membrane.webp`, resized to 1400 px, content unchanged) with generic alt text and updated card heading and copy.
