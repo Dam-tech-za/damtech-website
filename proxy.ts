@@ -79,7 +79,9 @@ function isProtectedAdminPath(pathname: string): boolean {
   if (pathname === "/admin/login" || pathname === "/admin/login/") return false;
   if (
     pathname === "/admin/unauthorised" ||
-    pathname === "/admin/unauthorised/"
+    pathname === "/admin/unauthorised/" ||
+    pathname === "/admin/forgot-password" ||
+    pathname === "/admin/forgot-password/"
   ) {
     return false;
   }

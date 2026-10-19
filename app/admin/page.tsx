@@ -11,10 +11,14 @@ import { RecentActivity } from "@/components/admin/dashboard/RecentActivity";
 import { RecentRfqs } from "@/components/admin/dashboard/RecentRfqs";
 import { AttentionPanel } from "@/components/admin/dashboard/AttentionPanel";
 import { buildAttentionItems } from "@/lib/admin/dashboard/attention";
-import { AdminErrorState, AdminPageHeader } from "@/components/admin/ui";
+import {
+  AdminErrorState,
+  AdminInfoBanner,
+  AdminPageHeader,
+} from "@/components/admin/ui";
 
 type PageProps = {
-  searchParams: Promise<{ range?: string | string[] }>;
+  searchParams: Promise<{ range?: string | string[]; password?: string }>;
 };
 
 export default async function AdminDashboardPage({ searchParams }: PageProps) {
@@ -31,6 +35,13 @@ export default async function AdminDashboardPage({ searchParams }: PageProps) {
         primaryAction={{ href: "/admin/rfqs/", label: "Open enquiries" }}
         secondaryActions={<DashboardHeaderControls rangeId={rangeId} />}
       />
+
+      {params.password === "changed" ? (
+        <AdminInfoBanner tone="info">
+          Your password has been changed. Use it next time you sign in with
+          email.
+        </AdminInfoBanner>
+      ) : null}
 
       {metrics.loadError ? (
         <AdminErrorState

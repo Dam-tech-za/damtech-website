@@ -30,14 +30,10 @@ export function AdminUserMenu({
       <AdminDropdownMenu
         items={[
           {
-            id: "profile",
-            label: "My profile",
-            href: "/admin/settings/",
-          },
-          {
-            id: "settings",
-            label: "Account settings",
-            href: "/admin/settings/system/",
+            // Verified by email: sends a reset link to this admin's address.
+            id: "change-password",
+            label: "Change password",
+            href: `/admin/forgot-password/?email=${encodeURIComponent(email)}`,
           },
           { id: "sep", label: "", separator: true },
           {

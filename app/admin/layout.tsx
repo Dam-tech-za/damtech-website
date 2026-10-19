@@ -20,7 +20,14 @@ export const metadata: Metadata = {
   },
 };
 
-const PUBLIC_ADMIN_PREFIXES = ["/admin/login", "/admin/unauthorised"];
+// Rendered without the admin shell. reset-password still needs the session
+// created by the emailed link (checked in proxy.ts and the page).
+const PUBLIC_ADMIN_PREFIXES = [
+  "/admin/login",
+  "/admin/unauthorised",
+  "/admin/forgot-password",
+  "/admin/reset-password",
+];
 
 export default async function AdminLayout({
   children,

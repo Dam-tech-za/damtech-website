@@ -753,3 +753,13 @@ form[aria-busy="true"] {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
+
+.admin-login__forgot {
+  margin: calc(-1 * var(--admin-space-2)) 0 0;
+  text-align: right;
+  font-size: 0.8125rem;
+}
+
+.admin-login__forgot a {
+  color: var(--admin-primary);
+}

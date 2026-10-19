@@ -47,6 +47,9 @@ export default async function AdminLoginPage({ searchParams }: PageProps) {
         ) : (
           <>
             <EmailPasswordSignInForm nextPath={nextPath} />
+            <p className="admin-login__forgot">
+              <Link href="/admin/forgot-password/">Forgot or never set a password?</Link>
+            </p>
             <div className="admin-login__divider" role="separator">
               <span>or</span>
             </div>
@@ -78,7 +81,7 @@ function mapLoginError(code?: string): string | null {
     case "missing_code":
       return "Sign-in was cancelled or incomplete. Please try again.";
     case "auth_exchange_failed":
-      return "We could not complete Google sign-in. Please try again.";
+      return "That sign-in or password reset link could not be used. It may have expired or been opened in a different browser. Please try again.";
     case "auth_not_configured":
       return "Admin authentication is not configured on this environment.";
     default:
