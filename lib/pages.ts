@@ -72,11 +72,11 @@ export const PAGE_SEO: Record<StaticPageKey, PageSeoEntry> = {
     image: IMAGE_PATHS.tulbaghWesternCapeSteelWaterTankProject,
   },
   waterproofing: {
-    title: "Waterproofing Betty's Bay, Kleinmond & Grabouw | Damtech",
+    title: "Home Waterproofing | Roofs, Damp & Leak Repair | Damtech",
     description:
-      "Roof, damp and leak waterproofing for homes in Betty's Bay, Kleinmond, Pringle Bay, Rooi-Els, Hermanus and Grabouw, plus Pretoria. Written quotes.",
+      "Roof, damp and leak waterproofing for homes in the Overstrand, Overberg and Pretoria: flat roofs, parapets, rising damp, balconies and showers.",
     path: "/waterproofing",
-    h1: "Roof & Home Waterproofing in Betty's Bay, Kleinmond and Grabouw",
+    h1: "Roof & Home Waterproofing",
     serviceName: "Home waterproofing",
     image: IMAGE_PATHS.bitumenTorchOnWaterproofingDamtech,
   },

@@ -51,7 +51,7 @@ function dedupeSitemap(entries: MetadataRoute.Sitemap): MetadataRoute.Sitemap {
  * modified date. Never set it to the build time — Google ignores lastmod that
  * changes on every deploy.
  */
-export const PAGES_LAST_MODIFIED = new Date("2026-10-18T00:00:00+02:00");
+export const PAGES_LAST_MODIFIED = new Date("2026-10-19T00:00:00+02:00");
 
 /** Build sitemap entries for all indexable routes (used by app/sitemap.ts). */
 export function buildSitemap(): MetadataRoute.Sitemap {

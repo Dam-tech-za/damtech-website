@@ -98,10 +98,10 @@ const QUOTE_SERVICE = "Roof / home waterproofing";
 const ROOF_WATERPROOFING: ResidentialPageConfig = {
   slug: "roof-waterproofing",
   kind: "service",
-  title: "Roof Waterproofing Betty's Bay & Kleinmond | Damtech",
+  title: "Roof Waterproofing & Roof Leak Repair | Damtech",
   description:
     "Roof leak repair and flat roof waterproofing for homes in Betty's Bay, Kleinmond, Pringle Bay, Hermanus and Grabouw, plus Pretoria. Written quotes.",
-  h1: "Roof Waterproofing for Homes in the Overstrand and Pretoria",
+  h1: "Roof Waterproofing and Leak Repair for Homes",
   breadcrumbLabel: "Roof waterproofing",
   heroEyebrow: "Flat roofs · Parapets · Leak repair",
   heroDescription:
@@ -189,7 +189,12 @@ const ROOF_WATERPROOFING: ResidentialPageConfig = {
       href: "/waterproofing-membranes-and-coatings/",
       label: "Membranes vs coatings guide",
     },
-    { href: "/waterproofing-overstrand/", label: "Waterproofing in the Overstrand" },
+    { href: "/waterproofing-overstrand/", label: "Waterproofing in Betty's Bay" },
+    { href: "/waterproofing-kleinmond/", label: "Waterproofing in Kleinmond" },
+    { href: "/waterproofing-hermanus/", label: "Waterproofing in Hermanus" },
+    { href: "/waterproofing-pringle-bay/", label: "Waterproofing in Pringle Bay & Rooi-Els" },
+    { href: "/waterproofing-gansbaai/", label: "Waterproofing in Gansbaai" },
+    { href: "/waterproofing-grabouw/", label: "Waterproofing in Grabouw" },
     { href: "/waterproofing-pretoria/", label: "Waterproofing in Pretoria" },
     { href: "/waterproofing/", label: "All home waterproofing" },
   ],
@@ -403,16 +408,16 @@ const WATERPROOFING_PRETORIA: ResidentialPageConfig = {
 const WATERPROOFING_OVERSTRAND: ResidentialPageConfig = {
   slug: "waterproofing-overstrand",
   kind: "regional",
-  title: "Waterproofing Betty's Bay, Hermanus & Overstrand | Damtech",
+  title: "Waterproofing Betty's Bay | Roof Leaks & Salt Damp | Damtech",
   description:
-    "Coastal home waterproofing in the Overstrand: Betty's Bay, Kleinmond, Hermanus and Gansbaai. Roof leaks, wind-driven rain and salt-exposed detail.",
-  h1: "Waterproofing in Betty's Bay, Hermanus and the Overstrand",
-  breadcrumbLabel: "Overstrand",
-  heroEyebrow: "Betty's Bay · Kleinmond · Hermanus · Gansbaai",
+    "Leaking flat roofs, salt damp and wind-driven rain repaired for homes in Betty's Bay, from Stony Point to Silversands. Free site assessments.",
+  h1: "Waterproofing in Betty's Bay",
+  breadcrumbLabel: "Betty's Bay",
+  heroEyebrow: "Betty's Bay · Stony Point · Silversands · Free assessments",
   heroDescription:
-    "Damtech waterproofs homes along the Overstrand coast from our Betty's Bay base — leaking roofs, wind-driven rain through walls, and salt-exposed flashings and gutters. Free assessments from Rooi-Els to Kleinmond and written quotes.",
+    "Damtech is based in Betty's Bay. We waterproof leaking flat roofs, walls hit by wind-driven rain, salt damp and salt-exposed flashings and gutters across Betty's Bay. Site assessments here are free, followed by a written quote.",
   intro:
-    "Damtech has an operating base at Betty's Bay in the Overstrand, the coastal part of the Overberg region in the Western Cape — not a Cape Town suburb. From there we assess and waterproof homes in Betty's Bay, Kleinmond, Pringle Bay, Rooi-Els, Hermanus, Onrus, Vermont, Gansbaai, Stanford and De Kelders, and inland to Grabouw and the Elgin valley. It is a service-area base, not a walk-in office.",
+    "Damtech has an operating base in Betty's Bay, on the Kogelberg coast of the Overstrand in the Western Cape — not a Cape Town suburb. We work across Betty's Bay, from Stony Point and the penguin colony to Silversands and the lakes, and site assessments here are free. Neighbouring towns have their own pages: Pringle Bay and Rooi-Els, Kleinmond, Hermanus, Gansbaai and Grabouw. It is a service-area base, not a walk-in office.",
   sections: [
     {
       id: "coastal-climate",
@@ -442,8 +447,8 @@ const WATERPROOFING_OVERSTRAND: ResidentialPageConfig = {
       id: "holiday-homes",
       heading: "Holiday homes and absent owners",
       paragraphs: [
-        "Many Overstrand houses are holiday homes, empty for weeks at a time, so a leak that starts in a June front may not be discovered until the owner returns and finds damaged ceilings and mould. Catching failed flashings and blocked outlets before the winter rains is especially worthwhile here.",
-        "We can assess a holiday home between visits, send the written quote through, and carry out the work while you are away, with photos of what was done.",
+        "Many Betty's Bay houses are holiday homes, empty for weeks at a time, so a leak that starts in a June front may not be discovered until the owner returns and finds damaged ceilings and mould. Catching failed flashings and blocked outlets before the winter rains is especially worthwhile here.",
+        "If you live in Gauteng or Cape Town, we can check the house between visits, send photos and a written quote, and carry out the work while you are away. Every job comes with before-and-after photos.",
       ],
     },
   ],
@@ -451,7 +456,7 @@ const WATERPROOFING_OVERSTRAND: ResidentialPageConfig = {
     {
       question: "Which Overstrand towns do you cover?",
       answer:
-        "From our Betty's Bay base we cover Betty's Bay, Kleinmond, Pringle Bay, Rooi-Els, Hermanus, Onrus, Vermont, Gansbaai, Stanford and De Kelders, and nearby Overberg communities within reach.",
+        "From our Betty's Bay base we cover Betty's Bay, Pringle Bay, Rooi-Els, Kleinmond, Hermanus, Onrus, Vermont, Gansbaai, Stanford and De Kelders, and inland to Grabouw and the Elgin valley. Site assessments are free in Rooi-Els, Pringle Bay, Betty's Bay and Kleinmond.",
     },
     {
       question: "Is the Overstrand part of Cape Town?",
@@ -481,16 +486,370 @@ const WATERPROOFING_OVERSTRAND: ResidentialPageConfig = {
       href: "/waterproofing-membranes-and-coatings/",
       label: "Membranes vs coatings guide",
     },
+    { href: "/waterproofing-pringle-bay/", label: "Waterproofing in Pringle Bay & Rooi-Els" },
+    { href: "/waterproofing-kleinmond/", label: "Waterproofing in Kleinmond" },
+    { href: "/waterproofing-hermanus/", label: "Waterproofing in Hermanus" },
+    { href: "/waterproofing-gansbaai/", label: "Waterproofing in Gansbaai" },
+    { href: "/waterproofing-grabouw/", label: "Waterproofing in Grabouw" },
     { href: "/waterproofing/", label: "All home waterproofing" },
-    { href: "/contact/", label: "Contact Damtech" },
   ],
   serviceTypes: ["Roof waterproofing", "Damp proofing"],
-  areaServed: "Overstrand, Western Cape",
+  areaServed: "Betty's Bay, Overstrand, Western Cape",
   officeIds: ["western-cape"],
   quoteService: QUOTE_SERVICE,
-  ctaTitle: "Book an assessment in the Overstrand",
+  ctaTitle: "Book a free assessment in Betty's Bay",
   ctaDescription:
-    "Tell us about the leaking roof or damp wall. Assessments are free in Rooi-Els, Pringle Bay, Betty's Bay and Kleinmond; for Hermanus, Gansbaai, Grabouw and further afield we quote from photos or confirm the call-out fee before a visit. Up to 10 years supplier-backed material warranty where stated in the quotation, plus 12 months workmanship.",
+    "Tell us about the leaking roof or damp wall. Site assessments in Betty's Bay are free, followed by a written quote. Up to 10 years supplier-backed material warranty where stated in the quotation, plus 12 months workmanship.",
+};
+
+// ---------------------------------------------------------------------------
+// Overstrand town pages (Oct 2026). Each page is written for its own town.
+// REAL JOB + BEFORE/AFTER PHOTOS: none exist yet for these towns. Do not add
+// a case study, project or photo until a real one is supplied; then add it as
+// a section on the matching page (see docs/branding/damtech-photography-requirements.md).
+// ---------------------------------------------------------------------------
+
+const WARRANTY_LINE =
+  "Up to 10 years supplier-backed material warranty where stated in the quotation, plus 12 months workmanship.";
+
+function townRelated(exclude: string): readonly ResidentialRelatedLink[] {
+  const links: ResidentialRelatedLink[] = [
+    { href: "/waterproofing-overstrand/", label: "Waterproofing in Betty's Bay" },
+    { href: "/waterproofing-pringle-bay/", label: "Waterproofing in Pringle Bay & Rooi-Els" },
+    { href: "/waterproofing-kleinmond/", label: "Waterproofing in Kleinmond" },
+    { href: "/waterproofing-hermanus/", label: "Waterproofing in Hermanus" },
+    { href: "/waterproofing-gansbaai/", label: "Waterproofing in Gansbaai" },
+    { href: "/waterproofing-grabouw/", label: "Waterproofing in Grabouw" },
+  ];
+  return [
+    { href: "/roof-waterproofing/", label: "Roof waterproofing" },
+    { href: "/foundation-waterproofing/", label: "Foundation & damp-proofing" },
+    ...links.filter((link) => !link.href.includes(exclude)),
+    { href: "/waterproofing/", label: "All home waterproofing" },
+  ];
+}
+
+const WATERPROOFING_PRINGLE_BAY: ResidentialPageConfig = {
+  slug: "waterproofing-pringle-bay",
+  kind: "regional",
+  title: "Waterproofing Pringle Bay & Rooi-Els | Damtech",
+  description:
+    "Roof leaks, salt damp and wind-driven rain fixed for homes in Pringle Bay, Rooi-Els and Hangklip. Free site assessments from our Betty's Bay base.",
+  h1: "Waterproofing in Pringle Bay and Rooi-Els",
+  breadcrumbLabel: "Pringle Bay & Rooi-Els",
+  heroEyebrow: "Pringle Bay · Rooi-Els · Hangklip · Free assessments",
+  heroDescription:
+    "Houses on the Hangklip peninsula take wind and salt from two sides. We repair leaking flat roofs, salt damp and wind-driven rain in Pringle Bay and Rooi-Els. Site assessments here are free.",
+  intro:
+    "Pringle Bay and Rooi-Els sit on the exposed tip of the Kogelberg coast, around Hangklip, with the mountain behind and the sea on both sides. We are a short drive away in Betty's Bay, so site assessments here are free.",
+  sections: [
+    {
+      id: "pringle-bay-wind",
+      heading: "Wind-driven rain on an exposed point",
+      paragraphs: [
+        "Winter fronts reach Pringle Bay and Rooi-Els with nothing to slow them down. Rain is driven sideways into sea-facing walls, sliding doors, window heads and the joint where a flat roof meets the parapet. Many 'roof leaks' here are really wall and junction leaks.",
+        "We check the weather side of the house first, then the roof, and the written quote names each entry point we found.",
+      ],
+    },
+    {
+      id: "pringle-bay-salt-damp",
+      heading: "Salt damp and corroded metal",
+      paragraphs: [
+        "Salt carried in the wind settles on walls and in plaster. Combined with damp, it causes salt damp: white crystals, powdery plaster and paint that keeps blistering. The same salt eats through gutters, flashings and fixings far faster than inland.",
+        "We treat the damp at its source and replace or re-detail corroded flashings with materials that suit a salt environment.",
+      ],
+    },
+    {
+      id: "pringle-bay-away",
+      heading: "Holiday homes and owners in Gauteng",
+      paragraphs: [
+        "Many houses in Pringle Bay and Rooi-Els belong to owners who live in Gauteng or Cape Town and visit a few times a year. We can check the house before winter or after a big storm, send you photos, and quote any repairs so you do not arrive to wet ceilings.",
+        "Every job comes with before-and-after photos, so you can see what was done without being there.",
+      ],
+    },
+  ],
+  faqs: [
+    {
+      question: "Is the site assessment free in Pringle Bay and Rooi-Els?",
+      answer: `Yes. Site assessments are free in Pringle Bay, Rooi-Els, Betty's Bay and Kleinmond. You receive a written quote afterwards. ${WARRANTY_LINE}`,
+    },
+    {
+      question: "Can you check my house while I'm in Gauteng?",
+      answer:
+        "Yes. We can inspect the house, send you photos and a written quote, and do the work while you are away, with before-and-after photos when it is finished.",
+    },
+    {
+      question: "What is salt damp?",
+      answer:
+        "Salt damp is damp carrying salts into walls and plaster. The salts crystallise as the wall dries, leaving white deposits and powdery, flaking plaster. Painting over it does not last; the moisture source has to be treated first.",
+    },
+  ],
+  related: townRelated("pringle-bay"),
+  serviceTypes: ["Roof waterproofing", "Damp proofing", "Leak detection"],
+  areaServed: "Pringle Bay, Rooi-Els and Hangklip, Overstrand, Western Cape",
+  officeIds: ["western-cape"],
+  quoteService: QUOTE_SERVICE,
+  ctaTitle: "Book a free assessment in Pringle Bay or Rooi-Els",
+  ctaDescription: `Tell us about the leaking roof or damp wall and send a few photos. Site assessments in Pringle Bay and Rooi-Els are free, followed by a written quote. ${WARRANTY_LINE}`,
+};
+
+const WATERPROOFING_KLEINMOND: ResidentialPageConfig = {
+  slug: "waterproofing-kleinmond",
+  kind: "regional",
+  title: "Waterproofing Kleinmond | Roof Leaks & Damp | Damtech",
+  description:
+    "Leaking flat roofs, rising and salt damp and wind-driven rain repaired for homes in Kleinmond, Palmiet and Heuningkloof. Free site assessments.",
+  h1: "Waterproofing in Kleinmond",
+  breadcrumbLabel: "Kleinmond",
+  heroEyebrow: "Kleinmond · Palmiet · Heuningkloof · Free assessments",
+  heroDescription:
+    "From the Palmiet river mouth to Heuningkloof, Kleinmond homes deal with winter fronts, lagoon-side moisture and salt air. We fix leaking roofs and damp walls, and site assessments in Kleinmond are free.",
+  intro:
+    "Kleinmond lies between the Kogelberg mountains, the Palmiet River and the sea, just along the R44 from our Betty's Bay base. Houses here get the sea on one side and moist air off the lagoon and river on the other.",
+  sections: [
+    {
+      id: "kleinmond-flat-roofs",
+      heading: "Leaking flat roofs after the first winter fronts",
+      paragraphs: [
+        "Flat roofs and box gutters are common on Kleinmond houses. When an outlet blocks with leaves or sand, water ponds and finds every tired lap and crack. The first north-westers of winter are usually when the stains appear.",
+        "We clear and correct outlets, open and re-seal failed laps, and waterproof the roof with a torch-on or liquid-applied system suited to it.",
+      ],
+    },
+    {
+      id: "kleinmond-damp",
+      heading: "Rising damp and salt damp near the lagoon",
+      paragraphs: [
+        "Low-lying stands near the lagoon and houses on sandy ground can hold moisture against the walls all winter. Bubbling paint low on the wall, a tide mark, white salts and swollen skirtings point to rising damp or salt damp, often where garden beds or paving sit above the damp-proof course.",
+        "We confirm whether the moisture is rising, coming through the wall from outside or leaking from a pipe before we recommend damp-proofing.",
+      ],
+    },
+    {
+      id: "kleinmond-away",
+      heading: "For owners who live in Gauteng",
+      paragraphs: [
+        "If your Kleinmond house is a holiday home, we can check it before the rainy season or after a storm and send you photos and a quote. Work done while you are away is documented with before-and-after photos.",
+      ],
+    },
+  ],
+  faqs: [
+    {
+      question: "Is the assessment really free in Kleinmond?",
+      answer: `Yes. Site assessments are free in Kleinmond, Betty's Bay, Pringle Bay and Rooi-Els. You receive a written quote afterwards. ${WARRANTY_LINE}`,
+    },
+    {
+      question: "Is it rising damp or a roof leak?",
+      answer:
+        "Rising damp sits low on the wall, leaves a tide mark and salts, and stays damp in dry weather. A roof or wall leak shows after rain and can appear higher up. We check both before quoting.",
+    },
+    {
+      question: "Do you cover Palmiet and Heuningkloof?",
+      answer:
+        "Yes, all of Kleinmond including Palmiet and Heuningkloof, and the stretch towards Betty's Bay.",
+    },
+  ],
+  related: townRelated("kleinmond"),
+  serviceTypes: ["Roof waterproofing", "Damp proofing", "Leak detection"],
+  areaServed: "Kleinmond, Palmiet and Heuningkloof, Overstrand, Western Cape",
+  officeIds: ["western-cape"],
+  quoteService: QUOTE_SERVICE,
+  ctaTitle: "Book a free assessment in Kleinmond",
+  ctaDescription: `Tell us about the leaking roof or damp wall and send a few photos. Site assessments in Kleinmond are free, followed by a written quote. ${WARRANTY_LINE}`,
+};
+
+const WATERPROOFING_HERMANUS: ResidentialPageConfig = {
+  slug: "waterproofing-hermanus",
+  kind: "regional",
+  title: "Waterproofing Hermanus | Roofs, Balconies & Damp | Damtech",
+  description:
+    "Leaking flat roofs, balconies and salt damp waterproofed in Hermanus, Onrus, Vermont, Sandbaai, Voëlklip and Westcliff. Written quotes.",
+  h1: "Waterproofing in Hermanus",
+  breadcrumbLabel: "Hermanus",
+  heroEyebrow: "Hermanus · Onrus · Vermont · Sandbaai · Voëlklip",
+  heroDescription:
+    "Flat roofs, sea-facing balconies, parapets and damp walls in Hermanus and its suburbs. Send photos for a quote; a site assessment in Hermanus is quoted upfront.",
+  intro:
+    "From Westcliff and Northcliff to Voëlklip and Eastcliff, and along the coast to Sandbaai, Onrus, Vermont and Fisherhaven, many Hermanus houses are built for the view: flat roofs, parapets, big windows and balconies over living space. Those are exactly the details where coastal leaks start.",
+  sections: [
+    {
+      id: "hermanus-balconies",
+      heading: "Balconies and roof decks that leak into the room below",
+      paragraphs: [
+        "A sea-facing balcony above a bedroom has to keep out wind-driven rain at the door threshold, the drain and the upstand behind the tiles. When the membrane under the tiles fails, water shows on the ceiling below, sometimes metres from where it got in.",
+        "We inspect falls, outlets, thresholds and upstands and tell you before any work starts whether tiles have to come up.",
+      ],
+    },
+    {
+      id: "hermanus-salt",
+      heading: "Salt air, parapets and flashings",
+      paragraphs: [
+        "Salt-laden air corrodes flashings, fixings, gutters and balustrade bases quickly, and cracked parapet copings let water track down inside the walls. Combined with damp, salt also causes salt damp: flaking plaster and white crystals on interior walls.",
+        "We re-detail parapets and flashings, waterproof flat roofs with a system suited to the roof, and treat salt damp at its source.",
+      ],
+    },
+    {
+      id: "hermanus-owners",
+      heading: "Complexes, holiday lets and owners in Gauteng",
+      paragraphs: [
+        "We quote for individual owners, trustees and managing agents, and keep building work another trade must do separate in the written quote. If you live in Gauteng, we can check your Hermanus home, send photos and a quote, and send before-and-after photos when the work is done.",
+      ],
+    },
+  ],
+  faqs: [
+    {
+      question: "Is the site assessment free in Hermanus?",
+      answer:
+        "No. In Hermanus we quote from your photos, or quote the site assessment upfront before we visit. Free assessments are limited to Betty's Bay, Pringle Bay, Rooi-Els and Kleinmond, close to our base.",
+    },
+    {
+      question: "My balcony leaks into the room below. Do the tiles have to come up?",
+      answer:
+        "Not always. Some balcony leaks come from the drain, threshold or upstand and can be fixed without lifting tiles. If the membrane under the tiles has failed, the quote says so before work starts.",
+    },
+    {
+      question: "Do you work in Onrus, Vermont, Sandbaai and Fisherhaven?",
+      answer:
+        "Yes. We cover Hermanus and the surrounding suburbs, from Fisherhaven and Hawston through Vermont, Onrus and Sandbaai to Voëlklip.",
+    },
+  ],
+  related: townRelated("hermanus"),
+  serviceTypes: ["Roof waterproofing", "Balcony waterproofing", "Damp proofing"],
+  areaServed: "Hermanus, Onrus, Vermont, Sandbaai, Fisherhaven and Hawston, Overstrand, Western Cape",
+  officeIds: ["western-cape"],
+  quoteService: QUOTE_SERVICE,
+  ctaTitle: "Request a waterproofing quote in Hermanus",
+  ctaDescription: `Tell us about the leak and send photos of the roof, balcony or damp wall. We quote from photos or quote the site assessment upfront. ${WARRANTY_LINE}`,
+};
+
+const WATERPROOFING_GANSBAAI: ResidentialPageConfig = {
+  slug: "waterproofing-gansbaai",
+  kind: "regional",
+  title: "Waterproofing Gansbaai & De Kelders | Damtech",
+  description:
+    "Roof leaks, salt damp and wind-driven rain fixed for exposed homes in Gansbaai, De Kelders, Kleinbaai, Franskraal and Pearly Beach. Written quotes.",
+  h1: "Waterproofing in Gansbaai and De Kelders",
+  breadcrumbLabel: "Gansbaai",
+  heroEyebrow: "Gansbaai · De Kelders · Kleinbaai · Franskraal",
+  heroDescription:
+    "Exposed coastal houses take the full force of winter fronts and salt spray. We trace and repair roof leaks, wind-driven rain and salt damp in Gansbaai and along the coast. The site assessment is quoted upfront.",
+  intro:
+    "On the De Kelders cliffs and the open coast at Kleinbaai, Franskraal and Pearly Beach there is little shelter from winter fronts or summer wind. Houses here need roofs, flashings and walls detailed for wind and salt, not just for rain.",
+  sections: [
+    {
+      id: "gansbaai-exposure",
+      heading: "Lifted roof edges, wind and salt spray",
+      paragraphs: [
+        "Strong wind lifts roof edges and drives rain into parapets, window frames and wall junctions, and the salt it carries corrodes metal flashings, gutters and fixings. Lifted edges and corroded flashings are among the most common leak points here.",
+        "We secure and re-detail edges, flashings and parapets, and choose membranes and finishes that suit a high-exposure, salt-laden site.",
+      ],
+    },
+    {
+      id: "gansbaai-damp",
+      heading: "Salt damp in older cottages",
+      paragraphs: [
+        "Older cottages may have no effective damp-proof course, or one bridged by later plaster, paving or garden beds. Damp low on the walls, flaking paint and salts that return after every repaint are the result.",
+        "We confirm the cause first, then quote damp-proofing and wall treatment that deals with it, not just a new coat of paint.",
+      ],
+    },
+    {
+      id: "gansbaai-away",
+      heading: "Houses left empty through winter",
+      paragraphs: [
+        "Plenty of houses along this coast stand empty for months. For owners in Gauteng or elsewhere we can inspect before winter, send photos and a quote, and complete repairs with before-and-after photos so you know the house is sound.",
+      ],
+    },
+  ],
+  faqs: [
+    {
+      question: "Is the site assessment free in Gansbaai?",
+      answer:
+        "No. We quote from your photos or quote the site assessment upfront. Free assessments are limited to Betty's Bay, Pringle Bay, Rooi-Els and Kleinmond, close to our base.",
+    },
+    {
+      question: "Why do my flashings and gutters rust so quickly?",
+      answer:
+        "Salt spray on the open coast corrodes metal much faster than inland. We re-detail with suitable materials and recommend a maintenance interval for your exposure.",
+    },
+    {
+      question: "My paint keeps peeling at the bottom of the wall. Why?",
+      answer:
+        "That is usually rising damp or salt damp, or soil and paving above the damp-proof course. Repainting will not fix it; the moisture source has to be treated first.",
+    },
+  ],
+  related: townRelated("gansbaai"),
+  serviceTypes: ["Roof waterproofing", "Damp proofing"],
+  areaServed: "Gansbaai, De Kelders, Kleinbaai, Franskraal and Pearly Beach, Overstrand, Western Cape",
+  officeIds: ["western-cape"],
+  quoteService: QUOTE_SERVICE,
+  ctaTitle: "Request a waterproofing quote in Gansbaai",
+  ctaDescription: `Tell us about the leak or damp problem and send photos. We quote from photos or quote the site assessment upfront. ${WARRANTY_LINE}`,
+};
+
+const WATERPROOFING_GRABOUW: ResidentialPageConfig = {
+  slug: "waterproofing-grabouw",
+  kind: "regional",
+  title: "Waterproofing Grabouw & Elgin | Roofs & Damp | Damtech",
+  description:
+    "Rising damp, leaking roofs and overflowing gutters fixed for homes and farm buildings in Grabouw, Elgin and Botrivier. Written quotes.",
+  h1: "Waterproofing in Grabouw and the Elgin Valley",
+  breadcrumbLabel: "Grabouw",
+  heroEyebrow: "Grabouw · Elgin · Botrivier",
+  heroDescription:
+    "Cold, wet Elgin valley winters keep walls damp for weeks and overload gutters and flat-roof outlets. We waterproof homes and farm buildings in Grabouw and Elgin. Send photos for a quote; the site assessment is quoted upfront.",
+  intro:
+    "Grabouw and the Elgin valley are inland, but the valley gets a lot of winter rain and cold, misty mornings with little sun to dry things out. Damtech already works here: we lined a 3,400 m² farm dam in the Grabouw district.",
+  sections: [
+    {
+      id: "grabouw-damp",
+      heading: "Rising damp and walls that never dry out",
+      paragraphs: [
+        "Long, wet winters keep walls and slabs damp. Rising damp, damp patches behind cupboards and mould in corners are common where a damp-proof course has failed or soil is banked against the walls, especially on older farmhouses and cottages.",
+        "We find the moisture source first and quote damp-proofing, wall treatment or drainage changes that deal with it.",
+      ],
+    },
+    {
+      id: "grabouw-gutters",
+      heading: "Overflowing gutters, valleys and flat-roof outlets",
+      paragraphs: [
+        "Heavy winter rain and leaves from orchards and gardens overwhelm gutters, valleys and outlets. Many 'roof' leaks here are really blocked or undersized gutters backing water under flashings, or ponding on a flat roof with a blocked outlet.",
+        "We repair and waterproof flat roofs and parapets, re-detail flashings and valleys, and recommend outlet and gutter changes where they are undersized.",
+      ],
+    },
+    {
+      id: "grabouw-farms",
+      heading: "Farm buildings, dams and owners who live away",
+      paragraphs: [
+        "On farms we waterproof the roofs and walls of houses, offices and stores, and line farm dams for irrigation (see our Overberg dam lining page). For owners who live in Gauteng or Cape Town, we can inspect, send photos and a quote, and document finished work with before-and-after photos.",
+      ],
+    },
+  ],
+  faqs: [
+    {
+      question: "Is the site assessment free in Grabouw?",
+      answer:
+        "No. We quote from your photos or quote the site assessment upfront. Free assessments are limited to Betty's Bay, Pringle Bay, Rooi-Els and Kleinmond, close to our base.",
+    },
+    {
+      question: "Have you worked in the area before?",
+      answer:
+        "Yes. Damtech installed 3,400 m² of HDPE lining on a farm dam in the Grabouw district; the project is in our projects section.",
+    },
+    {
+      question: "Why does my house stay damp all winter?",
+      answer:
+        "Long wet spells with little sun keep walls damp, and a failed or bridged damp-proof course lets ground moisture rise. We confirm the cause before quoting damp-proofing.",
+    },
+  ],
+  related: [
+    { href: "/overberg-dam-liners/", label: "Overberg dam lining" },
+    { href: "/projects/grabouw-hdpe-farm-dam/", label: "Grabouw farm dam project" },
+    ...townRelated("grabouw"),
+  ],
+  serviceTypes: ["Roof waterproofing", "Damp proofing"],
+  areaServed: "Grabouw, Elgin and Botrivier, Overberg, Western Cape",
+  officeIds: ["western-cape"],
+  quoteService: QUOTE_SERVICE,
+  ctaTitle: "Request a waterproofing quote in Grabouw",
+  ctaDescription: `Tell us about the leak or damp problem and send photos. We quote from photos or quote the site assessment upfront. ${WARRANTY_LINE}`,
 };
 
 // ---------------------------------------------------------------------------
@@ -704,6 +1063,11 @@ export const RESIDENTIAL_WATERPROOFING_PAGES: readonly ResidentialPageConfig[] =
   FOUNDATION_WATERPROOFING,
   WATERPROOFING_PRETORIA,
   WATERPROOFING_OVERSTRAND,
+  WATERPROOFING_PRINGLE_BAY,
+  WATERPROOFING_KLEINMOND,
+  WATERPROOFING_HERMANUS,
+  WATERPROOFING_GANSBAAI,
+  WATERPROOFING_GRABOUW,
   TORCH_ON_WATERPROOFING,
   MEMBRANES_AND_COATINGS,
 ];

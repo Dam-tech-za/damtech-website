@@ -379,6 +379,74 @@ export const LOCAL_LANDING_PAGES: LocalLandingPage[] = [
     ],
   },
   {
+    slug: "overberg-dam-liners",
+    title: "Overberg Dam Lining | Grabouw, Caledon, Bredasdorp | Damtech",
+    description:
+      "HDPE and PVC farm dam lining in the Overberg: Grabouw and Elgin orchards, Villiersdorp, Caledon and Bredasdorp grain and livestock farms. Request a quote.",
+    h1: "Farm Dam Lining in the Overberg",
+    heroDescription:
+      "Orchard dams in Grabouw and Elgin, irrigation storage around Villiersdorp, and stock and grain farms near Caledon and Bredasdorp. We line Overberg farm dams with HDPE and PVC.",
+    image: IMAGE_PATHS.villiersdorpWesternCapeHdpeDamLining8230m2,
+    serviceName: "HDPE Dam Lining Installation — Overberg",
+    intro:
+      "Overberg farms store winter rain for a dry, windy summer. Every cubic metre that seeps out of a dam before the irrigation season is water the farm no longer has. Damtech has lined farm dams in the region, including about 8,230 m² of HDPE in Villiersdorp and 3,400 m² in the Grabouw district, and works from a base in Betty's Bay on the Overstrand coast.",
+    climate:
+      "Winter rainfall fills dams between roughly May and September. Summers are dry and the south-easter raises evaporation on open water. The Elgin and Grabouw valley is wetter than the inland wheat country around Caledon and Bredasdorp, so dams there are often larger and refill reliably, while dams further inland must hold every litre they capture.",
+    soil:
+      "Soils range from stony, sandstone-derived slopes in the Elgin and Villiersdorp valleys to shale-derived clays on the Rûens around Caledon and Bredasdorp. Stony batters need careful preparation and geotextile protection before HDPE; shale clays can crack in dry summers and still lose water through fissures.",
+    irrigation:
+      "Apple and pear orchards in Grabouw and Elgin run drip and micro-sprinklers from farm dams through the summer, and fruit and vineyards around Villiersdorp do the same. On the Rûens, dams are used more for livestock water and household supply on grain and sheep farms, where a leaking dam means carting water in late summer.",
+    sectors:
+      "Deciduous fruit, vineyards and berries in the valleys; wheat, canola, sheep and dairy on the Rûens; plus lifestyle farms and estates with fire and ornamental dams.",
+    waterStorage:
+      "HDPE suits large earth dams that need a welded, UV-resistant liner; PVC suits smaller ponds and reservoirs; steel tanks suit sites where a dam cannot be enlarged. We recommend the system after seeing the dam, its soil and how the water is used.",
+    services: [
+      "HDPE farm dam lining with welded, tested seams",
+      "PVC lining for smaller ponds and reservoirs",
+      "Leaking dam assessment and liner repair",
+      "Steel water tanks where a dam is not the right answer",
+    ],
+    faqs: [
+      {
+        question: "Have you lined dams in the Overberg?",
+        answer:
+          "Yes. Damtech installed about 8,230 m² of HDPE lining in Villiersdorp and 3,400 m² on a farm dam in the Grabouw district. Both projects are in our projects section.",
+      },
+      {
+        question: "Do you work around Caledon and Bredasdorp?",
+        answer:
+          "Yes. We quote farm dam lining across the Overberg, including Caledon, Bredasdorp and the Rûens. Send the dam's approximate size and a few photos for a quote.",
+      },
+      {
+        question: "When is the best time to line an Overberg dam?",
+        answer:
+          "Late summer into autumn, when the dam is at its lowest after irrigation and before the winter rains refill it.",
+      },
+      {
+        question: "HDPE or PVC for my farm dam?",
+        answer:
+          "HDPE is usually the choice for larger earth dams that need a long-life, UV-resistant welded liner. PVC can suit smaller ponds and reservoirs. We recommend the material after seeing the dam.",
+      },
+    ],
+    relatedProjects: [
+      {
+        href: "/projects/villiersdorp-hdpe-dam-lining",
+        label: "Villiersdorp HDPE dam lining (~8,230 m²)",
+      },
+      {
+        href: "/projects/grabouw-hdpe-farm-dam",
+        label: "Grabouw farm dam lining (3,400 m²)",
+      },
+    ],
+    relatedLocations: [
+      { href: "/western-cape-dam-liners", label: "Western Cape dam liners" },
+      { href: "/farm-dam-liners", label: "Farm dam linings" },
+      { href: "/waterproofing-grabouw", label: "Waterproofing in Grabouw" },
+      { href: "/calculators", label: "Use the dam lining area calculator" },
+      { href: "/quote", label: "Request an Overberg quote" },
+    ],
+  },
+  {
     slug: "farm-dam-liners",
     title: "Farm Dam Linings | HDPE & PVC South Africa | Damtech",
     description:

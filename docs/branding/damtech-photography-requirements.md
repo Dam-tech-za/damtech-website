@@ -31,3 +31,18 @@ Source images in `public/images/` were **not** edited, cropped, replaced or rege
 | 8 | About / team | Damtech crew group photo on site in branded PPE | Ground, eye level | Faces upper half | 3:2, ≥ 3000×2000 | `damtech-crew-on-site.jpg` | "The Damtech installation team on site" |
 
 For every photo record: town, date, job type, approximate area, and client consent to publish. Original phone/camera JPEGs are fine; the site generates AVIF/WebP at build.
+
+## Overstrand / Overberg town pages (added 19 Oct 2026)
+These pages launched without photos because no completed Damtech waterproofing job exists in these towns yet. Do not publish stand-in or AI images. When a real job is done, add per page: one "after" hero-quality photo, a before/after pair of the same detail, and a three-line case study (town/suburb, problem found, what was done). Record client consent and the street-level location kept private.
+
+| Page | Wanted first | Suggested file names | Alt text pattern |
+|---|---|---|---|
+| `/waterproofing-overstrand/` (Betty's Bay) | Flat roof or parapet re-waterproofed, mountain or sea behind | `bettys-bay-flat-roof-waterproofing-after.jpg`, `-before.jpg` | "Flat roof waterproofed on a home in Betty's Bay" |
+| `/waterproofing-pringle-bay/` | Sea-facing wall or window head where wind-driven rain was stopped | `pringle-bay-wind-driven-rain-repair-before.jpg` / `-after.jpg` | "Wall junction resealed against wind-driven rain in Pringle Bay" |
+| `/waterproofing-kleinmond/` | Rising or salt damp treated on an interior wall | `kleinmond-rising-damp-treatment-before.jpg` / `-after.jpg` | "Rising damp treated on a wall in a Kleinmond home" |
+| `/waterproofing-hermanus/` | Balcony over living space, membrane under tiles | `hermanus-balcony-waterproofing-before.jpg` / `-after.jpg` | "Balcony waterproofing above a living room in Hermanus" |
+| `/waterproofing-gansbaai/` | Lifted roof edge or corroded flashing replaced | `gansbaai-roof-flashing-repair-before.jpg` / `-after.jpg` | "Corroded roof flashing replaced on a coastal home in Gansbaai" |
+| `/waterproofing-grabouw/` | Farmhouse or store roof, or damp wall | `grabouw-farmhouse-roof-waterproofing-after.jpg` | "Roof waterproofing on a farmhouse in Grabouw" |
+| `/overberg-dam-liners/` | Any Caledon or Bredasdorp farm dam job (Grabouw and Villiersdorp already have project photos) | `caledon-hdpe-farm-dam-lining.jpg` | "HDPE farm dam lining near Caledon, Overberg" |
+
+The Franschhoek job: send photos, location (town only) and scope; it can become a project page and support the Western Cape dam lining page.

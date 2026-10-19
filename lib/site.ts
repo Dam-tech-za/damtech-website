@@ -280,7 +280,12 @@ export const FOOTER_WATERPROOFING_LINKS: NavLink[] = [
   { href: "/roof-waterproofing", label: "Roof Waterproofing" },
   { href: "/foundation-waterproofing", label: "Foundation & Damp-Proofing" },
   { href: "/waterproofing-pretoria", label: "Waterproofing in Pretoria" },
-  { href: "/waterproofing-overstrand", label: "Waterproofing in the Overstrand" },
+  { href: "/waterproofing-overstrand", label: "Waterproofing in Betty's Bay" },
+  { href: "/waterproofing-pringle-bay", label: "Waterproofing in Pringle Bay & Rooi-Els" },
+  { href: "/waterproofing-kleinmond", label: "Waterproofing in Kleinmond" },
+  { href: "/waterproofing-hermanus", label: "Waterproofing in Hermanus" },
+  { href: "/waterproofing-gansbaai", label: "Waterproofing in Gansbaai" },
+  { href: "/waterproofing-grabouw", label: "Waterproofing in Grabouw" },
 ];
 
 export const FOOTER_COMPANY_LINKS: NavLink[] = [
@@ -318,6 +323,7 @@ export const SERVICE_LINKS = [
 /** Regional landing pages — footer discovery (crawlable). */
 export const FOOTER_REGION_LINKS: NavLink[] = [
   { href: "/western-cape-dam-liners", label: "Western Cape" },
+  { href: "/overberg-dam-liners", label: "Overberg" },
   { href: "/limpopo-dam-liners", label: "Limpopo" },
   { href: "/mpumalanga-dam-liners", label: "Mpumalanga" },
   { href: "/pretoria-dam-liners", label: "Pretoria" },
@@ -350,6 +356,11 @@ export const INDEXABLE_STATIC_PATHS = [
   "/foundation-waterproofing",
   "/waterproofing-pretoria",
   "/waterproofing-overstrand",
+  "/waterproofing-kleinmond",
+  "/waterproofing-hermanus",
+  "/waterproofing-gansbaai",
+  "/waterproofing-grabouw",
+  "/waterproofing-pringle-bay",
   "/torch-on-waterproofing",
   "/waterproofing-membranes-and-coatings",
   "/faq",
@@ -362,6 +373,7 @@ export const INDEXABLE_STATIC_PATHS = [
   "/limpopo-dam-liners",
   "/mpumalanga-dam-liners",
   "/western-cape-dam-liners",
+  "/overberg-dam-liners",
   "/farm-dam-liners",
   "/mining-dam-liners",
   "/agricultural-water-storage",

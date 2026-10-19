@@ -32,21 +32,13 @@ const seo = PAGE_SEO.waterproofing;
 export const metadata = createPageMetadata(seo);
 
 const AREA =
-  "Betty's Bay, Kleinmond, Pringle Bay, Rooi-Els, Hermanus, Gansbaai and Grabouw (Overstrand and Overberg, Western Cape); Pretoria and Gauteng";
+  "Overstrand and Overberg, Western Cape (Betty's Bay, Kleinmond, Hermanus, Gansbaai, Grabouw); Pretoria and Gauteng";
 
 const QUOTE_HREF = "/quote/?service=Roof+%2F+home+waterproofing";
 
 const WARRANTY_SUMMARY = `${WARRANTY_PUBLIC.bullets[0]}, plus ${WARRANTY_PUBLIC.bullets[1].charAt(0).toLowerCase()}${WARRANTY_PUBLIC.bullets[1].slice(1)}.`;
 
 const SECTIONS = [
-  {
-    id: "overstrand",
-    heading: "Waterproofing in Betty's Bay, Kleinmond, Pringle Bay and Grabouw",
-    paragraphs: [
-      "Damtech assesses and waterproofs homes from Rooi-Els, Pringle Bay and Betty's Bay to Kleinmond, Hermanus and Gansbaai, and inland to Grabouw and the Elgin valley. Site assessments are free in Rooi-Els, Pringle Bay, Betty's Bay and Kleinmond.",
-      "Coastal houses fail differently from Highveld houses. Most rain falls in winter, often driven sideways by strong wind, and salt air corrodes metal flashings, fixings and gutters. Wind-driven rain frequently enters through parapets, window heads and wall junctions rather than the roof covering, so we inspect the walls and flashings as well as the roof before recommending a system.",
-    ],
-  },
   {
     id: "roof-waterproofing",
     heading: "Roof waterproofing",
@@ -88,10 +80,11 @@ const SECTIONS = [
     ],
   },
   {
-    id: "pretoria",
-    heading: "Waterproofing in Pretoria and Gauteng",
+    id: "areas",
+    heading: "Where we work",
     paragraphs: [
-      "We also waterproof homes in Pretoria, Centurion and the rest of Gauteng, where summer thunderstorms test flat roofs, parapets and box gutters. Send photos for a quote; the Pretoria waterproofing page covers local roofs and suburbs in more detail.",
+      "In the Western Cape we waterproof homes along the Overstrand coast, from Rooi-Els, Pringle Bay and Betty's Bay to Kleinmond, Hermanus and Gansbaai, and inland to Grabouw and the Elgin valley. Coastal houses fail differently: winter rain is driven sideways into parapets, window heads and wall junctions, and salt air corrodes flashings and gutters. Site assessments are free in Rooi-Els, Pringle Bay, Betty's Bay and Kleinmond.",
+      "In Gauteng we waterproof homes in Pretoria, Centurion and surrounds, where summer thunderstorms test flat roofs, parapets and box gutters. Each area has its own page below with the local details.",
     ],
   },
 ] satisfies ServiceSection[];
@@ -133,9 +126,9 @@ const PROCESS_STEPS: readonly ProcessStep[] = [
 
 const FAQS: ServiceFaqItem[] = [
   {
-    question: "Do you waterproof homes in Betty's Bay, Kleinmond and Grabouw?",
+    question: "Which areas do you cover?",
     answer:
-      "Yes. From our Betty's Bay base we assess and waterproof homes in Rooi-Els, Pringle Bay, Betty's Bay, Kleinmond, Hermanus, Gansbaai and Grabouw. Site assessments are free in Rooi-Els, Pringle Bay, Betty's Bay and Kleinmond; further afield we quote from photos or confirm the call-out fee first.",
+      "The Overstrand and Overberg in the Western Cape (Rooi-Els, Pringle Bay, Betty's Bay, Kleinmond, Hermanus, Gansbaai and Grabouw) and Pretoria and Gauteng. Site assessments are free in Rooi-Els, Pringle Bay, Betty's Bay and Kleinmond; elsewhere we quote from photos or confirm the call-out fee first.",
   },
   {
     question: "Do you waterproof homes in Pretoria and Gauteng?",
@@ -200,9 +193,9 @@ export default function WaterproofingPage() {
       <Hero
         tone="blue"
         aside={<ResidentialEnquiryCard areaServed={AREA} quoteHref={QUOTE_HREF} />}
-        eyebrow="Homes · Overstrand · Grabouw · Pretoria"
+        eyebrow="Homes · Overstrand · Overberg · Pretoria"
         title={seo.h1}
-        description="We waterproof leaking roofs, flat roofs, parapets, damp walls, balconies and showers for homeowners from Rooi-Els and Betty's Bay to Kleinmond, Hermanus and Grabouw, and in Pretoria. Send photos for a quote; site assessments are free in Rooi-Els, Pringle Bay, Betty's Bay and Kleinmond."
+        description="We waterproof leaking roofs, flat roofs, parapets, damp walls, balconies and showers for homeowners in the Overstrand, Overberg and Pretoria. Send photos for a quote; site assessments are free in Rooi-Els, Pringle Bay, Betty's Bay and Kleinmond."
         breadcrumbs={breadcrumbs}
       >
         <Link href={QUOTE_HREF} className="hero-btn-primary w-full sm:w-auto">
@@ -241,7 +234,7 @@ export default function WaterproofingPage() {
       />
       <SiteSection>
         <RelatedPageLinks
-          heading="Home waterproofing services"
+          heading="Home waterproofing services and areas"
           links={[
             { href: "/roof-waterproofing/", label: "Roof waterproofing" },
             {
@@ -250,8 +243,13 @@ export default function WaterproofingPage() {
             },
             {
               href: "/waterproofing-overstrand/",
-              label: "Waterproofing in the Overstrand",
+              label: "Waterproofing in Betty's Bay",
             },
+            { href: "/waterproofing-pringle-bay/", label: "Waterproofing in Pringle Bay & Rooi-Els" },
+            { href: "/waterproofing-kleinmond/", label: "Waterproofing in Kleinmond" },
+            { href: "/waterproofing-hermanus/", label: "Waterproofing in Hermanus" },
+            { href: "/waterproofing-gansbaai/", label: "Waterproofing in Gansbaai" },
+            { href: "/waterproofing-grabouw/", label: "Waterproofing in Grabouw" },
             { href: "/waterproofing-pretoria/", label: "Waterproofing in Pretoria" },
             {
               href: "/torch-on-waterproofing/",
