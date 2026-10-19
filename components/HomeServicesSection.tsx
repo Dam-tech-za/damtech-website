@@ -8,6 +8,7 @@ import {
   WrenchIcon,
 } from "@/components/icons/StrokeIcons";
 import { SITE_IMAGES, type SiteImage } from "@/lib/images";
+import { VerseBanner } from "@/components/VerseBanner";
 
 type ServiceCard = {
   id: string;
@@ -145,7 +146,11 @@ export function HomeServicesSection() {
             </li>
           ))}
         </ul>
+      </div>
 
+      <VerseBanner />
+
+      <div className="site-shell">
         <div className="dt-maintenance">
           <div className="dt-maintenance__copy">
             <p className="dt-eyebrow">MAINTENANCE</p>
