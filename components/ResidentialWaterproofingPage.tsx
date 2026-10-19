@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ComparisonTable } from "@/components/ComparisonTable";
 import { Hero } from "@/components/Hero";
+import { RoofLeakCausesSection } from "@/components/RoofLeakCausesSection";
 import { PageSeo } from "@/components/PageSeo";
 import { ProcessStepsSection } from "@/components/ProcessStepsSection";
 import { SectionCta } from "@/components/SectionCta";
@@ -97,6 +98,10 @@ export function ResidentialWaterproofingPage({
       ) : null}
 
       <ServiceProseSections sections={page.sections} />
+
+      {page.causesDiagram === "roof-leaks" ? (
+        <RoofLeakCausesSection quoteHref={quoteHref} />
+      ) : null}
 
       {page.comparison ? (
         <SiteSection tone="muted">

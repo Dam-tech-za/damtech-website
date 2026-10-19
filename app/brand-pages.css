@@ -950,13 +950,13 @@
   color: var(--dt-ink);
 }
 
-/* Waterproofing page: damp cause diagrams (owner-supplied illustrations). */
-.damp-causes__header {
+/* Residential waterproofing: causes diagrams (owner-supplied illustrations). */
+.causes-diagram__header {
   margin-inline: auto;
   text-align: center;
 }
 
-.damp-causes__signs {
+.causes-diagram__signs {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
@@ -967,7 +967,7 @@
   max-width: 56rem;
 }
 
-.damp-causes__signs li {
+.causes-diagram__signs li {
   padding: 0.4rem 0.85rem;
   border: 1px solid var(--dt-line);
   border-radius: 999px;
@@ -977,12 +977,12 @@
   color: var(--dt-ink);
 }
 
-.damp-causes__figure {
+.causes-diagram__figure {
   max-width: 68.75rem;
   margin: clamp(2rem, 5vw, 3.5rem) auto 0;
 }
 
-.damp-causes__image {
+.causes-diagram__image {
   display: block;
   width: 100%;
   height: auto;
@@ -991,46 +991,46 @@
   background: var(--dt-white);
 }
 
-.damp-causes__figure figcaption {
+.causes-diagram__figure figcaption {
   max-width: 46rem;
   margin: 1.25rem auto 0;
   text-align: center;
 }
 
-.damp-causes__caption-title {
+.causes-diagram__caption-title {
   font-family: var(--font-display);
   font-size: var(--dt-size-sm);
   line-height: 1.15;
   color: var(--dt-ink);
 }
 
-.damp-causes__figure figcaption p {
+.causes-diagram__figure figcaption p {
   margin-top: 0.5rem;
   font-size: 1rem;
   line-height: 1.65;
   color: var(--dt-charcoal);
 }
 
-.damp-causes__figure figcaption a {
+.causes-diagram__figure figcaption a {
   color: var(--dt-blue);
   font-weight: 600;
   text-decoration: underline;
   text-underline-offset: 3px;
 }
 
-.damp-causes__cta {
+.causes-diagram__cta {
   max-width: 46rem;
   margin: clamp(2.5rem, 5vw, 3.5rem) auto 0;
   text-align: center;
 }
 
-.damp-causes__cta > p {
+.causes-diagram__cta > p {
   font-size: 1.1rem;
   font-weight: 600;
   color: var(--dt-ink);
 }
 
-.damp-causes__actions {
+.causes-diagram__actions {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
@@ -1038,12 +1038,12 @@
   margin-top: 1rem;
 }
 
-.damp-causes__zoom {
+.causes-diagram__zoom {
   position: relative;
   display: block;
 }
 
-.damp-causes__zoom-hint {
+.causes-diagram__zoom-hint {
   position: absolute;
   right: 0.6rem;
   bottom: 0.6rem;
@@ -1056,11 +1056,11 @@
 }
 
 @media (min-width: 900px) {
-  .damp-causes__zoom-hint {
+  .causes-diagram__zoom-hint {
     display: none;
   }
 }
 
-.damp-causes__caption-title {
+.causes-diagram__caption-title {
   font-weight: 700;
 }

@@ -42,6 +42,7 @@ import westernCapeDamLiningHero from "@/public/images/western-cape-dam-lining-re
 import flatRoofWaterproofingMembrane from "@/public/images/flat-roof-waterproofing-membrane.webp";
 import risingDampCausesDiagram from "@/public/images/rising-damp-causes-damp-walls-south-africa.webp";
 import foundationLeakPointsDiagram from "@/public/images/foundation-waterproofing-leak-points-diagram.webp";
+import roofLeakCausesDiagram from "@/public/images/roof-leak-causes-flat-roof-waterproofing-south-africa.webp";
 
 /** Stable public URLs for Open Graph, blog rewrites and JSON data. WebP only. */
 export const IMAGE_PATHS = {
@@ -79,6 +80,7 @@ export const IMAGE_PATHS = {
   flatRoofWaterproofingMembrane: "/images/flat-roof-waterproofing-membrane.webp",
   risingDampCausesDiagram: "/images/rising-damp-causes-damp-walls-south-africa.webp",
   foundationLeakPointsDiagram: "/images/foundation-waterproofing-leak-points-diagram.webp",
+  roofLeakCausesDiagram: "/images/roof-leak-causes-flat-roof-waterproofing-south-africa.webp",
   hdpeDamLiningAfterGeotextile: "/images/hdpe-dam-lining-after-geotextile.webp",
   hdpeDamLiningBeforeInstallation:
     "/images/hdpe-dam-lining-before-installation.webp",
@@ -142,6 +144,8 @@ export const IMAGE_ALTS: Record<ImagePath, string> = {
     "Diagram of the common causes of rising damp and damp walls in South African homes: failed or bridged damp-proof course, soil above the DPC, poor drainage, cracked plaster and leaking window sills, with peeling paint, mould and efflorescence inside",
   [IMAGE_PATHS.foundationLeakPointsDiagram]:
     "Diagram of common foundation leak points: failed waterproofing membrane, cracks in walls and floor slab, mortar joints, pipe penetrations, the floor-to-wall joint and water pressure from wet soil",
+  [IMAGE_PATHS.roofLeakCausesDiagram]:
+    "Diagram of common flat roof leak causes in South African homes: cracked waterproofing membrane, failed lap joints and flashings, ponding water, blocked outlets, parapet wall cracks and unsealed pipe penetrations, with ceiling damp stains and mould inside",
   [IMAGE_PATHS.flatRoofWaterproofingMembrane]:
     "Flat concrete roof waterproofed with overlapping reflective bitumen membrane sheets and a sealed parapet wall upstand",
   [IMAGE_PATHS.hdpeDamLiningAfterGeotextile]:
@@ -299,6 +303,11 @@ export const SITE_IMAGES = {
     foundationLeakPointsDiagram,
     IMAGE_PATHS.foundationLeakPointsDiagram,
     IMAGE_ALTS[IMAGE_PATHS.foundationLeakPointsDiagram],
+  ),
+  roofLeakCauses: siteImage(
+    roofLeakCausesDiagram,
+    IMAGE_PATHS.roofLeakCausesDiagram,
+    IMAGE_ALTS[IMAGE_PATHS.roofLeakCausesDiagram],
   ),
   flatRoofWaterproofing: siteImage(
     flatRoofWaterproofingMembrane,

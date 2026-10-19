@@ -44,6 +44,8 @@ export type ResidentialPageConfig = {
   quoteService: string;
   ctaTitle?: string;
   ctaDescription?: string;
+  /** Explanatory diagram section shown after the prose sections. */
+  causesDiagram?: "roof-leaks";
 };
 
 /** Pre-selects the residential service on the public quote form. */
@@ -96,16 +98,16 @@ const QUOTE_SERVICE = "Roof / home waterproofing";
 const ROOF_WATERPROOFING: ResidentialPageConfig = {
   slug: "roof-waterproofing",
   kind: "service",
-  title: "Roof Waterproofing Pretoria & Gauteng | Damtech",
+  title: "Roof Waterproofing Betty's Bay & Kleinmond | Damtech",
   description:
-    "Roof waterproofing for homes in Pretoria, Gauteng and the Overstrand: flat concrete roofs, parapets, flashings and leaking tiled or metal roofs.",
-  h1: "Roof Waterproofing for Homes",
+    "Roof leak repair and flat roof waterproofing for homes in Betty's Bay, Kleinmond, Pringle Bay, Hermanus and Grabouw, plus Pretoria. Written quotes.",
+  h1: "Roof Waterproofing for Homes in the Overstrand and Pretoria",
   breadcrumbLabel: "Roof waterproofing",
   heroEyebrow: "Flat roofs · Parapets · Leak repair",
   heroDescription:
-    "We waterproof and repair leaking house roofs — flat concrete slabs, parapets and flashings, and selected tiled and metal roofs — in Pretoria, Gauteng and the Overstrand. Send photos for a written quote.",
+    "We waterproof and repair leaking house roofs — flat concrete slabs, parapets and flashings, and selected tiled and metal roofs — from Rooi-Els, Betty's Bay and Kleinmond to Hermanus and Grabouw, and in Pretoria. Send photos for a written quote.",
   intro:
-    "Most roof leaks show up after the first heavy storm of the season: a stain on the ceiling, a drip into a cupboard, or water tracking along a beam. The right repair depends on the roof covering and where the water is really getting in, so we assess before we quote and we do not publish a rate per square metre — every roof is different.",
+    "Most roof leaks show up after the first heavy storm of the season, whether that is a winter north-wester on the coast or a summer thunderstorm on the Highveld: a stain on the ceiling, a drip into a cupboard, or water tracking along a beam. The right repair depends on the roof covering and where the water is really getting in, so we assess before we quote and we do not publish a rate per square metre — every roof is different.",
   sections: [
     {
       id: "flat-concrete-roofs",
@@ -177,7 +179,7 @@ const ROOF_WATERPROOFING: ResidentialPageConfig = {
     {
       question: "Which areas do you cover?",
       answer:
-        "Pretoria, Centurion, Johannesburg and the rest of Gauteng, and the Overstrand around our Betty's Bay base (Betty's Bay, Kleinmond, Hermanus, Gansbaai and nearby towns).",
+        "The Overstrand around our Betty's Bay base (Rooi-Els, Pringle Bay, Betty's Bay, Kleinmond, Hermanus, Gansbaai and nearby towns) and inland to Grabouw, plus Pretoria, Centurion and the rest of Gauteng. Site assessments are free in Rooi-Els, Pringle Bay, Betty's Bay and Kleinmond.",
     },
   ],
   related: [
@@ -187,6 +189,7 @@ const ROOF_WATERPROOFING: ResidentialPageConfig = {
       href: "/waterproofing-membranes-and-coatings/",
       label: "Membranes vs coatings guide",
     },
+    { href: "/waterproofing-overstrand/", label: "Waterproofing in the Overstrand" },
     { href: "/waterproofing-pretoria/", label: "Waterproofing in Pretoria" },
     { href: "/waterproofing/", label: "All home waterproofing" },
   ],
@@ -195,9 +198,11 @@ const ROOF_WATERPROOFING: ResidentialPageConfig = {
     "Flat roof waterproofing",
     "Roof leak repair",
   ],
-  areaServed: "Pretoria and Gauteng; Overstrand, Western Cape",
+  areaServed:
+    "Betty's Bay, Kleinmond, Pringle Bay, Rooi-Els, Hermanus and Grabouw (Overstrand and Overberg, Western Cape); Pretoria and Gauteng",
   quoteService: QUOTE_SERVICE,
   ctaTitle: "Request a roof waterproofing quote",
+  causesDiagram: "roof-leaks",
 };
 
 const FOUNDATION_WATERPROOFING: ResidentialPageConfig = {
