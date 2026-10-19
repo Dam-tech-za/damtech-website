@@ -9,6 +9,7 @@ import {
   type RefObject,
 } from "react";
 import { createPortal } from "react-dom";
+import { useRouter } from "next/navigation";
 import { deleteRfqAction } from "@/app/admin/rfqs/actions/delete-rfq";
 import { updateRfqStatusAction } from "@/app/admin/rfqs/actions";
 import {
@@ -39,6 +40,7 @@ export function DeleteRfqDialog({
   onClose,
   onSuccess,
 }: DeleteRfqDialogProps) {
+  const router = useRouter();
   const titleId = useId();
   const descriptionId = useId();
   const panelRef = useRef<HTMLDivElement>(null);
@@ -117,18 +119,32 @@ export function DeleteRfqDialog({
     setError(null);
     setIncidentId(null);
 
-    const result = await deleteRfqAction({
-      rfqId: summary.id,
-      reason,
-      reasonOther: reason === "Other" ? reasonOther : undefined,
-      typedConfirmation,
-      fromDetailPage,
-    });
+    let result: Awaited<ReturnType<typeof deleteRfqAction>>;
+    try {
+      // Navigation after deleting from the detail page happens here, not via a
+      // server redirect, so a failed request can never leave the dialog stuck.
+      result = await deleteRfqAction({
+        rfqId: summary.id,
+        reason,
+        reasonOther: reason === "Other" ? reasonOther : undefined,
+        typedConfirmation,
+      });
+    } catch {
+      setDeleting(false);
+      setError("The enquiry could not be deleted. Check your connection and try again.");
+      return;
+    }
 
     if (result.ok) {
+      // Close directly: handleClose() ignores calls while deleting is still true
+      // in this render, which used to leave the dialog stuck on "Deleting".
+      reset();
+      onClose();
       onSuccess?.();
-      if (!fromDetailPage) {
-        handleClose();
+      if (fromDetailPage) {
+        router.push("/admin/rfqs/?deleted=1");
+      } else {
+        router.refresh();
       }
       return;
     }

@@ -9,6 +9,18 @@ export const RFQ_DELETE_REASONS = [
 
 export type RfqDeleteReason = (typeof RFQ_DELETE_REASONS)[number];
 
+/**
+ * Emails the website sends by itself on every submission (and resends of the
+ * internal notification). They are not correspondence with a real customer,
+ * so they must not stop spam or test enquiries from being deleted; otherwise
+ * no website enquiry could ever be deleted.
+ */
+export const AUTOMATIC_RFQ_COMMUNICATION_TYPES = [
+  "admin_notification",
+  "admin_resend",
+  "customer_confirmation",
+] as const;
+
 export type RfqDeleteSummary = {
   id: string;
   rfqNumber: string;

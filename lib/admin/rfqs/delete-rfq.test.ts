@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import { canPerform } from "../../auth/permissions.ts";
 import {
+  AUTOMATIC_RFQ_COMMUNICATION_TYPES,
   assessRfqDeleteBlockers,
   buildRfqDeleteAuditSnapshot,
   validateRfqDeleteId,
@@ -172,5 +173,25 @@ describe("delete workflow guards", () => {
 
   it("deletion reason is required before server acceptance", () => {
     assert.equal(validateRfqDeleteReason("").ok, false);
+  });
+});
+
+describe("automatic emails do not block deleting spam", () => {
+  it("treats every website submission email type as automatic", () => {
+    for (const type of ["admin_notification", "admin_resend", "customer_confirmation"]) {
+      assert.ok((AUTOMATIC_RFQ_COMMUNICATION_TYPES as readonly string[]).includes(type));
+    }
+  });
+
+  it("allows deleting a new enquiry that only has automatic emails", () => {
+    const result = assessRfqDeleteBlockers({
+      status: "new",
+      convertedQuoteId: null,
+      linkedQuoteCount: 0,
+      sentCommunicationCount: 0, // automatic emails are excluded from this count
+      answeredInfoRequestCount: 0,
+      hasConfirmedAssetQuantities: false,
+    });
+    assert.equal(result.blocked, false);
   });
 });

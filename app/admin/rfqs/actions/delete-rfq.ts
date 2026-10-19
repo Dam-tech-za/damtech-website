@@ -1,13 +1,13 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
 import { assertAdmin, AdminAuthError } from "@/lib/auth/require-admin";
 import { writeAuditLog } from "@/lib/auth/audit";
 import { createClient } from "@/lib/supabase/server";
 import { createServiceRoleClient } from "@/lib/supabase/admin";
 import { isSupabaseServiceConfigured } from "@/lib/supabase/env";
 import {
+  AUTOMATIC_RFQ_COMMUNICATION_TYPES,
   assessRfqDeleteBlockers,
   buildRfqDeleteAuditSnapshot,
   createDeleteIncidentId,
@@ -32,7 +32,6 @@ export async function deleteRfqAction(input: {
   reason: string;
   reasonOther?: string;
   typedConfirmation: string;
-  fromDetailPage?: boolean;
 }): Promise<DeleteRfqResult> {
   let admin;
   try {
@@ -104,7 +103,12 @@ export async function deleteRfqAction(input: {
       .from("rfq_communications")
       .select("*", { count: "exact", head: true })
       .eq("rfq_id", rfqId)
-      .eq("status", "sent"),
+      .eq("status", "sent")
+      .not(
+        "communication_type",
+        "in",
+        `(${AUTOMATIC_RFQ_COMMUNICATION_TYPES.join(",")})`,
+      ),
     supabase
       .from("rfq_information_requests")
       .select("*", { count: "exact", head: true })
@@ -223,10 +227,6 @@ export async function deleteRfqAction(input: {
 
   revalidatePath("/admin/rfqs/");
   revalidatePath(`/admin/rfqs/${rfqId}/`);
-
-  if (input.fromDetailPage) {
-    redirect("/admin/rfqs/?deleted=1");
-  }
 
   return { ok: true };
 }
