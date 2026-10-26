@@ -14,7 +14,7 @@ export type AdminNavGroup = {
 
 export const ADMIN_NAV_GROUPS: AdminNavGroup[] = [
   { id: "overview", label: "Overview", itemIds: ["dashboard"] },
-  { id: "operations", label: "Operations", itemIds: ["operations", "procurement"] },
+  { id: "operations", label: "Operations", itemIds: ["operations", "procurement", "financials"] },
   {
     id: "sales",
     label: "Sales",
@@ -74,6 +74,7 @@ const SEGMENT_LABELS: Record<string, string> = {
   operations: "Operations",
   projects: "Projects",
   procurement: "Procurement",
+  financials: "Financials",
   rfqs: "Enquiries",
   quotes: "Quotations",
   orders: "Orders",

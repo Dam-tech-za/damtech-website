@@ -29,6 +29,8 @@ export type MondayProjectItem = {
   email: string | null;
   scope: string | null;
   safetyFile: string | null;
+  /** Exact Xero contact name, when known. Used as customer_name so later invoices match by contact. */
+  xeroContact?: string | null;
 };
 
 export type MondayMaterialItem = {
@@ -174,7 +176,7 @@ export function migrateMondayProject(item: MondayProjectItem, today: string): Mi
   return {
     monday_item_id: item.id,
     title: item.name.trim(),
-    customer_name: (item.client ?? item.name.split(" - ")[0]).trim(),
+    customer_name: (item.xeroContact || item.client || item.name.split(" - ")[0]).trim(),
     contact_email: item.email,
     contact_phone: item.phone,
     service: service.service,

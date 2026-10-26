@@ -204,6 +204,14 @@ describe("operations navigation", () => {
     assert.equal(activeNavItemId("/admin/operations/projects/abc/", ADMIN_NAV_ITEMS), "operations");
   });
 
+  it("shows Financials to owner and admin only", () => {
+    const ids = (role: "owner" | "admin" | "sales" | "viewer") => getNavItemsForRole(role).map((i) => i.id);
+    assert.ok(ids("owner").includes("financials"));
+    assert.ok(ids("admin").includes("financials"));
+    assert.ok(!ids("sales").includes("financials"));
+    assert.ok(!ids("viewer").includes("financials"));
+  });
+
   it("names project pages in breadcrumbs", () => {
     assert.deepEqual(
       adminBreadcrumbs("/admin/operations/projects/5b0f6c2e-1d2a-4b3c-9d8e-7f6a5b4c3d2e/").map((c) => c.label),

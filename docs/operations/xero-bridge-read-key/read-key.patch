@@ -1,0 +1,99 @@
+--- a/supabase/functions/xero-bridge/app.ts
++++ b/supabase/functions/xero-bridge/app.ts
+@@ -8,6 +8,9 @@
+ //   GET  /api/status       connection status                       (Bearer BRIDGE_API_KEY)
+ //   POST /api/<tool>       run one tool, JSON body of arguments     (Bearer BRIDGE_API_KEY)
+ //   POST /mcp              MCP server for Grok                     (Bearer BRIDGE_API_KEY)
++//
++// Optional second key BRIDGE_READ_API_KEY (e.g. for the website): /api/* and /mcp
++// only, read tools only, whatever WRITE_MODE is. Enforced here on the server.
+ 
+ import { Hono } from "hono";
+ import { z } from "zod";
+@@ -24,8 +27,12 @@
+   apiKey: string;
+   adminKey: string;
+   writeMode: WriteMode;
++  /** Optional read-only key. Must differ from apiKey; ignored if it does not. */
++  readApiKey?: string;
+ }
+ 
++export type Access = "full" | "read";
++
+ const RANK: Record<WriteMode, number> = { read: 0, draft: 1, full: 2 };
+ 
+ export function enabledTools(mode: WriteMode): ToolDef[] {
+@@ -47,6 +54,13 @@
+   return sameSecret(token.trim(), expected);
+ }
+ 
++/** Which key the caller presented: the main key gets WRITE_MODE, the read key gets read tools only. */
++export function accessFor(header: string | undefined | null, config: Pick<AppConfig, "apiKey" | "readApiKey">): Access | null {
++  if (bearerOk(header, config.apiKey)) return "full";
++  if (config.readApiKey && config.readApiKey !== config.apiKey && bearerOk(header, config.readApiKey)) return "read";
++  return null;
++}
++
+ const escapeHtml = (s: string) => s.replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`);
+ 
+ function page(title: string, body: string, status = 200) {
+@@ -152,18 +166,27 @@
+ 
+   // Everything below needs the API key.
+   app.use("/keepalive", async (c, next) => bearerOk(c.req.header("authorization"), config.apiKey) ? await next() : c.json({ error: "Missing or wrong API key" }, 401));
+-  app.use("/api/*", async (c, next) => bearerOk(c.req.header("authorization"), config.apiKey) ? await next() : c.json({ error: "Missing or wrong API key" }, 401));
+-  app.use("/mcp", async (c, next) => bearerOk(c.req.header("authorization"), config.apiKey) ? await next() : c.json({ error: "Missing or wrong API key" }, 401));
++  app.use("/api/*", async (c, next) => accessFor(c.req.header("authorization"), config) ? await next() : c.json({ error: "Missing or wrong API key" }, 401));
++  app.use("/mcp", async (c, next) => accessFor(c.req.header("authorization"), config) ? await next() : c.json({ error: "Missing or wrong API key" }, 401));
++  const readTools = tools.filter((t) => t.mode === "read");
++  const toolsFor = (access: Access | null) => (access === "full" ? tools : readTools);
+ 
+   app.post("/keepalive", async (c) => c.json({ refreshed: await ctx.xero.keepalive() }));
+ 
+-  app.get("/api/status", async (c) => c.json({ ...(await ctx.xero.status()), write_mode: config.writeMode }));
++  app.get("/api/status", async (c) => {
++    const access = accessFor(c.req.header("authorization"), config);
++    return c.json({ ...(await ctx.xero.status()), write_mode: access === "full" ? config.writeMode : "read", key: access });
++  });
+ 
+-  app.get("/api/tools", (c) => c.json(tools.map((t) => ({ name: t.name, description: t.description, mode: t.mode }))));
++  app.get("/api/tools", (c) =>
++    c.json(toolsFor(accessFor(c.req.header("authorization"), config)).map((t) => ({ name: t.name, description: t.description, mode: t.mode }))));
+ 
+   app.post("/api/:tool", async (c) => {
+     const tool = byName.get(c.req.param("tool"));
+     if (!tool) return c.json({ error: "Unknown tool, or not allowed in this WRITE_MODE" }, 404);
++    if (tool.mode !== "read" && accessFor(c.req.header("authorization"), config) !== "full") {
++      return c.json({ error: "This key is read-only" }, 403);
++    }
+     const args = await c.req.json().catch(() => {
+       throw new BadInput("Body must be a JSON object of arguments");
+     });
+@@ -173,7 +196,8 @@
+   app.all("/mcp", async (c) => {
+     // Stateless: a fresh server and transport for every request, as suits Edge Functions.
+     const transport = new WebStandardStreamableHTTPServerTransport({ sessionIdGenerator: undefined, enableJsonResponse: true });
+-    await buildMcp(tools, ctx, config.writeMode).connect(transport);
++    const access = accessFor(c.req.header("authorization"), config);
++    await buildMcp(toolsFor(access), ctx, access === "full" ? config.writeMode : "read").connect(transport);
+     return transport.handleRequest(c.req.raw);
+   });
+ 
+--- a/supabase/functions/xero-bridge/index.ts
++++ b/supabase/functions/xero-bridge/index.ts
+@@ -98,7 +98,14 @@
+     : undefined;
+ 
+   const app = createApp(
+-    { basePath: "/xero-bridge", apiKey: env("BRIDGE_API_KEY"), adminKey: env("BRIDGE_ADMIN_KEY"), writeMode },
++    {
++      basePath: "/xero-bridge",
++      apiKey: env("BRIDGE_API_KEY"),
++      adminKey: env("BRIDGE_ADMIN_KEY"),
++      writeMode,
++      // Optional read-only key for the website. Ignored when it equals BRIDGE_API_KEY.
++      readApiKey: Deno.env.get("BRIDGE_READ_API_KEY")?.trim() || undefined,
++    },
+     { xero, email, replyTo },
+   );
+   return app.fetch;

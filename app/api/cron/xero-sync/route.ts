@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { authorizeCronRequest } from "@/lib/cron/authorize-cron";
+import { refreshFinancials } from "@/lib/operations/financials-store";
 import { runConfiguredXeroSync } from "@/lib/operations/run-sync";
 
 export const dynamic = "force-dynamic";
@@ -25,6 +26,8 @@ async function handle(request: Request) {
   }
 
   const result = await runConfiguredXeroSync("cron");
+  // Financial reports change slowly; refresh at most every three hours (about 7 Xero calls).
+  const financials = await refreshFinancials("cron", { maxAgeMinutes: 180 });
   const status = result.status === "failed" ? 502 : 200;
   return NextResponse.json(
     {
@@ -33,6 +36,7 @@ async function handle(request: Request) {
       reason: result.reason,
       counts: result.counts,
       errors: result.errors.length,
+      financials: financials.ok ? "ok" : financials.reason,
     },
     { status, headers: { "Cache-Control": "no-store" } },
   );

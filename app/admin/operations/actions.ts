@@ -17,6 +17,7 @@ import {
   MATERIAL_STATUS_LABELS,
   stageLabel,
 } from "@/lib/operations/lifecycle";
+import { refreshFinancials } from "@/lib/operations/financials-store";
 import { runConfiguredXeroSync } from "@/lib/operations/run-sync";
 import {
   isMaterialFulfilment,
@@ -336,6 +337,26 @@ export async function runXeroSyncAction(_prev: AdminActionState, formData: FormD
   } catch (error) {
     unstable_rethrow(error);
     console.error("[operations] sync:", error);
+    return actionFailure(describeActionError(error));
+  }
+}
+
+export async function refreshFinancialsAction(): Promise<AdminActionState> {
+  try {
+    const { admin } = await adminOpsDb({ permission: "viewFinancials" });
+    const result = await refreshFinancials("manual");
+    await writeAuditLog({
+      actorUserId: admin.user.id,
+      actorEmail: admin.profile.email,
+      action: "ops.xero_financials_refresh",
+      entityType: "ops_sync",
+      afterData: result.ok ? { ok: true } : { ok: false, reason: result.reason },
+    });
+    revalidatePath("/admin/operations/financials/");
+    return result.ok ? actionSuccess("Financials refreshed from Xero.") : actionFailure(result.message);
+  } catch (error) {
+    unstable_rethrow(error);
+    console.error("[operations] financials:", error);
     return actionFailure(describeActionError(error));
   }
 }

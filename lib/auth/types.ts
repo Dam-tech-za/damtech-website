@@ -24,6 +24,7 @@ export type AdminNavItemId =
   | "dashboard"
   | "operations"
   | "procurement"
+  | "financials"
   | "rfqs"
   | "quotes"
   | "orders"

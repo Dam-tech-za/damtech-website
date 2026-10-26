@@ -579,6 +579,11 @@ describe("Monday migration mapping", () => {
     assert.ok(p.review_notes.some((n) => /not marked Accepted/.test(n)));
   });
 
+  it("uses the exact Xero contact name when supplied", () => {
+    assert.equal(migrateMondayProject(item({ client: "Francois Joubert, PPCF Boerdery cc", xeroContact: "Francois Joubert PPCF Boerdery" }), TODAY).customer_name, "Francois Joubert PPCF Boerdery");
+    assert.equal(migrateMondayProject(item({}), TODAY).customer_name, "Pexmart");
+  });
+
   it("parses Xero references", () => {
     assert.deepEqual(parseXeroRefs("QU0337 / INV0153 (RFQ-2026-00065)"), { quotes: ["QU0337"], invoices: ["INV0153"] });
   });

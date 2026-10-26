@@ -56,10 +56,10 @@ Five sections, matching the brief:
 | Overview | `/admin/operations/` | **Built**: Xero sync line + "Sync now", 4 figures (active, awaiting deposit, open supplier orders, owed on active jobs from Xero), "What needs attention" list, active projects ordered by next-action date |
 | Projects | `/admin/operations/projects/`, `/admin/operations/projects/[id]/` | **Built**: stage filter; detail with next action, stage path (supply-only path is shorter), on-hold flag, supplier orders (add/update), details form, money from Xero (read-only), activity |
 | Procurement | `/admin/operations/procurement/` | **Built**: open supplier orders across jobs |
-| Financials | `/admin/operations/financials/` | Stage 4 (not built; no placeholder screen) |
+| Financials | `/admin/operations/financials/` | **Built** (owner/admin only): FYTD and month-to-date revenue, gross profit and margin, operating expenses and net profit; last six months; cash per bank account; debtors and creditors with ageing; three-month cash forecast. Each block is labelled Actual, Forecast or Estimate, with the last refresh time. Project profit is deliberately not shown until job costs are coded in Xero |
 | Settings | existing `/admin/settings/` | Add "Xero connection" card in stage 2 |
 
-Sidebar gains an **Operations** group (Projects, Procurement) above Sales. Old sections stay until retired. Everyone with admin access can view; owner/admin/sales/estimator can edit; only owner/admin can run a Xero sync; Financials will be owner/admin only. Every screen says plainly when tables are not installed or the bridge key is missing, so empty screens are never mistaken for data. Calm admin styling (`styles/admin-layout.css`), not the public brand.
+Sidebar gains an **Operations** group (Projects, Procurement, Financials) above Sales. Old sections stay until retired. Everyone with admin access can view; owner/admin/sales/estimator can edit; only owner/admin can run a Xero sync; Financials will be owner/admin only. Every screen says plainly when tables are not installed or the bridge key is missing, so empty screens are never mistaken for data. Calm admin styling (`styles/admin-layout.css`), not the public brand.
 
 **Lifecycle.** Awaiting deposit → Planning → Scheduled → In progress → Handover → Completed. Supply-only: Awaiting deposit → Preparing goods → Dispatch or collection booked → Completed. On hold is a flag with a reason. Payment status (Not invoiced / Awaiting payment / Part paid / Invoices paid, balance not yet invoiced / Paid in full / Overdue) is computed from Xero invoices and never moves the stage. Leaving Awaiting deposit with nothing paid needs an explicit "Proceed without a deposit" tick. Next action + date are mandatory on every open project (enforced in the database too).
 
@@ -84,7 +84,9 @@ Functions: `ops_import_accepted_quote(jsonb)` (atomic, idempotent: existing link
 
 Verified on this branch with an in-memory Postgres (PGlite): applies cleanly twice, import is idempotent, a claimed quote links instead of duplicating, next-action rule enforced, sync lock and stale-run recovery work, anon has no table or function access, RLS on for all 10 tables.
 
-**Apply order (needs owner go-ahead):** Supabase branch (or a restored copy) → apply → run the 7-job Monday import and a baseline sync there → owner checks the screens → apply to production → set env vars → baseline sync → enable cron.
+**Rollback:** `supabase/rollbacks/20261026150000_operations_foundation_down.sql` (kept out of the migrations folder). It refuses to drop while any project, supplier order or sync record exists, unless `ops.allow_drop_with_data` is set deliberately. Tested: up → down → up in a local Postgres. The guard was checked read-only on the real database.
+
+**Apply order (owner approved on 26 Oct, done for production):** Supabase branch (or a restored copy) → apply → run the 7-job Monday import and a baseline sync there → owner checks the screens → apply to production → set env vars → baseline sync → enable cron.
 
 ## 5. Xero integration architecture
 
@@ -108,7 +110,9 @@ Admin "Sync now" (owner/admin) ────────────────�
 - **Webhooks:** Xero has no quote-accepted webhook; invoice webhooks could later trigger an immediate sync, but polling stays as the reconciliation path.
 - **Gate:** `/api/cron/xero-sync/` does nothing until `OPS_XERO_SYNC_ENABLED=true`.
 
-**Recommended bridge change (other repo, bridge maintainer):** add a second, read-only key for the website so a leaked website key cannot send invoices. Until then the website's allowlist is the only guard.
+**Read-only website key (prepared, not deployed):** `docs/operations/xero-bridge-read-key/` has a tested patch adding `BRIDGE_READ_API_KEY`. The bridge itself then refuses write tools for that key (403), lists only read tools, and keeps `/keepalive` on the main key. The website also refuses write tools, so there are two independent guards.
+
+**Financial refresh:** about 7 Xero calls (organisation, P&L year to date, P&L month to date, P&L six months, bank summary, open sales invoices, open bills). It runs from the same cron at most every three hours, or on demand from the Financials page. Results are stored as `ops_financial_snapshots` rows sharing one `ops_sync_runs` record.
 
 ## 6. Monday migration mapping
 
@@ -152,7 +156,7 @@ The import is `scripts/ops-monday-import.ts <export.json> [--write]` (dry run by
 | 1 Audit & design | This document | **Done** |
 | 2 Xero → Projects | Migration, bridge client, sync engine, cron route, Sync now, baseline | **Code done, unit-tested**; needs DB apply + bridge key |
 | 3 Operations screens | Overview, Projects, Procurement, project detail; Monday import | **Screens built**; import script + live check after DB apply |
-| 4 Financials & AI | Xero P&L/balance/bank/debtors/creditors cache and dashboard with ACTUAL/ESTIMATE/FORECAST labels and last-sync time; procurement-agent interface | Not started |
+| 4 Financials & AI | Xero P&L, bank, debtors and creditors cache, plus a dashboard with ACTUAL/ESTIMATE/FORECAST labels and the last-sync time | **Financials built and unit-tested.** Procurement-agent interface not started |
 | 5 Retire | Hide then remove Quotations/Pricing/Templates; cancel Monday | After parallel run |
 
 Acceptance tests (✓ = automated on this branch, ☐ = needs branch DB / live bridge):
@@ -168,10 +172,16 @@ Acceptance tests (✓ = automated on this branch, ☐ = needs branch DB / live b
 - ☐ Migration applied on a Supabase branch; Monday import of 7 jobs + 4 orders; baseline sync against the real bridge; screens checked on desktop and phone with a real admin login.
 - ☐ Mark a test quote Accepted in Xero (or use the next real one) → project appears within 15 min.
 
-## What the owner needs to provide or approve
+## Status and approvals (26 Oct 2026)
 
-1. ~~Database go-ahead~~ Done: migration applied to production on 26 Oct 2026.
-2. **The bridge key for the website**: set `XERO_BRIDGE_API_KEY` in Vercel (Production + Preview). Preferably a new read-only key added by the bridge maintainer. Never paste it into chat.
-3. **A test admin login** (or sign in yourself on the preview) so the screens can be checked end to end.
-4. After checking: approval to schedule the pg_cron job (every 15 min, 06:00–19:00 SAST) and set `OPS_XERO_SYNC_ENABLED=true`.
-5. Decision on retiring the website Quotations module (2 quotes on record) and the Pricing screens.
+Done: the design, the code (projects, procurement, financials, sync, Monday import), 404 automated tests, the production build, the migration (applied to production with approval; tables empty), a tested rollback, the bridge read-key patch, and the Monday data checked against Xero (`monday-migration-check.md`).
+
+**Not approved, not done:** production deploy of the code, the bridge patch, any data import, any sync, automatic sync.
+
+Next: `staging-test-plan.md`. Approvals needed, in order:
+1. Create a Supabase branch for staging (paid).
+2. Deploy the bridge read-only key patch and create the key.
+3. Put the read key in Vercel (Preview first).
+4. Admin login on the preview.
+5. After staging passes: merge to main, import Monday, baseline sync, then enable the 15-minute sync.
+6. Later: retire website Quotations and Pricing (two quotes on record); cancel Monday after the parallel run.

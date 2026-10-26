@@ -25,6 +25,7 @@ const NAV_ACCESS: Record<AdminNavItemId, readonly AdminRole[]> = {
   dashboard: ["owner", "admin", "sales", "estimator", "viewer"],
   operations: ["owner", "admin", "sales", "estimator", "viewer"],
   procurement: ["owner", "admin", "sales", "estimator", "viewer"],
+  financials: ["owner", "admin"],
   rfqs: ["owner", "admin", "sales", "estimator", "viewer"],
   quotes: ["owner", "admin", "sales", "estimator", "viewer"],
   orders: ["owner", "admin", "sales", "estimator", "viewer"],
@@ -54,6 +55,12 @@ export const ADMIN_NAV_ITEMS: AdminNavItem[] = [
     label: "Procurement",
     href: "/admin/operations/procurement/",
     description: "Supplier orders across jobs",
+  },
+  {
+    id: "financials",
+    label: "Financials",
+    href: "/admin/operations/financials/",
+    description: "Xero results, debtors, cash",
   },
   {
     id: "rfqs",

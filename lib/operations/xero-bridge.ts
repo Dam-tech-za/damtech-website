@@ -9,6 +9,7 @@
  */
 
 export const XERO_BRIDGE_READ_TOOLS = [
+  "get_organisation",
   "get_quotes",
   "get_quote",
   "get_invoices",
