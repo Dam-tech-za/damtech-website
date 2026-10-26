@@ -1,7 +1,7 @@
 # Operations 2.0 — replace Monday, simplify the admin
 
 Owner brief: thread "DamTech Operations 2.0" (26 Oct 2026). Branch `claude/project-thread-yssxtx`.
-Status: **design done, foundations built and unit-tested, nothing applied to production.**
+Status: **design done, foundations built and unit-tested. Migration applied to production and code merged to `main` on 26 Oct 2026 (owner approved). Xero sync stays off until the bridge key is set and the baseline run is done.**
 
 One authoritative system per kind of information:
 
@@ -65,7 +65,7 @@ Sidebar gains an **Operations** group (Projects, Procurement) above Sales. Old s
 
 ## 4. Supabase schema and migration plan
 
-Migration `supabase/migrations/20261026150000_operations_foundation.sql` — **additive only, not applied.**
+Migration `supabase/migrations/20261026150000_operations_foundation.sql` — additive only. **Applied to production 26 Oct 2026** (owner approved). Security advisors afterwards: no new warnings; the ops_* tables show only the expected INFO notice "RLS enabled, no policy" (service role only by design).
 
 | Table | Purpose |
 |---|---|
@@ -170,7 +170,7 @@ Acceptance tests (✓ = automated on this branch, ☐ = needs branch DB / live b
 
 ## What the owner needs to provide or approve
 
-1. **Go-ahead to create a Supabase branch** (paid; cost shown before creation) or to apply the migration to production directly. Nothing has been applied.
+1. ~~Database go-ahead~~ Done: migration applied to production on 26 Oct 2026.
 2. **The bridge key for the website**: set `XERO_BRIDGE_API_KEY` in Vercel (Production + Preview). Preferably a new read-only key added by the bridge maintainer. Never paste it into chat.
 3. **A test admin login** (or sign in yourself on the preview) so the screens can be checked end to end.
 4. After checking: approval to schedule the pg_cron job (every 15 min, 06:00–19:00 SAST) and set `OPS_XERO_SYNC_ENABLED=true`.

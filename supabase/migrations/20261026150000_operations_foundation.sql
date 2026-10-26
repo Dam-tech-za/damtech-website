@@ -8,8 +8,9 @@
 -- authenticated. The website reads and writes through server code that checks
 -- the admin role first and then uses the service role.
 --
--- NOT YET APPLIED. Apply to a Supabase branch first; production only with the
--- owner's go-ahead. See docs/operations/operations-2.0-design.md.
+-- Applied to production (Damtech Admin) on 26 Oct 2026 with the owner's
+-- go-ahead, as migration "operations_foundation". See
+-- docs/operations/operations-2.0-design.md.
 
 -- ---------------------------------------------------------------------------
 -- Projects: one operational record per won job
