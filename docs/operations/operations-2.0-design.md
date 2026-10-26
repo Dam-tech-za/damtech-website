@@ -1,7 +1,7 @@
 # Operations 2.0 — replace Monday, simplify the admin
 
 Owner brief: thread "DamTech Operations 2.0" (26 Oct 2026). Branch `claude/project-thread-yssxtx`.
-Status: **design done, foundations built and unit-tested. Migration applied to production and code merged to `main` on 26 Oct 2026 (owner approved). Xero sync stays off until the bridge key is set and the baseline run is done.**
+Status: **design done, foundations built and unit-tested. Migration applied to production on 26 Oct 2026 (owner approved); code approved for `main`. Xero sync stays off until the bridge key is set and the baseline run is done.**
 
 One authoritative system per kind of information:
 
