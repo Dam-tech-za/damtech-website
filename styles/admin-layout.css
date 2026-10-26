@@ -763,3 +763,210 @@ form[aria-busy="true"] {
 .admin-login__forgot a {
   color: var(--admin-primary);
 }
+
+/* ---------------------------------------------------------------
+   Operations 2.0 (Oct 2026): projects, supplier orders, Xero sync.
+   --------------------------------------------------------------- */
+
+.admin-status--ops-neutral { background: #eef1f5; color: #3d4a5c; }
+.admin-status--ops-info { background: #e8f1f9; color: var(--admin-info); }
+.admin-status--ops-warn { background: #fdf3e2; color: var(--admin-warning); }
+.admin-status--ops-good { background: #e7f5ec; color: var(--admin-success); }
+.admin-status--ops-bad { background: #fdecec; color: var(--admin-danger); }
+
+.ops-stage {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: var(--admin-space-1, 4px);
+}
+
+.ops-sync {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--admin-space-3);
+  padding: var(--admin-space-3) var(--admin-space-4);
+  border: 1px solid var(--admin-border);
+  border-radius: var(--admin-radius-md);
+  background: var(--admin-card-bg);
+}
+
+.ops-sync__line {
+  margin: 0;
+  color: var(--admin-text-muted);
+}
+
+.ops-sync__line strong {
+  color: var(--admin-text);
+}
+
+.ops-sync__error {
+  color: var(--admin-danger);
+}
+
+.ops-sync__form {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--admin-space-2);
+}
+
+.ops-table__title {
+  display: block;
+  font-weight: 600;
+  color: var(--admin-text);
+}
+
+.ops-table__meta {
+  display: block;
+  margin-top: 2px;
+  font-size: 0.8125rem;
+  color: var(--admin-text-muted);
+}
+
+.ops-filter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--admin-space-2);
+}
+
+.ops-filter__link {
+  padding: 6px 12px;
+  border: 1px solid var(--admin-border);
+  border-radius: 999px;
+  font-size: 0.875rem;
+  color: var(--admin-text);
+  text-decoration: none;
+  background: var(--admin-card-bg);
+}
+
+.ops-filter__link:hover {
+  border-color: var(--admin-primary);
+}
+
+.ops-filter__link--active {
+  background: var(--admin-primary);
+  border-color: var(--admin-primary);
+  color: #fff;
+}
+
+.ops-detail {
+  display: grid;
+  gap: var(--admin-space-4);
+  min-width: 0;
+}
+
+.ops-detail__main,
+.ops-detail__side {
+  display: grid;
+  gap: var(--admin-space-4);
+  align-content: start;
+  min-width: 0;
+}
+
+@media (min-width: 1100px) {
+  .ops-detail {
+    grid-template-columns: minmax(0, 1fr) 360px;
+  }
+}
+
+.ops-stages {
+  list-style: none;
+  margin: 0 0 var(--admin-space-4);
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--admin-space-2);
+}
+
+.ops-stages__step {
+  padding: 6px 10px;
+  border-radius: var(--admin-radius-sm);
+  border: 1px solid var(--admin-border);
+  font-size: 0.8125rem;
+  color: var(--admin-text-muted);
+}
+
+.ops-stages__step--done {
+  color: var(--admin-success);
+  border-color: #cfe8d8;
+  background: #f3faf5;
+}
+
+.ops-stages__step--current {
+  color: #fff;
+  border-color: var(--admin-primary);
+  background: var(--admin-primary);
+  font-weight: 600;
+}
+
+.ops-form {
+  display: grid;
+  gap: var(--admin-space-3);
+}
+
+.ops-form--inline {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: var(--admin-space-3);
+}
+
+.ops-form--inline .admin-field {
+  margin: 0;
+}
+
+.ops-form__grow {
+  flex: 1 1 260px;
+}
+
+.ops-form--grid {
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  align-items: end;
+}
+
+.ops-form__full {
+  grid-column: 1 / -1;
+}
+
+.ops-form-row {
+  display: grid;
+  gap: var(--admin-space-4);
+}
+
+.ops-orders {
+  list-style: none;
+  margin: 0 0 var(--admin-space-4);
+  padding: 0;
+  display: grid;
+  gap: var(--admin-space-3);
+}
+
+.ops-orders__item {
+  display: grid;
+  gap: var(--admin-space-2);
+  padding: var(--admin-space-3);
+  border: 1px solid var(--admin-border);
+  border-radius: var(--admin-radius-md);
+}
+
+.ops-add summary {
+  cursor: pointer;
+  font-weight: 600;
+  color: var(--admin-primary);
+  margin-bottom: var(--admin-space-3);
+}
+
+.ops-activity {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--admin-space-3);
+}
+
+.ops-pre {
+  white-space: pre-wrap;
+  margin: 0;
+}

@@ -14,6 +14,7 @@ export type AdminNavGroup = {
 
 export const ADMIN_NAV_GROUPS: AdminNavGroup[] = [
   { id: "overview", label: "Overview", itemIds: ["dashboard"] },
+  { id: "operations", label: "Operations", itemIds: ["operations", "procurement"] },
   {
     id: "sales",
     label: "Sales",
@@ -70,6 +71,9 @@ export function activeNavItemId(
 }
 
 const SEGMENT_LABELS: Record<string, string> = {
+  operations: "Operations",
+  projects: "Projects",
+  procurement: "Procurement",
   rfqs: "Enquiries",
   quotes: "Quotations",
   orders: "Orders",
@@ -107,6 +111,7 @@ function segmentLabel(segment: string, parent: string | undefined): string {
     if (parent === "quotes") return "Quotation";
     if (parent === "orders") return "Order";
     if (parent === "customers") return "Customer";
+    if (parent === "projects") return "Project";
     return "Details";
   }
   const label = SEGMENT_LABELS[segment];

@@ -36,6 +36,10 @@
       "schedule": "30 4 * * *"
     },
     {
+      "path": "/api/cron/xero-sync/",
+      "schedule": "45 4 * * *"
+    },
+    {
       "path": "/api/cron/supabase-keepalive/",
       "schedule": "15 4 * * *"
     },

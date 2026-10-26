@@ -23,6 +23,8 @@ export function hasAnyRole(
 /** Nav items each role may see. Mutations are still enforced server-side + RLS. */
 const NAV_ACCESS: Record<AdminNavItemId, readonly AdminRole[]> = {
   dashboard: ["owner", "admin", "sales", "estimator", "viewer"],
+  operations: ["owner", "admin", "sales", "estimator", "viewer"],
+  procurement: ["owner", "admin", "sales", "estimator", "viewer"],
   rfqs: ["owner", "admin", "sales", "estimator", "viewer"],
   quotes: ["owner", "admin", "sales", "estimator", "viewer"],
   orders: ["owner", "admin", "sales", "estimator", "viewer"],
@@ -40,6 +42,18 @@ export const ADMIN_NAV_ITEMS: AdminNavItem[] = [
     label: "Overview",
     href: "/admin/",
     description: "What needs attention",
+  },
+  {
+    id: "operations",
+    label: "Projects",
+    href: "/admin/operations/",
+    description: "Won jobs and next actions",
+  },
+  {
+    id: "procurement",
+    label: "Procurement",
+    href: "/admin/operations/procurement/",
+    description: "Supplier orders across jobs",
   },
   {
     id: "rfqs",
@@ -129,6 +143,9 @@ export const PERMISSIONS = {
   archivePricing: ["owner", "admin"] as const,
   viewAudit: ["owner", "admin"] as const,
   viewPricing: ["owner", "admin", "estimator", "viewer"] as const,
+  manageOperations: ["owner", "admin", "sales", "estimator"] as const,
+  runXeroSync: ["owner", "admin"] as const,
+  viewFinancials: ["owner", "admin"] as const,
 } as const;
 
 export function canPerform(

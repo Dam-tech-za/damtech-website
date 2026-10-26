@@ -197,3 +197,17 @@ describe("admin labels", () => {
     assert.equal(communicationStatusLabel("failed"), "Failed");
   });
 });
+
+describe("operations navigation", () => {
+  it("highlights Procurement, not Projects, on the supplier orders page", () => {
+    assert.equal(activeNavItemId("/admin/operations/procurement/", ADMIN_NAV_ITEMS), "procurement");
+    assert.equal(activeNavItemId("/admin/operations/projects/abc/", ADMIN_NAV_ITEMS), "operations");
+  });
+
+  it("names project pages in breadcrumbs", () => {
+    assert.deepEqual(
+      adminBreadcrumbs("/admin/operations/projects/5b0f6c2e-1d2a-4b3c-9d8e-7f6a5b4c3d2e/").map((c) => c.label),
+      ["Overview", "Operations", "Projects", "Project"],
+    );
+  });
+});

@@ -49,3 +49,6 @@ Restart: `git checkout claude/project-thread-mfiulx && npm run build && npx next
 
 ## Admin reconstruction (18 Oct 2026, branch claude/project-thread-s3q680)
 Navigation, save feedback, enquiry/order workflow fixes and a live "Needs attention" overview. Commits c9d698a, ebf8668, ebca3ec, 9badf84. Report: `docs/admin-completion-report.md`; defects: `docs/admin-audit.md`; tests: `docs/admin-test-results.md`. Not deployed. Authenticated click-through still blocked on a test login + Supabase branch. Advisor fix drafted, not applied: `docs/admin/proposed-advisor-fixes.sql`.
+
+## Operations 2.0 (26 Oct 2026, branch `claude/project-thread-yssxtx`)
+Replace Monday with an Operations section; Xero stays the money source via the existing Supabase `xero-bridge` (never a second Xero app). Design, keep/remove matrix, schema, Xero architecture, Monday mapping and acceptance tests: `docs/operations/operations-2.0-design.md`. Built: additive migration `20261026150000_operations_foundation.sql` (**not applied**), `lib/operations/*` sync engine + tests, `/admin/operations/` (Overview, Projects, Procurement), `/api/cron/xero-sync/` (off until `OPS_XERO_SYNC_ENABLED=true`), `scripts/ops-monday-import.ts`. Blocked on owner: Supabase branch or apply approval, `XERO_BRIDGE_API_KEY` in Vercel, admin login for screen checks.

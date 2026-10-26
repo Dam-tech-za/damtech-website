@@ -22,6 +22,8 @@ export type AdminProfile = {
 
 export type AdminNavItemId =
   | "dashboard"
+  | "operations"
+  | "procurement"
   | "rfqs"
   | "quotes"
   | "orders"
