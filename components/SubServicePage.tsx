@@ -21,6 +21,7 @@ import {
 import { SITE_IMAGES } from "@/lib/images";
 import { getSubServiceIntro } from "@/lib/service-intro-content";
 import { getPostBySlug } from "@/lib/posts";
+import { blogPostPath } from "@/lib/blog-url-moves";
 import { getProjectBySlug, getProjectsMatching } from "@/lib/projects";
 import { createFaqPageSchema, createServiceSchema } from "@/lib/seo";
 import { SITEMAP_LASTMOD } from "@/lib/sitemap-lastmod.generated";
@@ -154,7 +155,7 @@ export function SubServicePage({ page }: SubServicePageProps) {
           <ul className="home-why-choose__links">
             {relatedPosts.map((post) => (
               <li key={post.slug}>
-                <Link href={`/${post.slug}`} className="home-why-choose__link-card">
+                <Link href={blogPostPath(post.slug)} className="home-why-choose__link-card">
                   <span className="home-why-choose__link-label">{post.title}</span>
                   <span className="home-why-choose__link-arrow" aria-hidden>
                     →

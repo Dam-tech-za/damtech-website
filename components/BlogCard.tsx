@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { BlogPost } from "@/lib/posts";
 import { resolvePostExcerpt } from "@/lib/posts";
+import { blogPostPath } from "@/lib/blog-url-moves";
 
 type BlogCardProps = {
   post: BlogPost;
@@ -25,7 +26,7 @@ export function BlogCard({ post }: BlogCardProps) {
         </span>
       </div>
       <h2 className="mt-3 text-[length:var(--text-h4)] font-semibold leading-snug text-navy">
-        <Link href={`/${post.slug}`} className="hover:text-water">
+        <Link href={blogPostPath(post.slug)} className="hover:text-water">
           {post.title}
         </Link>
       </h2>
@@ -33,7 +34,7 @@ export function BlogCard({ post }: BlogCardProps) {
         {resolvePostExcerpt(post)}
       </p>
       <Link
-        href={`/${post.slug}`}
+        href={blogPostPath(post.slug)}
         className="link-row mt-2"
       >
         Read More →

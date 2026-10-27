@@ -28,7 +28,7 @@ const TEMPLATES = [
   "/projects/",
   "/projects/worcester-bitumen-earth-dam-lining/",
   "/blog/",
-  "/how-to-manage-farm-dam-water-levels-during-prolonged-droughts-in-south-africa/",
+  "/blog/farm-dam-drought-water-levels/",
   "/calculators/",
   "/quote/",
   "/contact/",

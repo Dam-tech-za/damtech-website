@@ -6,6 +6,7 @@ import {
 } from "@/lib/catalogue";
 import { getProjectSlugs } from "@/lib/projects";
 import { POSTS_PER_PAGE, paginatePosts, posts } from "@/lib/posts";
+import { blogPostPath } from "@/lib/blog-url-moves";
 import { absoluteUrl } from "@/lib/seo";
 import { INDEXABLE_STATIC_PATHS } from "@/lib/site";
 import { SITEMAP_LASTMOD } from "@/lib/sitemap-lastmod.generated";
@@ -87,7 +88,7 @@ export function buildSitemap(): MetadataRoute.Sitemap {
   }));
 
   const postEntries: MetadataRoute.Sitemap = posts.map((post) => ({
-    url: absoluteUrl(`/${post.slug}`),
+    url: absoluteUrl(blogPostPath(post.slug)),
     lastModified: new Date(post.modified),
   }));
 

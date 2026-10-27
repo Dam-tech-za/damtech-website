@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { SectionHeading } from "@/components/SectionHeading";
 import type { BlogPost } from "@/lib/posts";
+import { blogPostPath } from "@/lib/blog-url-moves";
 
 type RelatedPostsProps = {
   posts: BlogPost[];
@@ -34,7 +35,7 @@ export function RelatedPosts({
                 })}
               </time>
               <h3 className="mt-2 text-base font-semibold leading-snug text-navy">
-                <Link href={`/${post.slug}`} className="hover:text-water">
+                <Link href={blogPostPath(post.slug)} className="hover:text-water">
                   {post.title}
                 </Link>
               </h3>
@@ -42,7 +43,7 @@ export function RelatedPosts({
                 {post.excerpt}
               </p>
               <Link
-                href={`/${post.slug}`}
+                href={blogPostPath(post.slug)}
                 className="link-row mt-1"
               >
                 Read More →

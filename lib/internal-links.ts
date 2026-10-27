@@ -54,17 +54,17 @@ const LEGACY_PATH_REWRITES: Record<string, string> = {
   "/projects": "/projects/",
   "/projects/": "/projects/",
   "/fix-leaks-in-your-farms-water-storage-system":
-    "/essential-farm-dam-leak-repair-techniques-to-safeguard-your-water-storage-in-south-africa/",
+    "/blog/farm-dam-leak-repair/",
   "/fix-leaks-in-your-farms-water-storage-system/":
-    "/essential-farm-dam-leak-repair-techniques-to-safeguard-your-water-storage-in-south-africa/",
+    "/blog/farm-dam-leak-repair/",
   "/prevent-leaks-in-your-water-storage-system":
-    "/essential-farm-dam-leak-repair-techniques-to-safeguard-your-water-storage-in-south-africa/",
+    "/blog/farm-dam-leak-repair/",
   "/prevent-leaks-in-your-water-storage-system/":
-    "/essential-farm-dam-leak-repair-techniques-to-safeguard-your-water-storage-in-south-africa/",
+    "/blog/farm-dam-leak-repair/",
   "/how-to-prevent-and-repair-leaks-in-your-farms-dam":
-    "/essential-farm-dam-leak-repair-techniques-to-safeguard-your-water-storage-in-south-africa/",
+    "/blog/farm-dam-leak-repair/",
   "/how-to-prevent-and-repair-leaks-in-your-farms-dam/":
-    "/essential-farm-dam-leak-repair-techniques-to-safeguard-your-water-storage-in-south-africa/",
+    "/blog/farm-dam-leak-repair/",
 };
 
 const SERVICE_PAGES: readonly InternalServiceLink[] = [

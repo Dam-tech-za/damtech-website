@@ -1,4 +1,4 @@
-import { notFound } from "next/navigation";
+import { notFound, permanentRedirect } from "next/navigation";
 import { BlogCategoryFilter } from "@/components/BlogCategoryFilter";
 import { BlogCard } from "@/components/BlogCard";
 import { BlogPagination } from "@/components/BlogPagination";
@@ -48,6 +48,10 @@ export default async function BlogPaginatedPage({ params }: Props) {
     pageNumber,
     POSTS_PER_PAGE,
   );
+
+  if (pageNumber > totalPages) {
+    permanentRedirect(totalPages > 1 ? `/blog/page/${totalPages}/` : "/blog/");
+  }
 
   if (currentPage !== pageNumber) {
     notFound();

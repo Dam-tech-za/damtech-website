@@ -7,9 +7,7 @@ import { getPostCta, getPostServiceLinks } from "@/lib/internal-links";
 import { createArticleSchema, createMetadata } from "@/lib/seo";
 import { DEFAULT_OG_IMAGE } from "@/lib/images";
 import { getPostBySlug, getPostSlugs, getRelatedPosts, resolvePostDescription } from "@/lib/posts";
-import { getLocalPageSlugs } from "@/lib/local-pages";
-import { getSubServiceSlugs } from "@/lib/sub-service-pages";
-import { RESIDENTIAL_WATERPROOFING_SLUGS } from "@/lib/residential-waterproofing";
+import { blogPostPath } from "@/lib/blog-url-moves";
 import { BLOG_AUTHOR } from "@/lib/site";
 import {
   LazyCTA as CTA,
@@ -23,39 +21,6 @@ type Props = {
   params: Promise<{ slug: string }>;
 };
 
-const RESERVED = new Set([
-  "about-us-waterproofing-company",
-  "agricultural-water-storage",
-  "bitumen-waterproofing-services-and-more",
-  "bitumen-waterproofing",
-  "waterproofing",
-  "blog",
-  "calculators",
-  "category",
-  "contact",
-  "dam-liners",
-  "dam-lining-cost-south-africa",
-  "dam-repair-services",
-  "farm-dam-liners",
-  "johannesburg-dam-liners",
-  "limpopo-dam-liners",
-  "mining-dam-liners",
-  "mpumalanga-dam-liners",
-  "pretoria-dam-liners",
-  "projects",
-  "quote",
-  "reservoir-lining",
-  "services",
-  "steel-water-storage-tanks",
-  "thank-you",
-  "faq",
-  "western-cape-dam-liners",
-  "author",
-  ...getSubServiceSlugs(),
-  ...getLocalPageSlugs(),
-  ...RESIDENTIAL_WATERPROOFING_SLUGS,
-]);
-
 export async function generateStaticParams() {
   return getPostSlugs().map((slug) => ({ slug }));
 }
@@ -63,7 +28,7 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: Props) {
   const { slug } = await params;
   const post = getPostBySlug(slug);
-  if (!post || RESERVED.has(slug)) {
+  if (!post) {
     // Unknown slugs render the 404 page — never inherit the homepage title/canonical.
     return {
       title: { absolute: "Page Not Found | Damtech" },
@@ -77,7 +42,7 @@ export async function generateMetadata({ params }: Props) {
   return createMetadata({
     title: post.metaTitle || post.title,
     description: resolvePostDescription(post),
-    path: `/${post.slug}`,
+    path: blogPostPath(post.slug),
     image: DEFAULT_OG_IMAGE,
     ogType: "article",
     publishedTime: post.date,
@@ -87,10 +52,6 @@ export async function generateMetadata({ params }: Props) {
 
 export default async function BlogPostPage({ params }: Props) {
   const { slug } = await params;
-
-  if (RESERVED.has(slug)) {
-    notFound();
-  }
 
   const post = getPostBySlug(slug);
   if (!post) {
@@ -104,7 +65,7 @@ export default async function BlogPostPage({ params }: Props) {
   const breadcrumbs = [
     { name: "Home", path: "/" },
     { name: "Blog", path: "/blog" },
-    { name: post.title, path: `/${post.slug}` },
+    { name: post.title, path: blogPostPath(post.slug) },
   ];
 
   return (
@@ -114,7 +75,7 @@ export default async function BlogPostPage({ params }: Props) {
         schemas={createArticleSchema({
           title: post.title,
           description,
-          path: `/${post.slug}`,
+          path: blogPostPath(post.slug),
           datePublished: post.date,
           dateModified: post.modified,
           image: DEFAULT_OG_IMAGE,

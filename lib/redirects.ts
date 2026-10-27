@@ -1,4 +1,5 @@
 import type { Redirect } from "next/dist/lib/load-custom-routes";
+import { BLOG_URL_MOVES } from "./blog-url-moves.ts";
 
 /** Apex → www canonical redirect (must run before path redirects). */
 const CANONICAL_HOST_REDIRECTS: Redirect[] = [
@@ -249,38 +250,32 @@ export const redirects: Redirect[] = [
   // Prompt 11 Group A — leak-repair blog consolidation (deploy alone)
   {
     source: "/fix-leaks-in-your-farms-water-storage-system",
-    destination:
-      "/essential-farm-dam-leak-repair-techniques-to-safeguard-your-water-storage-in-south-africa/",
+    destination: "/blog/farm-dam-leak-repair/",
     permanent: true,
   },
   {
     source: "/fix-leaks-in-your-farms-water-storage-system/",
-    destination:
-      "/essential-farm-dam-leak-repair-techniques-to-safeguard-your-water-storage-in-south-africa/",
+    destination: "/blog/farm-dam-leak-repair/",
     permanent: true,
   },
   {
     source: "/prevent-leaks-in-your-water-storage-system",
-    destination:
-      "/essential-farm-dam-leak-repair-techniques-to-safeguard-your-water-storage-in-south-africa/",
+    destination: "/blog/farm-dam-leak-repair/",
     permanent: true,
   },
   {
     source: "/prevent-leaks-in-your-water-storage-system/",
-    destination:
-      "/essential-farm-dam-leak-repair-techniques-to-safeguard-your-water-storage-in-south-africa/",
+    destination: "/blog/farm-dam-leak-repair/",
     permanent: true,
   },
   {
     source: "/how-to-prevent-and-repair-leaks-in-your-farms-dam",
-    destination:
-      "/essential-farm-dam-leak-repair-techniques-to-safeguard-your-water-storage-in-south-africa/",
+    destination: "/blog/farm-dam-leak-repair/",
     permanent: true,
   },
   {
     source: "/how-to-prevent-and-repair-leaks-in-your-farms-dam/",
-    destination:
-      "/essential-farm-dam-leak-repair-techniques-to-safeguard-your-water-storage-in-south-africa/",
+    destination: "/blog/farm-dam-leak-repair/",
     permanent: true,
   },
   // Production audit 2026-10-18: malformed or mistyped URLs that Search Console
@@ -305,8 +300,7 @@ export const redirects: Redirect[] = [
   },
   {
     source: "/how-to-manage-dam-water-levels-during-prolonged-droughts-in-south-africa{/}?",
-    destination:
-      "/how-to-manage-farm-dam-water-levels-during-prolonged-droughts-in-south-africa/",
+    destination: "/blog/farm-dam-drought-water-levels/",
     permanent: true,
   },
   {
@@ -319,6 +313,12 @@ export const redirects: Redirect[] = [
     destination: "/steel-water-storage-tanks/:slug/",
     permanent: true,
   },
+  // Blog posts moved under /blog/ with short slugs (Oct 2026); merged posts point at the survivor.
+  ...Object.entries(BLOG_URL_MOVES).map(([oldSlug, newSlug]) => ({
+    source: `/${oldSlug}{/}?`,
+    destination: `/blog/${newSlug}/`,
+    statusCode: 301 as const,
+  })),
 ];
 
 /**
