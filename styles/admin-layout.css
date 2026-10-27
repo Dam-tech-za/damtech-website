@@ -1352,9 +1352,13 @@ form[aria-busy="true"] {
 }
 
 /* Financials: graphs from the Xero snapshot */
-.fin-charts {
+.fin-charts,
+.fin-charts__panel {
   --fin-income: #2a78d6;
   --fin-costs: #eb6834;
+}
+
+.fin-charts {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: var(--admin-space-3);
@@ -1533,5 +1537,56 @@ form[aria-busy="true"] {
 
   .fin-charts__panel--wide .fin-chart__svg {
     min-width: 560px;
+  }
+}
+
+/* Overview: one action per attention item, statistics folded away */
+.dash-attention__link {
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--admin-space-3);
+}
+
+.dash-attention__text {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.dash-attention__action {
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+.dash-attention__link:hover .dash-attention__action {
+  background: var(--admin-primary);
+  border-color: var(--admin-primary);
+  color: #fff;
+}
+
+.dash-more {
+  border: 1px solid var(--admin-border);
+  border-radius: var(--admin-radius-lg);
+  background: var(--admin-card-bg);
+  padding: var(--admin-space-3) var(--admin-space-4);
+}
+
+.dash-more__summary {
+  cursor: pointer;
+  font-weight: 600;
+  color: var(--admin-text);
+}
+
+.dash-more[open] > .dash-more__summary {
+  margin-bottom: var(--admin-space-3);
+}
+
+@media (max-width: 599px) {
+  .dash-attention__link {
+    padding: var(--admin-space-2) var(--admin-space-3);
+  }
+
+  .dash-attention__hint {
+    font-size: 0.78rem;
   }
 }

@@ -22,25 +22,25 @@ function formatSubmitted(iso: string): string {
 export function RecentRfqs({ rows }: RecentRfqsProps) {
   return (
     <AdminPanel
-      title="Recent RFQs"
+      title="Latest enquiries"
       actions={
         <AdminButton href="/admin/rfqs/" variant="link" size="sm">
-          View all RFQs
+          All enquiries
         </AdminButton>
       }
     >
       {rows.length === 0 ? (
         <DashboardEmptyState
-          title="No RFQs have been submitted yet."
+          title="No enquiries yet."
           actionHref="/quote/"
           actionLabel="View public quote form"
         />
       ) : (
         <>
-          <AdminTable caption="Recent RFQs">
+          <AdminTable caption="Latest enquiries">
             <thead>
               <tr>
-                <th>RFQ</th>
+                <th>Number</th>
                 <th>Customer</th>
                 <th>Service</th>
                 <th>Location</th>
@@ -83,7 +83,7 @@ export function RecentRfqs({ rows }: RecentRfqsProps) {
             </tbody>
           </AdminTable>
 
-          <ul className="dash-rfq-cards" aria-label="Recent RFQs">
+          <ul className="dash-rfq-cards" aria-label="Latest enquiries">
             {rows.map((row) => (
               <li key={`card-${row.id}`} className="dash-rfq-card">
                 <div className="dash-rfq-card__top">

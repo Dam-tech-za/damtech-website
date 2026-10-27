@@ -36,7 +36,7 @@ function barPath(x: number, w: number, y0: number, y1: number): string {
   return `M${x},${y0}V${y1 - r}Q${x},${y1} ${x + r},${y1}H${x + w - r}Q${x + w},${y1} ${x + w},${y1 - r}V${y0}Z`;
 }
 
-function IncomeAndCostsChart({ s }: { s: FinancialSnapshot }) {
+export function IncomeAndCostsChart({ s }: { s: FinancialSnapshot }) {
   const bars = incomeAndCosts(s);
   if (!bars.length) return <p className="ops-table__meta">Xero returned no monthly results yet.</p>;
   const H = 230;
