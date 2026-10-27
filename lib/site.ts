@@ -39,9 +39,16 @@ export const SOCIAL_LINKS = [
   "https://www.linkedin.com/company/dam-tec/",
 ] as const;
 
-/** Schema.org-format opening hours — matches the live site's LocalBusiness listing. */
-export const BUSINESS_HOURS =
-  "Monday,Tuesday,Wednesday,Thursday,Friday,Saturday,Sunday 09:00-17:00";
+/**
+ * Schema.org `openingHoursSpecification` entries for LocalBusiness — left empty until the
+ * owner confirms real hours (the old Mon–Sun 09:00–17:00 value conflicted with the Google
+ * Business Profiles). TODO(owner): supply confirmed hours.
+ */
+export const BUSINESS_HOURS: ReadonlyArray<{
+  dayOfWeek: readonly string[];
+  opens: string;
+  closes: string;
+}> = [];
 
 /** Search Console ownership token. Override via env if re-verifying under a new property. */
 export const GOOGLE_SITE_VERIFICATION =
@@ -65,6 +72,7 @@ export const SERVICE_AREA_PROVINCES = [
   "Northern Cape",
   "Free State",
   "KwaZulu-Natal",
+  "Eastern Cape",
 ] as const;
 
 /** Blog author for visible bylines and Article/BlogPosting schema. */
@@ -87,6 +95,7 @@ export const OFFICES = [
     name: "Western Cape — Betty's Bay",
     publicLabel: "Western Cape service area",
     phone: siteConfig.phone,
+    // TODO(owner): replace share.google link with the full Google Business Profile URL.
     googleBusinessProfileUrl: "https://share.google/Xbvr3S0ksWMMyIEuL",
     showStreetAddress: false,
     address: {
@@ -103,6 +112,7 @@ export const OFFICES = [
     name: "Gauteng — Pretoria",
     publicLabel: "Gauteng service area",
     phone: siteConfig.phone,
+    // TODO(owner): replace share.google link with the full Google Business Profile URL.
     googleBusinessProfileUrl: "https://share.google/NxSGti3zXVB01SI3Z",
     showStreetAddress: false,
     address: {

@@ -39,8 +39,10 @@ import { CatalogueProductGrid } from "@/components/catalogue/CatalogueProductGri
 
 import {
   catalogueProductUrlPath,
+  formatJsonLdPrice,
   getFishPondProducts,
   getLivestockTroughProducts,
+  getSchemaImageUrls,
   getWaterStorageProducts,
 } from "@/lib/catalogue";
 
@@ -209,6 +211,8 @@ export default function SteelTanksPage() {
             featuredProducts.map((product) => ({
               name: product.name,
               path: catalogueProductUrlPath(product),
+              priceInclVatZar: formatJsonLdPrice(product.priceInclVatZar),
+              imageUrl: getSchemaImageUrls(product.images)[0],
             })),
             "Damtech steel water tank, fish pond and livestock trough kits",
           ),

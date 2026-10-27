@@ -28,6 +28,8 @@ const WARN_DESCRIPTION_LENGTH = 155;
 const LOCALE = "en_ZA";
 const OG_IMAGE_WIDTH = 1200;
 const OG_IMAGE_HEIGHT = 630;
+/** Offer `priceValidUntil` for catalogue prices — move forward whenever prices are re-confirmed. */
+export const PRODUCT_PRICE_VALID_UNTIL = "2027-01-31";
 
 export type CreateMetadataInput = {
   title: string;
@@ -388,14 +390,23 @@ export function createLocalBusinessSchema() {
     "@id": `${siteConfig.domain}/#localbusiness`,
     name: siteConfig.name,
     url: siteConfig.domain,
-    telephone: siteConfig.phone || undefined,
+    telephone: phoneTel,
     email: siteConfig.email,
     description: siteConfig.defaultDescription,
     image: absoluteAssetUrl(DEFAULT_OG_IMAGE),
     logo: absoluteAssetUrl(IMAGE_PATHS.damtechLogo),
     priceRange: "$$",
     areaServed,
-    openingHours: [BUSINESS_HOURS],
+    ...(BUSINESS_HOURS.length > 0
+      ? {
+          openingHoursSpecification: BUSINESS_HOURS.map((hours) => ({
+            "@type": "OpeningHoursSpecification",
+            dayOfWeek: [...hours.dayOfWeek],
+            opens: hours.opens,
+            closes: hours.closes,
+          })),
+        }
+      : {}),
     sameAs: [...SOCIAL_LINKS],
     parentOrganization: {
       "@id": `${siteConfig.domain}/#organization`,
@@ -431,7 +442,7 @@ export function createLocalBusinessSchema() {
 
       return place;
     }),
-    serviceType: [
+    knowsAbout: [
       "Dam linings",
       "HDPE dam lining",
       "PVC dam lining",
@@ -677,6 +688,13 @@ export function createProductSchema(input: {
     url,
     priceCurrency: "ZAR",
     price: input.priceInclVatZar,
+    priceValidUntil: PRODUCT_PRICE_VALID_UNTIL,
+    priceSpecification: {
+      "@type": "UnitPriceSpecification",
+      price: input.priceInclVatZar,
+      priceCurrency: "ZAR",
+      valueAddedTaxIncluded: true,
+    },
     itemCondition: "https://schema.org/NewCondition",
     seller: {
       "@id": `${siteConfig.domain}/#organization`,
@@ -691,6 +709,7 @@ export function createProductSchema(input: {
   const schema: Record<string, unknown> = {
     "@context": "https://schema.org",
     "@type": "Product",
+    "@id": `${url}#product`,
     name: input.name,
     description: input.description,
     sku: input.sku,
@@ -719,7 +738,13 @@ export function createProductSchema(input: {
 }
 
 export function createItemListSchema(
-  items: ReadonlyArray<{ name: string; path: string }>,
+  items: ReadonlyArray<{
+    name: string;
+    path: string;
+    /** When set, the list item carries a Product with this VAT-inclusive offer price. */
+    priceInclVatZar?: string;
+    imageUrl?: string;
+  }>,
   listName: string,
 ): Record<string, unknown> {
   return {
@@ -727,11 +752,40 @@ export function createItemListSchema(
     "@type": "ItemList",
     name: listName,
     numberOfItems: items.length,
-    itemListElement: items.map((item, index) => ({
-      "@type": "ListItem",
-      position: index + 1,
-      name: item.name,
-      url: absoluteUrl(item.path),
-    })),
+    itemListElement: items.map((item, index) => {
+      const url = absoluteUrl(item.path);
+      if (!item.priceInclVatZar) {
+        return {
+          "@type": "ListItem",
+          position: index + 1,
+          name: item.name,
+          url,
+        };
+      }
+      return {
+        "@type": "ListItem",
+        position: index + 1,
+        item: {
+          "@type": "Product",
+          "@id": `${url}#product`,
+          name: item.name,
+          url,
+          ...(item.imageUrl ? { image: absoluteAssetUrl(item.imageUrl) } : {}),
+          offers: {
+            "@type": "Offer",
+            url,
+            priceCurrency: "ZAR",
+            price: item.priceInclVatZar,
+            priceValidUntil: PRODUCT_PRICE_VALID_UNTIL,
+            priceSpecification: {
+              "@type": "UnitPriceSpecification",
+              price: item.priceInclVatZar,
+              priceCurrency: "ZAR",
+              valueAddedTaxIncluded: true,
+            },
+          },
+        },
+      };
+    }),
   };
 }
