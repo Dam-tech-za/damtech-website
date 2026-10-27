@@ -19,7 +19,7 @@ export function CalculatorResultsPanel({
   if (!calculatorType && !inputs && !results) {
     return (
       <AdminPanel title="Calculator results">
-        <AdminEmptyState title="No calculator data on this RFQ." />
+        <AdminEmptyState title="No calculator figures on this enquiry." />
       </AdminPanel>
     );
   }

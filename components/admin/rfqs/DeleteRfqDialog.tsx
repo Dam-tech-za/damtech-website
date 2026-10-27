@@ -186,7 +186,7 @@ export function DeleteRfqDialog({
         tabIndex={-1}
       >
         <header className="admin-dialog__header">
-          <h2 id={titleId}>Delete RFQ?</h2>
+          <h2 id={titleId}>Delete this enquiry?</h2>
         </header>
 
         <div className="admin-dialog__body">
@@ -197,7 +197,7 @@ export function DeleteRfqDialog({
 
           <dl className="rfq-delete-dialog__summary">
             <div>
-              <dt>RFQ number</dt>
+              <dt>Enquiry number</dt>
               <dd>{summary.rfqNumber}</dd>
             </div>
             <div>
@@ -324,7 +324,7 @@ export function DeleteRfqDialog({
                 variant="primary"
                 disabled={deleting || closing}
               >
-                {closing ? "Closing…" : "Close RFQ instead"}
+                {closing ? "Closing…" : "Close it instead"}
               </AdminButton>
             </form>
           ) : (
@@ -335,7 +335,7 @@ export function DeleteRfqDialog({
               disabled={!canDelete || deleting}
               onClick={handleDelete}
             >
-              {deleting ? "Deleting…" : "Delete RFQ"}
+              {deleting ? "Deleting…" : "Delete enquiry"}
             </AdminButton>
           )}
         </footer>

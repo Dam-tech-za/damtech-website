@@ -241,7 +241,7 @@ export default async function AdminQuotesPage({ searchParams }: PageProps) {
         {result.rows.length === 0 ? (
           <AdminEmptyState
             title="No quotations match the selected filters."
-            description="Create a quote from an RFQ or start a blank quotation."
+            description="Create a quote from an enquiry, or start a blank one."
             actionHref={canManage ? "/admin/quotes/new/" : undefined}
             actionLabel={canManage ? "New Quote" : undefined}
           />

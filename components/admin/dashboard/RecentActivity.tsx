@@ -24,7 +24,7 @@ export function RecentActivity({ items }: RecentActivityProps) {
       {items.length === 0 ? (
         <DashboardEmptyState
           title="No recent activity yet."
-          description="Audit events from RFQs, quotes and pricing will appear here."
+          description="Changes to enquiries, quotes and prices will appear here."
         />
       ) : (
         <ul className="dash-activity">

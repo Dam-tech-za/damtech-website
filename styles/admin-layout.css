@@ -2190,3 +2190,44 @@ form[aria-busy="true"] {
 .ops-review__more[open] {
   padding-top: var(--admin-space-1);
 }
+
+/* Settings forms: unsaved state and a short "Saved" message */
+.admin-settings-form__state {
+  min-height: 1.2em;
+  margin: var(--admin-space-2) 0 0;
+  font-size: 0.82rem;
+  color: #92400e;
+}
+
+.admin-toast {
+  position: fixed;
+  right: 1.25rem;
+  bottom: 1.25rem;
+  z-index: 60;
+  max-width: 22rem;
+  padding: 0.7rem 1rem;
+  border-radius: var(--admin-radius-md);
+  background: #14532d;
+  color: #fff;
+  font-size: 0.9rem;
+  font-weight: 600;
+  box-shadow: 0 10px 30px rgb(3 25 38 / 20%);
+}
+
+.admin-toast--error {
+  background: #7f1d1d;
+}
+
+@media (max-width: 1023px) {
+  .admin-toast {
+    left: 1rem;
+    right: 1rem;
+    bottom: calc(4.75rem + env(safe-area-inset-bottom));
+    max-width: none;
+  }
+}
+
+.admin-shell button[type="submit"]:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}

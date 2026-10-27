@@ -32,7 +32,7 @@ export function RfqWorkflow({ stages }: RfqWorkflowProps) {
     >
       {total === 0 ? (
         <DashboardEmptyState
-          title="No RFQs have been submitted yet."
+          title="No enquiries yet."
           description="New website enquiries will appear here as they arrive."
           actionHref="/quote/"
           actionLabel="View public quote form"
