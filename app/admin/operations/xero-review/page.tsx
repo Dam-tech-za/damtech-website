@@ -3,10 +3,11 @@ import { requireAdmin } from "@/lib/auth/require-admin";
 import { canPerform } from "@/lib/auth/permissions";
 import { listUnmatchedInvoices } from "@/lib/operations/queries";
 import { STAGE_LABELS } from "@/lib/operations/lifecycle";
-import { dismissUnmatchedAction, linkUnmatchedInvoiceAction } from "@/app/admin/operations/project-actions";
+import { createProjectFromXeroAction, dismissUnmatchedAction, linkUnmatchedInvoiceAction } from "@/app/admin/operations/project-actions";
 import {
   AdminActionForm,
   AdminBackLink,
+  AdminButton,
   AdminEmptyState,
   AdminErrorState,
   AdminInfoBanner,
@@ -36,12 +37,13 @@ export default async function XeroReviewPage() {
       <AdminBackLink listPath="/admin/operations/" label="Operations" />
       <AdminPageHeader
         title="Unmatched Xero records"
-        description="Invoices that might belong to a project but don't name its quote. Choose the project once and it is remembered."
+        description="Invoices that might belong to a project but don't name its quote. Link each to its project once and it is remembered, or make it a new project."
+        primaryActionNode={canEdit ? <AdminButton href="/admin/operations/projects/new/" variant="primary">New project from Xero</AdminButton> : null}
       />
       <OpsSetupBanners setup={load.setup} />
       <AdminInfoBanner tone="muted">
-        The system never links an invoice on the customer name alone. Invoices for customers with no project (for example
-        online tank orders) are not listed.
+        The system never links an invoice on the customer name alone. Invoices for customers with no project yet are not
+        listed here: start those from <strong>New project from Xero</strong>.
       </AdminInfoBanner>
 
       {!load.ok ? (
@@ -80,6 +82,13 @@ export default async function XeroReviewPage() {
                         ))}
                       </AdminSelect>
                       <AdminSubmitButton pendingLabel="Linking…">Link</AdminSubmitButton>
+                    </AdminActionForm>
+                    <AdminActionForm action={createProjectFromXeroAction}>
+                      <input type="hidden" name="kind" value="invoice" />
+                      <input type="hidden" name="xero_id" value={entry.xero_invoice_id} />
+                      <AdminSubmitButton variant="secondary" pendingLabel="Creating…">
+                        Create new project from it
+                      </AdminSubmitButton>
                     </AdminActionForm>
                     <AdminActionForm
                       action={dismissUnmatchedAction}

@@ -201,7 +201,9 @@ describe("admin labels", () => {
 describe("operations navigation", () => {
   it("highlights Procurement, not Projects, on the supplier orders page", () => {
     assert.equal(activeNavItemId("/admin/operations/procurement/", ADMIN_NAV_ITEMS), "procurement");
-    assert.equal(activeNavItemId("/admin/operations/projects/abc/", ADMIN_NAV_ITEMS), "operations");
+    assert.equal(activeNavItemId("/admin/operations/projects/abc/", ADMIN_NAV_ITEMS), "ops-projects");
+    assert.equal(activeNavItemId("/admin/operations/", ADMIN_NAV_ITEMS), "operations");
+    assert.equal(activeNavItemId("/admin/operations/xero-review/", ADMIN_NAV_ITEMS), "xero-review");
   });
 
   it("shows Financials to owner and admin only", () => {

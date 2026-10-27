@@ -13,9 +13,11 @@ import { RATE_LIMITS, rateLimit } from "../security/rate-limit.ts";
 describe("admin permissions", () => {
   it("grants owner access to all nav items", () => {
     const items = getNavItemsForRole("owner");
-    assert.equal(items.length, 13);
+    assert.equal(items.length, 15);
     assert.ok(items.some((item) => item.id === "financials"));
     assert.ok(items.some((item) => item.id === "operations"));
+    assert.ok(items.some((item) => item.id === "ops-projects"));
+    assert.ok(items.some((item) => item.id === "xero-review"));
     assert.ok(items.some((item) => item.id === "procurement"));
     assert.ok(items.some((item) => item.id === "orders"));
     assert.ok(items.some((item) => item.id === "project-templates"));

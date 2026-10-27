@@ -98,7 +98,9 @@ export default async function OperationsOverviewPage() {
         {unmatchedInvoices > 0 ? (
           <p className="ops-attention-note">
             <AdminStatusBadge status="ops-warn" label={`${unmatchedInvoices} unmatched Xero record${unmatchedInvoices === 1 ? "" : "s"}`} />{" "}
-            <Link href="/admin/operations/xero-review/">Link them to the right projects</Link>
+            <AdminButton href="/admin/operations/xero-review/" size="sm" variant="primary">
+              Review and link
+            </AdminButton>
           </p>
         ) : null}
         {buckets.length === 0 ? (

@@ -1307,3 +1307,46 @@ form[aria-busy="true"] {
     flex: 1 1 100%;
   }
 }
+
+/* New project: start from Xero */
+.ops-xero-start {
+  display: grid;
+  gap: var(--admin-space-3);
+}
+
+.ops-xero-start__contacts {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--admin-space-1);
+}
+
+.ops-xero-start__contacts li {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--admin-space-2);
+  padding: var(--admin-space-2) 0;
+  border-bottom: 1px solid var(--admin-border);
+}
+
+.ops-xero-start__contacts li > span {
+  display: grid;
+}
+
+.ops-xero-start__table td:last-child {
+  text-align: right;
+  white-space: nowrap;
+}
+
+.ops-xero-start__create .admin-action-message:empty {
+  display: none;
+}
+
+@media (max-width: 899px) {
+  .ops-xero-start__table td:last-child {
+    text-align: left;
+  }
+}
