@@ -1350,3 +1350,188 @@ form[aria-busy="true"] {
     text-align: left;
   }
 }
+
+/* Financials: graphs from the Xero snapshot */
+.fin-charts {
+  --fin-income: #2a78d6;
+  --fin-costs: #eb6834;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--admin-space-3);
+}
+
+.fin-charts__panel {
+  background: var(--admin-card-bg);
+  border: 1px solid var(--admin-border);
+  border-radius: var(--admin-radius-md, 8px);
+  padding: var(--admin-space-3);
+  min-width: 0;
+}
+
+.fin-charts__panel--wide {
+  grid-column: 1 / -1;
+}
+
+.fin-charts__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--admin-space-2);
+  margin-bottom: var(--admin-space-2);
+}
+
+.fin-charts__head h2 {
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+.fin-chart {
+  margin: 0;
+}
+
+.fin-chart__legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 1rem;
+  font-size: 0.8rem;
+  color: var(--admin-text);
+  margin-bottom: var(--admin-space-1);
+}
+
+.fin-chart__key {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  margin-right: 4px;
+  vertical-align: -1px;
+}
+
+.fin-chart__key--income {
+  background: var(--fin-income);
+}
+
+.fin-chart__key--costs {
+  background: var(--fin-costs);
+}
+
+.fin-chart__svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.fin-chart__grid {
+  stroke: var(--admin-border);
+  stroke-width: 1;
+}
+
+.fin-chart__zero {
+  stroke: var(--admin-text-muted);
+  stroke-width: 1;
+}
+
+.fin-chart__tick,
+.fin-chart__label {
+  font-size: 11px;
+  fill: var(--admin-text-muted);
+}
+
+.fin-chart__net {
+  font-size: 11px;
+  font-weight: 600;
+  fill: var(--admin-text);
+}
+
+.fin-chart__net--loss {
+  fill: var(--admin-danger);
+}
+
+.fin-chart__bar--income {
+  fill: var(--fin-income);
+}
+
+.fin-chart__bar--costs {
+  fill: var(--fin-costs);
+}
+
+.fin-chart__bar--forecast {
+  fill-opacity: 0.55;
+  stroke: var(--fin-income);
+  stroke-width: 1.5;
+  stroke-dasharray: 4 3;
+}
+
+.fin-chart__partial .fin-chart__bar {
+  fill-opacity: 0.6;
+}
+
+.fin-chart__hit {
+  fill: transparent;
+}
+
+.fin-chart__hit:hover {
+  fill: rgb(3 25 38 / 4%);
+}
+
+.fin-hbars {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.55rem;
+}
+
+.fin-hbars__row {
+  display: grid;
+  grid-template-columns: 8.5rem minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--admin-space-2);
+  font-size: 0.82rem;
+}
+
+.fin-hbars__label {
+  color: var(--admin-text-muted);
+}
+
+.fin-hbars__track {
+  height: 14px;
+}
+
+.fin-hbars__bar {
+  display: block;
+  height: 100%;
+  border-radius: 0 4px 4px 0;
+  background: var(--fin-income);
+}
+
+.fin-hbars__bar--late {
+  background: var(--fin-costs);
+}
+
+.fin-hbars__value {
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+@media (max-width: 899px) {
+  .fin-charts {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .fin-hbars__row {
+    grid-template-columns: 7rem minmax(0, 1fr) auto;
+  }
+}
+
+@media (max-width: 599px) {
+  /* Keep the monthly chart readable on phones: scroll sideways instead of shrinking the text. */
+  .fin-charts__panel--wide .fin-chart {
+    overflow-x: auto;
+  }
+
+  .fin-charts__panel--wide .fin-chart__svg {
+    min-width: 560px;
+  }
+}
