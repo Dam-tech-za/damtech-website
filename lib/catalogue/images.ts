@@ -107,19 +107,19 @@ const SHARED_IMAGE = {
 };
 
 const RESERVOIR_PRIMARY_CAPTION =
-  "Interim catalogue image of an open corrugated steel reservoir with liner. Photographed proportions are not an exact scale representation of every listed tank capacity.";
+  "Open corrugated steel reservoir with liner. Tank proportions vary with the listed capacity.";
 
 const RESERVOIR_LIFESTYLE_CAPTION =
-  "Open corrugated steel reservoir in a farm setting. Shared lifestyle image for the open-top tank kits; not a measured pack shot of a listed diameter or height.";
+  "Open corrugated steel reservoir in a farm setting. Diameter and height vary with the listed capacity.";
 
 const SHALLOW_SHARED_CAPTION =
-  "Shared shallow corrugated-steel basin image. The galvanised safety crossbar shown is an illustrative optional safety feature and is not confirmed as included in the fixed-price kit.";
+  "Shallow corrugated steel basin with liner. The galvanised safety crossbar shown is illustrative and not a confirmed kit inclusion.";
 
 const TROUGH_PRIMARY_CAPTION =
-  "Round galvanised livestock water trough with liner. Listed size is 1.5 m diameter × 381 mm high. The galvanised safety crossbar shown is an illustrative optional safety feature and is not confirmed as included in the fixed-price kit.";
+  "Round galvanised livestock water trough with liner, 1.5 m diameter × 381 mm high. The galvanised safety crossbar shown is illustrative and not a confirmed kit inclusion.";
 
 const SHALLOW_LIFESTYLE_CAPTION =
-  "Shallow corrugated steel basin in a farm setting. Shared lifestyle image for the fish-pond and livestock-trough kits. The safety crossbar, where visible, is illustrative and not a confirmed kit inclusion.";
+  "Shallow corrugated steel basin in a farm setting. The safety crossbar, where visible, is illustrative and not a confirmed kit inclusion.";
 
 /** White-background open reservoir. Primary image for all four open tank SKUs. */
 export const RESERVOIR_PRIMARY_IMAGE: CatalogueImageAsset = {

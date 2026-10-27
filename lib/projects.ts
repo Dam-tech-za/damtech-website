@@ -850,7 +850,7 @@ export function getProjectsMatching(
 }
 
 export const PROJECTS_INDEX_SEO = {
-  title: "Dam Lining & Water Storage Projects | Damtech",
+  title: "Dam Lining & Water Storage Projects South Africa | Damtech",
   description:
     "Real Damtech case studies across South Africa: HDPE and bitumen dam linings, steel water tanks and game-lodge water storage — with sizes and photos.",
   path: "/projects",

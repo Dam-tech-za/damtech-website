@@ -31,7 +31,7 @@ export const PAGE_SEO: Record<StaticPageKey, PageSeoEntry> = {
   home: {
     title: "Dam Liners, Steel Water Tanks & Waterproofing | Damtech",
     description:
-      "HDPE and PVC dam liners, corrugated steel water tanks and waterproofing for farms, mines, businesses and homes across South Africa. Free quotes from Damtech.",
+      "HDPE and PVC dam liners, corrugated steel water tanks and waterproofing for farms, mines, businesses and homes in South Africa. Free quotes from Damtech.",
     path: "/",
     h1: "Damtech Dam Lining & Water Storage Solutions in South Africa",
     image: IMAGE_PATHS.damtechWaterStorageHero,
@@ -45,7 +45,7 @@ export const PAGE_SEO: Record<StaticPageKey, PageSeoEntry> = {
     image: IMAGE_PATHS.hdpeDamLiningFieldInstallation,
   },
   services: {
-    title: "Damtech Services | Dam Linings, Waterproofing & Water Storage",
+    title: "Dam Lining, Waterproofing & Water Storage Services | Damtech",
     description:
       "Explore Damtech's dam linings, waterproofing, reservoir lining, leaking dam repair, steel water tanks and water storage services in South Africa.",
     path: "/services",
@@ -63,9 +63,9 @@ export const PAGE_SEO: Record<StaticPageKey, PageSeoEntry> = {
     image: IMAGE_PATHS.hdpeDamLiningFieldInstallation,
   },
   "steel-tanks": {
-    title: "Steel Water Tanks for Sale South Africa | Sizes & Prices",
+    title: "Steel Water Tanks for Sale South Africa | Prices",
     description:
-      "Corrugated steel water tanks for sale in South Africa. VAT-inclusive kit prices, supply-only. Transport and installation excluded.",
+      "Corrugated steel water tanks for sale in South Africa, 10 000L to 100 000L. VAT-inclusive kit prices, supply-only. Transport and installation excluded.",
     path: "/steel-water-storage-tanks",
     h1: "Corrugated Steel Water Tanks for Sale in South Africa",
     serviceName: "Corrugated Steel Water Tank Supply",
@@ -81,7 +81,7 @@ export const PAGE_SEO: Record<StaticPageKey, PageSeoEntry> = {
     image: IMAGE_PATHS.bitumenTorchOnWaterproofingDamtech,
   },
   faq: {
-    title: "Dam Liner & Waterproofing FAQ | Damtech",
+    title: "Dam Liner & Waterproofing FAQ | Damtech South Africa",
     description:
       "Straight answers on dam liner lifespan, costs, repairs, steel tank sizing and waterproofing warranties — from Damtech's South African field experience.",
     path: "/faq",
@@ -91,15 +91,15 @@ export const PAGE_SEO: Record<StaticPageKey, PageSeoEntry> = {
   contact: {
     title: "Contact Damtech | Dam Linings & Water Storage Quotes",
     description:
-      "Contact Damtech for HDPE dam linings, steel water tanks, reservoir lining, leak repairs and waterproofing services across South Africa.",
+      "Contact Damtech for HDPE dam linings, steel water tanks, reservoir lining, leak repairs and waterproofing services across South Africa. Free quotes.",
     path: "/contact",
     h1: "Contact Damtech",
     image: IMAGE_PATHS.hdpeDamLiningEarthDam,
   },
   blog: {
-    title: "Dam Liner & Water Storage Guides | Damtech Blog",
+    title: "Dam Liner & Water Storage Guides | The Damtech Blog",
     description:
-      "Practical South African guides on farm dam liners, leaking dam repair, borehole integration, steel reservoirs and water storage planning from the Damtech team.",
+      "Practical South African guides on farm dam liners, leaking dam repair, borehole integration, steel reservoirs and water storage planning from Damtech.",
     path: "/blog",
     h1: "Dam Lining & Water Storage Guides",
     image: IMAGE_PATHS.damtechWaterStorageHero,
@@ -113,7 +113,7 @@ export const PAGE_SEO: Record<StaticPageKey, PageSeoEntry> = {
     image: IMAGE_PATHS.hdpeDamLiningEarthDam,
   },
   calculators: {
-    title: "Dam Lining & Water Storage Calculators | Damtech South Africa",
+    title: "Dam Lining & Water Tank Calculators | Damtech South Africa",
     description:
       "Free calculators for dam lining area, HDPE and PVC material, steel tank sizing, irrigation demand and rainwater harvesting. Plan before you get a quote.",
     path: "/calculators",

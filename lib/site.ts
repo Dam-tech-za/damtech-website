@@ -13,15 +13,15 @@ export const siteConfig = {
   defaultTitle:
     "Dam Liners, Steel Water Tanks & Waterproofing | Damtech",
   defaultDescription:
-    "HDPE and PVC dam liners, corrugated steel water tanks and waterproofing for farms, mines, businesses and homes across South Africa. Free quotes from Damtech.",
+    "HDPE and PVC dam liners, corrugated steel water tanks and waterproofing for farms, mines, businesses and homes in South Africa. Free quotes from Damtech.",
   defaultOgDescription:
-    "HDPE and PVC dam liners, corrugated steel water tanks and waterproofing for farms, mines, businesses and homes across South Africa. Free quotes from Damtech.",
+    "HDPE and PVC dam liners, corrugated steel water tanks and waterproofing for farms, mines, businesses and homes in South Africa. Free quotes from Damtech.",
   defaultOgTitle:
     "Dam Liners, Steel Water Tanks & Waterproofing | Damtech",
   defaultTwitterTitle:
     "Dam Liners, Steel Water Tanks & Waterproofing | Damtech",
   defaultTwitterDescription:
-    "HDPE and PVC dam liners, corrugated steel water tanks and waterproofing for farms, mines, businesses and homes across South Africa. Free quotes from Damtech.",
+    "HDPE and PVC dam liners, corrugated steel water tanks and waterproofing for farms, mines, businesses and homes in South Africa. Free quotes from Damtech.",
   phone: "+27 82 853 1026",
   email: "info@dam-tech.co.za",
   location: "South Africa",

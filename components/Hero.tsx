@@ -24,7 +24,18 @@ type HeroProps = {
   /** Render primary + secondary CTAs below intro (default true). */
   showActions?: boolean;
   breadcrumbs?: BreadcrumbItem[];
+  /** ISO date (YYYY-MM-DD) of the last content change, shown as "Last updated". */
+  updated?: string;
 };
+
+function formatUpdatedDate(isoDate: string): string {
+  return new Date(`${isoDate}T12:00:00+02:00`).toLocaleDateString("en-ZA", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+    timeZone: "Africa/Johannesburg",
+  });
+}
 
 /**
  * Inner-page hero. Homepage uses `HomeHero` instead.
@@ -43,6 +54,7 @@ export function Hero({
   aside,
   showActions = true,
   breadcrumbs,
+  updated,
 }: HeroProps) {
   const actions = children ?? (showActions ? <HeroActions /> : null);
   const variant = image ? "photo" : tone;
@@ -83,6 +95,12 @@ export function Hero({
           {eyebrow ? <p className="dt-page-hero__eyebrow">{eyebrow}</p> : null}
           <h1 className="dt-page-hero__title">{title}</h1>
           <p className="dt-page-hero__description">{description}</p>
+          {updated ? (
+            <p className="dt-page-hero__updated">
+              Last updated{" "}
+              <time dateTime={updated}>{formatUpdatedDate(updated)}</time>
+            </p>
+          ) : null}
           {actions ? <div className="dt-page-hero__actions">{actions}</div> : null}
         </div>
         {aside ? <div className="dt-page-hero__aside">{aside}</div> : null}

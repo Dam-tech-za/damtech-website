@@ -65,7 +65,7 @@ const LINER_TYPES = [
     href: "/pvc-dam-lining",
     summary:
       "Flexible dam lining for ponds, steel tanks and smaller reservoirs where ease of handling matters.",
-    sizes: "550–850 gsm",
+    sizes: "550 gsm standard, 850 gsm on request",
     uses: "Steel tanks, ponds, small reservoirs",
     lifespan: "Typically 10–15 years*",
     Icon: LayersIcon,

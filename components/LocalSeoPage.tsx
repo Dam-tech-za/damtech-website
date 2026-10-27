@@ -12,6 +12,7 @@ import { altForImagePath } from "@/lib/images";
 import { DAM_LINERS_SCHEMA_OFFERS } from "@/lib/service-pages-content";
 import type { LocalLandingPage } from "@/lib/local-pages";
 import { RELATED_SERVICE_LINKS } from "@/lib/related-services";
+import { SITEMAP_LASTMOD } from "@/lib/sitemap-lastmod.generated";
 import {
   HEAD_OFFICE,
   phoneTel,
@@ -99,6 +100,7 @@ export function LocalSeoPage({ page }: LocalSeoPageProps) {
         description={page.heroDescription}
         eyebrow={page.serviceName}
         breadcrumbs={breadcrumbs}
+        updated={SITEMAP_LASTMOD[`/${page.slug}`]}
       />
 
       <SiteSection>

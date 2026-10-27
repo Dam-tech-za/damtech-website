@@ -42,7 +42,7 @@ export const HDPE_DAM_LINING_PAGE: SubServicePageConfig = {
   slug: "hdpe-dam-lining",
   title: "HDPE Dam Lining South Africa | Geomembrane | Damtech",
   description:
-    "HDPE geomembrane dam lining in 1 mm–2 mm for farm dams, irrigation reservoirs and mining ponds. Welded seams, tested joints and installation across South Africa.",
+    "HDPE geomembrane dam lining in 1 mm–2 mm for farm dams, irrigation reservoirs and mining ponds. Welded, tested seams and installation across South Africa.",
   h1: "HDPE Dam Lining",
   image: IMAGE_PATHS.hdpeDamLiningFieldInstallation,
   serviceName: "HDPE Dam Lining",
@@ -146,7 +146,7 @@ export const HDPE_DAM_LINING_PAGE: SubServicePageConfig = {
 
 export const PVC_DAM_LINING_PAGE: SubServicePageConfig = {
   slug: "pvc-dam-lining",
-  title: "PVC Dam Lining & Liners South Africa | Damtech",
+  title: "PVC Dam Lining & Pond Liners South Africa | Damtech",
   description:
     "Flexible PVC dam liners for ponds, steel tanks and small reservoirs. Supply and installation across South Africa, with practical advice on liner choice.",
   h1: "PVC Dam Lining",
@@ -154,8 +154,7 @@ export const PVC_DAM_LINING_PAGE: SubServicePageConfig = {
   serviceName: "PVC Dam Lining",
   schemaOffers: [
     "550 gsm PVC liner installation",
-    "750 gsm PVC liner installation",
-    "850 gsm PVC liner installation",
+    "850 gsm PVC liner installation (on request)",
     "Steel tank PVC lining",
     "Pond and small reservoir lining",
   ],
@@ -164,7 +163,7 @@ export const PVC_DAM_LINING_PAGE: SubServicePageConfig = {
   heroDescription:
     "PVC geomembrane for ponds, steel reservoirs and smaller dams where flexibility, handling ease and value per square metre are priorities.",
   intro:
-    "PVC liners are a practical choice for smaller farm ponds, ornamental dams, steel tank interiors and cement reservoirs where HDPE’s stiffness is unnecessary. Reinforced PVC at 550–850 gsm balances flexibility with tear resistance and is well suited to sites with moderate UV exposure and controlled livestock access.",
+    "PVC liners are a practical choice for smaller farm ponds, ornamental dams, steel tank interiors and cement reservoirs where HDPE’s stiffness is unnecessary. Reinforced PVC at 550 gsm as standard (850 gsm on request) balances flexibility with tear resistance and is well suited to sites with moderate UV exposure and controlled livestock access.",
   benefits: [
     "Flexible sheet conforms to irregular pond shapes",
     "Lower cost per m² on smaller surface areas",
@@ -174,7 +173,7 @@ export const PVC_DAM_LINING_PAGE: SubServicePageConfig = {
     "Suitable for many agricultural water uses (confirm for drinking water)",
   ],
   specs: [
-    { label: "Weight grades", value: "550 gsm, 750 gsm and 850 gsm" },
+    { label: "Weight grades", value: "550 gsm standard; 850 gsm on request" },
     { label: "Best applications", value: "Ponds, steel tanks, small reservoirs" },
     { label: "Typical service life", value: "Typically 10–15 years*" },
     { label: "Seam method", value: "Heat welding or adhesive bonding" },
@@ -184,7 +183,7 @@ export const PVC_DAM_LINING_PAGE: SubServicePageConfig = {
     {
       heading: "Where PVC Liners Work Best",
       paragraphs: [
-        "PVC works best on compact sites: lined steel reservoirs, nursery ponds, estate water features and farm dams under roughly 2 000 m², where crews can handle lighter rolls. It is also the standard 850 gsm lining included on Damtech steel reservoir builds.",
+        "PVC works best on compact sites: lined steel reservoirs, nursery ponds, estate water features and farm dams under roughly 2 000 m², where crews can handle lighter rolls. It is also the standard 550 gsm lining included on Damtech steel reservoir builds, with 850 gsm available on request.",
         "For large earth dams with rocky subgrades or heavy UV exposure, we usually recommend HDPE instead — see our HDPE dam lining page for comparison.",
       ],
     },
@@ -204,7 +203,7 @@ export const PVC_DAM_LINING_PAGE: SubServicePageConfig = {
     {
       question: "What PVC weight do steel tanks use?",
       answer:
-        "Damtech steel reservoirs include an 850 gsm PVC liner and bidem floor sheet as standard. Tell us if the water is for human consumption so we can confirm suitability.",
+        "Damtech steel reservoirs include a 550 gsm PVC liner and bidem floor sheet as standard; 850 gsm is available on request. Tell us if the water is for human consumption so we can confirm suitability.",
     },
     {
       question: "Can PVC line an existing pond?",
@@ -223,12 +222,12 @@ export const PVC_DAM_LINING_PAGE: SubServicePageConfig = {
     { href: "/farm-dam-liners", label: "Farm Dam Linings" },
     { href: "/quote", label: "Request a PVC Dam Lining Quote" },
   ],
+  projectDetailMatch: /HDPE|PVC|dam lining/i,
   relatedProjectSlugs: ["grabouw-hdpe-farm-dam", "centurion-hdpe-dam-liner"],
   relatedPostSlugs: [
     "understanding-the-impact-of-soil-types-on-dam-liner-selection-and-longevity",
     "assessing-the-environmental-impact-of-different-dam-lining-materials-on-south-african-farmland",
   ],
-  projectDetailMatch: /HDPE|PVC|dam lining/i,
   projectsSectionTitle: "Related Dam Lining Projects",
   sectionCtaTitle: "Need a PVC Dam Lining Quote?",
   ctaTitle: "Request a PVC Lining Quote",
@@ -325,6 +324,7 @@ export const TORCH_ON_DAM_LINING_PAGE: SubServicePageConfig = {
     { href: "/waterproofing/", label: "Home waterproofing" },
     { href: "/services", label: "All Services" },
   ],
+  projectDetailMatch: /Bitumen/i,
   relatedProjectSlugs: [
     "hoedspruit-bitumen-dam-lining",
     "mpumalanga-torch-on-bitumen-concrete-dam-15m",
@@ -334,7 +334,6 @@ export const TORCH_ON_DAM_LINING_PAGE: SubServicePageConfig = {
     "water-saving-hacks-for-south-african-farm-dams",
     "essential-farm-dam-leak-repair-techniques-to-safeguard-your-water-storage-in-south-africa",
   ],
-  projectDetailMatch: /Bitumen/i,
   sectionCtaTitle: "Need a Torch-On Dam Lining Quote?",
   ctaTitle: "Book a Torch-On Dam Lining Assessment",
   ctaDescription:
@@ -345,7 +344,7 @@ export const DAM_REPAIR_SERVICES_PAGE: SubServicePageConfig = {
   slug: "dam-repair-services",
   title: "Leaking Dam Repair & Liner Repairs | Damtech South Africa",
   description:
-    "Leaking farm dam? Damtech assesses and repairs liner punctures, failed seams and seepage on earth dams, cement dams and reservoirs. Send photos for a quote.",
+    "Leaking dam? Damtech assesses and repairs liner punctures, failed seams and seepage on earth dams, cement dams and reservoirs. Send photos for a quote.",
   h1: "Leaking Dam Repair Services",
   image: IMAGE_PATHS.damLiningMaintenanceInspection1,
   serviceName: "Leaking Dam Repair",
@@ -442,6 +441,7 @@ export const DAM_REPAIR_SERVICES_PAGE: SubServicePageConfig = {
     { href: "/reservoir-lining", label: "Reservoir Lining" },
     { href: "/quote", label: "Request a Dam Repair Quote" },
   ],
+  projectDetailMatch: /HDPE|repair|leak/i,
   relatedProjectSlugs: [
     "stellenbosch-hdpe-dam-liner",
     "hoedspruit-bitumen-dam-lining",
@@ -452,7 +452,6 @@ export const DAM_REPAIR_SERVICES_PAGE: SubServicePageConfig = {
     "the-best-practices-for-repairing-leaks-in-corrugated-steel-reservoirs-to-avoid-costly-water-loss",
     "strategies-to-prevent-costly-farm-dam-liner-failure",
   ],
-  projectDetailMatch: /HDPE|repair|leak/i,
   sectionCtaTitle: "Need a Leaking Dam Repair Quote?",
   ctaTitle: "Request a Leaking Dam Assessment",
   ctaDescription:
@@ -501,7 +500,7 @@ export const RESERVOIR_LINING_PAGE: SubServicePageConfig = {
     "Nationwide installation crews",
   ],
   specs: [
-    { label: "Steel tanks", value: "850 gsm PVC lining, 11 kL–500 kL+" },
+    { label: "Steel tanks", value: "550 gsm PVC lining (850 gsm on request), 11 kL–500 kL+" },
     { label: "Concrete", value: "3–4 mm torch-on bitumen" },
     { label: "Earth reservoirs", value: "HDPE 1–2 mm geomembrane" },
     { label: "Service area", value: "South Africa nationwide" },
@@ -553,7 +552,7 @@ export const RESERVOIR_LINING_PAGE: SubServicePageConfig = {
     {
       question: "What liner goes inside a new corrugated steel tank?",
       answer:
-        "Damtech steel reservoirs are supplied with 850 gsm PVC lining as standard. Capacity ranges from 11 kL to 500 kL+ with optional roofs to reduce evaporation.",
+        "Damtech steel reservoirs are supplied with 550 gsm PVC lining as standard, with 850 gsm available on request. Capacity ranges from 11 kL to 500 kL+ with optional roofs to reduce evaporation.",
     },
     {
       question: "Do you line concrete irrigation reservoirs?",
@@ -574,6 +573,7 @@ export const RESERVOIR_LINING_PAGE: SubServicePageConfig = {
     { href: "/pvc-dam-lining", label: "PVC Dam Linings" },
     { href: "/dam-repair-services", label: "Leaking Dam Repair" },
   ],
+  projectDetailMatch: /tank|reservoir|steel|HDPE/i,
   relatedProjectSlugs: [
     "mpumalanga-torch-on-bitumen-concrete-dam-15m",
     "tzaneen-torch-on-bitumen-concrete-dam-18m",
@@ -584,7 +584,6 @@ export const RESERVOIR_LINING_PAGE: SubServicePageConfig = {
     "innovative-maintenance-strategies-to-extend-the-life-of-corrugated-steel-reservoirs-in-harsh-agricultural-environments",
     "maximizing-irrigation-efficiency-with-proper-reservoir-maintenance",
   ],
-  projectDetailMatch: /tank|reservoir|steel|HDPE/i,
   sectionCtaTitle: "Need a Reservoir Lining Quote?",
   ctaTitle: "Request Reservoir Lining Quote",
   ctaDescription:
@@ -623,7 +622,7 @@ export const DAM_LINING_COST_PAGE: SubServicePageConfig = {
   specs: [
     { label: "Primary drivers", value: "Area, liner type, thickness, access" },
     { label: "HDPE", value: "Typically specified 1–2 mm for farm dams" },
-    { label: "PVC", value: "550–850 gsm for ponds and tanks" },
+    { label: "PVC", value: "550 gsm standard, 850 gsm on request" },
     { label: "Extras", value: "Geotextile, outlets, dewatering, rock fill" },
     { label: "Next step", value: "Free quote from photos; site visit on request" },
   ],
@@ -698,6 +697,7 @@ export const DAM_LINING_COST_PAGE: SubServicePageConfig = {
     { href: "/farm-dam-liners", label: "Farm Dam Linings" },
     { href: "/quote", label: "Request a Quote" },
   ],
+  projectDetailMatch: /HDPE|m²/i,
   relatedProjectSlugs: [
     "centurion-hdpe-dam-liner",
     "north-west-game-lodge-hdpe-dam-lining",
@@ -708,7 +708,6 @@ export const DAM_LINING_COST_PAGE: SubServicePageConfig = {
     "the-importance-of-proper-dam-liners-how-hdpe-protects-your-investment",
     "understanding-the-impact-of-soil-types-on-dam-liner-selection-and-longevity",
   ],
-  projectDetailMatch: /HDPE|m²/i,
   sectionCtaTitle: "Need a Dam Lining Cost Estimate?",
   ctaTitle: "Request a Tailored Dam Lining Quote",
   ctaDescription:

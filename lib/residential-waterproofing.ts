@@ -98,7 +98,7 @@ const QUOTE_SERVICE = "Roof / home waterproofing";
 const ROOF_WATERPROOFING: ResidentialPageConfig = {
   slug: "roof-waterproofing",
   kind: "service",
-  title: "Roof Waterproofing & Roof Leak Repair | Damtech",
+  title: "Roof Waterproofing & Roof Leak Repair for Homes | Damtech",
   description:
     "Roof leak repair and flat roof waterproofing for homes in Betty's Bay, Kleinmond, Pringle Bay, Hermanus and Grabouw, plus Pretoria. Written quotes.",
   h1: "Roof Waterproofing and Leak Repair for Homes",

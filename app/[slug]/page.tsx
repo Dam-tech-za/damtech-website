@@ -144,6 +144,22 @@ export default async function BlogPostPage({ params }: Props) {
                   day: "numeric",
                 })}
               </time>
+              {post.modified &&
+              post.modified.slice(0, 10) > post.date.slice(0, 10) ? (
+                <>
+                  <span className="mx-2" aria-hidden>
+                    ·
+                  </span>
+                  Updated{" "}
+                  <time dateTime={post.modified}>
+                    {new Date(post.modified).toLocaleDateString("en-ZA", {
+                      year: "numeric",
+                      month: "long",
+                      day: "numeric",
+                    })}
+                  </time>
+                </>
+              ) : null}
             </p>
           </div>
         </header>

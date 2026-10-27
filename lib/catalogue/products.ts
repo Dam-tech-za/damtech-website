@@ -267,7 +267,7 @@ export const CATALOGUE_PRODUCTS: readonly CatalogueProduct[] = [
       {
         question: "Is this a plastic or steel water tank?",
         answer:
-          "It is a corrugated steel water reservoir kit with an 550 gsm PVC liner. It is not a plastic tank.",
+          "It is a corrugated steel water reservoir kit with a 550 gsm PVC liner. It is not a plastic tank.",
       },
       {
         question: "How large must the prepared site be?",

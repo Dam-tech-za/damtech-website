@@ -23,6 +23,7 @@ import { getSubServiceIntro } from "@/lib/service-intro-content";
 import { getPostBySlug } from "@/lib/posts";
 import { getProjectBySlug, getProjectsMatching } from "@/lib/projects";
 import { createFaqPageSchema, createServiceSchema } from "@/lib/seo";
+import { SITEMAP_LASTMOD } from "@/lib/sitemap-lastmod.generated";
 import type { SubServicePageConfig } from "@/lib/sub-service-pages";
 
 type SubServicePageProps = {
@@ -79,6 +80,7 @@ export function SubServicePage({ page }: SubServicePageProps) {
         title={page.h1}
         description={page.heroDescription}
         breadcrumbs={breadcrumbs}
+        updated={SITEMAP_LASTMOD[path]}
       />
 
       {intro ? (
@@ -146,8 +148,6 @@ export function SubServicePage({ page }: SubServicePageProps) {
 
       <ServiceFaqSection faqs={page.faqs} />
 
-      <SiteSection tone="muted">
-        <RelatedPageLinks links={page.relatedLinks} />
       {relatedPosts.length > 0 ? (
         <SiteSection>
           <PageSectionHeader eyebrow="FURTHER READING" title="Related Guides" />
@@ -166,6 +166,8 @@ export function SubServicePage({ page }: SubServicePageProps) {
         </SiteSection>
       ) : null}
 
+      <SiteSection tone="muted">
+        <RelatedPageLinks links={page.relatedLinks} />
         <p className="mt-8 text-sm text-slate-600">
           Compare all lining types on our{" "}
           <Link

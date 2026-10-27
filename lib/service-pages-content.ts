@@ -163,7 +163,7 @@ export const STEEL_TANKS_CONTENT = {
     {
       heading: "Linings, Roofs and Standard Fittings",
       paragraphs: [
-        "Each tank includes an 850 gsm PVC liner and bidem floor sheet suited to agricultural and general water storage. Standard fittings include 50 mm inlet and outlet connections and overflow. Upright columns support the tank structure; optional roofs reduce evaporation, debris ingress and algae growth, which is worthwhile in hot, dusty regions.",
+        "Each tank includes a 550 gsm PVC liner (850 gsm on request) and bidem floor sheet suited to agricultural and general water storage. Standard fittings include 50 mm inlet and outlet connections and overflow. Upright columns support the tank structure; optional roofs reduce evaporation, debris ingress and algae growth, which is worthwhile in hot, dusty regions.",
         "Where water chemistry or abrasion demands it, we can discuss alternative liner weights or coordinate with our HDPE team for linked earth-dam storage on the same property.",
       ],
     },
@@ -189,7 +189,7 @@ export const STEEL_TANKS_CONTENT = {
     {
       question: "Is the PVC liner suitable for drinking water?",
       answer:
-        "Our standard 850 gsm PVC lining is used for agricultural and general storage. Tell us if water is for human consumption so we can confirm suitability and any additional treatment or testing you require.",
+        "Our standard 550 gsm PVC lining (850 gsm on request) is used for agricultural and general storage. Tell us if water is for human consumption so we can confirm suitability and any additional treatment or testing you require.",
     },
     {
       question: "Can I add a roof later?",
