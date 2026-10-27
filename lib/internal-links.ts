@@ -87,6 +87,24 @@ const SERVICE_PAGES: readonly InternalServiceLink[] = [
       "Heat-bonded bitumen membranes for cement dams, canals and rigid reservoirs.",
   },
   {
+    href: "/dam-repair-services/",
+    label: "Leaking Dam Repair",
+    description:
+      "Repair for leaking farm dams, failed geomembrane liners and water storage systems.",
+  },
+  {
+    href: "/reservoir-lining/",
+    label: "Reservoir Lining",
+    description:
+      "Line or reline steel, concrete and farm reservoirs with PVC, HDPE or bitumen systems.",
+  },
+  {
+    href: "/dam-lining-cost-south-africa/",
+    label: "Dam Lining Cost Guide",
+    description:
+      "What drives the cost of HDPE, PVC and torch-on dam lining in South Africa.",
+  },
+  {
     href: "/dam-liners/",
     label: "Dam Linings (HDPE, PVC & Torch-On)",
     description:

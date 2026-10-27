@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Hero } from "@/components/Hero";
 import { PageImage } from "@/components/PageImage";
+import { PageSectionHeader } from "@/components/PageSectionHeader";
 import { PageSeo } from "@/components/PageSeo";
 import { BenefitCardGrid } from "@/components/BenefitCardGrid";
 import { ProcessStepsSection } from "@/components/ProcessStepsSection";
@@ -19,7 +20,8 @@ import {
 } from "@/components/lazy";
 import { SITE_IMAGES } from "@/lib/images";
 import { getSubServiceIntro } from "@/lib/service-intro-content";
-import { getProjectsMatching } from "@/lib/projects";
+import { getPostBySlug } from "@/lib/posts";
+import { getProjectBySlug, getProjectsMatching } from "@/lib/projects";
 import { createFaqPageSchema, createServiceSchema } from "@/lib/seo";
 import type { SubServicePageConfig } from "@/lib/sub-service-pages";
 
@@ -41,7 +43,12 @@ export function SubServicePage({ page }: SubServicePageProps) {
   const intro = getSubServiceIntro(page.slug);
   const fallbackImage = imageForPage(page);
 
-  const projects = getProjectsMatching(page.projectDetailMatch, 6);
+  const projects = page.relatedProjectSlugs
+    ? page.relatedProjectSlugs.flatMap((slug) => getProjectBySlug(slug) ?? [])
+    : getProjectsMatching(page.projectDetailMatch, 6);
+  const relatedPosts = (page.relatedPostSlugs ?? []).flatMap(
+    (slug) => getPostBySlug(slug) ?? [],
+  );
 
   const breadcrumbs = [
     { name: "Home", path: "/" },
@@ -141,6 +148,24 @@ export function SubServicePage({ page }: SubServicePageProps) {
 
       <SiteSection tone="muted">
         <RelatedPageLinks links={page.relatedLinks} />
+      {relatedPosts.length > 0 ? (
+        <SiteSection>
+          <PageSectionHeader eyebrow="FURTHER READING" title="Related Guides" />
+          <ul className="home-why-choose__links">
+            {relatedPosts.map((post) => (
+              <li key={post.slug}>
+                <Link href={`/${post.slug}`} className="home-why-choose__link-card">
+                  <span className="home-why-choose__link-label">{post.title}</span>
+                  <span className="home-why-choose__link-arrow" aria-hidden>
+                    →
+                  </span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </SiteSection>
+      ) : null}
+
         <p className="mt-8 text-sm text-slate-600">
           Compare all lining types on our{" "}
           <Link

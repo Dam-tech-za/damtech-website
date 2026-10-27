@@ -25,6 +25,10 @@ export type SubServicePageConfig = {
   faqs: ServiceFaqItem[];
   relatedLinks: readonly { href: string; label: string }[];
   projectDetailMatch: RegExp;
+  /** 2–3 real project slugs for the "Related projects" strip; overrides `projectDetailMatch`. */
+  relatedProjectSlugs?: readonly string[];
+  /** 2–3 existing blog post slugs for the page's further-reading block. */
+  relatedPostSlugs?: readonly string[];
   /** Override the default "{serviceName} projects" strip heading. */
   projectsSectionTitle?: string;
   sectionCtaTitle?: string;
@@ -124,6 +128,16 @@ export const HDPE_DAM_LINING_PAGE: SubServicePageConfig = {
     { href: "/quote", label: "Request an HDPE Dam Lining Quote" },
   ],
   projectDetailMatch: /HDPE/i,
+  relatedProjectSlugs: [
+    "north-west-game-lodge-hdpe-dam-lining",
+    "stellenbosch-hdpe-dam-liner",
+    "villiersdorp-hdpe-dam-lining",
+  ],
+  relatedPostSlugs: [
+    "the-importance-of-proper-dam-liners-how-hdpe-protects-your-investment",
+    "choosing-the-best-dam-lining-solutions-to-prevent-seepage-in-sandy-and-clay-soils-common-in-south-african-farmlands",
+    "strategies-to-prevent-costly-farm-dam-liner-failure",
+  ],
   sectionCtaTitle: "Need an HDPE Dam Lining Quote?",
   ctaTitle: "Get an HDPE Dam Lining Quote",
   ctaDescription:
@@ -208,6 +222,11 @@ export const PVC_DAM_LINING_PAGE: SubServicePageConfig = {
     { href: "/steel-water-storage-tanks", label: "Steel Water Tanks" },
     { href: "/farm-dam-liners", label: "Farm Dam Linings" },
     { href: "/quote", label: "Request a PVC Dam Lining Quote" },
+  ],
+  relatedProjectSlugs: ["grabouw-hdpe-farm-dam", "centurion-hdpe-dam-liner"],
+  relatedPostSlugs: [
+    "understanding-the-impact-of-soil-types-on-dam-liner-selection-and-longevity",
+    "assessing-the-environmental-impact-of-different-dam-lining-materials-on-south-african-farmland",
   ],
   projectDetailMatch: /HDPE|PVC|dam lining/i,
   projectsSectionTitle: "Related Dam Lining Projects",
@@ -305,6 +324,15 @@ export const TORCH_ON_DAM_LINING_PAGE: SubServicePageConfig = {
     { href: "/hdpe-dam-lining", label: "HDPE Dam Lining" },
     { href: "/waterproofing/", label: "Home waterproofing" },
     { href: "/services", label: "All Services" },
+  ],
+  relatedProjectSlugs: [
+    "hoedspruit-bitumen-dam-lining",
+    "mpumalanga-torch-on-bitumen-concrete-dam-15m",
+    "tzaneen-torch-on-bitumen-concrete-dam-18m",
+  ],
+  relatedPostSlugs: [
+    "water-saving-hacks-for-south-african-farm-dams",
+    "essential-farm-dam-leak-repair-techniques-to-safeguard-your-water-storage-in-south-africa",
   ],
   projectDetailMatch: /Bitumen/i,
   sectionCtaTitle: "Need a Torch-On Dam Lining Quote?",
@@ -413,6 +441,16 @@ export const DAM_REPAIR_SERVICES_PAGE: SubServicePageConfig = {
     { href: "/hdpe-dam-lining", label: "HDPE Dam Lining" },
     { href: "/reservoir-lining", label: "Reservoir Lining" },
     { href: "/quote", label: "Request a Dam Repair Quote" },
+  ],
+  relatedProjectSlugs: [
+    "stellenbosch-hdpe-dam-liner",
+    "hoedspruit-bitumen-dam-lining",
+    "mpumalanga-torch-on-bitumen-concrete-dam-15m",
+  ],
+  relatedPostSlugs: [
+    "essential-farm-dam-leak-repair-techniques-to-safeguard-your-water-storage-in-south-africa",
+    "the-best-practices-for-repairing-leaks-in-corrugated-steel-reservoirs-to-avoid-costly-water-loss",
+    "strategies-to-prevent-costly-farm-dam-liner-failure",
   ],
   projectDetailMatch: /HDPE|repair|leak/i,
   sectionCtaTitle: "Need a Leaking Dam Repair Quote?",
@@ -536,6 +574,16 @@ export const RESERVOIR_LINING_PAGE: SubServicePageConfig = {
     { href: "/pvc-dam-lining", label: "PVC Dam Linings" },
     { href: "/dam-repair-services", label: "Leaking Dam Repair" },
   ],
+  relatedProjectSlugs: [
+    "mpumalanga-torch-on-bitumen-concrete-dam-15m",
+    "tzaneen-torch-on-bitumen-concrete-dam-18m",
+    "tulbagh-steel-water-tank",
+  ],
+  relatedPostSlugs: [
+    "proven-leak-repair-solutions-for-corrugated-steel-reservoirs",
+    "innovative-maintenance-strategies-to-extend-the-life-of-corrugated-steel-reservoirs-in-harsh-agricultural-environments",
+    "maximizing-irrigation-efficiency-with-proper-reservoir-maintenance",
+  ],
   projectDetailMatch: /tank|reservoir|steel|HDPE/i,
   sectionCtaTitle: "Need a Reservoir Lining Quote?",
   ctaTitle: "Request Reservoir Lining Quote",
@@ -649,6 +697,16 @@ export const DAM_LINING_COST_PAGE: SubServicePageConfig = {
     { href: "/pvc-dam-lining", label: "PVC Dam Linings" },
     { href: "/farm-dam-liners", label: "Farm Dam Linings" },
     { href: "/quote", label: "Request a Quote" },
+  ],
+  relatedProjectSlugs: [
+    "centurion-hdpe-dam-liner",
+    "north-west-game-lodge-hdpe-dam-lining",
+    "villiersdorp-hdpe-dam-lining",
+  ],
+  relatedPostSlugs: [
+    "choosing-the-best-dam-lining-solutions-to-prevent-seepage-in-sandy-and-clay-soils-common-in-south-african-farmlands",
+    "the-importance-of-proper-dam-liners-how-hdpe-protects-your-investment",
+    "understanding-the-impact-of-soil-types-on-dam-liner-selection-and-longevity",
   ],
   projectDetailMatch: /HDPE|m²/i,
   sectionCtaTitle: "Need a Dam Lining Cost Estimate?",
