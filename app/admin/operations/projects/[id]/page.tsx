@@ -11,7 +11,6 @@ import {
   stagePath,
   todayInSouthAfrica,
 } from "@/lib/operations/lifecycle";
-import { groupForStage, GROUP_LABELS } from "@/lib/operations/board";
 import { DOCUMENT_KINDS, MATERIAL_FULFILMENT, MATERIAL_ORDER_STATUSES, PROJECT_SERVICES } from "@/lib/operations/types";
 import {
   addMaterialOrderAction,
@@ -102,6 +101,8 @@ export default async function OpsProjectPage({ params, searchParams }: PageProps
   const { project: p, materials, invoices, quotes, activity, tasks, documents, leads, payment, materialsStatus } = load.data;
   const canEdit = canPerform(admin.profile.role, "manageOperations");
   const path = stagePath(p.is_supply_only);
+  // One main action: move the job to its next stage (on hold jobs wait).
+  const nextStage = p.on_hold ? null : (path[path.indexOf(p.stage) + 1] ?? null);
   const today = todayInSouthAfrica();
   const notes = activity.filter((a) => a.kind === "note");
   const history = activity.filter((a) => a.kind !== "note");
@@ -112,7 +113,18 @@ export default async function OpsProjectPage({ params, searchParams }: PageProps
       <AdminBackLink listPath="/admin/operations/projects/" label="Projects" />
       <AdminPageHeader
         title={p.title}
-        description={`${p.customer_name}${p.site_location ? ` · ${p.site_location}` : ""} · ${GROUP_LABELS[groupForStage(p.stage)]}`}
+        description={`${p.customer_name}${p.site_location ? ` · ${p.site_location}` : ""} · Value ${formatOpsMoney(p.quoted_total_incl_vat)} · Paid ${formatOpsMoney(payment.paid)} · Owed ${formatOpsMoney(payment.due)}`}
+        primaryActionNode={
+          canEdit && nextStage && !p.archived_at ? (
+            <AdminActionForm action={changeStageAction} className="ops-header-action">
+              <input type="hidden" name="id" value={p.id} />
+              <input type="hidden" name="stage" value={nextStage} />
+              <AdminSubmitButton pendingLabel="Moving…">
+                {nextStage === "completed" ? "Mark complete" : `Move to ${stageLabel(nextStage, p.is_supply_only)}`}
+              </AdminSubmitButton>
+            </AdminActionForm>
+          ) : null
+        }
         toolbar={
           <span className="ops-stage">
             <StageBadge project={p} />
@@ -230,6 +242,8 @@ export default async function OpsProjectPage({ params, searchParams }: PageProps
 
           <AdminPanel title="Details" description={canEdit ? "Saving also clears the “check details” flag." : undefined}>
             {canEdit ? (
+              <details className="ops-collapse" open={p.needs_review || created !== undefined}>
+              <summary>Edit site, contact, crew, dates and scope</summary>
               <AdminActionForm action={updateProjectDetailsAction} className="ops-form ops-form--grid">
                 <input type="hidden" name="id" value={p.id} />
                 <AdminField label="Service" htmlFor="service">
@@ -271,6 +285,7 @@ export default async function OpsProjectPage({ params, searchParams }: PageProps
                 </AdminField>
                 <AdminSubmitButton>Save details</AdminSubmitButton>
               </AdminActionForm>
+              </details>
             ) : (
               <p className="ops-pre">{p.scope ?? "—"}</p>
             )}
@@ -301,7 +316,9 @@ export default async function OpsProjectPage({ params, searchParams }: PageProps
           </AdminPanel>
 
           {canEdit ? (
-            <AdminPanel title="Name, people and folder" compact>
+            <AdminPanel compact>
+              <details className="ops-collapse">
+              <summary>Name, lead and OneDrive folder</summary>
               <AdminActionForm action={updateProjectPeopleAction} className="ops-form">
                 <input type="hidden" name="id" value={p.id} />
                 <AdminField label="Project name" htmlFor="people-title" required>
@@ -329,6 +346,7 @@ export default async function OpsProjectPage({ params, searchParams }: PageProps
                 <AdminCheckbox name="materials_by_client" defaultChecked={p.materials_by_client} label="Client supplies the materials" />
                 <AdminSubmitButton variant="secondary">Save</AdminSubmitButton>
               </AdminActionForm>
+              </details>
             </AdminPanel>
           ) : null}
         </aside>
