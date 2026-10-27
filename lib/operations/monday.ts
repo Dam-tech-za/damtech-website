@@ -111,13 +111,19 @@ const SERVICE_MAP: Record<string, { service: ProjectService; supplyOnly: boolean
 };
 
 const MATERIAL_STATUS_MAP: Record<string, MaterialOrderStatus> = {
-  "not ordered": "quote_requested",
+  "not ordered": "not_ordered",
   "quote requested": "quote_requested",
+  quoted: "quoted",
+  "quoted / awaiting approval": "quoted",
   ordered: "ordered",
-  "ordered / paid": "ordered",
+  "ordered / paid": "paid",
+  paid: "paid",
   "partly in": "ordered",
-  ready: "ready",
-  "collected / delivered": "received",
+  ready: "ready_for_collection",
+  "ready for collection": "ready_for_collection",
+  "collected / delivered": "collected_delivered",
+  problem: "problem",
+  "problem / on hold": "problem",
 };
 
 const key = (v: string | null) => (v ?? "").trim().toLowerCase();
@@ -131,7 +137,7 @@ export function mapMondayService(label: string | null) {
 }
 
 export function mapMondayMaterialStatus(label: string | null): MaterialOrderStatus {
-  return MATERIAL_STATUS_MAP[key(label)] ?? "quote_requested";
+  return MATERIAL_STATUS_MAP[key(label)] ?? "not_ordered";
 }
 
 /** "QU0283 + QU0285 / INV0139 + INV0140" → quotes and invoices. */

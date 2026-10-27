@@ -1,6 +1,6 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { PaymentSummary } from "./payment.ts";
-import type { InvoiceLinkRow, OpsSyncStore, SyncProject, SyncRunResult, SyncTrigger } from "./sync.ts";
+import type { InvoiceLinkRow, OpsSyncStore, SyncProject, SyncRunResult, SyncTrigger, UnmatchedRow } from "./sync.ts";
 import type { PaymentStatus } from "./types.ts";
 import { PAYMENT_STATUS_LABELS } from "./lifecycle.ts";
 
@@ -36,6 +36,7 @@ export function createSupabaseSyncStore(db: SupabaseClient): OpsSyncStore {
             baseline: result.baseline,
             quotes_linked: result.counts.quotes_linked,
             quotes_ignored: result.counts.quotes_ignored,
+            invoices_for_review: result.counts.invoices_for_review,
             created_project_ids: result.createdProjectIds,
           },
         })
@@ -156,6 +157,58 @@ export function createSupabaseSyncStore(db: SupabaseClient): OpsSyncStore {
       return map;
     },
 
+    async recordUnmatched(rows: UnmatchedRow[]) {
+      const now = new Date().toISOString();
+      // Insert new entries; refresh amounts on existing ones without touching
+      // their status, so a dismissed or linked entry never reopens.
+      const { data: existing, error: readError } = await db
+        .from("ops_xero_unmatched")
+        .select("xero_invoice_id")
+        .in("xero_invoice_id", rows.map((r) => r.xero_invoice_id));
+      fail("read review queue", readError);
+      const known = new Set((existing ?? []).map((r) => String(r.xero_invoice_id)));
+      const fresh = rows.filter((r) => !known.has(r.xero_invoice_id));
+      if (fresh.length) {
+        const { error } = await db.from("ops_xero_unmatched").insert(fresh.map((r) => ({ ...r, last_seen_at: now })));
+        fail("queue invoices for review", error);
+      }
+      for (const r of rows.filter((row) => known.has(row.xero_invoice_id))) {
+        const { error } = await db
+          .from("ops_xero_unmatched")
+          .update({
+            xero_status: r.xero_status,
+            total_incl_vat: r.total_incl_vat,
+            amount_paid: r.amount_paid,
+            amount_due: r.amount_due,
+            due_date: r.due_date,
+            last_seen_at: now,
+          })
+          .eq("xero_invoice_id", r.xero_invoice_id);
+        fail("refresh review queue", error);
+      }
+    },
+
+    async resolveUnmatched(invoiceIds: string[]) {
+      if (!invoiceIds.length) return;
+      const { error } = await db
+        .from("ops_xero_unmatched")
+        .update({ status: "linked", resolved_at: new Date().toISOString() })
+        .in("xero_invoice_id", invoiceIds)
+        .eq("status", "open");
+      fail("close review entries", error);
+    },
+
+    async logInvoiceLinked(row: InvoiceLinkRow) {
+      const { error } = await db.from("ops_project_activity").insert({
+        project_id: row.project_id,
+        actor_label: "Xero sync",
+        kind: "invoice.linked",
+        summary: `Invoice ${row.invoice_number ?? row.xero_invoice_id} linked (${row.xero_status.toLowerCase()}, R${row.total_incl_vat.toFixed(2)}, R${row.amount_due.toFixed(2)} due)`,
+        data: { xero_invoice_id: row.xero_invoice_id, method: row.match_method },
+      });
+      fail("log invoice link", error);
+    },
+
     async updateProjectPayment(projectId: string, summary: PaymentSummary, previous: PaymentStatus) {
       const now = new Date().toISOString();
       const { error } = await db
@@ -169,12 +222,15 @@ export function createSupabaseSyncStore(db: SupabaseClient): OpsSyncStore {
         })
         .eq("id", projectId);
       fail("update project payment", error);
-      if (summary.status !== previous) {
+      {
         const { error: activityError } = await db.from("ops_project_activity").insert({
           project_id: projectId,
           actor_label: "Xero sync",
-          kind: "payment.status_changed",
-          summary: `Payment: ${PAYMENT_STATUS_LABELS[previous]} → ${PAYMENT_STATUS_LABELS[summary.status]}`,
+          kind: summary.status !== previous ? "payment.status_changed" : "payment.updated",
+          summary:
+            summary.status !== previous
+              ? `Payment: ${PAYMENT_STATUS_LABELS[previous]} → ${PAYMENT_STATUS_LABELS[summary.status]} (R${summary.paid.toFixed(2)} paid, R${summary.due.toFixed(2)} due)`
+              : `Xero amounts updated: R${summary.paid.toFixed(2)} paid, R${summary.due.toFixed(2)} due`,
           data: { from: previous, to: summary.status, paid: summary.paid, due: summary.due },
         });
         fail("log payment change", activityError);

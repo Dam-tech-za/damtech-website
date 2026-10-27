@@ -15,10 +15,10 @@ import type {
 
 export const STAGE_LABELS: Record<ProjectStage, string> = {
   awaiting_deposit: "Awaiting deposit",
-  planning: "Planning",
+  planning: "Planning & materials",
   scheduled: "Scheduled",
-  in_progress: "In progress",
-  handover: "Handover",
+  in_progress: "On site",
+  handover: "Snags / handover",
   completed: "Completed",
 };
 
@@ -76,10 +76,14 @@ export const SERVICE_LABELS: Record<ProjectService, string> = {
 };
 
 export const MATERIAL_STATUS_LABELS: Record<MaterialOrderStatus, string> = {
+  not_ordered: "Not ordered",
   quote_requested: "Quote requested",
+  quoted: "Quoted / awaiting approval",
   ordered: "Ordered",
-  ready: "Ready",
-  received: "Received",
+  paid: "Paid",
+  ready_for_collection: "Ready for collection",
+  collected_delivered: "Collected / delivered",
+  problem: "Problem / on hold",
   cancelled: "Cancelled",
 };
 
@@ -213,5 +217,5 @@ export function buildAttentionList(
 }
 
 export function isOpenMaterialOrder(order: Pick<OpsMaterialOrder, "status">): boolean {
-  return order.status !== "received" && order.status !== "cancelled";
+  return order.status !== "collected_delivered" && order.status !== "cancelled";
 }
