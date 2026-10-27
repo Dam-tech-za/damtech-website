@@ -98,7 +98,7 @@ function ContactQuickActions() {
 
         <p className="mt-4 text-xs text-subtle">
 
-          Monday – Friday 08:00 – 17:00 (SAST) · Saturday by appointment
+          Monday – Saturday 06:00 – 18:00 (SAST)
 
         </p>
 
