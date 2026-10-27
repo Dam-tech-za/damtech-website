@@ -1,6 +1,8 @@
 import { AdminBreadcrumbs, type AdminBreadcrumb } from "./AdminBreadcrumbs";
 import { AdminUserMenu } from "./AdminUserMenu";
 import { AdminIconButton } from "@/components/admin/ui/AdminIconButton";
+import { AdminNewMenu, type NewMenuItem } from "./AdminNewMenu";
+import { AdminSearchBox } from "./AdminSearchBox";
 
 type AdminHeaderProps = {
   title: string;
@@ -13,6 +15,7 @@ type AdminHeaderProps = {
   showTitle?: boolean;
   sidebarCollapsed?: boolean;
   onExpandSidebar?: () => void;
+  newItems?: NewMenuItem[];
 };
 
 export function AdminHeader({
@@ -26,6 +29,7 @@ export function AdminHeader({
   showTitle = false,
   sidebarCollapsed = false,
   onExpandSidebar,
+  newItems = [],
 }: AdminHeaderProps) {
   return (
     <header className="admin-header">
@@ -65,6 +69,8 @@ export function AdminHeader({
         </div>
       </div>
       <div className="admin-header__right">
+        <AdminSearchBox />
+        <AdminNewMenu items={newItems} />
         <AdminUserMenu
           email={email}
           fullName={fullName}

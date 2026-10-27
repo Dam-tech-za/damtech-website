@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect } from "react";
 import type { AdminNavItem } from "@/lib/auth/types";
-import { activeNavItemId, groupNavItems } from "@/lib/admin/navigation";
+import { activeNavItemId, visibleSections } from "@/lib/admin/navigation";
 import { SignOutButton } from "./SignOutButton";
 
 type AdminMobileNavProps = {
@@ -56,11 +56,11 @@ export function AdminMobileNav({
             </label>
           </div>
           <nav aria-label="Admin sections">
-            {groupNavItems(items).map(({ group, items: groupItems }) => (
-              <div key={group.id} className="admin-mobile-nav__group">
-                <p className="admin-mobile-nav__group-label">{group.label}</p>
+            {visibleSections(items).map(({ section, tabs }) => (
+              <div key={section.id} className="admin-mobile-nav__group">
+                <p className="admin-mobile-nav__group-label">{section.label}</p>
                 <ul>
-                  {groupItems.map((item) => {
+                  {tabs.map(({ item, label }) => {
                     const active = item.id === activeId;
                     return (
                       <li key={item.id}>
@@ -70,7 +70,7 @@ export function AdminMobileNav({
                           aria-current={active ? "page" : undefined}
                           onClick={() => closeMenu(toggleId)}
                         >
-                          {item.label}
+                          {label}
                         </Link>
                       </li>
                     );
