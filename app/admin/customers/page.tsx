@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import { requireAdmin } from "@/lib/auth/require-admin";
 import { canAccessNavItem, canPerform } from "@/lib/auth/permissions";
@@ -7,19 +8,15 @@ import {
   AdminButton,
   AdminEmptyState,
   AdminErrorState,
-  AdminFilterToolbar,
   AdminInput,
-  AdminMetricCard,
-  AdminMetricStrip,
   AdminPageHeader,
   AdminPanel,
-  AdminSearchField,
   AdminSelect,
   AdminTable,
 } from "@/components/admin/ui";
 
 type PageProps = {
-  searchParams: Promise<{ q?: string }>;
+  searchParams: Promise<{ q?: string; new?: string }>;
 };
 
 export default async function AdminCustomersPage({ searchParams }: PageProps) {
@@ -28,7 +25,8 @@ export default async function AdminCustomersPage({ searchParams }: PageProps) {
     redirect("/admin/unauthorised/");
   }
   const canManage = canPerform(admin.profile.role, "manageCustomers");
-  const { q } = await searchParams;
+  const { q, new: openNew } = await searchParams;
+  const showNew = openNew === "1";
   const supabase = await createClient();
 
   const startOfMonth = new Date();
@@ -44,7 +42,8 @@ export default async function AdminCustomersPage({ searchParams }: PageProps) {
     .limit(100);
 
   if (q?.trim()) {
-    const term = q.trim();
+    // Characters that would break the or() filter are dropped.
+    const term = q.trim().replace(/[,()%*\\"]/g, " ").trim();
     query = query.or(
       `name.ilike.%${term}%,company_name.ilike.%${term}%,email.ilike.%${term}%,phone.ilike.%${term}%`,
     );
@@ -54,8 +53,6 @@ export default async function AdminCustomersPage({ searchParams }: PageProps) {
     { data, error },
     { count: totalCustomers },
     { count: newThisMonth },
-    { data: openRfqCustomers },
-    { data: acceptedQuoteCustomers },
   ] = await Promise.all([
     query,
     supabase.from("customers").select("id", { count: "exact", head: true }),
@@ -63,179 +60,86 @@ export default async function AdminCustomersPage({ searchParams }: PageProps) {
       .from("customers")
       .select("id", { count: "exact", head: true })
       .gte("created_at", startOfMonth.toISOString()),
-    supabase
-      .from("rfqs")
-      .select("customer_id")
-      .not("customer_id", "is", null)
-      .not("status", "in", "(converted,closed,spam)"),
-    supabase
-      .from("quotes")
-      .select("customer_id")
-      .eq("is_latest_revision", true)
-      .eq("status", "accepted")
-      .not("customer_id", "is", null),
   ]);
-
-  const openRfqCount = new Set(
-    (openRfqCustomers ?? []).map((r) => r.customer_id).filter(Boolean),
-  ).size;
-  const acceptedCount = new Set(
-    (acceptedQuoteCustomers ?? []).map((r) => r.customer_id).filter(Boolean),
-  ).size;
 
   return (
     <div className="admin-stack--page">
       <AdminPageHeader
         title="Customers"
-        description="Manage customer, company and project contact records."
-        primaryAction={
-          canManage
-            ? { href: "#add-customer", label: "Add Customer" }
-            : undefined
-        }
+        description={`${totalCustomers ?? 0} customers${newThisMonth ? `, ${newThisMonth} new this month` : ""}.`}
+        primaryAction={canManage ? { href: "/admin/customers/?new=1#add-customer", label: "Add customer" } : undefined}
       />
 
-      <AdminMetricStrip label="Customer summary">
-        <AdminMetricCard
-          label="Total customers"
-          value={totalCustomers ?? 0}
-          tone="default"
-        />
-        <AdminMetricCard
-          label="New this month"
-          value={newThisMonth ?? 0}
-          tone="info"
-        />
-        <AdminMetricCard
-          label="With open RFQs"
-          value={openRfqCount}
-          tone="warning"
-        />
-        <AdminMetricCard
-          label="With accepted quotes"
-          value={acceptedCount}
-          tone="success"
-        />
-      </AdminMetricStrip>
-
-      <AdminPanel title="Directory">
-        <AdminFilterToolbar>
-          <form method="get" className="admin-filter-toolbar__form">
-            <AdminSearchField
-              name="q"
-              placeholder="Search name, company, email, phone…"
-              defaultValue={q ?? ""}
-              label="Search customers"
-            />
-            <AdminButton type="submit" variant="primary">
-              Search
-            </AdminButton>
-            {q ? (
-              <AdminButton href="/admin/customers/" variant="secondary">
-                Clear
-              </AdminButton>
-            ) : null}
-          </form>
-        </AdminFilterToolbar>
-      </AdminPanel>
+      <form method="get" className="ops-board-filters" role="search" aria-label="Search customers">
+        <label className="ops-board-filters__search">
+          <span className="sr-only">Search customers</span>
+          <input className="admin-input" type="search" name="q" defaultValue={q ?? ""} placeholder="Search name, company, email or phone" />
+        </label>
+        <button type="submit" className="admin-btn admin-btn--secondary">
+          Search
+        </button>
+        {q ? (
+          <AdminButton href="/admin/customers/" variant="ghost">
+            Clear
+          </AdminButton>
+        ) : null}
+      </form>
 
       {canManage ? (
-        <AdminPanel id="add-customer" title="Add customer">
+        <details id="add-customer" className="ops-collapse admin-panel" open={showNew}>
+          <summary>Add a customer</summary>
           <form action={upsertCustomerAction} className="admin-form-grid">
-            <AdminInput
-              name="name"
-              placeholder="Name *"
-              required
-              aria-label="Contact name"
-            />
-            <AdminInput
-              name="company_name"
-              placeholder="Company"
-              aria-label="Company"
-            />
-            <AdminInput
-              name="email"
-              placeholder="Email"
-              type="email"
-              aria-label="Email"
-            />
-            <AdminInput
-              name="phone"
-              placeholder="Phone"
-              aria-label="Phone"
-            />
-            <AdminInput
-              name="province"
-              placeholder="Province"
-              aria-label="Province"
-            />
-            <AdminSelect
-              name="customer_type"
-              defaultValue="individual"
-              aria-label="Customer type"
-            >
+            <AdminInput name="name" placeholder="Name *" required aria-label="Contact name" />
+            <AdminInput name="company_name" placeholder="Company" aria-label="Company" />
+            <AdminInput name="email" placeholder="Email" type="email" aria-label="Email" />
+            <AdminInput name="phone" placeholder="Phone" aria-label="Phone" />
+            <AdminInput name="province" placeholder="Province" aria-label="Province" />
+            <AdminSelect name="customer_type" defaultValue="individual" aria-label="Customer type">
               <option value="individual">Individual</option>
               <option value="company">Company</option>
             </AdminSelect>
             <AdminButton type="submit" variant="primary">
-              Create customer
+              Save customer
             </AdminButton>
           </form>
-        </AdminPanel>
+        </details>
       ) : null}
 
       <AdminPanel>
         {error ? (
-          <AdminErrorState
-            title="Unable to load customers"
-            message="Please retry shortly."
-          />
+          <AdminErrorState title="Customers could not be loaded." message="Refresh in a moment." />
         ) : (data ?? []).length === 0 ? (
           <AdminEmptyState
-            title="No customers match your search."
-            description="Add a customer record, or clear the search to see the full directory."
-            actionHref={canManage ? "#add-customer" : undefined}
-            actionLabel={canManage ? "Add Customer" : undefined}
+            title={q ? `No customer matches “${q}”.` : "No customers yet."}
+            description={q ? "Check the spelling, or try a phone number or email." : "Customers are added from enquiries, or by hand."}
+            actionHref={canManage ? "/admin/customers/?new=1#add-customer" : undefined}
+            actionLabel={canManage ? "Add customer" : undefined}
           />
         ) : (
-          <AdminTable>
+          <AdminTable caption="Customers">
             <thead>
               <tr>
-                <th>Customer / company</th>
-                <th>Contact</th>
-                <th>Email</th>
+                <th>Customer</th>
                 <th>Phone</th>
+                <th>Email</th>
                 <th>Province</th>
-                <th>Last activity</th>
-                <th>
-                  <span className="sr-only">Actions</span>
-                </th>
+                <th>Updated</th>
               </tr>
             </thead>
             <tbody>
               {(data ?? []).map((customer) => (
                 <tr key={customer.id}>
-                  <td>{customer.company_name || customer.name}</td>
-                  <td>{customer.name}</td>
-                  <td>{customer.email ?? "—"}</td>
-                  <td>{customer.phone ?? "—"}</td>
-                  <td>{customer.province ?? "—"}</td>
-                  <td>
-                    {customer.updated_at
-                      ? new Date(customer.updated_at).toLocaleDateString(
-                          "en-ZA",
-                        )
-                      : "—"}
+                  <td data-label="Customer">
+                    <Link href={`/admin/customers/${customer.id}/`} className="ops-table__title">
+                      {customer.company_name || customer.name}
+                    </Link>
+                    {customer.company_name ? <span className="ops-table__meta">{customer.name}</span> : null}
                   </td>
-                  <td>
-                    <AdminButton
-                      href={`/admin/customers/${customer.id}/`}
-                      size="sm"
-                      variant="secondary"
-                      className="admin-btn--table"
-                    >
-                      Open
-                    </AdminButton>
+                  <td data-label="Phone">{customer.phone ? <a href={`tel:${customer.phone}`}>{customer.phone}</a> : "—"}</td>
+                  <td data-label="Email">{customer.email ? <a href={`mailto:${customer.email}`}>{customer.email}</a> : "—"}</td>
+                  <td data-label="Province">{customer.province ?? "—"}</td>
+                  <td data-label="Updated">
+                    {customer.updated_at ? new Date(customer.updated_at).toLocaleDateString("en-ZA", { day: "numeric", month: "short", year: "numeric" }) : "—"}
                   </td>
                 </tr>
               ))}

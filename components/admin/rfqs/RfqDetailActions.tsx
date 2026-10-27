@@ -71,7 +71,7 @@ export function RfqDetailActions({
           { id: "sep-close", label: "", separator: true },
           {
             id: "close",
-            label: "Close RFQ",
+            label: "Close enquiry",
             href: `${detailHref}#status`,
             tone: "danger",
           },
@@ -82,7 +82,7 @@ export function RfqDetailActions({
           { id: "sep-delete", label: "", separator: true },
           {
             id: "delete",
-            label: "Delete RFQ",
+            label: "Delete enquiry",
             tone: "danger",
             icon: <TrashIcon />,
             onSelect: () => setDeleteOpen(true),

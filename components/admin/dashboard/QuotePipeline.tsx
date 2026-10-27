@@ -25,7 +25,7 @@ export function QuotePipeline({ rows }: QuotePipelineProps) {
       {totalCount === 0 ? (
         <DashboardEmptyState
           title="No quote data available for the selected period."
-          description="Create a quote from an RFQ or start a blank quotation."
+          description="Create a quote from an enquiry, or start a blank one."
           actionHref="/admin/quotes/new/"
           actionLabel="Create Quote"
         />

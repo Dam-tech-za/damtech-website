@@ -19,6 +19,7 @@ import {
   AdminSubmitButton,
   AdminTable,
 } from "@/components/admin/ui";
+import { FinancialCharts } from "@/components/admin/operations/FinancialCharts";
 import { OpsSetupBanners } from "@/components/admin/operations/OpsParts";
 import { formatOpsDate, formatOpsDateTime, formatOpsMoney } from "@/components/admin/operations/ops-format";
 
@@ -106,6 +107,8 @@ export default async function FinancialsPage() {
           {w}
         </AdminInfoBanner>
       ))}
+
+      <FinancialCharts s={s} basis={(b) => <Basis basis={b} />} />
 
       {s.ytd ? (
         <AdminPanel title="This financial year" description={`From ${formatOpsDate(s.financialYearStart)} to ${formatOpsDate(s.today)}.`} actions={<Basis basis="actual" />}>

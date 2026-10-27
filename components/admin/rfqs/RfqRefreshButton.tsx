@@ -12,7 +12,7 @@ export function RfqRefreshButton() {
     <AdminButton
       variant="secondary"
       disabled={pending}
-      aria-label="Refresh RFQ list"
+      aria-label="Refresh the list"
       onClick={() => startTransition(() => router.refresh())}
     >
       {pending ? "Refreshing…" : "Refresh"}

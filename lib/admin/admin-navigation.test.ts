@@ -85,7 +85,7 @@ describe("admin navigation", () => {
     assert.equal(adminPageTitle("/admin/"), "Overview");
     assert.equal(adminPageTitle("/admin/rfqs/"), "Enquiries");
     assert.equal(adminPageTitle("/admin/quotes/new/"), "Quotations");
-    assert.equal(adminPageTitle("/admin/audit/"), "Audit log");
+    assert.equal(adminPageTitle("/admin/audit/"), "Activity log");
   });
 });
 
@@ -219,5 +219,36 @@ describe("operations navigation", () => {
       adminBreadcrumbs("/admin/operations/projects/5b0f6c2e-1d2a-4b3c-9d8e-7f6a5b4c3d2e/").map((c) => c.label),
       ["Overview", "Operations", "Projects", "Project"],
     );
+  });
+});
+
+describe("six-section menu", () => {
+  it("shows owners six sections with sub-pages as tabs", async () => {
+    const { visibleSections } = await import("./navigation.ts");
+    const sections = visibleSections(getNavItemsForRole("owner"));
+    assert.deepEqual(sections.map((s) => s.section.label), ["Overview", "Enquiries", "Projects", "Customers", "Money", "Settings"]);
+    assert.equal(sections.find((s) => s.section.id === "projects")?.href, "/admin/operations/projects/");
+  });
+
+  it("highlights exactly one section for a page, including detail pages", async () => {
+    const { activeSectionId } = await import("./navigation.ts");
+    const items = getNavItemsForRole("owner");
+    assert.equal(activeSectionId("/admin/quotes/abc/", items), "enquiries");
+    assert.equal(activeSectionId("/admin/operations/procurement/", items), "projects");
+    assert.equal(activeSectionId("/admin/operations/xero-review/", items), "money");
+    assert.equal(activeSectionId("/admin/pricing/materials/", items), "settings");
+    assert.equal(activeSectionId("/admin/", items), "overview");
+  });
+
+  it("hides Money from sales except the unmatched Xero tab", async () => {
+    const { visibleSections } = await import("./navigation.ts");
+    const money = visibleSections(getNavItemsForRole("sales")).find((s) => s.section.id === "money");
+    assert.deepEqual(money?.tabs.map((t) => t.item.id), ["xero-review"]);
+  });
+
+  it("shows breadcrumbs only on detail pages", async () => {
+    const { detailBreadcrumbs } = await import("./navigation.ts");
+    assert.deepEqual(detailBreadcrumbs("/admin/rfqs/"), []);
+    assert.ok(detailBreadcrumbs("/admin/rfqs/5b0f6c2e-1d2a-4b3c-9d8e-7f6a5b4c3d2e/").length > 0);
   });
 });

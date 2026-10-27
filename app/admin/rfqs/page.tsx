@@ -16,7 +16,6 @@ import { RfqToolbar } from "@/components/admin/rfqs/RfqToolbar";
 import { RfqActiveFilters } from "@/components/admin/rfqs/RfqActiveFilters";
 import { RfqInboxTable } from "@/components/admin/rfqs/RfqInboxTable";
 import { RfqEmptyState } from "@/components/admin/rfqs/RfqEmptyState";
-import { RfqOnboardingNote } from "@/components/admin/rfqs/RfqOnboardingNote";
 import { RfqRefreshButton } from "@/components/admin/rfqs/RfqRefreshButton";
 import { RfqDeleteToast } from "@/components/admin/rfqs/RfqDeleteToast";
 import { AdminErrorState, AdminListMemory } from "@/components/admin/ui";
@@ -61,8 +60,6 @@ export default async function AdminRfqsPage({ searchParams }: PageProps) {
         refreshSlot={<RfqRefreshButton />}
       />
 
-      <RfqOnboardingNote />
-
       <Suspense fallback={null}>
         <RfqDeleteToast />
         <AdminListMemory listPath="/admin/rfqs/" />
@@ -81,9 +78,7 @@ export default async function AdminRfqsPage({ searchParams }: PageProps) {
         />
       ) : result.rows.length === 0 ? (
         <RfqEmptyState
-          variant={
-            result.totalUnfiltered === 0 && !hasActiveFilters ? "none" : "filtered"
-          }
+          variant={!hasActiveFilters ? "none" : "filtered"}
         />
       ) : (
         <RfqInboxTable

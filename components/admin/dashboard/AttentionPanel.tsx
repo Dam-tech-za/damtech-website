@@ -5,7 +5,7 @@ type AttentionPanelProps = {
   items: AttentionItem[];
 };
 
-/** Top of the overview: the short list of things an admin should act on now. */
+/** Top of the overview: the short list of things to act on now, each with one action. */
 export function AttentionPanel({ items }: AttentionPanelProps) {
   return (
     <section className="dash-attention" aria-labelledby="dash-attention-title">
@@ -14,8 +14,8 @@ export function AttentionPanel({ items }: AttentionPanelProps) {
       </h2>
       {items.length === 0 ? (
         <p className="dash-attention__clear">
-          Nothing needs attention right now. New enquiries and orders will
-          appear here as they arrive.
+          You&apos;re all caught up. New enquiries, late payments and project
+          steps will show up here.
         </p>
       ) : (
         <ul className="dash-attention__list">
@@ -25,8 +25,13 @@ export function AttentionPanel({ items }: AttentionPanelProps) {
               className={`dash-attention__item dash-attention__item--${item.tone}`}
             >
               <Link href={item.href} className="dash-attention__link">
-                <span className="dash-attention__label">{item.label}</span>
-                <span className="dash-attention__hint">{item.hint}</span>
+                <span className="dash-attention__text">
+                  <span className="dash-attention__label">{item.label}</span>
+                  <span className="dash-attention__hint">{item.hint}</span>
+                </span>
+                <span className="dash-attention__action admin-btn admin-btn--sm admin-btn--outline" aria-hidden>
+                  {item.action}
+                </span>
               </Link>
             </li>
           ))}

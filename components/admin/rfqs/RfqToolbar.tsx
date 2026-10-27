@@ -3,12 +3,10 @@ import {
   type RfqInboxFilters,
 } from "@/lib/admin/rfqs/rfq-inbox-types";
 import { countActiveAdvancedFilters } from "@/lib/admin/rfqs/rfq-inbox-utils";
-import { RFQ_STATUSES } from "@/lib/rfq/statuses";
 import {
   AdminButton,
   AdminFilterToolbar,
   AdminSearchField,
-  AdminSelect,
   AdminSortSelect,
 } from "@/components/admin/ui";
 import { RfqAdvancedFiltersTrigger } from "./RfqAdvancedFilters";
@@ -21,7 +19,6 @@ type RfqToolbarProps = {
 function hasActiveFilters(filters: RfqInboxFilters): boolean {
   return Boolean(
     filters.q ||
-      filters.status ||
       countActiveAdvancedFilters(filters) > 0 ||
       (filters.sort && filters.sort !== "submitted_desc"),
   );
@@ -49,7 +46,7 @@ export function RfqToolbar({ filters, staff }: RfqToolbarProps) {
           .filter(
             ([key, value]) =>
               Boolean(value?.trim()) &&
-              !["q", "status", "sort", "page"].includes(key),
+              !["q", "sort", "page"].includes(key),
           )
           .map(([key, value]) => (
             <input key={key} type="hidden" name={key} value={value} />
@@ -57,26 +54,10 @@ export function RfqToolbar({ filters, staff }: RfqToolbarProps) {
 
         <AdminSearchField
           name="q"
-          placeholder="Search customer, phone, email, RFQ or location"
+          placeholder="Search name, phone, email, number or town"
           defaultValue={filters.q ?? ""}
-          label="Search RFQs"
+          label="Search enquiries"
         />
-
-        <label className="admin-filter-field">
-          <span className="sr-only">Status</span>
-          <AdminSelect
-            name="status"
-            defaultValue={filters.status ?? ""}
-            aria-label="Status"
-          >
-            <option value="">All statuses</option>
-            {RFQ_STATUSES.filter((s) => s !== "archived").map((status) => (
-              <option key={status} value={status}>
-                {status.replaceAll("_", " ")}
-              </option>
-            ))}
-          </AdminSelect>
-        </label>
 
         <AdminSortSelect
           name="sort"
@@ -91,8 +72,8 @@ export function RfqToolbar({ filters, staff }: RfqToolbarProps) {
           ))}
         </AdminSortSelect>
 
-        <AdminButton type="submit" variant="primary">
-          Apply
+        <AdminButton type="submit" variant="secondary">
+          Search
         </AdminButton>
 
         {showClear ? (

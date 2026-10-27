@@ -81,8 +81,10 @@ export default async function XeroReviewPage() {
                           </option>
                         ))}
                       </AdminSelect>
-                      <AdminSubmitButton pendingLabel="Linking…">Link</AdminSubmitButton>
+                      <AdminSubmitButton pendingLabel="Linking…">{entry.suggested_project_id ? "Link to suggested project" : "Link"}</AdminSubmitButton>
                     </AdminActionForm>
+                    <details className="ops-collapse ops-review__more">
+                    <summary>Other options</summary>
                     <AdminActionForm action={createProjectFromXeroAction}>
                       <input type="hidden" name="kind" value="invoice" />
                       <input type="hidden" name="xero_id" value={entry.xero_invoice_id} />
@@ -97,6 +99,7 @@ export default async function XeroReviewPage() {
                       <input type="hidden" name="id" value={entry.id} />
                       <AdminSubmitButton variant="outline" pendingLabel="…">Not a project invoice</AdminSubmitButton>
                     </AdminActionForm>
+                    </details>
                   </div>
                 ) : null}
               </li>

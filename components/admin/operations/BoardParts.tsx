@@ -3,6 +3,8 @@ import { AdminActionForm, AdminSelect, AdminStatusBadge, AdminSubmitButton } fro
 import { changeStageAction } from "@/app/admin/operations/actions";
 import {
   GROUP_LABELS,
+  PROJECT_GROUPS,
+  groupForStage,
   MATERIALS_ROLLUP_LABELS,
   PAYMENT_LABEL_TEXT,
   type MaterialsRollup,
@@ -170,5 +172,51 @@ export function GroupHeading({ group, count }: { group: ProjectGroup; count: num
     <h2 className={`ops-group__title ops-group__title--${group}`}>
       {GROUP_LABELS[group]} <span className="ops-group__count">{count}</span>
     </h2>
+  );
+}
+
+/** One project as a board card: who, where, value, next step and Xero payment. */
+function ProjectCard({ project: p, today }: { project: BoardProject; today: string }) {
+  return (
+    <li className={`ops-card${p.on_hold ? " ops-card--hold" : ""}`}>
+      <Link href={`/admin/operations/projects/${p.id}/`} className="ops-card__link">
+        <span className="ops-card__title">{p.title}</span>
+        <span className="ops-table__meta">
+          {p.customer_name}
+          {p.site_location ? ` · ${p.site_location}` : ""}
+        </span>
+        <span className="ops-card__row">
+          <span className="ops-card__value">{formatOpsMoney(p.quoted_total_incl_vat)}</span>
+          <PaymentPictureBadge payment={p.payment} />
+        </span>
+        <NextActionCell project={p} today={today} />
+        {p.on_hold ? <AdminStatusBadge status="ops-warn" label="On hold" /> : null}
+      </Link>
+    </li>
+  );
+}
+
+/** Columns by stage group; on phones the columns scroll sideways. */
+export function ProjectKanban({ projects, today }: { projects: BoardProject[]; today: string }) {
+  const groups = PROJECT_GROUPS.map((group) => ({ group, items: projects.filter((p) => groupForStage(p.stage) === group) }));
+  return (
+    <div className="ops-kanban" role="list" aria-label="Projects by stage">
+      {groups.map(({ group, items }) => (
+        <section key={group} className={`ops-kanban__col ops-kanban__col--${group}`} role="listitem" aria-label={GROUP_LABELS[group]}>
+          <h2 className="ops-kanban__title">
+            {GROUP_LABELS[group]} <span className="ops-group__count">{items.length}</span>
+          </h2>
+          {items.length ? (
+            <ul className="ops-kanban__cards">
+              {items.map((p) => (
+                <ProjectCard key={p.id} project={p} today={today} />
+              ))}
+            </ul>
+          ) : (
+            <p className="ops-kanban__empty">Nothing here</p>
+          )}
+        </section>
+      ))}
+    </div>
   );
 }

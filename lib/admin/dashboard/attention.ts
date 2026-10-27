@@ -15,6 +15,12 @@ export type AttentionCounts = {
   failedEmailHref: string | null;
   quotesAwaitingApproval: number | null;
   quotesExpiringSoon: number | null;
+  /** Operations and Xero. Undefined = not shown for this role. */
+  opsOverdueActions?: number | null;
+  opsNoNextAction?: number | null;
+  opsSupplierOrders?: number | null;
+  unmatchedXero?: number | null;
+  overdueDebtors?: number | null;
 };
 
 export type AttentionTone = "urgent" | "normal" | "unavailable";
@@ -25,6 +31,8 @@ export type AttentionItem = {
   count: number | null;
   hint: string;
   href: string;
+  /** Button text: the one thing to do. */
+  action: string;
   tone: AttentionTone;
 };
 
@@ -45,6 +53,7 @@ type Spec = {
   label: (count: number) => string;
   hint: (count: number) => string;
   href: string;
+  action: string;
   urgent?: boolean;
   unavailableLabel: string;
 };
@@ -58,6 +67,7 @@ export function buildAttentionItems(
   const specs: Spec[] = [
     {
       id: "failed-emails",
+      action: "Resend",
       count: counts.failedEmails,
       label: (n) => `${n} ${plural(n, "email", "emails")} failed to send`,
       hint: () =>
@@ -68,6 +78,7 @@ export function buildAttentionItems(
     },
     {
       id: "new-enquiries",
+      action: "Reply",
       count: counts.newEnquiries,
       label: (n) => `${n} new ${plural(n, "enquiry", "enquiries")} not yet reviewed`,
       hint: () =>
@@ -80,6 +91,7 @@ export function buildAttentionItems(
     },
     {
       id: "orders-awaiting-invoice",
+      action: "Invoice",
       count: counts.ordersAwaitingInvoice,
       label: (n) => `${n} ${plural(n, "order", "orders")} awaiting an invoice`,
       hint: () =>
@@ -89,6 +101,7 @@ export function buildAttentionItems(
     },
     {
       id: "information-required",
+      action: "Chase",
       count: counts.informationRequired,
       label: (n) => `${n} ${plural(n, "enquiry is", "enquiries are")} waiting on the customer`,
       hint: () => "Status is Information Required. Chase the customer if they have gone quiet.",
@@ -97,6 +110,7 @@ export function buildAttentionItems(
     },
     {
       id: "site-measurement",
+      action: "Book visit",
       count: counts.siteMeasurement,
       label: (n) => `${n} site ${plural(n, "measurement", "measurements")} to arrange`,
       hint: () => "Status is Site Measurement. Book or confirm the visit on the enquiry.",
@@ -105,6 +119,7 @@ export function buildAttentionItems(
     },
     {
       id: "ready-for-quote",
+      action: "Quote",
       count: counts.readyForQuote,
       label: (n) => `${n} ${plural(n, "enquiry is", "enquiries are")} ready to quote`,
       hint: () => "Everything needed is in. Prepare the quotation.",
@@ -113,6 +128,7 @@ export function buildAttentionItems(
     },
     {
       id: "quotes-awaiting-approval",
+      action: "Approve",
       count: counts.quotesAwaitingApproval,
       label: (n) => `${n} ${plural(n, "quotation", "quotations")} awaiting approval`,
       hint: () => "Approve before sending to the customer.",
@@ -121,6 +137,7 @@ export function buildAttentionItems(
     },
     {
       id: "quotes-expiring",
+      action: "Follow up",
       count: counts.quotesExpiringSoon,
       label: (n) => `${n} sent ${plural(n, "quotation expires", "quotations expire")} within 7 days`,
       hint: () => "Follow up before the price validity runs out.",
@@ -128,6 +145,57 @@ export function buildAttentionItems(
       unavailableLabel: "Expiring quotations",
     },
   ];
+
+  // Operations and Xero (only when the caller loaded them for this role).
+  const optional = (v: number | null | undefined) => (v === undefined ? undefined : v);
+  const ops: (Spec | null)[] = [
+    optional(counts.opsOverdueActions) === undefined
+      ? null
+      : {
+          id: "ops-overdue",
+          action: "Open",
+          count: counts.opsOverdueActions ?? null,
+          label: (n) => `${n} ${plural(n, "project has", "projects have")} an overdue next step`,
+          hint: () => "Do it, or move the date, from Operations.",
+          href: "/admin/operations/",
+          urgent: true,
+          unavailableLabel: "Overdue project steps",
+        },
+    optional(counts.opsNoNextAction) === undefined
+      ? null
+      : {
+          id: "ops-no-next",
+          action: "Set next step",
+          count: counts.opsNoNextAction ?? null,
+          label: (n) => `${n} ${plural(n, "project has", "projects have")} no next step`,
+          hint: () => "Every active job needs one next step with a date.",
+          href: "/admin/operations/",
+          unavailableLabel: "Projects without a next step",
+        },
+    optional(counts.opsSupplierOrders) === undefined
+      ? null
+      : {
+          id: "ops-orders",
+          action: "Open",
+          count: counts.opsSupplierOrders ?? null,
+          label: (n) => `${n} supplier ${plural(n, "order needs", "orders need")} action`,
+          hint: () => "Not ordered yet, a problem, or late.",
+          href: "/admin/operations/procurement/",
+          unavailableLabel: "Supplier orders",
+        },
+    optional(counts.unmatchedXero) === undefined
+      ? null
+      : {
+          id: "unmatched-xero",
+          action: "Review",
+          count: counts.unmatchedXero ?? null,
+          label: (n) => `${n} Xero ${plural(n, "invoice needs", "invoices need")} a project`,
+          hint: () => "Link each to its project once, or make it a new project.",
+          href: "/admin/operations/xero-review/",
+          unavailableLabel: "Unmatched Xero invoices",
+        },
+  ];
+  specs.splice(1, 0, ...ops.filter((x): x is Spec => x !== null));
 
   const items: AttentionItem[] = [];
   for (const spec of specs) {
@@ -138,6 +206,7 @@ export function buildAttentionItems(
         count: null,
         hint: "Refresh the page. If this keeps happening, check System health under Settings.",
         href: spec.href,
+        action: "Open",
         tone: "unavailable",
       });
       continue;
@@ -149,7 +218,20 @@ export function buildAttentionItems(
       count: spec.count,
       hint: spec.hint(spec.count),
       href: spec.href,
+      action: spec.action,
       tone: spec.urgent ? "urgent" : "normal",
+    });
+  }
+  const debt = counts.overdueDebtors;
+  if (debt && debt > 0) {
+    items.splice(1, 0, {
+      id: "overdue-debtors",
+      label: `R${Math.round(debt).toLocaleString("en-ZA")} is overdue from customers`,
+      count: null,
+      hint: "Customers who are late paying, from the last Xero refresh.",
+      href: "/admin/operations/financials/",
+      action: "See who",
+      tone: "urgent",
     });
   }
   return items;

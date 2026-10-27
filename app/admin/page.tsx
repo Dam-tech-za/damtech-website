@@ -1,5 +1,6 @@
 import { requireAdmin } from "@/lib/auth/require-admin";
 import { getDashboardMetrics } from "@/lib/admin/dashboard/get-dashboard-metrics";
+import { getOverviewOps } from "@/lib/admin/dashboard/overview-ops";
 import { parseDashboardRange } from "@/lib/admin/dashboard/types";
 import { DashboardHeaderControls } from "@/components/admin/dashboard/DashboardHeaderControls";
 import { PrimaryKpiGrid } from "@/components/admin/dashboard/PrimaryKpiGrid";
@@ -10,8 +11,10 @@ import { BreakdownPanel } from "@/components/admin/dashboard/BreakdownPanel";
 import { RecentActivity } from "@/components/admin/dashboard/RecentActivity";
 import { RecentRfqs } from "@/components/admin/dashboard/RecentRfqs";
 import { AttentionPanel } from "@/components/admin/dashboard/AttentionPanel";
+import { IncomeAndCostsChart } from "@/components/admin/operations/FinancialCharts";
 import { buildAttentionItems } from "@/lib/admin/dashboard/attention";
 import {
+  AdminButton,
   AdminErrorState,
   AdminInfoBanner,
   AdminPageHeader,
@@ -21,20 +24,23 @@ type PageProps = {
   searchParams: Promise<{ range?: string | string[]; password?: string }>;
 };
 
+/**
+ * Overview, in the order an owner reads it: what to do now (one action per
+ * item), four key figures, the money trend from Xero, the latest enquiries.
+ * Detailed enquiry statistics stay one click away, folded at the bottom.
+ */
 export default async function AdminDashboardPage({ searchParams }: PageProps) {
-  await requireAdmin();
+  const admin = await requireAdmin();
   const params = await searchParams;
   const rangeId = parseDashboardRange(params.range);
-  const metrics = await getDashboardMetrics(rangeId);
-  const attentionItems = buildAttentionItems(metrics.attention);
+  const [metrics, ops] = await Promise.all([getDashboardMetrics(rangeId), getOverviewOps(admin.profile.role)]);
+  const attentionItems = buildAttentionItems({ ...metrics.attention, ...ops.attention });
+  const hasProvisional =
+    metrics.provisional.linerAreaM2 > 0 || metrics.provisional.tankCapacityKl > 0 || metrics.provisional.torchOnAreaM2 > 0;
 
   return (
     <div className="admin-stack--page dash">
-      <AdminPageHeader
-        title="Overview"
-        primaryAction={{ href: "/admin/rfqs/", label: "Open enquiries" }}
-        secondaryActions={<DashboardHeaderControls rangeId={rangeId} />}
-      />
+      <AdminPageHeader title="Overview" primaryAction={{ href: "/admin/rfqs/", label: "Open enquiries" }} />
 
       {params.password === "changed" ? (
         <AdminInfoBanner tone="info">
@@ -52,35 +58,38 @@ export default async function AdminDashboardPage({ searchParams }: PageProps) {
 
       <AttentionPanel items={attentionItems} />
 
-      <PrimaryKpiGrid metrics={metrics} />
+      <PrimaryKpiGrid metrics={metrics} activeProjects={ops.activeProjects} financials={ops.financials} />
 
-      <div className="dash-split">
-        <RfqWorkflow stages={metrics.rfqStages} />
-        <QuotePipeline rows={metrics.quotePipeline} />
-      </div>
-
-      {metrics.provisional.linerAreaM2 > 0 ||
-      metrics.provisional.tankCapacityKl > 0 ||
-      metrics.provisional.torchOnAreaM2 > 0 ? (
-        <ProvisionalPipeline provisional={metrics.provisional} />
+      {ops.financials ? (
+        <section className="fin-charts__panel" aria-labelledby="dash-money-title">
+          <header className="fin-charts__head">
+            <h2 id="dash-money-title">Income and costs per month</h2>
+            <AdminButton href="/admin/operations/financials/" variant="link" size="sm">
+              All financials
+            </AdminButton>
+          </header>
+          <IncomeAndCostsChart s={ops.financials} />
+        </section>
       ) : null}
 
-      <div className="dash-split">
-        <BreakdownPanel
-          title="Enquiries by service"
-          rows={metrics.services}
-          emptyTitle="No enquiries in this period."
-        />
-        <BreakdownPanel
-          title="Enquiries by province"
-          rows={metrics.provinces}
-          emptyTitle="No enquiries in this period."
-        />
-      </div>
+      <RecentRfqs rows={metrics.recentRfqs.slice(0, 5)} />
 
-      <RecentRfqs rows={metrics.recentRfqs} />
-
-      <RecentActivity items={metrics.recentActivity} />
+      <details className="dash-more" open={params.range !== undefined}>
+        <summary className="dash-more__summary">Enquiry statistics and recent activity</summary>
+        <div className="admin-stack--page">
+          <DashboardHeaderControls rangeId={rangeId} />
+          <div className="dash-split">
+            <RfqWorkflow stages={metrics.rfqStages} />
+            <QuotePipeline rows={metrics.quotePipeline} />
+          </div>
+          {hasProvisional ? <ProvisionalPipeline provisional={metrics.provisional} /> : null}
+          <div className="dash-split">
+            <BreakdownPanel title="Enquiries by service" rows={metrics.services} emptyTitle="No enquiries in this period." />
+            <BreakdownPanel title="Enquiries by province" rows={metrics.provinces} emptyTitle="No enquiries in this period." />
+          </div>
+          <RecentActivity items={metrics.recentActivity} />
+        </div>
+      </details>
     </div>
   );
 }

@@ -8,14 +8,14 @@ export function RfqEmptyState({ variant }: RfqEmptyStateProps) {
   if (variant === "none") {
     return (
       <div className="rfq-empty-state">
-        <h2>No RFQs have been received yet.</h2>
-        <p>Public quote requests will appear here after submission.</p>
+        <h2>No open enquiries. Nice.</h2>
+        <p>New quote requests from the website will appear here.</p>
         <div className="rfq-empty-state__actions">
-          <AdminButton href="/quote/" variant="secondary">
-            Open public quote form
+          <AdminButton href="/admin/rfqs/?status=all" variant="secondary">
+            See all enquiries
           </AdminButton>
           <AdminButton href="/quote/" variant="primary">
-            Create RFQ manually
+            Log an enquiry
           </AdminButton>
         </div>
       </div>
@@ -24,8 +24,8 @@ export function RfqEmptyState({ variant }: RfqEmptyStateProps) {
 
   return (
     <div className="rfq-empty-state">
-      <h2>No RFQs match these filters.</h2>
-      <p>Try changing or clearing the current filters.</p>
+      <h2>No enquiries match.</h2>
+      <p>Try another status above, or clear the search and filters.</p>
       <div className="rfq-empty-state__actions">
         <AdminButton href="/admin/rfqs/" variant="primary">
           Clear filters

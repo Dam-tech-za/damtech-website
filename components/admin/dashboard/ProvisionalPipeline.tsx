@@ -36,7 +36,7 @@ export function ProvisionalPipeline({ provisional }: ProvisionalPipelineProps) {
   return (
     <AdminPanel
       title="Provisional Project Pipeline"
-      description="Planning estimates from RFQ assets"
+      description="Rough sizes from open enquiries"
     >
       <div className="dash-info-banner dash-info-banner--muted" role="note">
         These quantities are planning estimates and not confirmed orders.

@@ -1,15 +1,26 @@
 import Link from "next/link";
 import type { AdminNavItem, AdminNavItemId } from "@/lib/auth/types";
-import { activeNavItemId, groupNavItems } from "@/lib/admin/navigation";
+import { activeSectionId, visibleSections, type AdminSectionId, type VisibleSection } from "@/lib/admin/navigation";
 
 type AdminSidebarProps = {
   items: AdminNavItem[];
   pathname: string;
+  /** Counts of things needing action, shown as a badge on the section. */
+  badges?: Partial<Record<AdminSectionId, number>>;
   collapsed?: boolean;
   onToggleCollapse?: () => void;
 };
 
-function NavIcon({ id }: { id: AdminNavItemId }) {
+const SECTION_ICON: Record<AdminSectionId, AdminNavItemId | "projects" | "money"> = {
+  overview: "dashboard",
+  enquiries: "rfqs",
+  projects: "projects",
+  customers: "customers",
+  money: "money",
+  settings: "settings",
+};
+
+export function NavIcon({ id }: { id: AdminNavItemId | "projects" | "money" }) {
   const common = {
     viewBox: "0 0 24 24",
     width: 18,
@@ -22,6 +33,20 @@ function NavIcon({ id }: { id: AdminNavItemId }) {
       return (
         <svg {...common}>
           <path d="M4 4h7v7H4V4Zm9 0h7v5h-7V4ZM4 13h7v7H4v-7Zm9 3h7v4h-7v-4Z" stroke="currentColor" strokeWidth="1.7" />
+        </svg>
+      );
+    case "projects":
+      return (
+        <svg {...common}>
+          <rect x="4" y="5" width="16" height="14" rx="2" stroke="currentColor" strokeWidth="1.7" />
+          <path d="M9 5v14M4 10h5" stroke="currentColor" strokeWidth="1.7" />
+        </svg>
+      );
+    case "money":
+      return (
+        <svg {...common}>
+          <rect x="3" y="6" width="18" height="12" rx="2" stroke="currentColor" strokeWidth="1.7" />
+          <circle cx="12" cy="12" r="2.5" stroke="currentColor" strokeWidth="1.7" />
         </svg>
       );
     case "rfqs":
@@ -92,32 +117,34 @@ function NavIcon({ id }: { id: AdminNavItemId }) {
 }
 
 function SidebarLink({
-  item,
+  entry,
   active,
   collapsed,
+  badge,
 }: {
-  item: AdminNavItem;
+  entry: VisibleSection;
   active: boolean;
   collapsed: boolean;
+  badge?: number;
 }) {
-
+  const { section, href } = entry;
   return (
     <li>
       <Link
-        href={item.href}
+        href={href}
         className={`admin-sidebar__link${collapsed ? " admin-sidebar__link--icon-only" : ""}${active ? " is-active" : ""}`}
-        aria-label={item.label}
+        aria-label={badge ? `${section.label}, ${badge} need action` : section.label}
         aria-current={active ? "page" : undefined}
-        title={collapsed ? undefined : item.description}
       >
         <span className="admin-sidebar__link-icon">
-          <NavIcon id={item.id} />
+          <NavIcon id={SECTION_ICON[section.id]} />
         </span>
         {!collapsed ? (
-          <span className="admin-sidebar__link-label">{item.label}</span>
+          <span className="admin-sidebar__link-label">{section.label}</span>
         ) : (
-          <span className="admin-sidebar__tooltip">{item.label}</span>
+          <span className="admin-sidebar__tooltip">{section.label}</span>
         )}
+        {badge ? <span className="admin-sidebar__badge">{badge > 99 ? "99+" : badge}</span> : null}
       </Link>
     </li>
   );
@@ -152,10 +179,12 @@ function CollapseIcon({ expanded }: { expanded: boolean }) {
 export function AdminSidebar({
   items,
   pathname,
+  badges = {},
   collapsed = false,
   onToggleCollapse,
 }: AdminSidebarProps) {
-  const activeId = activeNavItemId(pathname, items);
+  const activeId = activeSectionId(pathname, items);
+  const sections = visibleSections(items);
 
   return (
     <aside
@@ -188,36 +217,17 @@ export function AdminSidebar({
       </div>
 
       <nav className="admin-sidebar__nav">
-        {collapsed ? (
-          <ul className="admin-sidebar__icon-rail">
-            {items.map((item) => (
-              <SidebarLink
-                key={item.id}
-                item={item}
-                active={item.id === activeId}
-                collapsed
-              />
-            ))}
-          </ul>
-        ) : (
-          groupNavItems(items).map(({ group, items: groupItems }) => {
-            return (
-              <div key={group.id} className="admin-sidebar__group">
-                <p className="admin-sidebar__group-label">{group.label}</p>
-                <ul>
-                  {groupItems.map((item) => (
-                    <SidebarLink
-                      key={item.id}
-                      item={item}
-                      active={item.id === activeId}
-                      collapsed={false}
-                    />
-                  ))}
-                </ul>
-              </div>
-            );
-          })
-        )}
+        <ul className={collapsed ? "admin-sidebar__icon-rail" : "admin-sidebar__sections"}>
+          {sections.map((entry) => (
+            <SidebarLink
+              key={entry.section.id}
+              entry={entry}
+              active={entry.section.id === activeId}
+              collapsed={collapsed}
+              badge={badges[entry.section.id]}
+            />
+          ))}
+        </ul>
       </nav>
     </aside>
   );

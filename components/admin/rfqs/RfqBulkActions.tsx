@@ -45,7 +45,7 @@ export function RfqBulkActions({
             type="checkbox"
             checked={allSelected && totalOnPage > 0}
             onChange={onToggleAll}
-            aria-label="Select all RFQs on this page"
+            aria-label="Select all enquiries on this page"
           />
           Select page
         </label>

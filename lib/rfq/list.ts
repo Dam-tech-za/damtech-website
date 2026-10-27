@@ -110,6 +110,16 @@ export type PaginatedRFQResult = {
 
 export type RfqStatusCounts = Record<string, number>;
 
+/** Enquiries still being worked on: the inbox's default view. */
+export const OPEN_RFQ_STATUSES = [
+  "new",
+  "reviewing",
+  "site_measurement_required",
+  "information_required",
+  "ready_for_quote",
+  "quote_sent",
+] as const;
+
 const STATUS_CARD_KEYS = [
   "new",
   "reviewing",
@@ -141,6 +151,9 @@ export async function getRfqStatusCounts(): Promise<RfqStatusCounts> {
       counts[status] = count ?? 0;
     }),
   );
+  counts.open = OPEN_RFQ_STATUSES.reduce((sum, s) => sum + (counts[s] ?? 0), 0);
+  const { count: all } = await supabase.from("rfqs").select("*", { count: "exact", head: true }).neq("status", "archived");
+  counts.all = all ?? 0;
 
   return counts;
 }
@@ -184,7 +197,9 @@ export async function listRfqs(
       { count: "exact" },
     );
 
-  if (filters.status && (RFQ_STATUSES as readonly string[]).includes(filters.status)) {
+  if (filters.status === "open") {
+    query = query.in("status", [...OPEN_RFQ_STATUSES]);
+  } else if (filters.status && (RFQ_STATUSES as readonly string[]).includes(filters.status)) {
     query = query.eq("status", filters.status);
   }
   if (filters.service) query = query.eq("service_required", filters.service);

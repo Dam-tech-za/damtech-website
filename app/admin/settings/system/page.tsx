@@ -10,6 +10,7 @@ import { createServiceRoleClient } from "@/lib/supabase/admin";
 import { COMPANY_ASSETS_BUCKET } from "@/lib/storage/company-assets";
 import { getRfqEmailConfig } from "@/lib/rfq/email/config";
 import { SystemInfrastructureTest } from "@/components/admin/SystemInfrastructureTest";
+import { getSystemSummary } from "@/lib/admin/system-summary";
 
 type Status =
   | "Configured"
@@ -27,17 +28,32 @@ type Check = {
 
 export default async function AdminSystemSettingsPage() {
   await requireAdmin({ roles: ["owner", "admin"] });
-  const checks = await collectChecks();
+  const [checks, summary] = await Promise.all([collectChecks(), getSystemSummary()]);
 
   return (
     <div className="admin-stack--page">
       <AdminPageHeader
         title="System health"
-        description="Supabase, Resend, Upstash, storage and cron status checks."
-        secondaryAction={{ href: "/admin/settings/", label: "All settings" }}
+        description={`Checked ${new Date(summary.checkedAt).toLocaleTimeString("en-ZA", { hour: "2-digit", minute: "2-digit", timeZone: "Africa/Johannesburg" })}. Refresh the page to check again.`}
       />
 
-      <div className="admin-panel">
+      <ul className="sys-health" aria-label="System health at a glance">
+        {summary.rows.map((row) => (
+          <li key={row.label} className={`sys-health__row sys-health__row--${row.tone}`}>
+            <span className="sys-health__dot" aria-hidden />
+            <span className="sys-health__label">{row.label}</span>
+            <span className="sys-health__status">{row.status}</span>
+            <span className="sys-health__detail">
+              {row.detail}
+              {row.fix ? <strong className="sys-health__fix"> What to do: {row.fix}</strong> : null}
+            </span>
+          </li>
+        ))}
+      </ul>
+
+      <details className="admin-panel ops-collapse">
+      <summary>Technical checks (for a developer)</summary>
+      <div>
         <header className="admin-panel__header">
           <h2>Infrastructure status</h2>
           <p className="admin-empty__hint">
@@ -93,6 +109,7 @@ export default async function AdminSystemSettingsPage() {
           <li>Redeploy after changing environment variables</li>
         </ul>
       </div>
+      </details>
     </div>
   );
 }

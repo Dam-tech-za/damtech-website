@@ -3,7 +3,8 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import type { ReactNode } from "react";
 import { AdminShell } from "@/components/admin/layout";
-import { getNavItemsForRole } from "@/lib/auth/permissions";
+import { canPerform, getNavItemsForRole } from "@/lib/auth/permissions";
+import { getNavBadges } from "@/lib/admin/nav-badges";
 import { getCurrentAdmin, getCurrentUser } from "@/lib/auth/get-current-user";
 
 export const dynamic = "force-dynamic";
@@ -60,10 +61,25 @@ export default async function AdminLayout({
     redirect("/admin/unauthorised/");
   }
 
+  const role = admin.profile.role;
+  const badges = await getNavBadges(role);
+  // "+ New": only things this role can create, and only pages that exist.
+  const newItems = [
+    { href: "/quote/", label: "Enquiry", hint: "Log a phone or walk-in enquiry on the quote form" },
+    ...(canPerform(role, "manageOperations")
+      ? [{ href: "/admin/operations/projects/new/", label: "Project", hint: "From a Xero quote or invoice, or by hand" }]
+      : []),
+    ...(canPerform(role, "manageCustomers")
+      ? [{ href: "/admin/customers/?new=1#add-customer", label: "Customer", hint: "Name, contact details and addresses" }]
+      : []),
+  ];
+
   return (
     <AdminShell
       profile={admin.profile}
-      navItems={getNavItemsForRole(admin.profile.role)}
+      navItems={getNavItemsForRole(role)}
+      badges={badges}
+      newItems={newItems}
     >
       {children}
     </AdminShell>

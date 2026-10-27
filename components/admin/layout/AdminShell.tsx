@@ -3,11 +3,15 @@
 import { usePathname } from "next/navigation";
 import { useSyncExternalStore, type ReactNode } from "react";
 import type { AdminNavItem, AdminProfile } from "@/lib/auth/types";
+import type { AdminSectionId } from "@/lib/admin/navigation";
+import type { NewMenuItem } from "./AdminNewMenu";
+import { AdminBottomBar } from "./AdminBottomBar";
+import { AdminSectionTabs } from "./AdminSectionTabs";
 import {
   readSidebarCollapsedPreference,
   writeSidebarCollapsedPreference,
 } from "@/lib/admin/sidebar-preference";
-import { adminBreadcrumbs, adminPageTitle } from "@/lib/admin/navigation";
+import { adminPageTitle, detailBreadcrumbs } from "@/lib/admin/navigation";
 import { AdminHeader } from "./AdminHeader";
 import { AdminMobileSidebar } from "./AdminMobileSidebar";
 import { AdminSidebar } from "./AdminSidebar";
@@ -16,6 +20,8 @@ import { AdminMain, AdminMainContent } from "./AdminMain";
 type AdminShellProps = {
   profile: AdminProfile;
   navItems: AdminNavItem[];
+  badges?: Partial<Record<AdminSectionId, number>>;
+  newItems?: NewMenuItem[];
   children: ReactNode;
 };
 
@@ -52,15 +58,16 @@ function getSidebarCollapsedServerSnapshot() {
 export function AdminShell({
   profile,
   navItems,
+  badges,
+  newItems,
   children,
 }: AdminShellProps) {
   // Derived on the client: the layout does not re-render on navigation, so
   // server-computed breadcrumbs would go stale after the first page.
   const pathname = usePathname() || "/admin/";
   const title = adminPageTitle(pathname);
-  const crumbs = adminBreadcrumbs(pathname);
-  // On the Overview itself a lone "Overview" crumb only repeats the page title.
-  const breadcrumbs = crumbs.length > 1 ? crumbs : [];
+  // Breadcrumbs only on detail pages; section pages have the menu and tabs.
+  const breadcrumbs = detailBreadcrumbs(pathname);
   const collapsed = useSyncExternalStore(
     subscribeSidebarPreference,
     getSidebarCollapsedSnapshot,
@@ -83,6 +90,7 @@ export function AdminShell({
       <AdminSidebar
         items={navItems}
         pathname={pathname}
+        badges={badges}
         collapsed={collapsed}
         onToggleCollapse={toggleCollapsed}
       />
@@ -97,9 +105,14 @@ export function AdminShell({
           avatarUrl={profile.avatar_url}
           sidebarCollapsed={collapsed}
           onExpandSidebar={expandSidebar}
+          newItems={newItems}
         />
-        <AdminMainContent>{children}</AdminMainContent>
+        <AdminMainContent>
+          <AdminSectionTabs items={navItems} pathname={pathname} />
+          {children}
+        </AdminMainContent>
       </AdminMain>
+      <AdminBottomBar items={navItems} pathname={pathname} badges={badges} />
     </div>
   );
 }

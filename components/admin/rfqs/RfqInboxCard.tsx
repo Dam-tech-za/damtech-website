@@ -105,7 +105,7 @@ export function RfqInboxCard({
             size="sm"
             variant="secondary"
           >
-            View RFQ
+            Open enquiry
           </AdminButton>
           <RfqRowActions
             summary={toDeleteSummary(row)}
