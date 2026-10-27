@@ -2099,3 +2099,17 @@ form[aria-busy="true"] {
 .ops-header-action .admin-action-message:empty {
   display: none;
 }
+
+/* Customer page: one list of everything */
+.cust-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--admin-space-3);
+}
+
+.cust-item__main {
+  display: grid;
+  gap: 1px;
+  min-width: 0;
+}

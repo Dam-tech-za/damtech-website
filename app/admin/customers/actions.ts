@@ -202,7 +202,16 @@ export async function upsertCustomerAction(formData: FormData): Promise<void> {
   if (!payload.name) return;
 
   if (id) {
-    const { error } = await supabase.from("customers").update(payload).eq("id", id);
+    // Only overwrite fields the form actually shows: the edit form has no
+    // address or registration inputs, and saving it must not wipe them.
+    const update: Partial<typeof payload> = { ...payload };
+    const shows = (prefix: string) => [...formData.keys()].some((k) => k.startsWith(prefix));
+    if (!shows("billingAddress") && !shows("billingCity")) delete update.billing_address;
+    if (!shows("siteAddress") && !shows("siteCity")) delete update.site_address;
+    if (!formData.has("registration_number")) delete update.registration_number;
+    if (!formData.has("notes")) delete update.notes;
+    if (!formData.has("vat_number")) delete update.vat_number;
+    const { error } = await supabase.from("customers").update(update).eq("id", id);
     if (error) {
       console.error("[customers] update failed:", error.message);
       return;

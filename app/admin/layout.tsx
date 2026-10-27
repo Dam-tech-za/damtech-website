@@ -70,7 +70,7 @@ export default async function AdminLayout({
       ? [{ href: "/admin/operations/projects/new/", label: "Project", hint: "From a Xero quote or invoice, or by hand" }]
       : []),
     ...(canPerform(role, "manageCustomers")
-      ? [{ href: "/admin/customers/#add-customer", label: "Customer", hint: "Name, contact details and addresses" }]
+      ? [{ href: "/admin/customers/?new=1#add-customer", label: "Customer", hint: "Name, contact details and addresses" }]
       : []),
   ];
 
