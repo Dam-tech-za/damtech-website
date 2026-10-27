@@ -220,9 +220,13 @@ export default async function AdminRfqDetailPage({
       : " · Unassigned"
   }`;
 
+  // South African numbers: 082… → 2782… for wa.me.
+  const waDigits = (rfq.phone ?? "").replace(/D/g, "").replace(/^0(?=d{9}$)/, "27");
+  const whatsappHref = waDigits.length >= 10 ? `https://wa.me/${waDigits}` : null;
+
   return (
     <div className="admin-rfq-detail admin-stack--page">
-      <AdminBackLink listPath="/admin/rfqs/" label="Back to enquiries" />
+      <AdminBackLink listPath="/admin/rfqs/" label="Enquiries" />
       <AdminPageHeader
         title={rfq.rfq_number}
         description={headerDescription}
@@ -251,38 +255,18 @@ export default async function AdminRfqDetailPage({
         }
         secondaryActions={
           <>
-            {canManage ? <ResendRfqNotificationButton rfqId={rfq.id} /> : null}
-            {rfq.email ? (
-              <AdminButton href={`mailto:${rfq.email}`} variant="secondary">
-                Email customer
+            {canManage && !rfq.xero_quote_number ? (
+              <AdminButton href="#rfq-xero-quote" variant="primary">
+                Link the Xero quote
               </AdminButton>
-            ) : null}
-            {rfq.phone ? (
-              <AdminButton href={`tel:${rfq.phone}`} variant="secondary">
-                Call
-              </AdminButton>
-            ) : null}
-            {rfq.xero_quote_number ? (
+            ) : rfq.xero_quote_number ? (
               <AdminButton href="#rfq-xero-quote" variant="secondary">
                 Xero {rfq.xero_quote_number}
               </AdminButton>
             ) : null}
             {quote ? (
-              <AdminButton
-                href={`/admin/quotes/${quote.id}/edit/`}
-                variant="secondary"
-              >
+              <AdminButton href={`/admin/quotes/${quote.id}/edit/`} variant="secondary">
                 Open quote {quote.quote_number}
-              </AdminButton>
-            ) : null}
-            {canManage && !rfq.xero_quote_number ? (
-              <AdminButton href="#rfq-xero-quote" variant="primary">
-                Allocate Xero quote
-              </AdminButton>
-            ) : null}
-            {canQuote && !quote ? (
-              <AdminButton href="#rfq-prepare-quote" variant="secondary">
-                Convert to website quote
               </AdminButton>
             ) : null}
             {canManage || canDelete ? (
@@ -965,7 +949,36 @@ export default async function AdminRfqDetailPage({
       </div>
         </div>
 
-        <aside className="admin-detail-aside" aria-label="RFQ actions">
+        <aside className="admin-detail-aside admin-detail-aside--sticky" aria-label="Enquiry actions">
+          <AdminPanel title="Contact" compact>
+            <p className="rfq-contact-card__name">
+              <strong>{rfq.contact_name || "No name given"}</strong>
+              {rfq.company_name ? <span className="ops-table__meta">{rfq.company_name}</span> : null}
+            </p>
+            <div className="rfq-contact-card__actions">
+              {rfq.phone ? (
+                <AdminButton href={`tel:${rfq.phone}`} size="sm" variant="secondary">
+                  Call {rfq.phone}
+                </AdminButton>
+              ) : null}
+              {whatsappHref ? (
+                <AdminButton href={whatsappHref} size="sm" variant="secondary" target="_blank" rel="noopener">
+                  WhatsApp
+                </AdminButton>
+              ) : null}
+              {rfq.email ? (
+                <AdminButton href={`mailto:${rfq.email}?subject=${encodeURIComponent(`Your Damtech enquiry ${rfq.rfq_number}`)}`} size="sm" variant="secondary">
+                  Email
+                </AdminButton>
+              ) : null}
+              {!rfq.phone && !rfq.email ? <span className="ops-table__meta">No phone or email on this enquiry.</span> : null}
+            </div>
+            {canManage ? (
+              <div className="rfq-contact-card__resend">
+                <ResendRfqNotificationButton rfqId={rfq.id} />
+              </div>
+            ) : null}
+          </AdminPanel>
           <AdminPanel title="Workflow" compact>
             <dl className="admin-dl">
               <div>
@@ -1018,8 +1031,8 @@ export default async function AdminRfqDetailPage({
                 </AdminButton>
               ) : null}
               {canQuote && !quote ? (
-                <AdminButton href="#rfq-prepare-quote" size="sm" variant="primary">
-                  Convert to quote
+                <AdminButton href="#rfq-prepare-quote" size="sm" variant="secondary">
+                  Make a website quote
                 </AdminButton>
               ) : null}
             </div>

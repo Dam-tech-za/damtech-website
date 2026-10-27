@@ -92,13 +92,16 @@ export const RFQ_INBOX_SORT_OPTIONS: {
 ];
 
 export const RFQ_STATUS_STRIP = [
+  { key: "open", label: "Open" },
   { key: "new", label: "New" },
-  { key: "reviewing", label: "Reviewing" },
-  { key: "information_required", label: "Info required" },
-  { key: "site_measurement_required", label: "Site measurement" },
-  { key: "ready_for_quote", label: "Ready" },
-  { key: "quote_sent", label: "Quote sent" },
-  { key: "converted", label: "Converted" },
+  { key: "reviewing", label: "Contacted" },
+  { key: "information_required", label: "Waiting on customer" },
+  { key: "site_measurement_required", label: "Site visit" },
+  { key: "ready_for_quote", label: "Ready to quote" },
+  { key: "quote_sent", label: "Quoted" },
+  { key: "converted", label: "Won" },
+  { key: "closed", label: "Closed" },
+  { key: "all", label: "All" },
 ] as const;
 
 export const RFQ_STATUS_LABELS: Record<string, string> = {

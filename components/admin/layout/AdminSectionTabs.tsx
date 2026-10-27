@@ -1,9 +1,11 @@
 import Link from "next/link";
 import type { AdminNavItem } from "@/lib/auth/types";
-import { activeNavItemId, activeSectionId, visibleSections } from "@/lib/admin/navigation";
+import { activeNavItemId, activeSectionId, detailBreadcrumbs, visibleSections } from "@/lib/admin/navigation";
 
 /** The pages of the current section as tabs above the page (hidden when a section has one page). */
 export function AdminSectionTabs({ items, pathname }: { items: AdminNavItem[]; pathname: string }) {
+  // Detail pages have breadcrumbs and their own in-page sections instead.
+  if (detailBreadcrumbs(pathname).length) return null;
   const sectionId = activeSectionId(pathname, items);
   const entry = visibleSections(items).find((s) => s.section.id === sectionId);
   if (!entry || entry.tabs.length < 2) return null;

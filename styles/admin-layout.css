@@ -1889,3 +1889,61 @@ form[aria-busy="true"] {
     display: none;
   }
 }
+
+/* Enquiries: status chips as pills, contact card */
+.rfq-status-strip__list {
+  padding: 0;
+  background: none;
+  border: 0;
+  gap: 0.4rem;
+}
+
+.rfq-status-strip__link {
+  min-height: 2.25rem;
+  align-items: center;
+  padding: 0.3rem 0.75rem;
+  border: 1px solid var(--admin-border);
+  border-radius: 999px;
+  background: #fff;
+}
+
+.rfq-status-strip__link.is-active {
+  background: var(--admin-primary);
+  border-color: var(--admin-primary);
+  outline: 0;
+  color: #fff;
+}
+
+.rfq-status-strip__link.is-active .rfq-status-strip__count {
+  color: #fff;
+}
+
+.rfq-status-strip__count {
+  color: var(--admin-text-muted);
+  font-size: 0.8rem;
+}
+
+.rfq-contact-card__name {
+  display: grid;
+  margin: 0 0 var(--admin-space-2);
+}
+
+.rfq-contact-card__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--admin-space-1);
+}
+
+.rfq-contact-card__resend {
+  margin-top: var(--admin-space-2);
+}
+
+/* Page stacks never grow wider than the screen (a scrolling chip row inside
+   an auto-sized grid column used to push the whole page sideways on phones). */
+.admin-stack--page {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.rfq-status-strip__link {
+  white-space: nowrap;
+}

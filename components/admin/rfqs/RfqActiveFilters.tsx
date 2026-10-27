@@ -1,5 +1,4 @@
 import {
-  RFQ_STATUS_LABELS,
   type RfqInboxFilters,
 } from "@/lib/admin/rfqs/rfq-inbox-types";
 import {
@@ -17,13 +16,7 @@ type Chip = { key: string; label: string; omit: string[] };
 function buildChips(filters: RfqInboxFilters): Chip[] {
   const chips: Chip[] = [];
 
-  if (filters.status) {
-    chips.push({
-      key: "status",
-      label: `Status: ${RFQ_STATUS_LABELS[filters.status] ?? filters.status}`,
-      omit: ["status"],
-    });
-  }
+  // Status is shown by the chips above the list, not repeated here.
   if (filters.province) {
     chips.push({
       key: "province",

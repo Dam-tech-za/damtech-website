@@ -68,7 +68,7 @@ export function RfqInboxTable({
   function handleRowDeleted(id: string) {
     setRemovedIds((prev) => (prev.includes(id) ? prev : [...prev, id]));
     setSelected((prev) => prev.filter((rowId) => rowId !== id));
-    setToastMessage("RFQ deleted successfully.");
+    setToastMessage("Enquiry deleted.");
     window.setTimeout(() => setToastMessage(null), 5000);
   }
 
@@ -87,8 +87,8 @@ export function RfqInboxTable({
   const hasFilters = total !== totalUnfiltered;
   const visibleTotal = Math.max(0, total - removedIds.length);
   const countLabel = hasFilters
-    ? `${visibleTotal} of ${totalUnfiltered} RFQs`
-    : `${visibleTotal} RFQ${visibleTotal === 1 ? "" : "s"}`;
+    ? `${visibleTotal} of ${totalUnfiltered} enquiries`
+    : `${visibleTotal} ${visibleTotal === 1 ? "enquiry" : "enquiries"}`;
 
   return (
     <section className="rfq-inbox-panel">

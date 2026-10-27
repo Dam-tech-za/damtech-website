@@ -17,7 +17,7 @@ export function RfqPageHeader({
   return (
     <AdminPageHeader
       title="Enquiries"
-      description="Every quote request and contact message from the website (RFQs). Open one to see the customer, site and request, then update its status as you follow up."
+      description="Quote requests and messages from the website. Open one to reply and move it along."
       secondaryActions={refreshSlot}
       secondaryAction={
         canExport
@@ -25,7 +25,7 @@ export function RfqPageHeader({
           : undefined
       }
       primaryAction={
-        canManage ? { href: "/quote/", label: "Add enquiry via website form" } : undefined
+        canManage ? { href: "/quote/", label: "Log an enquiry" } : undefined
       }
     />
   );

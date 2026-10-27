@@ -14,6 +14,8 @@ export async function getRfqInbox(filters: RfqInboxFilters): Promise<RfqInboxRes
   const sort = parseRfqInboxSort(filters.sort);
   const listFilters: RFQListFilters = {
     ...filters,
+    // Inbox default: only enquiries still being worked on. "all" lifts it.
+    status: !filters.status ? "open" : filters.status === "all" ? undefined : filters.status,
     ...toListSortParams(sort),
   };
 
