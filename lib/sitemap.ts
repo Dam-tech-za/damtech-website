@@ -8,6 +8,7 @@ import { getProjectSlugs } from "@/lib/projects";
 import { POSTS_PER_PAGE, paginatePosts, posts } from "@/lib/posts";
 import { absoluteUrl } from "@/lib/seo";
 import { INDEXABLE_STATIC_PATHS } from "@/lib/site";
+import { SITEMAP_LASTMOD } from "@/lib/sitemap-lastmod.generated";
 
 function isDisallowedSitemapPath(path: string): boolean {
   const normalised = path.startsWith("/") ? path : `/${path}`;
@@ -28,13 +29,6 @@ function isDisallowedSitemapPath(path: string): boolean {
   );
 }
 
-function staticChangeFrequency(
-  path: string,
-): NonNullable<MetadataRoute.Sitemap[number]["changeFrequency"]> {
-  if (path === "/" || path === "/blog") return "weekly";
-  return "monthly";
-}
-
 function dedupeSitemap(entries: MetadataRoute.Sitemap): MetadataRoute.Sitemap {
   const seen = new Set<string>();
   return entries.filter((entry) => {
@@ -45,31 +39,43 @@ function dedupeSitemap(entries: MetadataRoute.Sitemap): MetadataRoute.Sitemap {
 }
 
 /**
- * Last significant update of the non-blog pages (service, location, product,
- * project and index pages). 18 Oct 2026 = redesign release plus audit fixes.
- * Bump this when page content changes site-wide; blog posts carry their own
- * modified date. Never set it to the build time — Google ignores lastmod that
- * changes on every deploy.
+ * Fallback lastmod for a URL missing from `SITEMAP_LASTMOD` (run
+ * `node scripts/generate-sitemap-lastmod.mjs` after content changes). Never use the
+ * build time — Google ignores lastmod that changes on every deploy.
  */
 export const PAGES_LAST_MODIFIED = new Date("2026-10-19T00:00:00+02:00");
 
+/** Midday SAST keeps the UTC date in sitemap.xml equal to the local calendar date. */
+const SAST_MIDDAY = "T12:00:00+02:00";
+
+function pageLastModified(path: string): Date {
+  const date = SITEMAP_LASTMOD[path];
+  return date ? new Date(`${date}${SAST_MIDDAY}`) : PAGES_LAST_MODIFIED;
+}
+
+function latest(...dates: Date[]): Date {
+  return new Date(Math.max(...dates.map((d) => d.getTime())));
+}
+
 /** Build sitemap entries for all indexable routes (used by app/sitemap.ts). */
 export function buildSitemap(): MetadataRoute.Sitemap {
+  const newestPost = latest(...posts.map((post) => new Date(post.modified)));
+
   const staticEntries: MetadataRoute.Sitemap = INDEXABLE_STATIC_PATHS.filter(
     (path) => !isDisallowedSitemapPath(path),
   ).map((path) => ({
     url: absoluteUrl(path),
-    lastModified: PAGES_LAST_MODIFIED,
-    changeFrequency: staticChangeFrequency(path),
+    lastModified:
+      path === "/blog" ? latest(pageLastModified(path), newestPost) : pageLastModified(path),
   }));
 
   const catalogueEntries: MetadataRoute.Sitemap = CATALOGUE_PRODUCTS.map(
     (product) => {
+      const path = catalogueProductUrlPath(product).replace(/\/$/, "");
       const schemaImages = getSchemaImageUrls(product.images);
       return {
-        url: absoluteUrl(catalogueProductUrlPath(product)),
-        lastModified: PAGES_LAST_MODIFIED,
-        changeFrequency: "monthly" as const,
+        url: absoluteUrl(path),
+        lastModified: pageLastModified(path),
         ...(schemaImages.length > 0 ? { images: schemaImages } : {}),
       };
     },
@@ -77,14 +83,12 @@ export function buildSitemap(): MetadataRoute.Sitemap {
 
   const projectEntries: MetadataRoute.Sitemap = getProjectSlugs().map((slug) => ({
     url: absoluteUrl(`/projects/${slug}`),
-    lastModified: PAGES_LAST_MODIFIED,
-    changeFrequency: "monthly" as const,
+    lastModified: pageLastModified(`/projects/${slug}`),
   }));
 
   const postEntries: MetadataRoute.Sitemap = posts.map((post) => ({
     url: absoluteUrl(`/${post.slug}`),
     lastModified: new Date(post.modified),
-    changeFrequency: "monthly",
   }));
 
   const { totalPages } = paginatePosts(posts, 1, POSTS_PER_PAGE);
@@ -92,8 +96,7 @@ export function buildSitemap(): MetadataRoute.Sitemap {
     { length: Math.max(0, totalPages - 1) },
     (_, i) => ({
       url: absoluteUrl(`/blog/page/${i + 2}`),
-      lastModified: PAGES_LAST_MODIFIED,
-      changeFrequency: "weekly" as const,
+      lastModified: latest(pageLastModified("/blog"), newestPost),
     }),
   );
 
