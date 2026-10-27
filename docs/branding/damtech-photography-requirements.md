@@ -46,3 +46,14 @@ These pages launched without photos because no completed Damtech waterproofing j
 | `/overberg-dam-liners/` | Any Caledon or Bredasdorp farm dam job (Grabouw and Villiersdorp already have project photos) | `caledon-hdpe-farm-dam-lining.jpg` | "HDPE farm dam lining near Caledon, Overberg" |
 
 The Franschhoek job: send photos, location (town only) and scope; it can become a project page and support the Western Cape dam lining page.
+
+## Province dam liner pages (added 27 Oct 2026)
+These five pages launched with generic Damtech installation photos (neutral alt text, no location claimed) because no project from these provinces is on the site yet, except the Marico game lodge in North West. When a real job is done, add one wide "after" photo of the lined dam and, if possible, an aerial. Record town, date, size and client consent.
+
+| Page | Wanted first | Suggested file name | Alt text pattern |
+|---|---|---|---|
+| `/kwazulu-natal-dam-liners/` | Midlands dairy or pasture irrigation dam, lined | `<town>-kzn-hdpe-dam-lining.jpg` | "HDPE-lined irrigation dam near <town>, KwaZulu-Natal" |
+| `/north-west-dam-liners/` | Further Marico game lodge dam shots, or another North West job | `marico-game-lodge-hdpe-dam-<n>.jpg` | "HDPE-lined game lodge dam in the Marico area, North West" |
+| `/northern-cape-dam-liners/` | Irrigation or mine dam along the Orange River | `<town>-northern-cape-hdpe-dam.jpg` | "HDPE dam lining near <town>, Northern Cape" |
+| `/free-state-dam-liners/` | Farm earth dam or stock dam, lined | `<town>-free-state-farm-dam-lining.jpg` | "Lined farm dam near <town>, Free State" |
+| `/eastern-cape-dam-liners/` | Citrus or dairy irrigation dam, lined | `<town>-eastern-cape-hdpe-dam.jpg` | "HDPE-lined irrigation dam near <town>, Eastern Cape" |
