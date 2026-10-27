@@ -23,5 +23,5 @@ export function formatOpsDateTime(value: string | null): string {
 }
 
 export function formatOpsMoney(value: number | null): string {
-  return value === null ? "—" : formatZarExactAmount(value);
+  return value == null || !Number.isFinite(value) ? "—" : formatZarExactAmount(value);
 }

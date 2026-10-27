@@ -14,6 +14,7 @@ import { adminOpsDb } from "@/lib/operations/admin-db";
 import {
   checkNextAction,
   checkStageChange,
+  todayInSouthAfrica,
   MATERIAL_STATUS_LABELS,
   stageLabel,
 } from "@/lib/operations/lifecycle";
@@ -230,7 +231,7 @@ export async function addMaterialOrderAction(_prev: AdminActionState, formData: 
   const projectId = text(formData, "project_id", 64);
   const supplier = text(formData, "supplier_name", 200);
   const description = text(formData, "description", 1000);
-  const status = text(formData, "status", 40) || "quote_requested";
+  const status = text(formData, "status", 40) || "not_ordered";
   const fulfilment = text(formData, "fulfilment", 40) || "tbc";
   const expected = optionalDate(formData, "expected_date");
   if (!UUID.test(projectId)) return actionFailure("This project could not be found.");
@@ -248,6 +249,7 @@ export async function addMaterialOrderAction(_prev: AdminActionState, formData: 
       supplier_name: supplier,
       description,
       quantity: optionalText(formData, "quantity", 200),
+      unit: optionalText(formData, "unit", 40),
       supplier_reference: optionalText(formData, "supplier_reference", 200),
       status,
       fulfilment,
@@ -277,7 +279,7 @@ export async function updateMaterialOrderAction(_prev: AdminActionState, formDat
     const { db, admin } = await adminOpsDb({ permission: "manageOperations" });
     const { data: before, error: readError } = await db
       .from("ops_material_orders")
-      .select("project_id, status, supplier_name")
+      .select("project_id, status, supplier_name, received_date")
       .eq("id", id)
       .maybeSingle();
     if (readError) throw readError;
@@ -288,6 +290,8 @@ export async function updateMaterialOrderAction(_prev: AdminActionState, formDat
         status,
         expected_date: expected,
         supplier_reference: optionalText(formData, "supplier_reference", 200),
+        // Record the receipt date the first time an order is marked collected / delivered.
+        ...(status === "collected_delivered" && !before.received_date ? { received_date: todayInSouthAfrica() } : {}),
       })
       .eq("id", id);
     if (error) throw error;
