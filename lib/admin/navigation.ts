@@ -102,7 +102,7 @@ const SEGMENT_LABELS: Record<string, string> = {
   estimating: "Estimating rules",
   pdf: "PDF layout",
   system: "System health",
-  audit: "Audit log",
+  audit: "Activity log",
 };
 
 const ID_SEGMENT = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -188,7 +188,7 @@ export const ADMIN_SECTIONS: AdminSection[] = [
     id: "settings",
     label: "Settings",
     itemIds: ["settings", "pricing", "project-templates", "audit"],
-    tabLabels: { settings: "Settings", pricing: "Pricing", "project-templates": "Project templates", audit: "Audit log" },
+    tabLabels: { settings: "Settings", pricing: "Pricing", "project-templates": "Project templates", audit: "Activity log" },
   },
 ];
 

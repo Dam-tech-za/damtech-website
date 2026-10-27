@@ -126,7 +126,7 @@ export const ADMIN_NAV_ITEMS: AdminNavItem[] = [
   },
   {
     id: "audit",
-    label: "Audit log",
+    label: "Activity log",
     href: "/admin/audit/",
     description: "Change history",
   },

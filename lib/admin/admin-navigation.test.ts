@@ -85,7 +85,7 @@ describe("admin navigation", () => {
     assert.equal(adminPageTitle("/admin/"), "Overview");
     assert.equal(adminPageTitle("/admin/rfqs/"), "Enquiries");
     assert.equal(adminPageTitle("/admin/quotes/new/"), "Quotations");
-    assert.equal(adminPageTitle("/admin/audit/"), "Audit log");
+    assert.equal(adminPageTitle("/admin/audit/"), "Activity log");
   });
 });
 

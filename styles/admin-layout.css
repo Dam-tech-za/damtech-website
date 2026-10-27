@@ -2113,3 +2113,80 @@ form[aria-busy="true"] {
   gap: 1px;
   min-width: 0;
 }
+
+/* System health at a glance */
+.sys-health {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--admin-space-2);
+}
+
+.sys-health__row {
+  display: grid;
+  grid-template-columns: auto 8rem 9rem minmax(0, 1fr);
+  align-items: center;
+  gap: var(--admin-space-3);
+  padding: 0.75rem 1rem;
+  background: var(--admin-card-bg);
+  border: 1px solid var(--admin-border);
+  border-radius: var(--admin-radius-md);
+}
+
+.sys-health__dot {
+  width: 0.7rem;
+  height: 0.7rem;
+  border-radius: 50%;
+  background: #16a34a;
+}
+
+.sys-health__row--warn .sys-health__dot { background: #d97706; }
+.sys-health__row--bad .sys-health__dot { background: #dc2626; }
+.sys-health__row--bad { border-color: #f1b5b5; background: #fdf5f5; }
+
+.sys-health__label { font-weight: 650; }
+.sys-health__status { font-weight: 600; font-size: 0.875rem; }
+.sys-health__detail { font-size: 0.85rem; color: var(--admin-text-muted); }
+.sys-health__fix { color: var(--admin-text); font-weight: 600; }
+
+@media (max-width: 767px) {
+  .sys-health__row {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  .sys-health__status,
+  .sys-health__detail {
+    grid-column: 2;
+  }
+}
+
+/* Activity log as sentences */
+.audit-feed {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.audit-feed__item {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--admin-space-3);
+  padding: 0.6rem 0.25rem;
+  border-bottom: 1px solid var(--admin-border);
+  font-size: 0.9rem;
+}
+
+.audit-feed__item:last-child { border-bottom: 0; }
+.audit-feed__item--failed { border-left: 3px solid #dc2626; padding-left: 0.6rem; }
+.audit-feed__item--security { border-left: 3px solid #d97706; padding-left: 0.6rem; }
+.audit-feed__item time { white-space: nowrap; }
+
+.ops-review__more {
+  display: grid;
+  gap: var(--admin-space-2);
+}
+
+.ops-review__more[open] {
+  padding-top: var(--admin-space-1);
+}
