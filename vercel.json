@@ -40,6 +40,10 @@
       "schedule": "45 4 * * *"
     },
     {
+      "path": "/api/cron/ops-reminders/",
+      "schedule": "15 5 * * *"
+    },
+    {
       "path": "/api/cron/supabase-keepalive/",
       "schedule": "15 4 * * *"
     },

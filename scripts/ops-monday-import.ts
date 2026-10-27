@@ -55,11 +55,13 @@ if (!url || !key) {
 const db = createClient(url, key, { auth: { persistSession: false } });
 
 const idByMonday = new Map<string, string>();
+const audit = { projectsCreated: 0, projectsSkipped: 0, projectsFlagged: 0, ordersWritten: 0, ordersSkipped: 0 };
 for (const p of projects) {
   const { data: existing, error: readError } = await db.from("ops_projects").select("id").eq("monday_item_id", p.monday_item_id).maybeSingle();
   if (readError) throw readError;
   if (existing) {
     idByMonday.set(p.monday_item_id, existing.id);
+    audit.projectsSkipped++;
     console.log(`skip (exists) ${p.title}`);
     continue;
   }
@@ -73,12 +75,15 @@ for (const p of projects) {
     kind: "project.migrated",
     summary: review_notes.length ? `Migrated from Monday. Check: ${review_notes.join(" ")}` : "Migrated from Monday.",
   });
+  audit.projectsCreated++;
+  if (review_notes.length) audit.projectsFlagged++;
   console.log(`created ${p.title}`);
 }
 
 for (const m of materials) {
   const projectId = idByMonday.get(m.project_monday_item_id);
   if (!projectId) {
+    audit.ordersSkipped++;
     console.log(`skip order (no project) ${m.supplier_name}`);
     continue;
   }
@@ -88,6 +93,10 @@ for (const m of materials) {
     .from("ops_material_orders")
     .upsert({ ...row, project_id: projectId }, { onConflict: "monday_item_id", ignoreDuplicates: true });
   if (error) throw error;
+  audit.ordersWritten++;
   console.log(`order ${m.supplier_name} – ${m.description}`);
 }
-console.log("Done.");
+// Amounts are never imported from Monday: the Xero sync fills them from the
+// quote and invoice numbers stored on each project.
+console.log("\nAudit:", JSON.stringify(audit));
+console.log("Done. Run a Xero sync next so money comes from Xero, then check flagged projects in the admin.");
