@@ -280,11 +280,29 @@ function memoryStore() {
   const quoteLinks = new Map<string, { project_id: string; status: string; quote_date: string | null }>();
   const ignores = new Set<string>();
   const invoiceLinks = new Map<string, InvoiceLinkRow>();
+  const unmatched = new Map<string, { status: "open" | "linked" | "dismissed"; suggested: string | null; reason: string }>();
+  const activity: string[] = [];
   const runs: { id: string; status: string; baseline: boolean }[] = [];
   let running = false;
   let seq = 0;
 
   const store: OpsSyncStore = {
+    async recordUnmatched(rows) {
+      for (const row of rows) {
+        if (!unmatched.has(row.xero_invoice_id)) {
+          unmatched.set(row.xero_invoice_id, { status: "open", suggested: row.suggested_project_id, reason: row.reason });
+        }
+      }
+    },
+    async resolveUnmatched(ids) {
+      for (const id of ids) {
+        const entry = unmatched.get(id);
+        if (entry && entry.status === "open") entry.status = "linked";
+      }
+    },
+    async logInvoiceLinked(row) {
+      activity.push(`linked ${row.invoice_number}`);
+    },
     async startRun() {
       if (running) return null;
       running = true;
@@ -365,7 +383,7 @@ function memoryStore() {
       p.amount_due = summary.due;
     },
   };
-  return { store, projects, quoteLinks, ignores, invoiceLinks, setRunning: (v: boolean) => (running = v) };
+  return { store, projects, quoteLinks, ignores, invoiceLinks, unmatched, activity, setRunning: (v: boolean) => (running = v) };
 }
 
 function fakeBridge(state: { quotes: XeroQuoteSummary[]; invoices: XeroInvoiceSummary[] }) {
@@ -490,15 +508,27 @@ describe("Xero → project sync", () => {
     state.quotes.push(quote("q-new", "QU0400", "ACCEPTED"));
     await runXeroProjectSync(bridge, mem.store, { trigger: "cron", today: TODAY });
 
+    // No quote number in the reference: same customer is not enough, so it
+    // waits in the review queue with the project suggested.
     state.invoices.push(invoice({}));
+    const queued = await runXeroProjectSync(bridge, mem.store, { trigger: "cron", today: TODAY });
+    assert.equal(queued.counts.invoices_linked, 0);
+    assert.equal(queued.counts.invoices_for_review, 1);
+    assert.equal(mem.unmatched.get("i-1")?.suggested, mem.projects[0].id);
+    assert.equal(mem.projects[0].payment_status, "not_invoiced");
+
+    // Once the invoice names the quote it links automatically and leaves the queue.
+    state.invoices[0] = invoice({ reference: "Hire Engineering QU0400" });
     const r = await runXeroProjectSync(bridge, mem.store, { trigger: "cron", today: TODAY });
     assert.equal(r.counts.invoices_linked, 1);
+    assert.equal(mem.unmatched.get("i-1")?.status, "linked");
+    assert.deepEqual(mem.activity, ["linked INV0144"]);
     assert.equal(r.counts.projects_updated, 1);
     assert.equal(mem.projects[0].payment_status, "part_paid");
     assert.equal(mem.projects[0].amount_due, 16311.73);
 
     // Paid in Xero later: same link refreshed, not linked twice.
-    state.invoices[0] = invoice({ status: "PAID", amount_due: 0, amount_paid: 71311.73 });
+    state.invoices[0] = invoice({ reference: "Hire Engineering QU0400", status: "PAID", amount_due: 0, amount_paid: 71311.73 });
     const later = await runXeroProjectSync(bridge, mem.store, { trigger: "cron", today: TODAY });
     assert.equal(later.counts.invoices_linked, 0);
     assert.equal(mem.invoiceLinks.size, 1);

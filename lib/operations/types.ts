@@ -41,11 +41,16 @@ export const PAYMENT_STATUSES = [
 ] as const;
 export type PaymentStatus = (typeof PAYMENT_STATUSES)[number];
 
+/** The Monday "Material Orders & Collections" statuses (procurement only; supplier payment lives in Xero). */
 export const MATERIAL_ORDER_STATUSES = [
+  "not_ordered",
   "quote_requested",
+  "quoted",
   "ordered",
-  "ready",
-  "received",
+  "paid",
+  "ready_for_collection",
+  "collected_delivered",
+  "problem",
   "cancelled",
 ] as const;
 export type MaterialOrderStatus = (typeof MATERIAL_ORDER_STATUSES)[number];
@@ -86,6 +91,7 @@ export type OpsProject = {
   on_hold_reason: string | null;
   next_action: string | null;
   next_action_due: string | null;
+  next_action_owner: string | null;
   project_lead_id: string | null;
   crew: string | null;
   scheduled_start: string | null;
@@ -102,6 +108,9 @@ export type OpsProject = {
   source: "xero_quote" | "monday_migration" | "manual";
   needs_review: boolean;
   monday_item_id: string | null;
+  materials_by_client: boolean;
+  onedrive_url: string | null;
+  archived_at: string | null;
   created_at: string;
   updated_at: string;
   completed_at: string | null;
@@ -114,12 +123,16 @@ export type OpsMaterialOrder = {
   supplier_name: string;
   description: string;
   quantity: string | null;
+  unit: string | null;
   supplier_reference: string | null;
   status: MaterialOrderStatus;
   fulfilment: MaterialFulfilment;
   expected_date: string | null;
+  received_date: string | null;
+  fulfilment_notes: string | null;
   cost_excl_vat: number | null;
   xero_bill_id: string | null;
+  xero_bill_number: string | null;
   notes: string | null;
   created_at: string;
   updated_at: string;
@@ -140,6 +153,50 @@ export type OpsInvoiceLink = {
   due_date: string | null;
   match_method: "reference" | "contact" | "manual";
   last_synced_at: string;
+};
+
+export type OpsTask = {
+  id: string;
+  project_id: string;
+  title: string;
+  kind: "task" | "quality" | "handover";
+  due_date: string | null;
+  owner: string | null;
+  done: boolean;
+  completed_at: string | null;
+  sort_order: number;
+  created_at: string;
+};
+
+export type OpsDocument = {
+  id: string;
+  project_id: string;
+  title: string;
+  url: string;
+  kind: "safety_file" | "supplier_quote" | "drawing" | "photo" | "handover" | "other";
+  created_at: string;
+};
+
+export const DOCUMENT_KINDS = ["safety_file", "supplier_quote", "drawing", "photo", "handover", "other"] as const;
+export const TASK_KINDS = ["task", "quality", "handover"] as const;
+
+export type OpsUnmatchedInvoice = {
+  id: string;
+  xero_invoice_id: string;
+  invoice_number: string | null;
+  reference: string | null;
+  contact_name: string | null;
+  invoice_date: string | null;
+  due_date: string | null;
+  xero_status: string;
+  total_incl_vat: number;
+  amount_paid: number;
+  amount_due: number;
+  reason: string;
+  suggested_project_id: string | null;
+  status: "open" | "linked" | "dismissed";
+  first_seen_at: string;
+  last_seen_at: string;
 };
 
 export type OpsActivity = {

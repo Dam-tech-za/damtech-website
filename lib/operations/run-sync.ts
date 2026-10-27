@@ -15,7 +15,7 @@ export async function runConfiguredXeroSync(trigger: SyncTrigger, options: { bas
     return {
       status: "skipped",
       reason: "bridge_not_configured",
-      counts: { quotes_seen: 0, projects_created: 0, quotes_linked: 0, quotes_ignored: 0, invoices_linked: 0, projects_updated: 0 },
+      counts: { quotes_seen: 0, projects_created: 0, quotes_linked: 0, quotes_ignored: 0, invoices_linked: 0, projects_updated: 0, invoices_for_review: 0 },
       errors: [],
       createdProjectIds: [],
       baseline: options.baseline === true,

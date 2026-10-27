@@ -149,3 +149,65 @@ export function matchInvoiceToProject(
   );
   return open.length === 1 ? { projectId: open[0].id, method: "contact" } : null;
 }
+
+export type InvoiceClassification =
+  | { kind: "linked"; projectId: string; method: "reference" }
+  | { kind: "review"; reason: string; suggestedProjectId: string | null }
+  | { kind: "unrelated" };
+
+/**
+ * What the sync does with an invoice that is not linked yet.
+ *
+ * Only an invoice number listed on a project, or a quote number in the
+ * reference that exactly one project holds, links automatically. A match on
+ * the customer alone is never trusted: it goes to the review queue with the
+ * likely project suggested, so a person confirms it once. Invoices for
+ * customers with no project at all are ordinary sales and are left alone.
+ */
+export function classifyInvoice(
+  invoice: { number: string | null; reference: string | null; contact: string | null; date: string | null },
+  projects: InvoiceMatchProject[],
+): InvoiceClassification {
+  const match = matchInvoiceToProject(invoice, projects);
+  if (match && match.method === "reference") return { kind: "linked", projectId: match.projectId, method: "reference" };
+
+  const numbers = quoteNumbersInReference(invoice.reference);
+  const byQuote = projects.filter((p) => p.xero_quote_numbers.some((q) => numbers.includes(q.toUpperCase())));
+  if (numbers.length && byQuote.length > 1) {
+    return { kind: "review", reason: `The reference ${numbers.join(", ")} appears on more than one project.`, suggestedProjectId: null };
+  }
+  const listed = invoice.number
+    ? projects.filter((p) => p.xero_invoice_numbers.some((n) => upper(n) === upper(invoice.number ?? "")))
+    : [];
+  if (listed.length > 1) {
+    return { kind: "review", reason: "This invoice number is listed on more than one project.", suggestedProjectId: null };
+  }
+
+  const sameCustomer = projects.filter((p) => sameName(invoice.contact, p.customer_name));
+  if (match && match.method === "contact") {
+    return {
+      kind: "review",
+      reason: "Same customer as one open project, but the invoice does not name its quote. Confirm the project once.",
+      suggestedProjectId: match.projectId,
+    };
+  }
+  if (numbers.length) {
+    return {
+      kind: "review",
+      reason: `The reference names ${numbers.join(", ")}, which is not on any project yet.`,
+      suggestedProjectId: null,
+    };
+  }
+  if (sameCustomer.length > 0) {
+    const open = sameCustomer.filter((p) => p.stage !== "completed");
+    return {
+      kind: "review",
+      reason:
+        open.length > 1
+          ? "This customer has more than one project and the invoice does not say which."
+          : "This customer has a project, but the invoice does not name its quote.",
+      suggestedProjectId: null,
+    };
+  }
+  return { kind: "unrelated" };
+}

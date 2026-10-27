@@ -1,7 +1,7 @@
 import { summarisePayment, guessInvoiceKind, type PaymentSummary } from "./payment.ts";
 import {
   buildQuoteImportPayload,
-  matchInvoiceToProject,
+  classifyInvoice,
   type InvoiceMatchProject,
   type QuoteImportPayload,
 } from "./quote-import.ts";
@@ -50,6 +50,21 @@ export type InvoiceLinkRow = {
   match_method: "reference" | "contact" | "manual";
 };
 
+export type UnmatchedRow = {
+  xero_invoice_id: string;
+  invoice_number: string | null;
+  reference: string | null;
+  contact_name: string | null;
+  invoice_date: string | null;
+  due_date: string | null;
+  xero_status: string;
+  total_incl_vat: number;
+  amount_paid: number;
+  amount_due: number;
+  reason: string;
+  suggested_project_id: string | null;
+};
+
 export type SyncCounts = {
   quotes_seen: number;
   projects_created: number;
@@ -57,6 +72,7 @@ export type SyncCounts = {
   quotes_ignored: number;
   invoices_linked: number;
   projects_updated: number;
+  invoices_for_review: number;
 };
 
 export type SyncRunResult = {
@@ -82,6 +98,11 @@ export type OpsSyncStore = {
   upsertInvoiceLinks(rows: InvoiceLinkRow[]): Promise<void>;
   invoiceLinksByProject(): Promise<Map<string, InvoiceLinkRow[]>>;
   updateProjectPayment(projectId: string, summary: PaymentSummary, previous: PaymentStatus): Promise<void>;
+  /** Queue invoices that need a person; never reopens one already linked or dismissed. */
+  recordUnmatched(rows: UnmatchedRow[]): Promise<void>;
+  /** Close queue entries for invoices that are now linked. */
+  resolveUnmatched(invoiceIds: string[]): Promise<void>;
+  logInvoiceLinked(row: InvoiceLinkRow): Promise<void>;
 };
 
 export type SyncOptions = {
@@ -100,6 +121,7 @@ const emptyCounts = (): SyncCounts => ({
   quotes_ignored: 0,
   invoices_linked: 0,
   projects_updated: 0,
+  invoices_for_review: 0,
 });
 
 export function daysBefore(today: string, days: number): string {
@@ -220,24 +242,45 @@ async function syncInvoices(
   const byId = new Map(projects.map((p) => [p.id, p]));
   const existing = await store.existingInvoiceLinks();
   const rows: InvoiceLinkRow[] = [];
+  const newlyLinked: InvoiceLinkRow[] = [];
+  const review: UnmatchedRow[] = [];
 
   for (const inv of invoices) {
     const current = existing.get(inv.id);
     let projectId: string;
     let method: InvoiceLinkRow["match_method"];
+    let isNew = false;
     if (current) {
       projectId = current.project_id;
       method = current.match_method;
     } else {
       if (inv.status.toUpperCase() === "VOIDED") continue;
-      const match = matchInvoiceToProject({ number: inv.number, reference: inv.reference, contact: inv.contact, date: inv.date }, projects);
-      if (!match) continue;
-      projectId = match.projectId;
-      method = match.method;
+      const verdict = classifyInvoice({ number: inv.number, reference: inv.reference, contact: inv.contact, date: inv.date }, projects);
+      if (verdict.kind === "unrelated") continue;
+      if (verdict.kind === "review") {
+        review.push({
+          xero_invoice_id: inv.id,
+          invoice_number: inv.number,
+          reference: inv.reference,
+          contact_name: inv.contact,
+          invoice_date: inv.date,
+          due_date: inv.due_date,
+          xero_status: inv.status,
+          total_incl_vat: num(inv.total),
+          amount_paid: num(inv.amount_paid),
+          amount_due: num(inv.amount_due),
+          reason: verdict.reason,
+          suggested_project_id: verdict.suggestedProjectId,
+        });
+        continue;
+      }
+      projectId = verdict.projectId;
+      method = verdict.method;
+      isNew = true;
       counts.invoices_linked += 1;
     }
     const project = byId.get(projectId);
-    rows.push({
+    const row: InvoiceLinkRow = {
       project_id: projectId,
       xero_invoice_id: inv.id,
       invoice_number: inv.number,
@@ -250,9 +293,19 @@ async function syncInvoices(
       invoice_date: inv.date,
       due_date: inv.due_date,
       match_method: method,
-    });
+    };
+    rows.push(row);
+    if (isNew) newlyLinked.push(row);
   }
   if (rows.length) await store.upsertInvoiceLinks(rows);
+  if (newlyLinked.length) {
+    await store.resolveUnmatched(newlyLinked.map((r) => r.xero_invoice_id));
+    for (const row of newlyLinked) await store.logInvoiceLinked(row);
+  }
+  if (review.length) {
+    await store.recordUnmatched(review);
+    counts.invoices_for_review = review.length;
+  }
 
   const links = await store.invoiceLinksByProject();
   for (const project of projects) {
