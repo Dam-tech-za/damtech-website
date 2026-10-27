@@ -58,7 +58,7 @@ import { formatOpsDate, formatOpsDateTime, formatOpsMoney } from "@/components/a
 
 export const metadata: Metadata = { title: "Project" };
 
-type PageProps = { params: Promise<{ id: string }>; searchParams: Promise<{ created?: string }> };
+type PageProps = { params: Promise<{ id: string }>; searchParams: Promise<{ created?: string; existing?: string }> };
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
@@ -84,7 +84,7 @@ const SECTIONS = [
 export default async function OpsProjectPage({ params, searchParams }: PageProps) {
   const admin = await requireAdmin();
   const { id } = await params;
-  const { created } = await searchParams;
+  const { created, existing } = await searchParams;
   if (!UUID.test(id)) notFound();
   const load = await getOpsProject(id);
 
@@ -122,7 +122,14 @@ export default async function OpsProjectPage({ params, searchParams }: PageProps
         }
       />
 
-      {created ? <AdminInfoBanner tone="info">Project created. Add tasks, supplier orders and documents below.</AdminInfoBanner> : null}
+      {created === "xero" ? (
+        <AdminInfoBanner tone="info">
+          Project created from Xero with the customer, numbers and amounts filled in. Add what Xero doesn&apos;t know: site, scope, dates, contact person and the next action.
+        </AdminInfoBanner>
+      ) : created ? (
+        <AdminInfoBanner tone="info">Project created. Add tasks, supplier orders and documents below.</AdminInfoBanner>
+      ) : null}
+      {existing ? <AdminInfoBanner tone="muted">That Xero record was already on this project.</AdminInfoBanner> : null}
       {p.needs_review ? (
         <AdminInfoBanner tone="warning">
           {p.source === "xero_quote"

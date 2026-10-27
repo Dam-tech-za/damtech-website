@@ -24,6 +24,8 @@ export function hasAnyRole(
 const NAV_ACCESS: Record<AdminNavItemId, readonly AdminRole[]> = {
   dashboard: ["owner", "admin", "sales", "estimator", "viewer"],
   operations: ["owner", "admin", "sales", "estimator", "viewer"],
+  "ops-projects": ["owner", "admin", "sales", "estimator", "viewer"],
+  "xero-review": ["owner", "admin", "sales", "estimator"],
   procurement: ["owner", "admin", "sales", "estimator", "viewer"],
   financials: ["owner", "admin"],
   rfqs: ["owner", "admin", "sales", "estimator", "viewer"],
@@ -46,9 +48,21 @@ export const ADMIN_NAV_ITEMS: AdminNavItem[] = [
   },
   {
     id: "operations",
-    label: "Projects",
+    label: "What needs attention",
     href: "/admin/operations/",
-    description: "Won jobs and next actions",
+    description: "Overdue and upcoming actions on jobs",
+  },
+  {
+    id: "ops-projects",
+    label: "Projects",
+    href: "/admin/operations/projects/",
+    description: "Every job, board or table; add a project",
+  },
+  {
+    id: "xero-review",
+    label: "Unmatched Xero",
+    href: "/admin/operations/xero-review/",
+    description: "Invoices to link to a project",
   },
   {
     id: "procurement",

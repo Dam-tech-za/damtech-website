@@ -10,6 +10,7 @@
 
 export const XERO_BRIDGE_READ_TOOLS = [
   "get_organisation",
+  "get_contacts",
   "get_quotes",
   "get_quote",
   "get_invoices",

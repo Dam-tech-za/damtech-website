@@ -23,6 +23,8 @@ export type AdminProfile = {
 export type AdminNavItemId =
   | "dashboard"
   | "operations"
+  | "ops-projects"
+  | "xero-review"
   | "procurement"
   | "financials"
   | "rfqs"

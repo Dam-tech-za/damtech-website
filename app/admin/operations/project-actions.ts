@@ -14,6 +14,9 @@ import { adminOpsDb } from "@/lib/operations/admin-db";
 import { checkNextAction, todayInSouthAfrica } from "@/lib/operations/lifecycle";
 import { summarisePayment } from "@/lib/operations/payment";
 import { guessInvoiceKind } from "@/lib/operations/payment";
+import { buildQuoteImportPayload, inferService, quoteNumbersInReference } from "@/lib/operations/quote-import";
+import { createXeroBridgeClient, xeroBridgeConfigFromEnv, type XeroInvoiceSummary, type XeroQuoteDetail } from "@/lib/operations/xero-bridge";
+import { stageFromInvoice } from "@/lib/operations/xero-start";
 import {
   DOCUMENT_KINDS,
   TASK_KINDS,
@@ -137,6 +140,7 @@ export async function createProjectAction(_prev: AdminActionState, formData: For
         contact_person: optionalText(formData, "contact_person", 200),
         contact_phone: optionalText(formData, "contact_phone", 40),
         contact_email: optionalText(formData, "contact_email", 200),
+        xero_contact_id: UUID.test(text(formData, "xero_contact_id", 64)) ? text(formData, "xero_contact_id", 64) : null,
         stage,
         next_action: next.action,
         next_action_due: next.due,
@@ -544,32 +548,7 @@ export async function linkUnmatchedInvoiceAction(_prev: AdminActionState, formDa
     if (!project) return actionFailure("That project no longer exists.");
 
     const quoted = project.quoted_total_incl_vat === null ? null : Number(project.quoted_total_incl_vat);
-    const { error: linkError } = await db.from("ops_xero_invoice_links").upsert(
-      {
-        project_id: projectId,
-        xero_invoice_id: entry.xero_invoice_id,
-        invoice_number: entry.invoice_number,
-        reference: entry.reference,
-        kind: guessInvoiceKind(entry.reference, Number(entry.total_incl_vat), quoted),
-        xero_status: entry.xero_status,
-        total_incl_vat: entry.total_incl_vat,
-        amount_paid: entry.amount_paid,
-        amount_due: entry.amount_due,
-        invoice_date: entry.invoice_date,
-        due_date: entry.due_date,
-        match_method: "manual",
-        last_synced_at: new Date().toISOString(),
-      },
-      { onConflict: "xero_invoice_id" },
-    );
-    if (linkError) throw linkError;
-    // Remember the relationship so later syncs never ask again.
-    if (entry.invoice_number) {
-      await db
-        .from("ops_projects")
-        .update({ xero_invoice_numbers: [...new Set([...(project.xero_invoice_numbers ?? []), String(entry.invoice_number).toUpperCase()])] })
-        .eq("id", projectId);
-    }
+    await linkInvoiceToProject(db, project, entry, quoted);
     const { error: closeError } = await db
       .from("ops_xero_unmatched")
       .update({ status: "linked", resolved_project_id: projectId, resolved_by: who.id, resolved_at: new Date().toISOString() })
@@ -612,6 +591,195 @@ export async function dismissUnmatchedAction(_prev: AdminActionState, formData: 
   } catch (error) {
     return fail("dismiss unmatched", error);
   }
+}
+
+type InvoiceToLink = {
+  xero_invoice_id: string;
+  invoice_number: string | null;
+  reference: string | null;
+  xero_status: string;
+  total_incl_vat: number | string;
+  amount_paid: number | string;
+  amount_due: number | string;
+  invoice_date: string | null;
+  due_date: string | null;
+};
+
+/** Links one Xero invoice to a project by hand and remembers its number so later syncs never ask again. */
+async function linkInvoiceToProject(
+  db: SupabaseClient,
+  project: { id: string; xero_invoice_numbers: string[] | null },
+  inv: InvoiceToLink,
+  quoted: number | null,
+) {
+  const { error: linkError } = await db.from("ops_xero_invoice_links").upsert(
+    {
+      project_id: project.id,
+      xero_invoice_id: inv.xero_invoice_id,
+      invoice_number: inv.invoice_number,
+      reference: inv.reference,
+      kind: guessInvoiceKind(inv.reference, Number(inv.total_incl_vat), quoted),
+      xero_status: inv.xero_status,
+      total_incl_vat: inv.total_incl_vat,
+      amount_paid: inv.amount_paid,
+      amount_due: inv.amount_due,
+      invoice_date: inv.invoice_date,
+      due_date: inv.due_date,
+      match_method: "manual",
+      last_synced_at: new Date().toISOString(),
+    },
+    { onConflict: "xero_invoice_id" },
+  );
+  if (linkError) throw linkError;
+  if (inv.invoice_number) {
+    const { error } = await db
+      .from("ops_projects")
+      .update({ xero_invoice_numbers: [...new Set([...(project.xero_invoice_numbers ?? []), String(inv.invoice_number).toUpperCase()])] })
+      .eq("id", project.id);
+    if (error) throw error;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Create a project from a Xero quote or invoice (one click, details prefilled)
+// ---------------------------------------------------------------------------
+
+function bridgeOrNull() {
+  const config = xeroBridgeConfigFromEnv();
+  return config ? createXeroBridgeClient({ ...config, timeoutMs: 15000 }) : null;
+}
+
+type StoredInvoice = InvoiceToLink & { contact_name: string | null; xero_contact_id: string | null };
+
+/** The invoice from Xero itself, else the copy the sync stored for review. */
+async function readInvoice(db: SupabaseClient, xeroId: string): Promise<StoredInvoice | "bill" | null> {
+  const bridge = bridgeOrNull();
+  if (bridge) {
+    try {
+      const x = await bridge.call<XeroInvoiceSummary & { contact_id?: string | null }>("get_invoice", { invoice_id: xeroId });
+      if (String(x.type ?? "ACCREC").toUpperCase() !== "ACCREC") return "bill";
+      return {
+        xero_invoice_id: x.id,
+        invoice_number: x.number,
+        reference: x.reference,
+        xero_status: x.status,
+        total_incl_vat: x.total,
+        amount_paid: x.amount_paid ?? Math.max(0, Number(x.total) - Number(x.amount_due)),
+        amount_due: x.amount_due,
+        invoice_date: x.date,
+        due_date: x.due_date,
+        contact_name: x.contact,
+        xero_contact_id: x.contact_id ?? null,
+      };
+    } catch (error) {
+      console.error("[operations] get_invoice failed, using stored copy:", error instanceof Error ? error.message : error);
+    }
+  }
+  const { data, error } = await db.from("ops_xero_unmatched").select("*").eq("xero_invoice_id", xeroId).maybeSingle();
+  if (error) throw error;
+  return (data as StoredInvoice | null) ?? null;
+}
+
+/**
+ * Creates a project from an accepted Xero quote (the same import the sync
+ * uses, so it is never duplicated) or from a sales invoice (customer, numbers
+ * and value filled in, invoice linked). Amounts are read from Xero on the
+ * server, never taken from the form. Opens the project to fill in the rest.
+ */
+export async function createProjectFromXeroAction(_prev: AdminActionState, formData: FormData): Promise<AdminActionState> {
+  const kind = text(formData, "kind", 10);
+  const xeroId = text(formData, "xero_id", 64);
+  if ((kind !== "quote" && kind !== "invoice") || !UUID.test(xeroId)) return actionFailure("This Xero record could not be found.");
+  let projectId: string | null = null;
+  let created = false;
+  try {
+    const { db, admin, who } = await actor();
+    const today = todayInSouthAfrica();
+
+    if (kind === "quote") {
+      const bridge = bridgeOrNull();
+      if (!bridge) return actionFailure("The Xero connection is not set up on this site.");
+      const detail = await bridge.call<XeroQuoteDetail>("get_quote", { quote_id: xeroId });
+      if (!["ACCEPTED", "INVOICED"].includes(String(detail.status).toUpperCase())) {
+        return actionFailure(`${detail.number} is ${String(detail.status).toLowerCase()} in Xero. Mark it accepted in Xero first.`);
+      }
+      const { data, error } = await db.rpc("ops_import_accepted_quote", { p: buildQuoteImportPayload(detail, today) });
+      if (error) throw error;
+      const row = (Array.isArray(data) ? data[0] : data) as { result_project_id: string; result_created: boolean } | null;
+      if (!row?.result_project_id) throw new Error("No project returned");
+      projectId = row.result_project_id;
+      created = row.result_created === true;
+      if (created) await log(db, projectId, who, "project.created", `Project created from Xero quote ${detail.number}`);
+    } else {
+      const { data: existing, error: existingError } = await db
+        .from("ops_xero_invoice_links")
+        .select("project_id")
+        .eq("xero_invoice_id", xeroId)
+        .maybeSingle();
+      if (existingError) throw existingError;
+      if (existing) {
+        projectId = existing.project_id as string;
+      } else {
+        const inv = await readInvoice(db, xeroId);
+        if (inv === "bill") return actionFailure("That is a supplier bill, not a sales invoice.");
+        if (!inv) return actionFailure("Xero could not be reached just now. Try again in a moment.");
+        if (String(inv.xero_status).toUpperCase() === "VOIDED") return actionFailure("That invoice is voided in Xero.");
+
+        const customer = inv.contact_name?.trim() || "Unknown customer";
+        const number = inv.invoice_number ? String(inv.invoice_number).toUpperCase() : null;
+        const quotes = quoteNumbersInReference(inv.reference);
+        if (quotes.length) {
+          const { data: clash, error: clashError } = await db.from("ops_projects").select("id, title").overlaps("xero_quote_numbers", quotes).limit(1);
+          if (clashError) throw clashError;
+          if (clash?.length) return actionFailure(`This invoice names ${quotes.join(", ")}, which is already on “${clash[0].title}”. Link it there instead.`);
+        }
+        const { data, error } = await db
+          .from("ops_projects")
+          .insert({
+            title: `${customer} – ${inv.reference?.trim() || number || "Xero invoice"}`.slice(0, 200),
+            customer_name: customer.slice(0, 200),
+            xero_contact_id: inv.xero_contact_id && UUID.test(inv.xero_contact_id) ? inv.xero_contact_id : null,
+            service: inferService(inv.reference, []),
+            stage: stageFromInvoice(Number(inv.amount_paid)),
+            next_action: "Fill in the site, scope and dates",
+            next_action_due: today,
+            xero_quote_numbers: quotes,
+            xero_invoice_numbers: number ? [number] : [],
+            source: "manual",
+            needs_review: true,
+          })
+          .select("id, xero_invoice_numbers")
+          .single();
+        if (error) throw error;
+        projectId = data.id as string;
+        created = true;
+        await linkInvoiceToProject(db, { id: projectId, xero_invoice_numbers: data.xero_invoice_numbers as string[] }, inv, null);
+        await recomputeProjectPayment(db, projectId, null);
+        await log(db, projectId, who, "project.created", `Project created from Xero invoice ${number ?? xeroId}`);
+      }
+      // Close any review-queue entry for this invoice.
+      await db
+        .from("ops_xero_unmatched")
+        .update({ status: "linked", resolved_project_id: projectId, resolved_by: who.id, resolved_at: new Date().toISOString() })
+        .eq("xero_invoice_id", xeroId)
+        .eq("status", "open");
+    }
+
+    if (created) {
+      await writeAuditLog({
+        actorUserId: admin.user.id,
+        actorEmail: admin.profile.email,
+        action: "ops_project.created_from_xero",
+        entityType: "ops_project",
+        entityId: projectId,
+        afterData: { kind, xero_id: xeroId },
+      });
+    }
+    refresh(projectId ?? undefined);
+  } catch (error) {
+    return fail("create from xero", error);
+  }
+  redirect(`/admin/operations/projects/${projectId}/?${created ? "created=xero" : "existing=1"}`);
 }
 
 /** Recompute a project's cached payment fields from its linked invoices (same rules as the sync). */

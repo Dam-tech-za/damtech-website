@@ -12,7 +12,9 @@ import type {
   OpsSyncRun,
   ProjectStage,
 } from "./types";
-import { xeroBridgeConfigFromEnv } from "./xero-bridge";
+import { createXeroBridgeClient, xeroBridgeConfigFromEnv, type XeroInvoiceSummary, type XeroQuoteSummary } from "./xero-bridge";
+import { unclaimedXeroItems, type XeroContactOption, type XeroStartItem } from "./xero-start";
+import { daysBefore } from "./sync";
 
 /**
  * Read side of the Operations screens. Every loader reports `setup` so pages
@@ -291,4 +293,72 @@ export async function listProcurement(includeClosed = false): Promise<OpsLoad<Pr
       };
     }),
   };
+}
+
+export type XeroStartData = {
+  items: XeroStartItem[];
+  contacts: XeroContactOption[];
+  /** Plain-words problem reading Xero; the form still works by hand. */
+  xeroError: string | null;
+};
+
+/**
+ * Recent accepted quotes and sales invoices that are not on a project yet,
+ * plus a Xero customer search. Read-only through the bridge; one page of each
+ * list to protect the daily Xero call budget.
+ */
+export async function loadXeroStart(options: { search?: string; contact?: { id: string; name: string } | null } = {}): Promise<OpsLoad<XeroStartData>> {
+  const { db } = await adminOpsDb();
+  const [projects, invoiceLinks, quoteLinks] = await Promise.all([
+    db.from("ops_projects").select("xero_quote_numbers, xero_invoice_numbers").limit(2000),
+    db.from("ops_xero_invoice_links").select("xero_invoice_id").limit(5000),
+    db.from("ops_xero_quote_links").select("xero_quote_id").limit(5000),
+  ]);
+  const err = projects.error ?? invoiceLinks.error ?? quoteLinks.error;
+  if (err) return failure(err, "xero start");
+  const setup = { tablesReady: true, bridgeConfigured: bridgeConfigured() };
+  const config = xeroBridgeConfigFromEnv();
+  if (!config) return { ok: true, setup, data: { items: [], contacts: [], xeroError: "The Xero connection is not set up on this site." } };
+
+  const bridge = createXeroBridgeClient({ ...config, timeoutMs: 15000 });
+  const today = todayInSouthAfrica();
+  const search = options.search?.trim().slice(0, 80) ?? "";
+  // One customer: all their quotes; everyone: only recent ones.
+  const forContact = (days: number) => (options.contact ? { contact_id: options.contact.id } : { date_from: daysBefore(today, days) });
+  try {
+    const [accepted, invoiced, invoices, contacts] = await Promise.all([
+      bridge.call<XeroQuoteSummary[]>("get_quotes", { status: "ACCEPTED", ...forContact(180), page: 1 }),
+      bridge.call<XeroQuoteSummary[]>("get_quotes", { status: "INVOICED", ...forContact(120), page: 1 }),
+      bridge.call<XeroInvoiceSummary[]>("get_invoices", {
+        kind: "sales",
+        status: "AUTHORISED,PAID",
+        ...(options.contact?.name ? { contact_name: options.contact.name } : { date_from: daysBefore(today, 120) }),
+        page: 1,
+      }),
+      search
+        ? bridge.call<{ id: string; name: string; email: string | null; is_customer?: boolean; status?: string }[]>("get_contacts", { search, page: 1 })
+        : Promise.resolve([]),
+    ]);
+    const claimed = {
+      quoteNumbers: new Set((projects.data ?? []).flatMap((p) => (p.xero_quote_numbers ?? []).map((n: string) => n.toUpperCase()))),
+      invoiceNumbers: new Set((projects.data ?? []).flatMap((p) => (p.xero_invoice_numbers ?? []).map((n: string) => n.toUpperCase()))),
+      quoteIds: new Set((quoteLinks.data ?? []).map((q) => q.xero_quote_id as string)),
+      invoiceIds: new Set((invoiceLinks.data ?? []).map((i) => i.xero_invoice_id as string)),
+    };
+    return {
+      ok: true,
+      setup,
+      data: {
+        items: unclaimedXeroItems([...accepted, ...invoiced], invoices, claimed, options.contact).slice(0, 40),
+        contacts: contacts
+          .filter((c) => c.status !== "ARCHIVED")
+          .slice(0, 15)
+          .map((c) => ({ id: c.id, name: c.name, email: c.email ?? null })),
+        xeroError: null,
+      },
+    };
+  } catch (error) {
+    console.error("[operations] xero start:", error instanceof Error ? error.message : error);
+    return { ok: true, setup, data: { items: [], contacts: [], xeroError: "Xero could not be reached just now. You can still fill in the form by hand." } };
+  }
 }

@@ -14,7 +14,7 @@ export type AdminNavGroup = {
 
 export const ADMIN_NAV_GROUPS: AdminNavGroup[] = [
   { id: "overview", label: "Overview", itemIds: ["dashboard"] },
-  { id: "operations", label: "Operations", itemIds: ["operations", "procurement", "financials"] },
+  { id: "operations", label: "Operations", itemIds: ["operations", "ops-projects", "procurement", "xero-review", "financials"] },
   {
     id: "sales",
     label: "Sales",
@@ -92,6 +92,7 @@ const SEGMENT_LABELS: Record<string, string> = {
   suppliers: "Suppliers",
   review: "Price review",
   new: "New",
+  "xero-review": "Unmatched Xero records",
   edit: "Edit",
   preview: "Preview",
   revisions: "Revisions",
