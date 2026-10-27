@@ -7,6 +7,7 @@ import { getPostCta, getPostServiceLinks } from "@/lib/internal-links";
 import { createArticleSchema, createMetadata } from "@/lib/seo";
 import { DEFAULT_OG_IMAGE } from "@/lib/images";
 import { getPostBySlug, getPostSlugs, getRelatedPosts, resolvePostDescription } from "@/lib/posts";
+import { getLocalPageSlugs } from "@/lib/local-pages";
 import { getSubServiceSlugs } from "@/lib/sub-service-pages";
 import { RESIDENTIAL_WATERPROOFING_SLUGS } from "@/lib/residential-waterproofing";
 import { BLOG_AUTHOR } from "@/lib/site";
@@ -51,6 +52,7 @@ const RESERVED = new Set([
   "western-cape-dam-liners",
   "author",
   ...getSubServiceSlugs(),
+  ...getLocalPageSlugs(),
   ...RESIDENTIAL_WATERPROOFING_SLUGS,
 ]);
 

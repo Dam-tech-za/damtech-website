@@ -338,6 +338,11 @@ export const FOOTER_REGION_LINKS: NavLink[] = [
   { href: "/mpumalanga-dam-liners", label: "Mpumalanga" },
   { href: "/pretoria-dam-liners", label: "Pretoria" },
   { href: "/johannesburg-dam-liners", label: "Johannesburg" },
+  { href: "/kwazulu-natal-dam-liners", label: "KwaZulu-Natal" },
+  { href: "/north-west-dam-liners", label: "North West" },
+  { href: "/free-state-dam-liners", label: "Free State" },
+  { href: "/northern-cape-dam-liners", label: "Northern Cape" },
+  { href: "/eastern-cape-dam-liners", label: "Eastern Cape" },
 ];
 
 /**
@@ -384,6 +389,11 @@ export const INDEXABLE_STATIC_PATHS = [
   "/mpumalanga-dam-liners",
   "/western-cape-dam-liners",
   "/overberg-dam-liners",
+  "/kwazulu-natal-dam-liners",
+  "/north-west-dam-liners",
+  "/northern-cape-dam-liners",
+  "/free-state-dam-liners",
+  "/eastern-cape-dam-liners",
   "/farm-dam-liners",
   "/mining-dam-liners",
   "/agricultural-water-storage",

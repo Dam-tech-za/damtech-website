@@ -3,6 +3,7 @@ import { Hero } from "@/components/Hero";
 import { PageImage } from "@/components/PageImage";
 import { PageSeo } from "@/components/PageSeo";
 import { FAQ } from "@/components/FAQ";
+import { ArrowRightIcon, CheckCircleIcon } from "@/components/icons/StrokeIcons";
 import { PageSectionHeader } from "@/components/PageSectionHeader";
 import { RelatedServicesGrid } from "@/components/RelatedServicesGrid";
 import { SiteSection } from "@/components/SiteSection";
@@ -37,6 +38,29 @@ const CONTENT_SECTIONS: Array<{
   { key: "sectors", heading: "Agriculture, Mining & Industry", eyebrow: "SECTORS" },
   { key: "waterStorage", heading: "Water Storage Needs", eyebrow: "STORAGE" },
 ];
+
+const PLAN_LINKS = [
+  {
+    href: "/hdpe-dam-lining",
+    label: "HDPE dam lining",
+    note: " for large earth dams, mine and effluent dams.",
+  },
+  {
+    href: "/pvc-dam-lining",
+    label: "PVC dam lining",
+    note: " for ponds, steel tanks and smaller dams.",
+  },
+  {
+    href: "/dam-lining-cost-south-africa",
+    label: "Dam lining cost guide",
+    note: " to see what drives the price of a lined dam.",
+  },
+  {
+    href: "/quote",
+    label: "Request a dam lining quote",
+    note: " with your dam size, location and photos.",
+  },
+] as const;
 
 export function LocalSeoPage({ page }: LocalSeoPageProps) {
   const isWesternCape = page.slug === "western-cape-dam-liners";
@@ -113,6 +137,20 @@ export function LocalSeoPage({ page }: LocalSeoPageProps) {
               ))}
             </div>
 
+            {page.typicalUses && page.typicalUses.length > 0 ? (
+              <div className="mt-10">
+                <PageSectionHeader title="Typical Local Uses" eyebrow="WHERE LINERS ARE USED" />
+                <ul className="dt-checklist">
+                  {page.typicalUses.map((use) => (
+                    <li key={use}>
+                      <CheckCircleIcon className="dt-checklist__icon" aria-hidden />
+                      <span>{use}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ) : null}
+
             <div className="mt-10">
               <PageSectionHeader
                 title="Damtech Services in This Area"
@@ -122,6 +160,23 @@ export function LocalSeoPage({ page }: LocalSeoPageProps) {
                 {page.services.map((service) => (
                   <li key={service} className="home-why-choose__card">
                     <p className="home-why-choose__card-text">{service}</p>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div className="mt-10">
+              <PageSectionHeader title="Plan Your Dam Liner" eyebrow="NEXT STEPS" />
+              <ul className="dt-checklist">
+                {PLAN_LINKS.map((link) => (
+                  <li key={link.href}>
+                    <ArrowRightIcon className="dt-checklist__icon" aria-hidden />
+                    <span>
+                      <Link href={link.href} className="font-medium text-water hover:text-navy">
+                        {link.label}
+                      </Link>
+                      {link.note}
+                    </span>
                   </li>
                 ))}
               </ul>

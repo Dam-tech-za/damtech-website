@@ -1,5 +1,7 @@
+import Link from "next/link";
 import { Hero } from "@/components/Hero";
 import { SITE_IMAGES } from "@/lib/images";
+import { PageSectionHeader } from "@/components/PageSectionHeader";
 import { PageSeo } from "@/components/PageSeo";
 import { SiteSection } from "@/components/SiteSection";
 import {
@@ -28,6 +30,7 @@ import {
   DAM_LINERS_CONTENT,
   DAM_LINERS_SCHEMA_OFFERS,
 } from "@/lib/service-pages-content";
+import { FOOTER_REGION_LINKS } from "@/lib/site";
 
 const seo = PAGE_SEO["dam-liners"];
 
@@ -168,6 +171,26 @@ export default function DamLinersPage() {
       <ProcessStepsSection />
 
       <ProjectProofStrip title="Dam lining projects" projects={DAM_PROJECTS} />
+
+      <SiteSection>
+        <PageSectionHeader
+          eyebrow="BY REGION"
+          title="Dam Liners by Region"
+          intro="Local conditions, typical uses and FAQs for dam lining in each area Damtech serves."
+        />
+        <ul className="home-why-choose__links">
+          {FOOTER_REGION_LINKS.map((link) => (
+            <li key={link.href}>
+              <Link href={link.href} className="home-why-choose__link-card">
+                <span className="home-why-choose__link-label">Dam liners in {link.label}</span>
+                <span className="home-why-choose__link-arrow" aria-hidden>
+                  →
+                </span>
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </SiteSection>
 
       <ServiceFaqSection faqs={DAM_LINERS_CONTENT.faqs} />
 

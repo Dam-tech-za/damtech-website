@@ -23,7 +23,13 @@ const MAX_IMPORTED_BLOCK_LINES = 400;
 /** Non-indexable route trees; /quote itself is kept, its sub-routes are not. */
 const SKIP_ROUTES = ["admin", "auth", "api", "author", "order", "q", "thank-you", "category"];
 
-const git = (args) => execFileSync("git", args, { cwd: ROOT, encoding: "utf8", maxBuffer: 64 * 1024 * 1024 });
+const git = (args) =>
+  execFileSync("git", args, {
+    cwd: ROOT,
+    encoding: "utf8",
+    maxBuffer: 64 * 1024 * 1024,
+    stdio: ["ignore", "pipe", "pipe"],
+  });
 const read = (file) => fs.readFileSync(path.join(ROOT, file), "utf8").replace(/\r\n/g, "\n");
 const nowSec = Math.floor(Date.now() / 1000);
 

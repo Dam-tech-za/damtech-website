@@ -1,4 +1,5 @@
 import { IMAGE_PATHS } from "./images";
+import { PROVINCE_LANDING_PAGES } from "./local-pages-provinces";
 import {
   AGRICULTURAL_STORAGE_SCHEMA_OFFERS,
   MINING_LINERS_SCHEMA_OFFERS,
@@ -26,6 +27,8 @@ export type LocalLandingPage = {
   irrigation: string;
   sectors: string;
   waterStorage: string;
+  /** Short list of typical local uses for lined dams (farms, mines, effluent, irrigation). */
+  typicalUses?: string[];
   services: string[];
   faqs: LocalFaqItem[];
   relatedProjects: Array<{ href: string; label: string }>;
@@ -661,10 +664,12 @@ export const LOCAL_LANDING_PAGES: LocalLandingPage[] = [
   },
 ];
 
+const ALL_LOCAL_PAGES: LocalLandingPage[] = [...LOCAL_LANDING_PAGES, ...PROVINCE_LANDING_PAGES];
+
 export function getLocalPageBySlug(slug: string): LocalLandingPage | undefined {
-  return LOCAL_LANDING_PAGES.find((page) => page.slug === slug);
+  return ALL_LOCAL_PAGES.find((page) => page.slug === slug);
 }
 
 export function getLocalPageSlugs(): string[] {
-  return LOCAL_LANDING_PAGES.map((page) => page.slug);
+  return ALL_LOCAL_PAGES.map((page) => page.slug);
 }
