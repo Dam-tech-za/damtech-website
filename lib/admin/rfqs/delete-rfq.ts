@@ -87,12 +87,19 @@ export function validateTypedRfqConfirmation(
 export function assessRfqDeleteBlockers(input: {
   status: string;
   convertedQuoteId: string | null;
+  /** Xero quote linked via allocate-xero-quote (optional for older call sites). */
+  xeroQuoteId?: string | null;
   linkedQuoteCount: number;
   sentCommunicationCount: number;
   answeredInfoRequestCount: number;
   hasConfirmedAssetQuantities: boolean;
 }): RfqDeleteBlockAssessment {
-  if (input.status === "converted" || input.convertedQuoteId) {
+  if (
+    input.status === "converted" ||
+    input.status === "quote_sent" ||
+    input.convertedQuoteId ||
+    input.xeroQuoteId
+  ) {
     return blocked(
       "This RFQ cannot be permanently deleted because it is linked to quotation or business history. Close or archive it instead.",
     );

@@ -54,11 +54,16 @@ export function RfqDetailActions({
             label: "Request information",
             href: `${detailHref}#information`,
           },
+          {
+            id: "xero-quote",
+            label: "Allocate Xero quote",
+            href: `${detailHref}#rfq-xero-quote`,
+          },
           ...(canQuote && !hasQuote
             ? [
                 {
                   id: "convert",
-                  label: "Convert to quote",
+                  label: "Convert to website quote",
                   href: `${detailHref}#rfq-prepare-quote`,
                 },
               ]

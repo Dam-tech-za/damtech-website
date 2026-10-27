@@ -97,6 +97,7 @@ export const RFQ_STATUS_STRIP = [
   { key: "information_required", label: "Info required" },
   { key: "site_measurement_required", label: "Site measurement" },
   { key: "ready_for_quote", label: "Ready" },
+  { key: "quote_sent", label: "Quote sent" },
   { key: "converted", label: "Converted" },
 ] as const;
 
@@ -106,6 +107,7 @@ export const RFQ_STATUS_LABELS: Record<string, string> = {
   information_required: "Information Required",
   site_measurement_required: "Site Measurement",
   ready_for_quote: "Ready for Quote",
+  quote_sent: "Quote sent",
   converted: "Converted",
   closed: "Closed",
   spam: "Spam",

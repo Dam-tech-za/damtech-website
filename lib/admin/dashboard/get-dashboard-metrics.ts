@@ -398,6 +398,7 @@ export async function getDashboardMetrics(
       { status: "information_required", label: "Information Required" },
       { status: "site_measurement_required", label: "Site Measurement Needed" },
       { status: "ready_for_quote", label: "Ready for Quote" },
+      { status: "quote_sent", label: "Quote sent" },
       { status: "converted", label: "Converted" },
     ];
 

@@ -20,6 +20,14 @@ import {
   describeActionError,
   type AdminActionState,
 } from "@/lib/admin/action-state";
+import {
+  buildAllocateXeroQuotePatch,
+  resolveXeroQuote,
+} from "@/lib/rfq/allocate-xero-quote";
+import {
+  createXeroBridgeClient,
+  xeroBridgeConfigFromEnv,
+} from "@/lib/operations/xero-bridge";
 
 type CurrentAdminRecord = Awaited<ReturnType<typeof assertAdmin>>;
 
@@ -446,4 +454,189 @@ export async function prepareQuoteSuggestionsAction(
   formData: FormData,
 ): Promise<void> {
   await convertRfqAction(formData);
+}
+
+export async function allocateXeroQuoteAction(
+  _prev: AdminActionState,
+  formData: FormData,
+): Promise<AdminActionState> {
+  const rfqId = String(formData.get("rfqId") ?? "");
+  const quoteInput = String(formData.get("xeroQuoteNumber") ?? "");
+  if (!rfqId) return actionFailure("Enquiry not found.");
+
+  try {
+    const admin = await assertAdmin({ permission: "manageRfqs" });
+    const config = xeroBridgeConfigFromEnv();
+    if (!config) {
+      return actionFailure(
+        "Xero is not connected on this server (XERO_BRIDGE_API_KEY). Set it, then try again.",
+      );
+    }
+
+    const supabase = await createClient();
+    const { data: before, error: loadError } = await supabase
+      .from("rfqs")
+      .select(
+        "id, rfq_number, status, xero_quote_id, xero_quote_number",
+      )
+      .eq("id", rfqId)
+      .maybeSingle();
+    if (loadError) {
+      console.error("[rfq] allocate load failed:", loadError.message);
+      return actionFailure(describeActionError(loadError));
+    }
+    if (!before) return actionFailure("This enquiry no longer exists.");
+
+    const bridge = createXeroBridgeClient(config);
+    const resolved = await resolveXeroQuote(bridge, quoteInput);
+    if (!resolved.ok) return actionFailure(resolved.error);
+
+    const built = buildAllocateXeroQuotePatch({
+      quote: resolved.quote,
+      currentStatus: before.status,
+    });
+    if (!built.ok) return actionFailure(built.error);
+
+    if (
+      before.xero_quote_id &&
+      before.xero_quote_id !== resolved.quote.id
+    ) {
+      // Replacing an existing link is allowed; uniqueness is on the new id.
+    }
+
+    const { data: conflict } = await supabase
+      .from("rfqs")
+      .select("id, rfq_number")
+      .eq("xero_quote_id", resolved.quote.id)
+      .neq("id", rfqId)
+      .maybeSingle();
+    if (conflict) {
+      return actionFailure(
+        `${resolved.quote.number} is already linked to ${conflict.rfq_number}.`,
+      );
+    }
+
+    const { error } = await supabase
+      .from("rfqs")
+      .update(built.patch)
+      .eq("id", rfqId);
+    if (error) {
+      console.error("[rfq] allocate update failed:", error.message);
+      return actionFailure(describeActionError(error));
+    }
+
+    const statusNote =
+      built.patch.status === before.status
+        ? `Status stays ${statusLabel(before.status)}.`
+        : `Status: ${statusLabel(before.status)} → ${statusLabel(built.patch.status)}.`;
+
+    await insertRfqEvents(admin, [
+      {
+        rfqId,
+        eventType: "xero_quote_allocated",
+        message: `Xero quote ${resolved.quote.number} (${resolved.quote.status}) allocated. ${statusNote}`,
+        metadata: {
+          xero_quote_id: resolved.quote.id,
+          xero_quote_number: resolved.quote.number,
+          xero_quote_status: resolved.quote.status,
+          from_status: before.status,
+          to_status: built.patch.status,
+        },
+      },
+    ]);
+    await writeAuditLog({
+      actorUserId: admin.user.id,
+      actorEmail: admin.user.email,
+      action: "rfq_xero_quote_allocated",
+      entityType: "rfq",
+      entityId: rfqId,
+      beforeData: {
+        status: before.status,
+        xero_quote_id: before.xero_quote_id,
+        xero_quote_number: before.xero_quote_number,
+      },
+      afterData: built.patch,
+    });
+
+    revalidatePath("/admin/");
+    revalidatePath("/admin/rfqs/");
+    revalidatePath(`/admin/rfqs/${rfqId}/`);
+    return actionSuccess(
+      `Linked ${resolved.quote.number} (${resolved.quote.status}). Enquiry marked ${statusLabel(built.patch.status)}.`,
+    );
+  } catch (error) {
+    unstable_rethrow(error);
+    console.error("[rfq] allocate xero quote:", error);
+    return actionFailure(describeActionError(error));
+  }
+}
+
+export async function clearXeroQuoteAllocationAction(
+  _prev: AdminActionState,
+  formData: FormData,
+): Promise<AdminActionState> {
+  const rfqId = String(formData.get("rfqId") ?? "");
+  if (!rfqId) return actionFailure("Enquiry not found.");
+
+  try {
+    const admin = await assertAdmin({ permission: "manageRfqs" });
+    const supabase = await createClient();
+    const { data: before } = await supabase
+      .from("rfqs")
+      .select("status, xero_quote_id, xero_quote_number, xero_quote_status")
+      .eq("id", rfqId)
+      .maybeSingle();
+    if (!before) return actionFailure("This enquiry no longer exists.");
+    if (!before.xero_quote_id && !before.xero_quote_number) {
+      return actionSuccess("No Xero quote is linked to this enquiry.");
+    }
+
+    const patch: Record<string, unknown> = {
+      xero_quote_id: null,
+      xero_quote_number: null,
+      xero_quote_status: null,
+      xero_quote_allocated_at: null,
+    };
+    // Only roll status back when it was set by allocation.
+    if (before.status === "quote_sent") {
+      patch.status = "reviewing";
+    }
+
+    const { error } = await supabase.from("rfqs").update(patch).eq("id", rfqId);
+    if (error) {
+      console.error("[rfq] clear xero quote failed:", error.message);
+      return actionFailure(describeActionError(error));
+    }
+
+    await insertRfqEvents(admin, [
+      {
+        rfqId,
+        eventType: "xero_quote_cleared",
+        message: `Cleared Xero quote ${before.xero_quote_number ?? before.xero_quote_id}.`,
+        metadata: {
+          cleared_quote_id: before.xero_quote_id,
+          cleared_quote_number: before.xero_quote_number,
+          from_status: before.status,
+          to_status: patch.status ?? before.status,
+        },
+      },
+    ]);
+    await writeAuditLog({
+      actorUserId: admin.user.id,
+      actorEmail: admin.user.email,
+      action: "rfq_xero_quote_cleared",
+      entityType: "rfq",
+      entityId: rfqId,
+      beforeData: before,
+      afterData: patch,
+    });
+
+    revalidatePath("/admin/");
+    revalidatePath("/admin/rfqs/");
+    revalidatePath(`/admin/rfqs/${rfqId}/`);
+    return actionSuccess("Xero quote link cleared.");
+  } catch (error) {
+    unstable_rethrow(error);
+    return actionFailure(describeActionError(error));
+  }
 }

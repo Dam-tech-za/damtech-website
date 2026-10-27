@@ -13,6 +13,7 @@ const STAGE_CLASS: Record<string, string> = {
   information_required: "is-info",
   site_measurement_required: "is-measure",
   ready_for_quote: "is-ready",
+  quote_sent: "is-converted",
   converted: "is-converted",
 };
 

@@ -105,6 +105,20 @@ describe("assessRfqDeleteBlockers", () => {
     assert.equal(result.code, "RFQ_DELETE_BLOCKED");
   });
 
+  it("blocks quote_sent and Xero-linked RFQs", () => {
+    assert.equal(
+      assessRfqDeleteBlockers({ ...base, status: "quote_sent" }).blocked,
+      true,
+    );
+    assert.equal(
+      assessRfqDeleteBlockers({
+        ...base,
+        xeroQuoteId: "11111111-1111-4111-8111-111111111111",
+      }).blocked,
+      true,
+    );
+  });
+
   it("blocks linked quotes", () => {
     const result = assessRfqDeleteBlockers({
       ...base,

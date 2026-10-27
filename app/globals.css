@@ -4244,6 +4244,7 @@
     color: var(--color-navy-dark);
   }
   .admin-status--reviewing { background: #fef3c7; color: #92400e; }
+  .admin-status--quote_sent { background: #dbeafe; color: #1e3a8a; }
   .admin-status--spam { background: #fee2e2; color: #991b1b; }
 
   .admin-source-badge {

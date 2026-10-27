@@ -4,6 +4,7 @@ export const RFQ_STATUSES = [
   "site_measurement_required",
   "information_required",
   "ready_for_quote",
+  "quote_sent",
   "converted",
   "closed",
   "spam",

@@ -23,6 +23,8 @@ const RFQ_EVENT_LABELS: Record<string, string> = {
   asset_confirmed: "Measurements confirmed",
   calculation_overridden: "Quantities overridden",
   converted_to_quote: "Converted to quotation",
+  xero_quote_allocated: "Xero quote allocated",
+  xero_quote_cleared: "Xero quote link cleared",
 };
 
 export function rfqEventLabel(code: string | null | undefined): string {

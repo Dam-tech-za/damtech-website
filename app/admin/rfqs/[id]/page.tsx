@@ -13,12 +13,15 @@ import {
 } from "@/lib/rfq/quantity-summary";
 import {
   addRfqNoteAction,
+  allocateXeroQuoteAction,
   assignRfqAction,
+  clearXeroQuoteAllocationAction,
   convertRfqAction,
   createInfoRequestAction,
   updateMeasurementScheduleAction,
   updateRfqStatusAction,
 } from "../actions";
+import { xeroBridgeConfigFromEnv } from "@/lib/operations/xero-bridge";
 import { CalculatorResultsPanel } from "@/components/admin/CalculatorResultsPanel";
 import { RfqAssetReviewPanels } from "@/components/admin/RfqAssetReviewPanels";
 import {
@@ -259,6 +262,11 @@ export default async function AdminRfqDetailPage({
                 Call
               </AdminButton>
             ) : null}
+            {rfq.xero_quote_number ? (
+              <AdminButton href="#rfq-xero-quote" variant="secondary">
+                Xero {rfq.xero_quote_number}
+              </AdminButton>
+            ) : null}
             {quote ? (
               <AdminButton
                 href={`/admin/quotes/${quote.id}/edit/`}
@@ -267,9 +275,14 @@ export default async function AdminRfqDetailPage({
                 Open quote {quote.quote_number}
               </AdminButton>
             ) : null}
+            {canManage && !rfq.xero_quote_number ? (
+              <AdminButton href="#rfq-xero-quote" variant="primary">
+                Allocate Xero quote
+              </AdminButton>
+            ) : null}
             {canQuote && !quote ? (
-              <AdminButton href="#rfq-prepare-quote" variant="primary">
-                Convert to Quote
+              <AdminButton href="#rfq-prepare-quote" variant="secondary">
+                Convert to website quote
               </AdminButton>
             ) : null}
             {canManage || canDelete ? (
@@ -586,6 +599,56 @@ export default async function AdminRfqDetailPage({
             </ul>
           )}
         </AdminPanel>
+
+        {canManage ? (
+          <AdminPanel
+            id="rfq-xero-quote"
+            title="Xero quote"
+            description="After you send the quote in Xero, enter its number here. That marks the enquiry as attended (Quote sent)."
+          >
+            {rfq.xero_quote_number ? (
+              <div className="admin-stack-form">
+                <p>
+                  Linked{" "}
+                  <strong>{rfq.xero_quote_number}</strong>
+                  {rfq.xero_quote_status
+                    ? ` · Xero status ${rfq.xero_quote_status}`
+                    : null}
+                  {rfq.xero_quote_allocated_at
+                    ? ` · allocated ${new Date(rfq.xero_quote_allocated_at).toLocaleString("en-ZA")}`
+                    : null}
+                </p>
+                <AdminActionForm
+                  action={clearXeroQuoteAllocationAction}
+                  confirmMessage={`Clear the link to ${rfq.xero_quote_number}? The enquiry stays in the inbox; status goes back to Reviewing if it was Quote sent.`}
+                >
+                  <input type="hidden" name="rfqId" value={rfq.id} />
+                  <AdminSubmitButton variant="secondary">
+                    Clear Xero link
+                  </AdminSubmitButton>
+                </AdminActionForm>
+              </div>
+            ) : xeroBridgeConfigFromEnv() ? (
+              <AdminActionForm action={allocateXeroQuoteAction} className="admin-inline-form">
+                <input type="hidden" name="rfqId" value={rfq.id} />
+                <AdminInput
+                  name="xeroQuoteNumber"
+                  placeholder="QU0288"
+                  aria-label="Xero quote number"
+                  required
+                />
+                <AdminSubmitButton pendingLabel="Checking Xero…">
+                  Allocate & mark attended
+                </AdminSubmitButton>
+              </AdminActionForm>
+            ) : (
+              <AdminEmptyState
+                title="Xero is not connected on this server."
+                description="Set XERO_BRIDGE_API_KEY (same key that powers Financials), then refresh this page."
+              />
+            )}
+          </AdminPanel>
+        ) : null}
 
         {canManage ? (
           <AdminPanel

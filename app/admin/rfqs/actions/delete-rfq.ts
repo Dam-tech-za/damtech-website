@@ -61,7 +61,7 @@ export async function deleteRfqAction(input: {
   const { data: rfq, error: rfqError } = await supabase
     .from("rfqs")
     .select(
-      "id, rfq_number, status, contact_name, company_name, service_required, submitted_at, converted_quote_id, measurement_report_attachment_id",
+      "id, rfq_number, status, contact_name, company_name, service_required, submitted_at, converted_quote_id, xero_quote_id, measurement_report_attachment_id",
     )
     .eq("id", rfqId)
     .maybeSingle();
@@ -131,6 +131,7 @@ export async function deleteRfqAction(input: {
   const blockers = assessRfqDeleteBlockers({
     status: rfq.status,
     convertedQuoteId: rfq.converted_quote_id,
+    xeroQuoteId: (rfq as { xero_quote_id?: string | null }).xero_quote_id ?? null,
     linkedQuoteCount: linkedQuoteCount ?? 0,
     sentCommunicationCount: sentCommunicationCount ?? 0,
     answeredInfoRequestCount: answeredInfoRequestCount ?? 0,

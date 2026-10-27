@@ -116,6 +116,7 @@ const STATUS_CARD_KEYS = [
   "site_measurement_required",
   "information_required",
   "ready_for_quote",
+  "quote_sent",
   "converted",
   "closed",
 ] as const;
