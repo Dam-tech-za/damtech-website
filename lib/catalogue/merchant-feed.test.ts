@@ -97,12 +97,12 @@ describe("enabled Merchant TSV content", () => {
     assert.equal(result.status, 200);
     const parsed = parseMerchantFeedTsv(result.body ?? "");
     const expectedPrices: Record<string, string> = {
-      "DMT-WT-10000": "12999.00 ZAR",
-      "DMT-WT-20000": "15999.00 ZAR",
-      "DMT-WT-50000": "24999.00 ZAR",
-      "DMT-WT-100000": "40999.00 ZAR",
+      "DMT-WT-10000": "13999.00 ZAR",
+      "DMT-WT-20000": "18999.00 ZAR",
+      "DMT-WT-50000": "31999.00 ZAR",
+      "DMT-WT-100000": "43999.00 ZAR",
       "DMT-FP-10000": "13999.00 ZAR",
-      "DMT-FP-15000": "17999.00 ZAR",
+      "DMT-FP-15000": "13999.00 ZAR",
       "DMT-LT-1500": "4999.00 ZAR",
     };
     for (const row of parsed.rows) {

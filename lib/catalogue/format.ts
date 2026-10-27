@@ -22,14 +22,14 @@ export function formatZarInclVat(amount: number): string {
   return `R ${formatZarNumber(amount)} incl. VAT`;
 }
 
-/** Marketing whole-rand price, e.g. “R12 999 incl. VAT”. JSON-LD still uses two decimals. */
+/** Marketing whole-rand price, e.g. “R13 999 incl. VAT”. JSON-LD still uses two decimals. */
 export function formatZarWholeInclVat(amount: number): string {
   const whole = Math.round(roundMoney(amount));
   const grouped = String(whole).replace(/\B(?=(\d{3})+(?!\d))/g, ZA_GROUP);
   return `R${grouped} incl. VAT`;
 }
 
-/** Checkout whole-rand amount without repeating “incl. VAT”, e.g. “R12 999”. */
+/** Checkout whole-rand amount without repeating “incl. VAT”, e.g. “R13 999”. */
 export function formatZarWholeAmount(amount: number): string {
   const whole = Math.round(roundMoney(amount));
   const grouped = String(whole).replace(/\B(?=(\d{3})+(?!\d))/g, ZA_GROUP);

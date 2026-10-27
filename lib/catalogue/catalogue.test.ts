@@ -84,10 +84,10 @@ describe("catalogue identity", () => {
 
 describe("prices", () => {
   it("formats VAT-inclusive consumer prices without from/ex-VAT language", () => {
-    const formatted = formatZarInclVat(12999);
-    assert.equal(formatted, "R 12\u00a0999.00 incl. VAT");
+    const formatted = formatZarInclVat(13999);
+    assert.equal(formatted, "R 13\u00a0999.00 incl. VAT");
     assert.doesNotMatch(formatted, /from|starting|estimated|ex-VAT|excl/i);
-    assert.equal(formatJsonLdPrice(12999), "12999.00");
+    assert.equal(formatJsonLdPrice(13999), "13999.00");
   });
 
   it("keeps visible prices equal to catalogue and JSON-LD prices", () => {
@@ -105,13 +105,11 @@ describe("prices", () => {
     }
   });
 
-  it("formats whole-rand marketing prices as R12 999 incl. VAT", () => {
-    assert.equal(formatZarWholeInclVat(12999), "R12\u00a0999 incl. VAT");
-    assert.equal(formatZarWholeInclVat(15999), "R15\u00a0999 incl. VAT");
-    assert.equal(formatZarWholeInclVat(24999), "R24\u00a0999 incl. VAT");
-    assert.equal(formatZarWholeInclVat(40999), "R40\u00a0999 incl. VAT");
+  it("formats whole-rand marketing prices as R13 999 incl. VAT", () => {
     assert.equal(formatZarWholeInclVat(13999), "R13\u00a0999 incl. VAT");
-    assert.equal(formatZarWholeInclVat(17999), "R17\u00a0999 incl. VAT");
+    assert.equal(formatZarWholeInclVat(18999), "R18\u00a0999 incl. VAT");
+    assert.equal(formatZarWholeInclVat(31999), "R31\u00a0999 incl. VAT");
+    assert.equal(formatZarWholeInclVat(43999), "R43\u00a0999 incl. VAT");
     assert.equal(formatZarWholeInclVat(4999), "R4\u00a0999 incl. VAT");
   });
 });
@@ -138,10 +136,10 @@ describe("water tank product pages", () => {
 
   it("publishes the required VAT-inclusive supply-only prices and dimensions", () => {
     const expected = [
-      ["DMT-WT-10000", 12999, 3, 1.5, "3 m × 1.5 m"],
-      ["DMT-WT-20000", 15999, 4, 1.5, "4 m × 1.5 m"],
-      ["DMT-WT-50000", 24999, 5, 2.3, "5 m × 2.3 m"],
-      ["DMT-WT-100000", 40999, 9, 1.5, "9 m × 1.5 m"],
+      ["DMT-WT-10000", 13999, 3, 1.5, "3 m × 1.5 m"],
+      ["DMT-WT-20000", 18999, 4, 1.5, "4 m × 1.5 m"],
+      ["DMT-WT-50000", 31999, 5, 2.3, "5 m × 2.3 m"],
+      ["DMT-WT-100000", 43999, 9, 1.5, "9 m × 1.5 m"],
     ] as const;
     for (const [sku, price, diameter, height, dims] of expected) {
       const product = getBySku(sku);
@@ -161,7 +159,7 @@ describe("water tank product pages", () => {
       assert.match(product.ctaLabel, /Add .+ Tank to RFQ — Request Invoice/);
       assert.equal(isUnresolvedFact(product.inclusions), false);
       if (!isUnresolvedFact(product.inclusions)) {
-        assert.ok(product.inclusions.some((item) => /850 gsm PVC liner/i.test(item)));
+        assert.ok(product.inclusions.some((item) => /550 gsm PVC liner/i.test(item)));
       }
       for (const faq of product.faqs) {
         assert.doesNotMatch(
@@ -183,9 +181,9 @@ describe("RFQ SKU resolution", () => {
     });
     assert.ok(line);
     assert.equal(line.productName, "10 000L Corrugated Steel Water Tank");
-    assert.equal(line.unitPriceInclVatZar, 12999);
+    assert.equal(line.unitPriceInclVatZar, 13999);
     assert.equal(line.quantity, 2);
-    assert.equal(line.lineTotalInclVatZar, 25998);
+    assert.equal(line.lineTotalInclVatZar, 27998);
     assert.equal(line.vatIncluded, true);
     assert.equal(line.transportExcluded, true);
     assert.equal(line.installationExcluded, true);
@@ -224,7 +222,7 @@ describe("niche fish pond and trough pages", () => {
     assert.equal(pond15.slug, "15000-litre-fish-pond");
     assert.equal(trough.slug, "livestock-water-trough");
     assert.equal(pond10.priceInclVatZar, 13999);
-    assert.equal(pond15.priceInclVatZar, 17999);
+    assert.equal(pond15.priceInclVatZar, 13999);
     assert.equal(trough.priceInclVatZar, 4999);
     assert.equal(
       pond10.ctaLabel,

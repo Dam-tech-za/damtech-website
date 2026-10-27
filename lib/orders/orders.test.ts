@@ -82,8 +82,8 @@ describe("1 valid order submission parse", () => {
     const snapshot = resolveOrderableProduct(parsed.data.sku, parsed.data.quantity);
     assert.ok(snapshot);
     assert.equal(snapshot.sku, "DMT-WT-10000");
-    assert.equal(snapshot.unitPriceInclVatZar, 12999);
-    assert.equal(snapshot.totalInclVatZar, 12999);
+    assert.equal(snapshot.unitPriceInclVatZar, 13999);
+    assert.equal(snapshot.totalInclVatZar, 13999);
     assert.equal(snapshot.transportExcluded, true);
     assert.equal(DELIVERY_FULFILMENT.method, parsed.data.fulfilmentMethod);
   });
@@ -97,7 +97,7 @@ describe("2 invalid SKU rejection", () => {
     assert.equal(parsed.ok, false);
     if (parsed.ok) return;
     assert.match(parsed.error, /not available to order online/i);
-    assert.doesNotMatch(parsed.error, /DMT-WT-10000|price|12999/);
+    assert.doesNotMatch(parsed.error, /DMT-WT-10000|price|13999/);
   });
 });
 
@@ -116,8 +116,8 @@ describe("3 manipulated client price ignored", () => {
     assert.equal(parsed.ok, true);
     if (!parsed.ok) return;
     const snapshot = resolveOrderableProduct(parsed.data.sku, parsed.data.quantity);
-    assert.equal(snapshot?.unitPriceInclVatZar, 12999);
-    assert.equal(snapshot?.totalInclVatZar, 12999);
+    assert.equal(snapshot?.unitPriceInclVatZar, 13999);
+    assert.equal(snapshot?.totalInclVatZar, 13999);
     assert.equal(snapshot?.productName, "10 000L Corrugated Steel Water Tank");
   });
 });
@@ -225,7 +225,7 @@ describe("9 Resend failure after successful persistence", () => {
       email: "customer@example.com",
       productName: "10 000L Corrugated Steel Water Tank",
       quantity: 1,
-      totalInclVatZar: 12999,
+      totalInclVatZar: 13999,
       confirmationEmailStatus: "failed",
       internalEmailStatus: "failed",
     });
@@ -248,20 +248,20 @@ describe("10 order-reference uniqueness", () => {
 
 describe("11 VAT calculation", () => {
   it("splits VAT-inclusive totals in integer cents", () => {
-    const breakdown = breakdownVatInclusive(12999, 1, 15);
-    assert.equal(breakdown.totalInclVatCents, 1299900);
-    assert.equal(breakdown.vatAmountCents, vatFromInclusiveCents(1299900, 15));
+    const breakdown = breakdownVatInclusive(13999, 1, 15);
+    assert.equal(breakdown.totalInclVatCents, 1399900);
+    assert.equal(breakdown.vatAmountCents, vatFromInclusiveCents(1399900, 15));
     assert.equal(
       breakdown.exVatCents + breakdown.vatAmountCents,
       breakdown.totalInclVatCents,
     );
-    const two = breakdownVatInclusive(12999, 2, 15);
-    assert.equal(two.totalInclVatZar, 25998);
-    assert.equal(formatZarWholeAmount(12999), "R12\u00a0999");
-    assert.doesNotMatch(formatZarWholeAmount(12999), /incl\. VAT/i);
+    const two = breakdownVatInclusive(13999, 2, 15);
+    assert.equal(two.totalInclVatZar, 27998);
+    assert.equal(formatZarWholeAmount(13999), "R13\u00a0999");
+    assert.doesNotMatch(formatZarWholeAmount(13999), /incl\. VAT/i);
     assert.equal(
       formatZarExactAmount(breakdown.vatAmountZar),
-      "R1\u00a0695.52",
+      "R1\u00a0825.96",
     );
     assert.doesNotMatch(formatZarExactAmount(breakdown.vatAmountZar), /incl\. VAT/i);
   });
@@ -288,12 +288,12 @@ describe("checkout summary copy", () => {
 describe("12 product-price snapshot", () => {
   it("reads every allowlisted SKU from the catalogue, not a second price list", () => {
     const expected: Record<string, number> = {
-      "DMT-WT-10000": 12999,
-      "DMT-WT-20000": 15999,
-      "DMT-WT-50000": 24999,
-      "DMT-WT-100000": 40999,
+      "DMT-WT-10000": 13999,
+      "DMT-WT-20000": 18999,
+      "DMT-WT-50000": 31999,
+      "DMT-WT-100000": 43999,
       "DMT-FP-10000": 13999,
-      "DMT-FP-15000": 17999,
+      "DMT-FP-15000": 13999,
       "DMT-LT-1500": 4999,
     };
     for (const sku of CATALOGUE_SKUS) {
@@ -415,7 +415,7 @@ describe("18 invalid order URLs reveal no catalogue internals", () => {
       price: "1",
       name: "Fake",
     });
-    assert.equal(priced?.unitPriceInclVatZar, 12999);
+    assert.equal(priced?.unitPriceInclVatZar, 13999);
     const page = readFileSync(join(root, "app/order/page.tsx"), "utf8");
     assert.match(page, /Kit not found/);
     assert.doesNotMatch(page, /CATALOGUE_SKUS/);

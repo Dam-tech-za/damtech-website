@@ -16,7 +16,7 @@ import { UNRESOLVED_BUSINESS_FACTS } from "./unresolved.ts";
 /** Verified from Damtech steel-tank copy: liner, bidem, columns and 50 mm fittings ship with the kit. */
 const WATER_TANK_INCLUSIONS = [
   "Corrugated galvanised steel shell",
-  "850 gsm PVC liner",
+  "550 gsm PVC liner",
   "Bidem floor sheet",
   "Upright columns for ring loads",
   "50 mm inlet, outlet and overflow fittings",
@@ -33,7 +33,7 @@ const TROUGH_SUPPLY_NOTICE =
 
 const FISH_POND_INCLUSIONS = [
   "Corrugated galvanised steel shell",
-  "850 gsm PVC liner",
+  "550 gsm PVC liner",
   "Bidem floor sheet",
 ] as const;
 
@@ -96,7 +96,7 @@ export const CATALOGUE_PRODUCTS: readonly CatalogueProduct[] = [
     h1: "10 000L Corrugated Steel Water Tank",
     seoTitle: "10 000L Water Tank Price South Africa | Damtech",
     seoDescription:
-      "Buy a 10 000L corrugated steel water tank kit from Damtech for R12 999 incl. VAT. 3 m diameter × 1.5 m high. Transport and installation excluded.",
+      "Buy a 10 000L corrugated steel water tank kit from Damtech for R13 999 incl. VAT. 3 m diameter × 1.5 m high. Transport and installation excluded.",
     feedTitle: "10 000L Corrugated Steel Water Tank Kit – 3 m × 1.5 m",
     merchantEligible: true,
     heroCopy:
@@ -105,11 +105,11 @@ export const CATALOGUE_PRODUCTS: readonly CatalogueProduct[] = [
       "This 10 000 litre water tank is suited to customers who need a compact above-ground water reserve for borehole storage, livestock watering, rainwater collection or general property backup. The modular corrugated-steel construction provides an alternative to linking several small plastic tanks together.",
     bodyHeading: "10 000 Litre Water Storage for Farms and Properties",
     bodyCopy:
-      "A 10 000L water tank — often searched as a 10000L water tank — is a practical first step into bulk storage when smaller household tanks no longer cover borehole pumping windows, stock troughs or rainwater capture. The 3 m × 1.5 m kit sits behind a shed or along a service yard without the civils of an earth dam. The price is R12 999 incl. VAT for the supply-only reservoir kit. Delivery and installation are excluded.",
+      "A 10 000L water tank — often searched as a 10000L water tank — is a practical first step into bulk storage when smaller household tanks no longer cover borehole pumping windows, stock troughs or rainwater capture. The 3 m × 1.5 m kit sits behind a shed or along a service yard without the civils of an earth dam. The price is R13 999 incl. VAT for the supply-only reservoir kit. Delivery and installation are excluded.",
     categoryId: "corrugated-steel-water-tanks",
     categoryLabel: PRODUCT_CATEGORY_LABELS["corrugated-steel-water-tanks"],
     rfqService: "Steel water tank",
-    priceInclVatZar: 12999,
+    priceInclVatZar: 13999,
     currency: "ZAR",
     vatIncluded: true,
     vatRatePercent: VAT_RATE_PERCENT,
@@ -125,7 +125,7 @@ export const CATALOGUE_PRODUCTS: readonly CatalogueProduct[] = [
       capacityLitresLabel: "10 000 litres",
       diameterM: 3,
       heightM: 1.5,
-      priceInclVatZar: 12999,
+      priceInclVatZar: 13999,
     }),
     inclusions: WATER_TANK_INCLUSIONS,
     exclusions: SUPPLY_EXCLUSIONS,
@@ -141,19 +141,19 @@ export const CATALOGUE_PRODUCTS: readonly CatalogueProduct[] = [
       "Light agricultural use",
     ],
     sitePreparation:
-      "The 10 000L kit needs a level, compacted pad that can take a 3 m diameter shell. Damtech steel-tank work typically uses sand or crusher dust on geotextile so the liner is not stressed by settlement. Base preparation, civils and installation are excluded from the R12 999 incl. VAT price. Damtech can quote installation separately after you submit an RFQ.",
+      "The 10 000L kit needs a level, compacted pad that can take a 3 m diameter shell. Damtech steel-tank work typically uses sand or crusher dust on geotextile so the liner is not stressed by settlement. Base preparation, civils and installation are excluded from the R13 999 incl. VAT price. Damtech can quote installation separately after you submit an RFQ.",
     supplyNotice: WATER_TANK_SUPPLY_NOTICE,
     ctaLabel: "Add 10 000L Tank to RFQ — Request Invoice",
     faqs: [
       {
         question: "What is the price of the 10 000L water tank?",
         answer:
-          "The 10 000L corrugated steel water tank kit is R12 999 incl. VAT. That is the fixed supply-only price for this SKU. Transport and installation are excluded and are confirmed when Damtech prepares your invoice.",
+          "The 10 000L corrugated steel water tank kit is R13 999 incl. VAT. That is the fixed supply-only price for this SKU. Transport and installation are excluded and are confirmed when Damtech prepares your invoice.",
       },
       {
-        question: "Does the R12 999 price include VAT?",
+        question: "Does the R13 999 price include VAT?",
         answer:
-          "Yes. R12 999 includes 15% VAT. Damtech does not advertise an ex-VAT consumer price for this kit.",
+          "Yes. R13 999 includes 15% VAT. Damtech does not advertise an ex-VAT consumer price for this kit.",
       },
       {
         question: "Are transport and installation included?",
@@ -168,7 +168,7 @@ export const CATALOGUE_PRODUCTS: readonly CatalogueProduct[] = [
       {
         question: "What is included in the supply-only kit?",
         answer:
-          "The kit includes a corrugated galvanised steel shell, 850 gsm PVC liner, bidem floor sheet, upright columns, and 50 mm inlet, outlet and overflow fittings. Optional roofs, the base, transport and installation are not included.",
+          "The kit includes a corrugated galvanised steel shell, 550 gsm PVC liner, bidem floor sheet, upright columns, and 50 mm inlet, outlet and overflow fittings. Optional roofs, the base, transport and installation are not included.",
       },
       {
         question: "Can Damtech quote for delivery and installation separately?",
@@ -204,7 +204,7 @@ export const CATALOGUE_PRODUCTS: readonly CatalogueProduct[] = [
     h1: "20 000L Corrugated Steel Water Tank",
     seoTitle: "20 000L Water Tank Price South Africa | Damtech",
     seoDescription:
-      "20 000L corrugated steel water tank kit for R15 999 incl. VAT. Measures 4 m × 1.5 m. A supply-only farm and property tank from Damtech.",
+      "20 000L corrugated steel water tank kit for R18 999 incl. VAT. Measures 4 m × 1.5 m. A supply-only farm and property tank from Damtech.",
     feedTitle: "20 000L Corrugated Steel Water Tank Kit – 4 m × 1.5 m",
     merchantEligible: true,
     heroCopy:
@@ -213,11 +213,11 @@ export const CATALOGUE_PRODUCTS: readonly CatalogueProduct[] = [
       "A 20 000 litre water tank can provide buffer storage between a borehole, pump, irrigation line or livestock watering system. It is aimed at customers who have outgrown smaller domestic tanks but do not yet require a large commercial reservoir.",
     bodyHeading: "Affordable 20 000 Litre Bulk Water Storage",
     bodyCopy:
-      "At 4 m × 1.5 m the 20 000L kit holds a working reserve for mixed farm use without the height of a taller ring tank. Farmers and lodge managers use this size to store borehole water pumped when power is available, then draw it for stock or irrigation. The price is R15 999 incl. VAT for the supply-only kit. Delivery and installation are excluded.",
+      "At 4 m × 1.5 m the 20 000L kit holds a working reserve for mixed farm use without the height of a taller ring tank. Farmers and lodge managers use this size to store borehole water pumped when power is available, then draw it for stock or irrigation. The price is R18 999 incl. VAT for the supply-only kit. Delivery and installation are excluded.",
     categoryId: "corrugated-steel-water-tanks",
     categoryLabel: PRODUCT_CATEGORY_LABELS["corrugated-steel-water-tanks"],
     rfqService: "Steel water tank",
-    priceInclVatZar: 15999,
+    priceInclVatZar: 18999,
     currency: "ZAR",
     vatIncluded: true,
     vatRatePercent: VAT_RATE_PERCENT,
@@ -233,7 +233,7 @@ export const CATALOGUE_PRODUCTS: readonly CatalogueProduct[] = [
       capacityLitresLabel: "20 000 litres",
       diameterM: 4,
       heightM: 1.5,
-      priceInclVatZar: 15999,
+      priceInclVatZar: 18999,
     }),
     inclusions: WATER_TANK_INCLUSIONS,
     exclusions: SUPPLY_EXCLUSIONS,
@@ -250,24 +250,24 @@ export const CATALOGUE_PRODUCTS: readonly CatalogueProduct[] = [
       "Commercial property backup",
     ],
     sitePreparation:
-      "Plan a prepared site for a 4 m diameter, 1.5 m high tank. A level, compacted sand or crusher-dust base on geotextile is the usual approach on Damtech steel-reservoir projects. The advertised R15 999 incl. VAT price does not include the base, delivery or installation.",
+      "Plan a prepared site for a 4 m diameter, 1.5 m high tank. A level, compacted sand or crusher-dust base on geotextile is the usual approach on Damtech steel-reservoir projects. The advertised R18 999 incl. VAT price does not include the base, delivery or installation.",
     supplyNotice: WATER_TANK_SUPPLY_NOTICE,
     ctaLabel: "Add 20 000L Tank to RFQ — Request Invoice",
     faqs: [
       {
         question: "How much does the 20 000L water tank cost?",
         answer:
-          "The 20 000L corrugated steel water tank kit is R15 999 incl. VAT. Transport and installation are excluded from that price.",
+          "The 20 000L corrugated steel water tank kit is R18 999 incl. VAT. Transport and installation are excluded from that price.",
       },
       {
         question: "Is VAT included in the advertised price?",
         answer:
-          "Yes. R15 999 includes 15% VAT. There is no separate ex-VAT consumer price on this page.",
+          "Yes. R18 999 includes 15% VAT. There is no separate ex-VAT consumer price on this page.",
       },
       {
         question: "Is this a plastic or steel water tank?",
         answer:
-          "It is a corrugated steel water reservoir kit with an 850 gsm PVC liner. It is not a plastic tank.",
+          "It is a corrugated steel water reservoir kit with an 550 gsm PVC liner. It is not a plastic tank.",
       },
       {
         question: "How large must the prepared site be?",
@@ -316,7 +316,7 @@ export const CATALOGUE_PRODUCTS: readonly CatalogueProduct[] = [
     h1: "50 000L Corrugated Steel Water Tank",
     seoTitle: "50 000L Steel Water Tank Price South Africa | Damtech",
     seoDescription:
-      "Order a 50 000L-class corrugated steel water tank kit for R24 999 incl. VAT. 5 m diameter × 2.3 m high. Transport and installation excluded.",
+      "Order a 50 000L-class corrugated steel water tank kit for R31 999 incl. VAT. 5 m diameter × 2.3 m high. Transport and installation excluded.",
     feedTitle: "50 000L Corrugated Steel Water Tank Kit – 5 m × 2.3 m",
     merchantEligible: true,
     heroCopy:
@@ -325,11 +325,11 @@ export const CATALOGUE_PRODUCTS: readonly CatalogueProduct[] = [
       "The 50 000L tank is positioned between small property-backup tanks and large farm reservoirs. It can be incorporated into borehole, rainwater, livestock or irrigation systems where a meaningful water buffer is required.",
     bodyHeading: "50 000 Litre Water Tank for Agricultural and Commercial Storage",
     bodyCopy:
-      "At 5 m × 2.3 m this 50 000L-class kit stores more volume on a modest footprint than the 1.5 m-high tanks. Game lodges, estates and commercial yards use it as borehole-balancing or irrigation buffer storage. The price is R24 999 incl. VAT for the supply-only kit, including the 850 gsm PVC liner. Delivery and installation are excluded.",
+      "At 5 m × 2.3 m this 50 000L-class kit stores more volume on a modest footprint than the 1.5 m-high tanks. Game lodges, estates and commercial yards use it as borehole-balancing or irrigation buffer storage. The price is R31 999 incl. VAT for the supply-only kit, including the 550 gsm PVC liner. Delivery and installation are excluded.",
     categoryId: "corrugated-steel-water-tanks",
     categoryLabel: PRODUCT_CATEGORY_LABELS["corrugated-steel-water-tanks"],
     rfqService: "Steel water tank",
-    priceInclVatZar: 24999,
+    priceInclVatZar: 31999,
     currency: "ZAR",
     vatIncluded: true,
     vatRatePercent: VAT_RATE_PERCENT,
@@ -345,7 +345,7 @@ export const CATALOGUE_PRODUCTS: readonly CatalogueProduct[] = [
       capacityLitresLabel: "50 000 litres",
       diameterM: 5,
       heightM: 2.3,
-      priceInclVatZar: 24999,
+      priceInclVatZar: 31999,
     }),
     inclusions: WATER_TANK_INCLUSIONS,
     exclusions: SUPPLY_EXCLUSIONS,
@@ -362,24 +362,24 @@ export const CATALOGUE_PRODUCTS: readonly CatalogueProduct[] = [
       "Commercial water reserves",
     ],
     sitePreparation:
-      "The 50 000L kit is 5 m in diameter and 2.3 m high, so the pad must be level across that footprint. Compacted sand or crusher dust on geotextile is the preparation Damtech specifies for steel reservoirs. Base work, transport and installation are excluded from the R24 999 incl. VAT price and can be quoted separately.",
+      "The 50 000L kit is 5 m in diameter and 2.3 m high, so the pad must be level across that footprint. Compacted sand or crusher dust on geotextile is the preparation Damtech specifies for steel reservoirs. Base work, transport and installation are excluded from the R31 999 incl. VAT price and can be quoted separately.",
     supplyNotice: WATER_TANK_SUPPLY_NOTICE,
     ctaLabel: "Add 50 000L Tank to RFQ — Request Invoice",
     faqs: [
       {
         question: "What is the price of a 50 000 litre water tank?",
         answer:
-          "This 50 000L-class corrugated steel water tank kit is R24 999 incl. VAT. Delivery and installation are excluded.",
+          "This 50 000L-class corrugated steel water tank kit is R31 999 incl. VAT. Delivery and installation are excluded.",
       },
       {
         question: "Does the price include VAT?",
         answer:
-          "Yes. R24 999 includes 15% VAT. Damtech does not show an ex-VAT consumer price for this kit.",
+          "Yes. R31 999 includes 15% VAT. Damtech does not show an ex-VAT consumer price for this kit.",
       },
       {
         question: "Does the advertised price include the liner?",
         answer:
-          "Yes. The R24 999 incl. VAT kit price includes the 850 gsm PVC liner and bidem floor sheet. It is not a shell-only price.",
+          "Yes. The R31 999 incl. VAT kit price includes the 550 gsm PVC liner and bidem floor sheet. It is not a shell-only price.",
       },
       {
         question: "Are transport and installation excluded?",
@@ -428,7 +428,7 @@ export const CATALOGUE_PRODUCTS: readonly CatalogueProduct[] = [
     h1: "100 000L Corrugated Steel Water Tank",
     seoTitle: "100 000L Water Tank Price South Africa | Damtech",
     seoDescription:
-      "100 000L corrugated steel water tank kit for R40 999 incl. VAT. 9 m diameter × 1.5 m high. Fixed-price supply-only reservoir from Damtech.",
+      "100 000L corrugated steel water tank kit for R43 999 incl. VAT. 9 m diameter × 1.5 m high. Fixed-price supply-only reservoir from Damtech.",
     feedTitle: "100 000L Corrugated Steel Water Tank Kit – 9 m × 1.5 m",
     merchantEligible: true,
     heroCopy:
@@ -437,11 +437,11 @@ export const CATALOGUE_PRODUCTS: readonly CatalogueProduct[] = [
       "A 100 000 litre water tank creates a substantial reserve for livestock, irrigation, borehole balancing, estate backup or commercial operations. It offers one central storage point instead of a large bank of smaller tanks, simplifying the basic storage layout and connections.",
     bodyHeading: "100 000 Litre Bulk Water Storage",
     bodyCopy:
-      "This 100 000L water tank — also found in searches as a 100000L water tank — spreads volume across a 9 m × 1.5 m footprint rather than a tall narrow shell. Farms and commercial sites use it as a single bulk reserve instead of many linked plastic tanks. The price is R40 999 incl. VAT for the supply-only kit. Delivery and installation are excluded.",
+      "This 100 000L water tank — also found in searches as a 100000L water tank — spreads volume across a 9 m × 1.5 m footprint rather than a tall narrow shell. Farms and commercial sites use it as a single bulk reserve instead of many linked plastic tanks. The price is R43 999 incl. VAT for the supply-only kit. Delivery and installation are excluded.",
     categoryId: "corrugated-steel-water-tanks",
     categoryLabel: PRODUCT_CATEGORY_LABELS["corrugated-steel-water-tanks"],
     rfqService: "Steel water tank",
-    priceInclVatZar: 40999,
+    priceInclVatZar: 43999,
     currency: "ZAR",
     vatIncluded: true,
     vatRatePercent: VAT_RATE_PERCENT,
@@ -457,7 +457,7 @@ export const CATALOGUE_PRODUCTS: readonly CatalogueProduct[] = [
       capacityLitresLabel: "100 000 litres",
       diameterM: 9,
       heightM: 1.5,
-      priceInclVatZar: 40999,
+      priceInclVatZar: 43999,
     }),
     inclusions: WATER_TANK_INCLUSIONS,
     exclusions: SUPPLY_EXCLUSIONS,
@@ -474,19 +474,19 @@ export const CATALOGUE_PRODUCTS: readonly CatalogueProduct[] = [
       "Commercial and operational reserves",
     ],
     sitePreparation:
-      "The 100 000L tank is 9 m in diameter and 1.5 m high. The prepared area must cover that 9 m footprint plus working room for assembly around the shell. A level, compacted sand or crusher-dust base on geotextile is required so the liner is not strained. Extra space for pipework depends on the site; Damtech confirms access when calculating transport. The base and installation are not included in the R40 999 incl. VAT price.",
+      "The 100 000L tank is 9 m in diameter and 1.5 m high. The prepared area must cover that 9 m footprint plus working room for assembly around the shell. A level, compacted sand or crusher-dust base on geotextile is required so the liner is not strained. Extra space for pipework depends on the site; Damtech confirms access when calculating transport. The base and installation are not included in the R43 999 incl. VAT price.",
     supplyNotice: WATER_TANK_SUPPLY_NOTICE,
     ctaLabel: "Add 100 000L Tank to RFQ — Request Invoice",
     faqs: [
       {
         question: "How much is the 100 000L water tank?",
         answer:
-          "The 100 000L corrugated steel water tank kit is R40 999 incl. VAT. Delivery and installation are excluded.",
+          "The 100 000L corrugated steel water tank kit is R43 999 incl. VAT. Delivery and installation are excluded.",
       },
       {
-        question: "Is R40 999 the complete VAT-inclusive kit price?",
+        question: "Is R43 999 the complete VAT-inclusive kit price?",
         answer:
-          "Yes. R40 999 includes 15% VAT for the supply-only kit, including the 850 gsm PVC liner. It does not include transport, installation, the base or an optional roof.",
+          "Yes. R43 999 includes 15% VAT for the supply-only kit, including the 550 gsm PVC liner. It does not include transport, installation, the base or an optional roof.",
       },
       {
         question: "What are the dimensions?",
@@ -617,7 +617,7 @@ export const CATALOGUE_PRODUCTS: readonly CatalogueProduct[] = [
       {
         question: "Is the liner included?",
         answer:
-          "Yes. The advertised R13 999 incl. VAT price includes the 850 gsm PVC liner and bidem floor sheet used in Damtech’s steel-kit catalogue. It is not a shell-only price.",
+          "Yes. The advertised R13 999 incl. VAT price includes the 550 gsm PVC liner and bidem floor sheet used in Damtech’s steel-kit catalogue. It is not a shell-only price.",
       },
       {
         question: "Are delivery and installation included?",
@@ -664,7 +664,7 @@ export const CATALOGUE_PRODUCTS: readonly CatalogueProduct[] = [
     h1: "15 000L Fish Farming Pond and Aquaculture Tank",
     seoTitle: "15 000L Fish Farming Pond South Africa | Damtech",
     seoDescription:
-      "15 000L fish-farming pond and aquaculture tank kit for R17 999 incl. VAT. Corrugated steel supply-only kit. Transport and installation excluded.",
+      "15 000L fish-farming pond and aquaculture tank kit for R13 999 incl. VAT. Corrugated steel supply-only kit. Transport and installation excluded.",
     feedTitle: "15 000L Corrugated Steel Fish Pond Kit",
     merchantEligible: true,
     heroCopy:
@@ -673,7 +673,7 @@ export const CATALOGUE_PRODUCTS: readonly CatalogueProduct[] = [
       "This larger pond is intended for customers who require more containment volume than the 10 000L model. The final aquaculture system must still be designed around the species, stocking density, water exchange, filtration, aeration and operational requirements.",
     bodyHeading: "15 000 Litre Fish-Farming and Aquaculture Containment",
     bodyCopy:
-      "The 15 000L kit is a containment vessel, not a commercially productive fish farm on its own. It does not include aeration, filtration or livestock. Diameter and height remain unpublished until Damtech confirms them on the invoice. The price is R17 999 incl. VAT. Delivery and installation are excluded.",
+      "The 15 000L kit is a containment vessel, not a commercially productive fish farm on its own. It does not include aeration, filtration or livestock. Diameter and height remain unpublished until Damtech confirms them on the invoice. The price is R13 999 incl. VAT. Delivery and installation are excluded.",
     supportingSections: [
       {
         heading: "Containment Is Only One Part of a Healthy Fish-Pond System",
@@ -685,7 +685,7 @@ export const CATALOGUE_PRODUCTS: readonly CatalogueProduct[] = [
     categoryId: "fish-ponds-and-aquaculture-tanks",
     categoryLabel: PRODUCT_CATEGORY_LABELS["fish-ponds-and-aquaculture-tanks"],
     rfqService: "Fish pond / aquaculture tank",
-    priceInclVatZar: 17999,
+    priceInclVatZar: 13999,
     currency: "ZAR",
     vatIncluded: true,
     vatRatePercent: VAT_RATE_PERCENT,
@@ -704,7 +704,7 @@ export const CATALOGUE_PRODUCTS: readonly CatalogueProduct[] = [
       { label: "Installation", value: "Excluded" },
       { label: "Filtration and aeration", value: "Excluded" },
       { label: "SKU", value: "DMT-FP-15000" },
-      { label: "Price", value: formatZarWholeInclVat(17999) },
+      { label: "Price", value: formatZarWholeInclVat(13999) },
     ],
     inclusions: FISH_POND_INCLUSIONS,
     exclusions: FISH_POND_EXCLUSIONS,
@@ -713,7 +713,7 @@ export const CATALOGUE_PRODUCTS: readonly CatalogueProduct[] = [
     deliveryExplanation:
       `This is a supply-only pond kit. Delivery only throughout South Africa. Delivery and installation are excluded from the listed price. ${MERCHANT_SHIPPING_POLICY_COPY.deliveryCharge} Assembly, filtration and aeration are quoted separately if required.`,
     sitePreparation:
-      "Prepare a level, compacted sand or crusher-dust base on geotextile before assembling the 15 000L shell. The larger volume still needs an even pad so the liner is not strained. Exact footprint is confirmed on the invoice. The base, transport and installation are excluded from the R17 999 incl. VAT price.",
+      "Prepare a level, compacted sand or crusher-dust base on geotextile before assembling the 15 000L shell. The larger volume still needs an even pad so the liner is not strained. Exact footprint is confirmed on the invoice. The base, transport and installation are excluded from the R13 999 incl. VAT price.",
     applications: [
       "Fish-farming and aquaculture containment",
       "Breeding or grow-out projects",
@@ -724,14 +724,14 @@ export const CATALOGUE_PRODUCTS: readonly CatalogueProduct[] = [
     images: fishPondImageManifest("DMT-FP-15000"),
     faqs: [
       {
-        question: "What is included in the R17 999 price?",
+        question: "What is included in the R13 999 price?",
         answer:
-          "R17 999 incl. VAT covers the supply-only corrugated steel shell, 850 gsm PVC liner and bidem floor sheet. Filtration, pumps, aeration, fish, transport and installation are not included.",
+          "R13 999 incl. VAT covers the supply-only corrugated steel shell, 550 gsm PVC liner and bidem floor sheet. Filtration, pumps, aeration, fish, transport and installation are not included.",
       },
       {
         question: "Is VAT included?",
         answer:
-          "Yes. R17 999 includes 15% VAT. Damtech does not advertise an ex-VAT consumer price for this kit.",
+          "Yes. R13 999 includes 15% VAT. Damtech does not advertise an ex-VAT consumer price for this kit.",
       },
       {
         question: "What is excluded from the fish-pond kit?",
