@@ -114,8 +114,22 @@ describe("JSON-LD wiring", () => {
     assert.match(seo, /hasShippingService: createShippingServiceSchema\(\)/);
     assert.match(seo, /hasMerchantReturnPolicy: createOfferMerchantReturnPolicy\(\)/);
     assert.match(seo, /shippingDetails: createOfferShippingDetails\(\)/);
+    assert.match(seo, /validFrom: PRODUCT_PRICE_VALID_FROM/);
+    assert.match(seo, /PRODUCT_PRICE_VALID_FROM = "2026-10-27T00:00:00\+02:00"/);
+    assert.match(seo, /merchantAvailabilityToSchemaUrl\(CATALOGUE_MERCHANT_AVAILABILITY\)/);
+    assert.match(seo, /item: createProductNode\(/);
     const returnsPage = readFileSync(join(root, "app/returns/page.tsx"), "utf8");
     assert.match(returnsPage, /MERCHANT_RETURN_POLICY_COPY/);
     assert.doesNotMatch(returnsPage, /case by case/i);
+  });
+
+  it("gives listing-page ItemList products the same Merchant listing fields", () => {
+    const listing = readFileSync(
+      join(root, "app/steel-water-storage-tanks/page.tsx"),
+      "utf8",
+    );
+    assert.match(listing, /description: product\.seoDescription/);
+    assert.match(listing, /sku: product\.sku/);
+    assert.match(listing, /imageUrls: getSchemaImageUrls\(product\.images\)/);
   });
 });

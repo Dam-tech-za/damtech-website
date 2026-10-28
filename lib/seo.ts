@@ -1,5 +1,9 @@
 import type { Metadata } from "next";
 import {
+  CATALOGUE_MERCHANT_AVAILABILITY,
+  merchantAvailabilityToSchemaUrl,
+} from "./catalogue/availability.ts";
+import {
   createMerchantReturnPolicySchema,
   createOfferMerchantReturnPolicy,
   createOfferShippingDetails,
@@ -28,7 +32,12 @@ const WARN_DESCRIPTION_LENGTH = 155;
 const LOCALE = "en_ZA";
 const OG_IMAGE_WIDTH = 1200;
 const OG_IMAGE_HEIGHT = 630;
-/** Offer `priceValidUntil` for catalogue prices — move forward whenever prices are re-confirmed. */
+/**
+ * Offer price window for catalogue kits.
+ * `validFrom` is the date the current VAT-inclusive kit prices took effect
+ * (550 gsm pricing, 27 Oct 2026). Move both dates whenever prices are re-confirmed.
+ */
+export const PRODUCT_PRICE_VALID_FROM = "2026-10-27T00:00:00+02:00";
 export const PRODUCT_PRICE_VALID_UNTIL = "2027-01-31";
 
 export type CreateMetadataInput = {
@@ -671,7 +680,7 @@ export function createProjectCaseStudySchema(project: {
   };
 }
 
-export function createProductSchema(input: {
+type CatalogueProductSchemaInput = {
   name: string;
   description: string;
   path: string;
@@ -681,13 +690,19 @@ export function createProductSchema(input: {
   imageUrls?: readonly string[];
   brandName?: string;
   availability?: string;
+};
+
+function createProductOffer(input: {
+  url: string;
+  priceInclVatZar: string;
+  availability?: string;
 }): Record<string, unknown> {
-  const url = absoluteUrl(input.path);
-  const offer: Record<string, unknown> = {
+  return {
     "@type": "Offer",
-    url,
+    url: input.url,
     priceCurrency: "ZAR",
     price: input.priceInclVatZar,
+    validFrom: PRODUCT_PRICE_VALID_FROM,
     priceValidUntil: PRODUCT_PRICE_VALID_UNTIL,
     priceSpecification: {
       "@type": "UnitPriceSpecification",
@@ -699,15 +714,17 @@ export function createProductSchema(input: {
     seller: {
       "@id": `${siteConfig.domain}/#organization`,
     },
+    availability:
+      input.availability ??
+      merchantAvailabilityToSchemaUrl(CATALOGUE_MERCHANT_AVAILABILITY),
     hasMerchantReturnPolicy: createOfferMerchantReturnPolicy(),
     shippingDetails: createOfferShippingDetails(),
   };
-  if (input.availability) {
-    offer.availability = input.availability;
-  }
+}
 
+function createProductNode(input: CatalogueProductSchemaInput): Record<string, unknown> {
+  const url = absoluteUrl(input.path);
   const schema: Record<string, unknown> = {
-    "@context": "https://schema.org",
     "@type": "Product",
     "@id": `${url}#product`,
     name: input.name,
@@ -723,28 +740,56 @@ export function createProductSchema(input: {
       "@id": `${siteConfig.domain}/#organization`,
       name: siteConfig.name,
     },
-    offers: offer,
+    offers: createProductOffer({
+      url,
+      priceInclVatZar: input.priceInclVatZar,
+      availability: input.availability,
+    }),
   };
 
   const imageUrls = [
     ...(input.imageUrls ?? []),
     ...(input.imageUrl ? [input.imageUrl] : []),
-  ].filter((url, index, list) => list.indexOf(url) === index);
+  ].filter((imageUrl, index, list) => list.indexOf(imageUrl) === index);
   if (imageUrls.length > 0) {
-    schema.image = imageUrls.map((url) => absoluteAssetUrl(url));
+    schema.image = imageUrls.map((imageUrl) => absoluteAssetUrl(imageUrl));
   }
 
   return schema;
 }
 
+export function createProductSchema(
+  input: CatalogueProductSchemaInput,
+): Record<string, unknown> {
+  return {
+    "@context": "https://schema.org",
+    ...createProductNode(input),
+  };
+}
+
+export type ItemListSchemaItem = {
+  name: string;
+  path: string;
+  imageUrl?: string;
+} & (
+  | {
+      priceInclVatZar?: undefined;
+      description?: undefined;
+      sku?: undefined;
+    }
+  | {
+      /** When set, the list item carries a Product with this VAT-inclusive offer price. */
+      priceInclVatZar: string;
+      description: string;
+      sku: string;
+      imageUrls?: readonly string[];
+      availability?: string;
+      brandName?: string;
+    }
+);
+
 export function createItemListSchema(
-  items: ReadonlyArray<{
-    name: string;
-    path: string;
-    /** When set, the list item carries a Product with this VAT-inclusive offer price. */
-    priceInclVatZar?: string;
-    imageUrl?: string;
-  }>,
+  items: ReadonlyArray<ItemListSchemaItem>,
   listName: string,
 ): Record<string, unknown> {
   return {
@@ -753,38 +798,28 @@ export function createItemListSchema(
     name: listName,
     numberOfItems: items.length,
     itemListElement: items.map((item, index) => {
-      const url = absoluteUrl(item.path);
       if (!item.priceInclVatZar) {
         return {
           "@type": "ListItem",
           position: index + 1,
           name: item.name,
-          url,
+          url: absoluteUrl(item.path),
         };
       }
       return {
         "@type": "ListItem",
         position: index + 1,
-        item: {
-          "@type": "Product",
-          "@id": `${url}#product`,
+        item: createProductNode({
           name: item.name,
-          url,
-          ...(item.imageUrl ? { image: absoluteAssetUrl(item.imageUrl) } : {}),
-          offers: {
-            "@type": "Offer",
-            url,
-            priceCurrency: "ZAR",
-            price: item.priceInclVatZar,
-            priceValidUntil: PRODUCT_PRICE_VALID_UNTIL,
-            priceSpecification: {
-              "@type": "UnitPriceSpecification",
-              price: item.priceInclVatZar,
-              priceCurrency: "ZAR",
-              valueAddedTaxIncluded: true,
-            },
-          },
-        },
+          description: item.description,
+          path: item.path,
+          sku: item.sku,
+          priceInclVatZar: item.priceInclVatZar,
+          imageUrl: item.imageUrl,
+          imageUrls: item.imageUrls,
+          availability: item.availability,
+          brandName: item.brandName,
+        }),
       };
     }),
   };

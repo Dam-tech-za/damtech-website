@@ -211,8 +211,10 @@ export default function SteelTanksPage() {
             featuredProducts.map((product) => ({
               name: product.name,
               path: catalogueProductUrlPath(product),
+              description: product.seoDescription,
+              sku: product.sku,
               priceInclVatZar: formatJsonLdPrice(product.priceInclVatZar),
-              imageUrl: getSchemaImageUrls(product.images)[0],
+              imageUrls: getSchemaImageUrls(product.images),
             })),
             "Damtech steel water tank, fish pond and livestock trough kits",
           ),
