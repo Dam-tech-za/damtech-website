@@ -10,9 +10,7 @@ import { ProvisionalPipeline } from "@/components/admin/dashboard/ProvisionalPip
 import { BreakdownPanel } from "@/components/admin/dashboard/BreakdownPanel";
 import { RecentActivity } from "@/components/admin/dashboard/RecentActivity";
 import { RecentRfqs } from "@/components/admin/dashboard/RecentRfqs";
-import { AttentionPanel } from "@/components/admin/dashboard/AttentionPanel";
 import { IncomeAndCostsChart } from "@/components/admin/operations/FinancialCharts";
-import { buildAttentionItems } from "@/lib/admin/dashboard/attention";
 import {
   AdminButton,
   AdminErrorState,
@@ -25,16 +23,16 @@ type PageProps = {
 };
 
 /**
- * Overview, in the order an owner reads it: what to do now (one action per
- * item), four key figures, the money trend from Xero, the latest enquiries.
- * Detailed enquiry statistics stay one click away, folded at the bottom.
+ * Overview, in the order an owner reads it: four key figures, the money
+ * trend from Xero, the latest enquiries. Things that need action live on the
+ * header bell. Detailed enquiry statistics stay one click away, folded at the
+ * bottom.
  */
 export default async function AdminDashboardPage({ searchParams }: PageProps) {
   const admin = await requireAdmin();
   const params = await searchParams;
   const rangeId = parseDashboardRange(params.range);
   const [metrics, ops] = await Promise.all([getDashboardMetrics(rangeId), getOverviewOps(admin.profile.role)]);
-  const attentionItems = buildAttentionItems({ ...metrics.attention, ...ops.attention });
   const hasProvisional =
     metrics.provisional.linerAreaM2 > 0 || metrics.provisional.tankCapacityKl > 0 || metrics.provisional.torchOnAreaM2 > 0;
 
@@ -55,8 +53,6 @@ export default async function AdminDashboardPage({ searchParams }: PageProps) {
           message="The numbers below may be incomplete. Refresh the page in a moment; if it keeps happening, check System health under Settings."
         />
       ) : null}
-
-      <AttentionPanel items={attentionItems} />
 
       <PrimaryKpiGrid metrics={metrics} activeProjects={ops.activeProjects} financials={ops.financials} />
 

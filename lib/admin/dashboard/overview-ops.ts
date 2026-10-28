@@ -1,4 +1,5 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
+import { cache } from "react";
 import { canAccessNavItem, canPerform } from "@/lib/auth/permissions";
 import type { AdminRole } from "@/lib/auth/types";
 import { attentionBuckets, orderNeedsAction } from "@/lib/operations/board";
@@ -23,7 +24,7 @@ export type OverviewOps = {
 
 type AttentionProject = Pick<OpsProject, "id" | "title" | "on_hold_reason" | "stage" | "on_hold" | "next_action" | "next_action_due" | "needs_review" | "archived_at">;
 
-export async function getOverviewOps(role: AdminRole): Promise<OverviewOps> {
+export const getOverviewOps = cache(async function getOverviewOps(role: AdminRole): Promise<OverviewOps> {
   const result: OverviewOps = { attention: {}, activeProjects: null, financials: null };
   if (!canAccessNavItem(role, "operations")) return result;
 
@@ -60,4 +61,4 @@ export async function getOverviewOps(role: AdminRole): Promise<OverviewOps> {
     result.attention.overdueDebtors = a["1-30"] + a["31-60"] + a["61-90"] + a["90+"];
   }
   return result;
-}
+});

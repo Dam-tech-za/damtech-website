@@ -236,3 +236,13 @@ export function buildAttentionItems(
   }
   return items;
 }
+
+/** Number shown on the header bell: one badge per notification row. */
+export function attentionBadgeCount(items: ReadonlyArray<AttentionItem>): number {
+  return items.length;
+}
+
+export function formatAttentionBadge(count: number): string {
+  if (count <= 0) return "";
+  return count > 99 ? "99+" : String(count);
+}

@@ -4,6 +4,7 @@ import { usePathname } from "next/navigation";
 import { useSyncExternalStore, type ReactNode } from "react";
 import type { AdminNavItem, AdminProfile } from "@/lib/auth/types";
 import type { AdminSectionId } from "@/lib/admin/navigation";
+import type { AttentionItem } from "@/lib/admin/dashboard/attention";
 import type { NewMenuItem } from "./AdminNewMenu";
 import { AdminBottomBar } from "./AdminBottomBar";
 import { AdminSectionTabs } from "./AdminSectionTabs";
@@ -22,6 +23,7 @@ type AdminShellProps = {
   navItems: AdminNavItem[];
   badges?: Partial<Record<AdminSectionId, number>>;
   newItems?: NewMenuItem[];
+  notifications?: AttentionItem[];
   children: ReactNode;
 };
 
@@ -60,6 +62,7 @@ export function AdminShell({
   navItems,
   badges,
   newItems,
+  notifications,
   children,
 }: AdminShellProps) {
   // Derived on the client: the layout does not re-render on navigation, so
@@ -106,6 +109,7 @@ export function AdminShell({
           sidebarCollapsed={collapsed}
           onExpandSidebar={expandSidebar}
           newItems={newItems}
+          notifications={notifications}
         />
         <AdminMainContent>
           <AdminSectionTabs items={navItems} pathname={pathname} />

@@ -1,12 +1,15 @@
+"use client";
+
 import Link from "next/link";
 import type { AttentionItem } from "@/lib/admin/dashboard/attention";
 
 type AttentionPanelProps = {
   items: AttentionItem[];
+  onNavigate?: () => void;
 };
 
-/** Top of the overview: the short list of things to act on now, each with one action. */
-export function AttentionPanel({ items }: AttentionPanelProps) {
+/** List of things to act on now, each with one action. Used in the header bell. */
+export function AttentionPanel({ items, onNavigate }: AttentionPanelProps) {
   return (
     <section className="dash-attention" aria-labelledby="dash-attention-title">
       <h2 id="dash-attention-title" className="dash-attention__title">
@@ -24,7 +27,7 @@ export function AttentionPanel({ items }: AttentionPanelProps) {
               key={item.id}
               className={`dash-attention__item dash-attention__item--${item.tone}`}
             >
-              <Link href={item.href} className="dash-attention__link">
+              <Link href={item.href} className="dash-attention__link" onClick={onNavigate}>
                 <span className="dash-attention__text">
                   <span className="dash-attention__label">{item.label}</span>
                   <span className="dash-attention__hint">{item.hint}</span>

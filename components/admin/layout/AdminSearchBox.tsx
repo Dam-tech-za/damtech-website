@@ -42,7 +42,7 @@ export function AdminSearchBox() {
         maxLength={80}
       />
       <kbd className="admin-search__kbd" aria-hidden>
-        Ctrl K
+        Ctrl+K
       </kbd>
     </form>
   );

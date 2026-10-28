@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import type { ReactNode } from "react";
 import { AdminShell } from "@/components/admin/layout";
 import { canPerform, getNavItemsForRole } from "@/lib/auth/permissions";
+import { getAttentionItems } from "@/lib/admin/dashboard/get-attention";
 import { getNavBadges } from "@/lib/admin/nav-badges";
 import { getCurrentAdmin, getCurrentUser } from "@/lib/auth/get-current-user";
 
@@ -62,7 +63,10 @@ export default async function AdminLayout({
   }
 
   const role = admin.profile.role;
-  const badges = await getNavBadges(role);
+  const [badges, notifications] = await Promise.all([
+    getNavBadges(role),
+    getAttentionItems(role),
+  ]);
   // "+ New": only things this role can create, and only pages that exist.
   const newItems = [
     { href: "/quote/", label: "Enquiry", hint: "Log a phone or walk-in enquiry on the quote form" },
@@ -80,6 +84,7 @@ export default async function AdminLayout({
       navItems={getNavItemsForRole(role)}
       badges={badges}
       newItems={newItems}
+      notifications={notifications}
     >
       {children}
     </AdminShell>

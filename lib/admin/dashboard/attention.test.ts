@@ -1,6 +1,11 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import { buildAttentionItems, type AttentionCounts } from "./attention.ts";
+import {
+  attentionBadgeCount,
+  buildAttentionItems,
+  formatAttentionBadge,
+  type AttentionCounts,
+} from "./attention.ts";
 
 const base: AttentionCounts = {
   newEnquiries: 2,
@@ -40,5 +45,13 @@ describe("overview needs attention", () => {
   it("says when an Operations count could not load instead of hiding it", () => {
     const items = buildAttentionItems({ ...base, unmatchedXero: null });
     assert.equal(items.find((i) => i.id === "unmatched-xero")?.tone, "unavailable");
+  });
+
+  it("badges the header bell with the number of notification rows", () => {
+    const items = buildAttentionItems({ ...base, opsOverdueActions: 3, unmatchedXero: 2 });
+    assert.equal(attentionBadgeCount(items), 3);
+    assert.equal(formatAttentionBadge(3), "3");
+    assert.equal(formatAttentionBadge(0), "");
+    assert.equal(formatAttentionBadge(120), "99+");
   });
 });
