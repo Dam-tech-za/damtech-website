@@ -27,7 +27,7 @@ type Props = {
 function formatCurrent(field: string, value: string): string {
   if (field === "contact_phone" && value) {
     const shown = displayPhone(value);
-    return shown ? `${shown.flag ? `${shown.flag} ` : ""}${shown.text}` : value;
+    return shown ? shown.text : value;
   }
   return value || "—";
 }
@@ -165,6 +165,24 @@ export function FromXeroReviewCard({ project, open, onClose, onApplied }: Props)
                 <span className="ops-xero-review__match"> · {preview.matchCount} field{preview.matchCount === 1 ? "" : "s"} already match</span>
               ) : null}
             </p>
+            {preview.matched.length ? (
+              <ul className="ops-xero-review__same" aria-label="Already the same as Xero">
+                {preview.matched.map((m) => (
+                  <li key={m.field}>
+                    <span className="ops-xero-review__same-tick" aria-hidden>
+                      ✓
+                    </span>
+                    <span className="ops-xero-review__label">{m.label}</span>
+                    <span className="ops-xero-review__current">{formatCurrent(m.field, m.current)}</span>
+                  </li>
+                ))}
+              </ul>
+            ) : null}
+            {preview.missingInXero.length ? (
+              <p className="ops-xero-review__missing">
+                Not on this contact in Xero: {preview.missingInXero.join(", ").toLowerCase()}. Add it in Xero, or type it on the board.
+              </p>
+            ) : null}
             {rows.length === 0 ? (
               <p className="ops-xero-review__status">Everything already matches Xero.</p>
             ) : (

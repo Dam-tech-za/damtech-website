@@ -51,6 +51,10 @@ export type ReviewPreview = {
   contactId: string;
   rows: ReviewRow[];
   matchCount: number;
+  /** Fields that already match Xero, shown greyed so you can see they were checked. */
+  matched: ReviewRow[];
+  /** Fields Xero has nothing for on this contact (e.g. no phone or address). */
+  missingInXero: string[];
 };
 
 export type ReviewApplyItem = {
@@ -60,6 +64,15 @@ export type ReviewApplyItem = {
 
 function normNumber(raw: string): string {
   return raw.replace(/[-\s]/g, "").toUpperCase();
+}
+
+/** Same number written differently: "074 921 7449" and "+27749217449". */
+function samePhone(a: string, b: string): boolean {
+  const d = (v: string) => {
+    const n = v.replace(/\D/g, "");
+    return n.startsWith("0") ? `27${n.slice(1)}` : n;
+  };
+  return Boolean(d(a)) && d(a) === d(b);
 }
 
 function eq(a: string, b: string): boolean {
@@ -82,12 +95,15 @@ function pushRow(
   label: string,
   current: string,
   proposed: string,
-  options?: { hideIfEmptyProposed?: boolean },
+  options?: { hideIfEmptyProposed?: boolean; missing?: string[]; same?: (a: string, b: string) => boolean },
 ) {
   const cur = (current ?? "").trim();
   const prop = (proposed ?? "").trim();
-  if (options?.hideIfEmptyProposed && !prop) return;
-  const match = Boolean(prop) && eq(cur, prop);
+  if (options?.hideIfEmptyProposed && !prop) {
+    options.missing?.push(label);
+    return;
+  }
+  const match = Boolean(prop) && (options?.same ?? eq)(cur, prop);
   rows.push({
     field,
     label,
@@ -115,7 +131,8 @@ function buildRowsFromContact(
   documentNumber: string,
   documentTotal: number | null,
   documentTitle: string | null,
-): { rows: ReviewRow[]; matchCount: number } {
+): { rows: ReviewRow[]; matchCount: number; matched: ReviewRow[]; missingInXero: string[] } {
+  const missing: string[] = [];
   const rows: ReviewRow[] = [];
   const clientName = extras.person || extras.name || "";
   const ourClient = project.contact_person || project.customer_name || "";
@@ -126,16 +143,18 @@ function buildRowsFromContact(
 
   pushRow(rows, "title", "Project name", project.title, documentTitle || project.title);
   pushRow(rows, "customer_name", "Client name", ourClient, clientName || extras.name || "");
-  pushRow(rows, "contact_phone", "Phone", project.contact_phone ?? "", extras.phone ?? "");
-  pushRow(rows, "contact_email", "Email", project.contact_email ?? "", extras.email ?? "");
+  // Never offer to blank a field because Xero has nothing for it.
+  pushRow(rows, "contact_phone", "Phone", project.contact_phone ?? "", extras.phone ?? "", { hideIfEmptyProposed: true, missing, same: samePhone });
+  pushRow(rows, "contact_email", "Email", project.contact_email ?? "", extras.email ?? "", { hideIfEmptyProposed: true, missing });
   pushRow(rows, "xero_number", "Xero number", ourXero, documentNumber);
   pushRow(rows, "quoted_total_incl_vat", "Total project value", moneyText(project.quoted_total_incl_vat), moneyText(documentTotal));
   pushRow(rows, "location", "Location", locationText(project.site_province, project.site_town), xeroLocation, {
     hideIfEmptyProposed: true,
+    missing,
   });
 
   const matchCount = rows.filter((r) => r.match).length;
-  return { rows: rows.filter((r) => !r.match), matchCount };
+  return { rows: rows.filter((r) => !r.match), matchCount, matched: rows.filter((r) => r.match), missingInXero: missing };
 }
 
 export async function buildProjectXeroReview(
@@ -209,6 +228,8 @@ export async function buildProjectXeroReview(
       contactId: found.contact.id!,
       rows: built.rows,
       matchCount: built.matchCount,
+      matched: built.matched,
+      missingInXero: built.missingInXero,
     };
   } catch (err) {
     if (err instanceof XeroDocumentError) return { error: err.message };

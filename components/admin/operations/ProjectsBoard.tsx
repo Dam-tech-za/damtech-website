@@ -320,10 +320,10 @@ export function ProjectsBoard({
             <col className="ops-sheet__col-pay" />
             {!hide("lead") ? <col className="ops-sheet__col-lead" /> : null}
             {!hide("client") ? <col className="ops-sheet__col-client" /> : null}
-            {!hide("email") ? <col className="ops-sheet__col-email" /> : null}
+            {!hide("location") ? <col className="ops-sheet__col-location" /> : null}
             {!hide("xero") ? <col className="ops-sheet__col-xero" /> : null}
             {!hide("value") ? <col className="ops-sheet__col-value" /> : null}
-            {!hide("location") ? <col className="ops-sheet__col-location" /> : null}
+            {!hide("email") ? <col className="ops-sheet__col-email" /> : null}
           </colgroup>
           <thead>
             <tr>
@@ -349,9 +349,9 @@ export function ProjectsBoard({
                   Client
                 </th>
               ) : null}
-              {!hide("email") ? (
-                <th className="ops-sheet__c-email" scope="col">
-                  Email
+              {!hide("location") ? (
+                <th className="ops-sheet__c-location" scope="col">
+                  Location
                 </th>
               ) : null}
               {!hide("xero") ? (
@@ -364,9 +364,9 @@ export function ProjectsBoard({
                   Value
                 </th>
               ) : null}
-              {!hide("location") ? (
-                <th className="ops-sheet__c-location" scope="col">
-                  Location
+              {!hide("email") ? (
+                <th className="ops-sheet__c-email" scope="col">
+                  Email
                 </th>
               ) : null}
             </tr>
@@ -422,9 +422,14 @@ export function ProjectsBoard({
                             <ClientEditCell project={p} canEdit={canEdit} onPatched={patchRow} />
                           </td>
                         ) : null}
-                        {!hide("email") ? (
-                          <td className="ops-sheet__c-email" data-label="Email">
-                            <EmailEditCell project={p} canEdit={canEdit} onPatched={patchRow} />
+                        {!hide("location") ? (
+                          <td className="ops-sheet__c-location" data-label="Location">
+                            <LocationEditCell
+                              project={p}
+                              canEdit={canEdit}
+                              display={formatLocationCell(p)}
+                              onPatched={patchRow}
+                            />
                           </td>
                         ) : null}
                         {!hide("xero") ? (
@@ -437,14 +442,9 @@ export function ProjectsBoard({
                             <ValueEditCell project={p} canEdit={canEdit} onPatched={patchRow} />
                           </td>
                         ) : null}
-                        {!hide("location") ? (
-                          <td className="ops-sheet__c-location" data-label="Location">
-                            <LocationEditCell
-                              project={p}
-                              canEdit={canEdit}
-                              display={formatLocationCell(p)}
-                              onPatched={patchRow}
-                            />
+                        {!hide("email") ? (
+                          <td className="ops-sheet__c-email" data-label="Email">
+                            <EmailEditCell project={p} canEdit={canEdit} onPatched={patchRow} />
                           </td>
                         ) : null}
                       </tr>

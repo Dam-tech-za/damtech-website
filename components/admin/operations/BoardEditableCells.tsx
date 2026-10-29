@@ -4,6 +4,7 @@ import { useId, useRef, useState, type KeyboardEvent, type ReactNode } from "rea
 import { updateBoardFieldAction } from "@/app/admin/operations/board-field-actions";
 import { SA_TOWNS } from "@/lib/operations/sa-places";
 import { displayPhone } from "@/lib/operations/phone-display";
+import { CountryFlag } from "./CountryFlag";
 import type { BoardProject } from "@/lib/operations/queries";
 import { formatOpsMoney } from "./ops-format";
 
@@ -245,21 +246,27 @@ export function ClientEditCell({
 
   if (!canEdit) {
     return (
-      <span className="ops-client">
+      <span className="ops-client ops-client--grid">
+        <span className="ops-client__flagcol">
+          <CountryFlag country={shown?.country} />
+        </span>
         <span className="ops-client__name">{project.contact_person || "—"}</span>
         {shown ? (
-          <span className="ops-client__phone">
-            {shown.flag ? <span aria-hidden="true">{shown.flag}</span> : null} {shown.text}
-          </span>
+          <a className="ops-client__phone" href={shown.href}>
+            {shown.text}
+          </a>
         ) : (
-          <span className="ops-table__meta">+ Phone</span>
+          <span className="ops-table__meta ops-client__phone">—</span>
         )}
       </span>
     );
   }
 
   return (
-    <span className="ops-client ops-client--edit">
+    <span className="ops-client ops-client--edit ops-client--grid">
+      <span className="ops-client__flagcol">
+        <CountryFlag country={shown?.country} />
+      </span>
       <InlineText
         value={project.contact_person ?? ""}
         placeholder="+ Client"
@@ -274,11 +281,6 @@ export function ClientEditCell({
         }}
       />
       <span className="ops-inline-phone">
-        {shown?.flag ? (
-          <span className="ops-inline-phone__flag" aria-hidden="true">
-            {shown.flag}
-          </span>
-        ) : null}
         <InlineText
           value={project.contact_phone ?? ""}
           displayValue={shown?.text}

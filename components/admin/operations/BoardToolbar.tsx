@@ -30,10 +30,10 @@ export type BoardColumnId = "lead" | "client" | "email" | "xero" | "value" | "lo
 export const BOARD_COLUMNS: { id: BoardColumnId; label: string }[] = [
   { id: "lead", label: "Lead" },
   { id: "client", label: "Client" },
-  { id: "email", label: "Email" },
+  { id: "location", label: "Location" },
   { id: "xero", label: "Xero" },
   { id: "value", label: "Value" },
-  { id: "location", label: "Location" },
+  { id: "email", label: "Email" },
 ];
 
 export type BoardToolbarState = {
