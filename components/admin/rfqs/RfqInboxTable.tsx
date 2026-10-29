@@ -133,9 +133,9 @@ export function RfqInboxTable({
       ) : null}
 
       <div className="rfq-inbox-table-wrap">
-        <table className="admin-table rfq-inbox-table">
+        <table className="admin-table rfq-inbox-table admin-sheet">
           <colgroup>
-            <col className="rfq-col-check" />
+            <col className="rfq-col-check admin-sheet__check" />
             {optionalColumns.includes("rfqNumber") ? (
               <col className="rfq-col-rfq" />
             ) : null}
@@ -143,39 +143,46 @@ export function RfqInboxTable({
             <col className="rfq-col-contact" />
             <col className="rfq-col-location" />
             <col className="rfq-col-service" />
-            <col className="rfq-col-size" />
+            {optionalColumns.includes("size") ? <col className="rfq-col-size" /> : null}
             <col className="rfq-col-status" />
             <col className="rfq-col-submitted" />
             {optionalColumns.includes("lastUpdated") ? (
               <col className="rfq-col-updated" />
             ) : null}
-            <col className="rfq-col-actions" />
+            <col className="rfq-col-actions admin-sheet__actions" />
           </colgroup>
           <thead>
             <tr>
-              <th scope="col" className="rfq-col-check">
-                <span className="sr-only">Select</span>
+              <th scope="col" className="rfq-col-check admin-sheet__check">
+                <input
+                  type="checkbox"
+                  checked={effectiveSelected.length === visibleRows.length && visibleRows.length > 0}
+                  onChange={toggleAll}
+                  aria-label="Select all enquiries on this page"
+                />
               </th>
               {optionalColumns.includes("rfqNumber") ? (
                 <th scope="col" className="rfq-col-rfq">
                   RFQ
                 </th>
               ) : null}
-              <th scope="col" className="rfq-col-customer">
+              <th scope="col" className="rfq-col-customer admin-sheet__lead">
                 Customer
               </th>
               <th scope="col" className="rfq-col-contact">
-                Contact
+                Phone / email
               </th>
               <th scope="col" className="rfq-col-location">
                 Location
               </th>
               <th scope="col" className="rfq-col-service">
-                Service / project
+                Service
               </th>
-              <th scope="col" className="rfq-col-size">
-                Approx. size
-              </th>
+              {optionalColumns.includes("size") ? (
+                <th scope="col" className="rfq-col-size">
+                  Approx. size
+                </th>
+              ) : null}
               <th scope="col" className="rfq-col-status">
                 Status
               </th>
@@ -187,7 +194,7 @@ export function RfqInboxTable({
                   Last updated
                 </th>
               ) : null}
-              <th scope="col" className="rfq-col-actions">
+              <th scope="col" className="rfq-col-actions admin-sheet__actions">
                 <span className="sr-only">Actions</span>
               </th>
             </tr>

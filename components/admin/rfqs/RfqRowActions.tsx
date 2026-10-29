@@ -1,6 +1,5 @@
 "use client";
 
-import { AdminButton } from "@/components/admin/ui/AdminButton";
 import { AdminTableActions } from "@/components/admin/ui/AdminTableActions";
 import { RfqActionMenu } from "./RfqActionMenu";
 import type { RfqDeleteSummary } from "@/lib/admin/rfqs/delete-rfq";
@@ -20,24 +19,12 @@ export function RfqRowActions({
   compact,
   onDeleted,
 }: RfqRowActionsProps) {
-  const detailHref = `/admin/rfqs/${summary.id}/`;
-
   return (
     <AdminTableActions>
       <div
         className={`rfq-row-actions${compact ? " rfq-row-actions--compact" : ""}`}
         onClick={(event) => event.stopPropagation()}
       >
-        {!compact ? (
-          <AdminButton
-            href={detailHref}
-            size="sm"
-            variant="outline"
-            className="admin-btn--table"
-          >
-            View
-          </AdminButton>
-        ) : null}
         <RfqActionMenu
           summary={summary}
           canManage={canManage}
