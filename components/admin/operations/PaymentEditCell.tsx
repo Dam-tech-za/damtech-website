@@ -81,21 +81,27 @@ export function PaymentEditCell({
     if (!open) return;
     const place = () => {
       const el = triggerRef.current;
+      const menu = menuRef.current;
       if (!el) return;
       const rect = el.getBoundingClientRect();
-      const menuHeight = Math.min(280, 8 + PAYMENT_MENU_OPTIONS.length * 34);
+      // Longest label + tick; never narrower than the trigger or 200px.
+      const measured = menu?.offsetWidth ?? 0;
+      const width = Math.max(200, rect.width, measured);
+      const menuHeight = Math.min(320, 12 + PAYMENT_MENU_OPTIONS.length * 36);
       const spaceBelow = window.innerHeight - rect.bottom;
       const flipUp = spaceBelow < menuHeight + 8 && rect.top > spaceBelow;
       const top = flipUp ? Math.max(8, rect.top - menuHeight - 4) : rect.bottom + 4;
-      const width = Math.max(176, rect.width);
       let left = rect.left;
       if (left + width > window.innerWidth - 8) left = Math.max(8, window.innerWidth - width - 8);
-      setMenuStyle({ top, left, width, maxHeight: menuHeight });
+      setMenuStyle({ top, left, minWidth: width, width: "max-content", maxHeight: menuHeight });
     };
     place();
+    // Re-measure after paint so max-content width is accurate, then clamp again.
+    const raf = window.requestAnimationFrame(place);
     window.addEventListener("resize", place);
     window.addEventListener("scroll", place, true);
     return () => {
+      window.cancelAnimationFrame(raf);
       window.removeEventListener("resize", place);
       window.removeEventListener("scroll", place, true);
     };

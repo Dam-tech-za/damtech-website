@@ -2375,12 +2375,12 @@ form[aria-busy="true"] {
 }
 
 .ops-sheet__scroll {
-  flex: 1 1 auto;
+  flex: 1 1 0;
   min-height: 0;
   width: 100%;
   max-width: 100%;
   overflow: auto;
-  overscroll-behavior: contain;
+  overscroll-behavior: auto;
   scrollbar-width: thin;
   border: 1px solid #e6e9ef;
   border-radius: 8px;
@@ -2767,31 +2767,49 @@ form[aria-busy="true"] {
 .ops-pay-edit__menu {
   position: fixed;
   z-index: 1000;
-  min-width: 176px;
+  width: max-content;
+  min-width: 200px;
   margin: 0;
-  padding: 0.25rem;
+  padding: 6px;
+  box-sizing: border-box;
+  overflow: visible;
   list-style: none;
   background: #fff;
   border: 1px solid #e6e9ef;
-  box-shadow: 0 8px 20px rgb(16 24 40 / 0.12);
+  border-radius: 8px;
+  box-shadow: 0 6px 16px rgb(16 24 40 / 0.1);
   display: grid;
-  gap: 2px;
+  gap: 4px;
 }
 
-.ops-pay-edit__menu .ops-pay {
+.ops-pay-edit__menu .ops-pay,
+.ops-pay-edit__menu .ops-pay--cell {
   width: 100%;
+  margin: 0;
+  box-sizing: border-box;
   border: 0;
   cursor: pointer;
-  min-height: 1.85rem;
+  min-height: 28px;
+  padding: 0 12px;
+  justify-content: flex-start;
+  gap: 8px;
 }
 
-.ops-pay-edit__menu .ops-pay.is-selected {
-  outline: 2px solid #323338;
-  outline-offset: -2px;
+.ops-pay-edit__menu .ops-pay__text {
+  flex: 1 1 auto;
+  text-align: left;
 }
 
+.ops-pay-edit__menu .ops-pay__tick {
+  position: static;
+  margin-left: auto;
+  flex: 0 0 auto;
+}
+
+.ops-pay-edit__menu .ops-pay.is-selected,
 .ops-pay-edit__menu .ops-pay.is-active {
-  box-shadow: inset 0 0 0 2px rgb(16 24 40 / 0.55);
+  outline: none;
+  box-shadow: inset 0 0 0 1.5px #323338;
 }
 
 .ops-sheet--frozen td.ops-sheet__c-pay {
@@ -2989,17 +3007,6 @@ form[aria-busy="true"] {
   min-height: 0;
 }
 
-.ops-pay-edit__menu {
-  gap: 4px;
-  padding: 6px;
-  border: 1px solid #e6e9ef;
-  border-radius: 8px;
-  box-shadow: 0 6px 16px rgb(16 24 40 / 0.1);
-}
-
-.ops-pay-edit__menu .ops-pay--cell {
-  padding-right: 28px;
-}
 
 .ops-peek {
   display: grid;
@@ -3371,11 +3378,19 @@ form[aria-busy="true"] {
 }
 
 /* ----- Projects page: near full-width, no card, flex fill ----- */
-.admin-shell__main:has(.ops-projects-page) {
+.admin-shell:has(.ops-projects-page) {
+  height: 100dvh;
+  min-height: 0;
+  overflow: hidden;
+  grid-template-rows: minmax(0, 1fr);
+}
+
+.admin-shell:has(.ops-projects-page) .admin-shell__main {
+  height: 100%;
+  min-height: 0;
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  min-height: 0;
 }
 
 .admin-shell__main:has(.ops-projects-page) .admin-header {
@@ -3384,10 +3399,10 @@ form[aria-busy="true"] {
 
 .admin-shell__content:has(.ops-projects-page) {
   max-width: none;
-  padding: 12px 20px 0;
+  padding: 12px 20px 12px;
   display: flex;
   flex-direction: column;
-  flex: 1 1 auto;
+  flex: 1 1 0;
   min-height: 0;
   overflow: hidden;
   background: #f5f6f8;
@@ -3400,7 +3415,7 @@ form[aria-busy="true"] {
 .ops-projects-page {
   display: flex;
   flex-direction: column;
-  flex: 1 1 auto;
+  flex: 1 1 0;
   min-height: 0;
   gap: 8px;
 }
@@ -3435,7 +3450,7 @@ form[aria-busy="true"] {
 }
 
 .ops-projects-page .admin-panel--board {
-  flex: 1 1 auto;
+  flex: 1 1 0;
   min-height: 0;
   display: flex;
   flex-direction: column;
@@ -3449,9 +3464,14 @@ form[aria-busy="true"] {
 .ops-projects-page .ops-workspace {
   display: flex;
   flex-direction: column;
-  flex: 1 1 auto;
+  flex: 1 1 0;
   min-height: 0;
   gap: 8px;
+}
+
+.ops-projects-page .ops-sheet {
+  flex: 1 1 0;
+  min-height: 0;
 }
 
 .ops-client,
@@ -3646,9 +3666,11 @@ form[aria-busy="true"] {
   border: 1px solid #e6e9ef;
   border-radius: 8px;
   box-shadow: 0 6px 16px rgb(16 24 40 / 0.1);
-  padding: 10px;
+  padding: 6px;
+  box-sizing: border-box;
   max-height: min(70vh, 420px);
   overflow: auto;
+  overflow-x: visible;
 }
 
 .ops-toolbar__popover-title {

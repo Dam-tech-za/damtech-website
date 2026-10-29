@@ -150,14 +150,17 @@ function ToolbarPopover({
       const anchor = anchorRef.current;
       if (!anchor) return;
       const rect = anchor.getBoundingClientRect();
-      const panelH = panelRef.current?.offsetHeight ?? 240;
+      const panel = panelRef.current;
+      const panelW = Math.max(width, panel?.offsetWidth ?? width);
+      const panelH = panel?.offsetHeight ?? 240;
       const flip = window.innerHeight - rect.bottom < panelH + 8 && rect.top > panelH;
       const top = flip ? Math.max(8, rect.top - panelH - 4) : rect.bottom + 4;
       let left = rect.left;
-      if (left + width > window.innerWidth - 8) left = Math.max(8, window.innerWidth - width - 8);
-      setStyle({ top, left, width });
+      if (left + panelW > window.innerWidth - 8) left = Math.max(8, window.innerWidth - panelW - 8);
+      setStyle({ top, left, width: panelW, maxWidth: "calc(100vw - 16px)" });
     };
     place();
+    const raf = window.requestAnimationFrame(place);
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
     };
@@ -172,6 +175,7 @@ function ToolbarPopover({
     document.addEventListener("mousedown", onPointer);
     document.addEventListener("keydown", onKey);
     return () => {
+      window.cancelAnimationFrame(raf);
       window.removeEventListener("resize", place);
       window.removeEventListener("scroll", place, true);
       document.removeEventListener("mousedown", onPointer);
