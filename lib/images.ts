@@ -33,6 +33,7 @@ import villiersdorpWesternCapeHdpeDamLining8230m22 from "@/public/images/villier
 import tulbaghWesternCapeSteelWaterTankProject from "@/public/images/corrugated-steel-water-tank-tulbagh-western-cape.webp";
 // Owner photos (Oct 2026): 12 m steel reservoir in the Western Cape, HDPE dam at a Barberton pecan farm.
 import westernCapeSteelReservoir12m from "@/public/images/western-cape-corrugated-steel-reservoir-12m-diameter-damtech.webp";
+import westernCapeSteelReservoir12mCompleted from "@/public/images/western-cape-corrugated-steel-reservoir-12m-completed-shade-net-cover.webp";
 import westernCapeSteelReservoir12mWalls from "@/public/images/western-cape-corrugated-steel-reservoir-12m-walls-installed.webp";
 import westernCapeSteelReservoir12mBase from "@/public/images/western-cape-corrugated-steel-reservoir-12m-prepared-sand-base.webp";
 import barbertonHdpeDamLiningPecanFarm from "@/public/images/barberton-mpumalanga-hdpe-dam-lining-pecan-nut-farm-1000m2.webp";
@@ -84,6 +85,8 @@ export const IMAGE_PATHS = {
     "/images/corrugated-steel-water-tank-tulbagh-western-cape.webp",
   westernCapeSteelReservoir12m:
     "/images/western-cape-corrugated-steel-reservoir-12m-diameter-damtech.webp",
+  westernCapeSteelReservoir12mCompleted:
+    "/images/western-cape-corrugated-steel-reservoir-12m-completed-shade-net-cover.webp",
   westernCapeSteelReservoir12mWalls:
     "/images/western-cape-corrugated-steel-reservoir-12m-walls-installed.webp",
   westernCapeSteelReservoir12mBase:
@@ -153,6 +156,8 @@ export const IMAGE_ALTS: Record<ImagePath, string> = {
     "Corrugated steel water tank installed in Tulbagh, Western Cape",
   [IMAGE_PATHS.westernCapeSteelReservoir12m]:
     "12 m diameter corrugated galvanised steel water reservoir, 2.29 m high, installed by Damtech on a farm in the Western Cape mountains",
+  [IMAGE_PATHS.westernCapeSteelReservoir12mCompleted]:
+    "Completed 12 m × 2.29 m corrugated galvanised steel water reservoir with a black shade-net roof cover and connected pipework, installed by Damtech below the mountains in the Western Cape",
   [IMAGE_PATHS.westernCapeSteelReservoir12mWalls]:
     "Galvanised corrugated steel reservoir walls and uprights of a 12 m Damtech reservoir standing on its prepared base in the Western Cape",
   [IMAGE_PATHS.westernCapeSteelReservoir12mBase]:
@@ -216,7 +221,7 @@ export const FEATURED_PROJECT_IMAGES = {
     worcesterWesternCapeBitumenEarthDamLining15000m2,
   "villiersdorp-hdpe-dam-lining": villiersdorpWesternCapeHdpeDamLining8230m2,
   "tulbagh-steel-water-tank": tulbaghWesternCapeSteelWaterTankProject,
-  "western-cape-steel-reservoir-12m": westernCapeSteelReservoir12m,
+  "western-cape-steel-reservoir-12m": westernCapeSteelReservoir12mCompleted,
   "barberton-pecan-farm-hdpe-dam-lining": barbertonHdpeDamLiningPecanFarm,
   "north-west-game-lodge-hdpe-dam-lining": hdpeDamLiningEarthDam,
   "centurion-hdpe-dam-liner": hartswaterHdpeDamLiningProject,

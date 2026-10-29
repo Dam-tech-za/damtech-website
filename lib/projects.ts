@@ -269,17 +269,23 @@ export const PROJECT_CASE_STUDIES: ProjectCaseStudy[] = [
       "12 m diameter × 2.29 m high corrugated galvanised steel reservoir.",
       "About 259 m³ (259 000 litres) gross volume.",
       "Built on a levelled, compacted sand base prepared by Damtech.",
+      "Finished with a shade-net roof cover and inlet and outlet pipework connected.",
       "Modular steel construction that can be extended or relined later.",
     ],
     summary:
       "A 12 m × 2.29 m corrugated galvanised steel reservoir on a prepared base in the Western Cape, holding about 259 000 litres.",
     galleryIntro:
-      "From prepared base to finished walls: Damtech's 12 m corrugated steel reservoir in the Western Cape.",
+      "From prepared base to the covered, fully installed reservoir: Damtech's 12 m corrugated steel reservoir in the Western Cape.",
     images: [
+      projectImage(
+        IMAGE_PATHS.westernCapeSteelReservoir12mCompleted,
+        undefined,
+        "Fully installed: the 12 m × 2.29 m reservoir with its shade-net roof cover and pipework connected.",
+      ),
       projectImage(
         IMAGE_PATHS.westernCapeSteelReservoir12m,
         undefined,
-        "The finished 12 m × 2.29 m corrugated galvanised steel reservoir below the mountains.",
+        "The 12 m × 2.29 m corrugated galvanised steel reservoir walls below the mountains.",
       ),
       projectImage(
         IMAGE_PATHS.westernCapeSteelReservoir12mWalls,
