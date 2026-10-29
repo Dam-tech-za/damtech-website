@@ -2604,8 +2604,13 @@ form[aria-busy="true"] {
 }
 
 .ops-sheet__add-row .ops-sheet__sticky-row {
+  /* Pin only under Check + Project — not the full scroller width. */
+  width: calc(var(--col-check) + var(--col-project));
+  max-width: calc(var(--col-check) + var(--col-project));
   background: #fff;
-  padding-left: calc(var(--col-check) + 12px);
+  padding: 0 12px 0 var(--col-check);
+  gap: 6px;
+  min-height: 36px;
 }
 
 .ops-group__count {
@@ -3112,11 +3117,15 @@ form[aria-busy="true"] {
 
 .ops-sheet__add-input {
   width: 100%;
+  min-width: 0;
   border: 0;
+  border-bottom: 1px solid #e6e9ef;
+  border-radius: 0;
   background: transparent;
-  min-height: 2.2rem;
+  min-height: 2rem;
   box-shadow: none;
   color: #486581;
+  outline: none;
 }
 
 .ops-sheet__add-input::placeholder {
@@ -3125,6 +3134,8 @@ form[aria-busy="true"] {
 
 .ops-sheet__add-input:focus {
   outline: none;
+  border-bottom-color: #0073ea;
+  box-shadow: none;
   color: var(--admin-text);
 }
 
@@ -3143,6 +3154,17 @@ form[aria-busy="true"] {
 
 .ops-sheet__xero-link:hover {
   text-decoration: underline;
+}
+
+@media (max-width: 1100px) {
+  .ops-sheet__xero-link {
+    font-size: 0;
+  }
+
+  .ops-sheet__xero-link::before {
+    content: "+ Xero";
+    font-size: 12px;
+  }
 }
 
 .ops-sheet tr.is-selected td {
@@ -3301,6 +3323,11 @@ form[aria-busy="true"] {
 
 .ops-selection-bar__btn:hover:not(:disabled) {
   background: #f0f2f5;
+}
+
+.ops-selection-bar__btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
 }
 
 .ops-selection-bar__btn--danger:hover:not(:disabled) {
@@ -3651,6 +3678,189 @@ body:has(.ops-projects-page) {
 
 .ops-sheet__add-input:focus {
   background: transparent !important;
+  border-bottom-color: #0073ea;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+.ops-sheet__flash {
+  position: fixed;
+  left: calc(var(--admin-sidebar-width) + (100vw - var(--admin-sidebar-width)) / 2);
+  bottom: 96px;
+  transform: translateX(-50%);
+  z-index: 41;
+  margin: 0;
+  padding: 8px 14px;
+  background: #323338;
+  color: #fff;
+  border-radius: 8px;
+  font-size: 13px;
+  box-shadow: 0 6px 16px rgb(16 24 40 / 0.18);
+}
+
+.ops-sheet__flash-undo {
+  margin-left: 8px;
+  border: 0;
+  background: transparent;
+  color: #9ec9ff;
+  font: inherit;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.ops-xero-update--quiet {
+  margin: 0;
+  font-size: 12px;
+  color: #0b7a47;
+}
+
+.ops-xero-review {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  background: rgb(16 24 40 / 0.25);
+}
+
+.ops-xero-review__card {
+  width: min(560px, calc(100vw - 32px));
+  max-height: 80dvh;
+  overflow: auto;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 12px 40px rgb(16 24 40 / 0.22);
+  padding: 20px;
+  display: grid;
+  gap: 14px;
+}
+
+.ops-xero-review__head h2 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 650;
+  color: #323338;
+}
+
+.ops-xero-review__sub {
+  margin: 4px 0 0;
+  font-size: 13px;
+  color: #676879;
+}
+
+.ops-xero-review__status {
+  margin: 0;
+  font-size: 13px;
+  color: #676879;
+}
+
+.ops-xero-review__error {
+  margin: 0;
+  font-size: 13px;
+  color: #d83a52;
+}
+
+.ops-xero-review__doc {
+  margin: 0;
+  font-size: 13px;
+  color: #323338;
+}
+
+.ops-xero-review__match {
+  color: #676879;
+}
+
+.ops-xero-review__find {
+  display: flex;
+  gap: 8px;
+  align-items: end;
+}
+
+.ops-xero-review__find label {
+  flex: 1;
+  display: grid;
+  gap: 4px;
+  font-size: 12px;
+  color: #676879;
+}
+
+.ops-xero-review__table {
+  display: grid;
+  gap: 6px;
+  font-size: 12px;
+}
+
+.ops-xero-review__tr {
+  display: grid;
+  grid-template-columns: 88px minmax(0, 1fr) minmax(0, 1.2fr) 64px;
+  gap: 8px;
+  align-items: center;
+}
+
+.ops-xero-review__tr--head {
+  color: #676879;
+  font-weight: 600;
+}
+
+.ops-xero-review__current {
+  color: #676879;
+  word-break: break-word;
+}
+
+.ops-xero-review__input {
+  width: 100%;
+  min-height: 32px;
+  font-size: 12px;
+}
+
+.ops-xero-review__toggles {
+  display: inline-flex;
+  gap: 2px;
+}
+
+.ops-xero-review__toggle {
+  width: 28px;
+  height: 28px;
+  border: 1px solid #e6e9ef;
+  border-radius: 6px;
+  background: #fff;
+  color: #676879;
+  cursor: pointer;
+}
+
+.ops-xero-review__toggle.is-on {
+  background: #e8f5e9;
+  border-color: #a5d6a7;
+  color: #2e7d32;
+}
+
+.ops-xero-review__toggle.is-off {
+  background: #fdecea;
+  border-color: #f5c6cb;
+  color: #d83a52;
+}
+
+.ops-xero-review__foot {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.ops-xero-review__text {
+  margin-right: auto;
+  border: 0;
+  background: transparent;
+  color: #676879;
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.ops-xero-review__text:hover {
+  color: #323338;
 }
 
 /* monday.com slim toolbar */

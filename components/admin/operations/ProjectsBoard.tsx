@@ -27,6 +27,7 @@ import {
   ValueEditCell,
   XeroEditCell,
 } from "./BoardEditableCells";
+import { FromXeroReviewCard } from "./FromXeroReviewCard";
 import { ProjectPeekDrawer } from "./ProjectPeekDrawer";
 import { SelectionBar } from "./SelectionBar";
 
@@ -203,6 +204,8 @@ export function ProjectsBoard({
   const [xeroQuotes, setXeroQuotes] = useState<XeroStartItem[]>([]);
   const [xeroError, setXeroError] = useState<string | null>(null);
   const [xeroLoading, setXeroLoading] = useState(false);
+  const [reviewProjectId, setReviewProjectId] = useState<string | null>(null);
+  const [flash, setFlash] = useState<{ message: string; undo: (() => Promise<void>) | null } | null>(null);
 
   const leads = useMemo(
     () => mergeLeadSuggestions([...leadSuggestions, ...rows.map((p) => p.leadName)]),
@@ -286,6 +289,8 @@ export function ProjectsBoard({
   const allVisibleSelected = visibleIds.length > 0 && visibleIds.every((id) => selected.has(id));
   const idsValue = selectedProjects.map((p) => p.id).join(",");
   const singleUnlinked = selectedProjects.length === 1 && !isLinkedToXero(selectedProjects[0]) ? selectedProjects[0] : null;
+  const singleSelected = selectedProjects.length === 1 ? selectedProjects[0] : null;
+  const reviewProject = reviewProjectId ? rows.find((p) => p.id === reviewProjectId) ?? null : null;
 
   const toggleOne = (id: string) => {
     setSelected((current) => {
@@ -460,6 +465,28 @@ export function ProjectsBoard({
         </table>
       </div>
 
+      {flash ? (
+        <p className="ops-sheet__flash" role="status">
+          {flash.message}
+          {flash.undo ? (
+            <>
+              {" "}
+              <button
+                type="button"
+                className="ops-sheet__flash-undo"
+                onClick={() => {
+                  const undo = flash.undo;
+                  setFlash(null);
+                  void undo?.();
+                }}
+              >
+                Undo
+              </button>
+            </>
+          ) : null}
+        </p>
+      ) : null}
+
       {selectedProjects.length > 0 && canEdit ? (
         <SelectionBar
           count={selectedProjects.length}
@@ -469,6 +496,23 @@ export function ProjectsBoard({
           linkToXero={
             singleUnlinked ? () => void openXeroPicker({ linkId: singleUnlinked.id }) : null
           }
+          onFromXero={() => {
+            if (singleSelected) setReviewProjectId(singleSelected.id);
+          }}
+          fromXeroEnabled={Boolean(singleSelected)}
+        />
+      ) : null}
+
+      {reviewProject ? (
+        <FromXeroReviewCard
+          project={reviewProject}
+          open
+          onClose={() => setReviewProjectId(null)}
+          onApplied={(patch, message, undo) => {
+            patchRow({ ...reviewProject, ...patch } as BoardProject);
+            setFlash({ message, undo });
+            setSelected(new Set());
+          }}
         />
       ) : null}
 

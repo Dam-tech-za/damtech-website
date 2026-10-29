@@ -24,6 +24,21 @@ export type XeroContactExtras = {
 
 type UnknownRecord = Record<string, unknown>;
 
+const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+/** Known bad contacts that previously overwrote every Planning row via Contacts[0]. */
+export const BLOCKED_XERO_CONTACT_IDS = new Set([
+  "f3dd1d70-c89c-4648-91ae-0c10dc123078", // K&S49 Trading (PTY) LTD / Sharon
+  "05c50aa7-ddeb-4b53-959b-15efb85494bb", // *K And S49 Trading
+]);
+
+export class XeroContactLookupError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "XeroContactLookupError";
+  }
+}
+
 const asRecord = (v: unknown): UnknownRecord | null =>
   v && typeof v === "object" && !Array.isArray(v) ? (v as UnknownRecord) : null;
 
@@ -103,7 +118,6 @@ function pickAddress(raw: UnknownRecord): { city: string | null; region: string 
     .filter((a): a is UnknownRecord => a !== null)
     .sort((a, b) => {
       const type = (v: UnknownRecord) => String(v.type ?? v.AddressType ?? "").toUpperCase();
-      // Prefer Delivery / POBOX delivery-ish, then STREET / Billing.
       const score = (t: string) => (t.includes("DELIVERY") || t.includes("SHIPPING") ? 0 : t.includes("STREET") || t.includes("POBOX") ? 1 : 2);
       return score(type(a)) - score(type(b));
     });
@@ -177,7 +191,6 @@ export function fillFromXeroContact<T extends Record<string, unknown>>(
   const patch: Record<string, unknown> = {};
   if (!current.customer_name?.trim() && extras.name) patch.customer_name = extras.name.slice(0, 200);
   if (!current.contact_person?.trim() && (extras.person || extras.name)) {
-    // Person first; if no primary person, Contact name is used for Client.
     patch.contact_person = (extras.person || extras.name || "").slice(0, 200);
   }
   if (!current.contact_phone?.trim() && extras.phone) patch.contact_phone = extras.phone.slice(0, 40);
@@ -193,29 +206,102 @@ export function locationFromXeroCity(city: string | null, region: string | null)
   return null;
 }
 
+export type ContactLookupContext = {
+  projectId?: string | null;
+  documentNumber?: string | null;
+  /** ContactID taken from the quote/invoice. Required for the hard guard. */
+  documentContactId: string;
+};
+
 /**
- * Fetch a Xero contact by ContactID only. Name search is intentionally
- * unsupported — it caused wrong contacts (K&S49) to be written onto every job.
+ * Fetch a Xero contact by ContactID only. Never falls back to Contacts[0],
+ * name search, or an unfiltered list. Throws on any failure.
+ */
+export async function fetchXeroContactByIdStrict(
+  bridge: XeroBridgeClient,
+  ctx: ContactLookupContext,
+): Promise<XeroContactExtras> {
+  const documentContactId = (ctx.documentContactId ?? "").trim();
+  if (!documentContactId || !UUID.test(documentContactId)) {
+    throw new XeroContactLookupError("This Xero document has no ContactID.");
+  }
+
+  let rows: unknown[];
+  try {
+    const result = await bridge.call<unknown[]>("get_contacts", { contact_id: documentContactId, page: 1 });
+    if (!Array.isArray(result)) {
+      throw new XeroContactLookupError("Xero didn't answer, nothing was changed.");
+    }
+    rows = result;
+  } catch (error) {
+    if (error instanceof XeroContactLookupError) throw error;
+    throw new XeroContactLookupError("Xero didn't answer, nothing was changed.");
+  }
+
+  if (!rows.length) {
+    console.error("[xero-contact] empty contacts response", {
+      projectId: ctx.projectId,
+      documentNumber: ctx.documentNumber,
+      documentContactId,
+    });
+    throw new XeroContactLookupError("Xero contact not found for this document.");
+  }
+
+  const mapped = rows.map(mapXeroContact);
+  // NEVER take mapped[0] — that is how K&S49 (first by name) overwrote every project.
+  const match = mapped.find((c) => c.id === documentContactId);
+  const resolvedContactId = match?.id ?? null;
+  const matched = resolvedContactId === documentContactId;
+
+  console.info("[xero-contact] sync lookup", {
+    projectId: ctx.projectId ?? null,
+    documentNumber: ctx.documentNumber ?? null,
+    documentContactId,
+    resolvedContactId,
+    matched,
+  });
+
+  if (!match || !resolvedContactId) {
+    console.error("[xero-contact] ContactID mismatch — refusing Contacts[0] fallback", {
+      projectId: ctx.projectId,
+      documentNumber: ctx.documentNumber,
+      documentContactId,
+      returnedIds: mapped.map((c) => c.id),
+    });
+    throw new XeroContactLookupError("Xero returned a different contact. Nothing was changed.");
+  }
+
+  if (BLOCKED_XERO_CONTACT_IDS.has(resolvedContactId) && !BLOCKED_XERO_CONTACT_IDS.has(documentContactId)) {
+    console.error("[xero-contact] blocked contact rejected", {
+      projectId: ctx.projectId,
+      documentNumber: ctx.documentNumber,
+      documentContactId,
+      resolvedContactId,
+    });
+    throw new XeroContactLookupError("Blocked a known wrong Xero contact. Nothing was changed.");
+  }
+
+  return match;
+}
+
+/**
+ * Fetch a Xero contact by ContactID only. Returns null on failure (legacy callers).
+ * Never returns a contact whose id does not equal the requested ContactID.
  */
 export async function fetchXeroContactById(
   bridge: XeroBridgeClient,
   contactId: string | null | undefined,
 ): Promise<XeroContactExtras | null> {
   const id = (contactId ?? "").trim();
-  if (!id) return null;
+  if (!id || !UUID.test(id)) return null;
   try {
-    const rows = await bridge.call<unknown[]>("get_contacts", { contact_id: id, page: 1 });
-    if (!Array.isArray(rows) || rows.length === 0) {
-      // Some bridge builds only support `search` with a UUID.
-      const alt = await bridge.call<unknown[]>("get_contacts", { search: id, page: 1 });
-      if (!Array.isArray(alt) || !alt.length) return null;
-      const mapped = alt.map(mapXeroContact);
-      return mapped.find((c) => c.id === id) ?? null;
+    return await fetchXeroContactByIdStrict(bridge, { documentContactId: id });
+  } catch (error) {
+    if (error instanceof XeroContactLookupError) {
+      console.error("[xero-contact]", error.message);
+      return null;
     }
-    const mapped = rows.map(mapXeroContact);
-    return mapped.find((c) => c.id === id) ?? mapped[0] ?? null;
-  } catch {
-    return null;
+    throw error;
   }
 }
 

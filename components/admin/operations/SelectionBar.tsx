@@ -70,6 +70,28 @@ function IconXero() {
   );
 }
 
+function IconFromXero() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true">
+      <path
+        d="M10 3.5v8M10 11.5 7.5 9M10 11.5 12.5 9M4.5 14.5h11"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M15.5 8.5a5.5 5.5 0 1 0-1.2 3.4"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+}
+
 function BarButton({
   label,
   danger,
@@ -79,6 +101,8 @@ function BarButton({
   pendingLabel,
   buttonRef,
   pending = false,
+  disabled = false,
+  title,
   ...rest
 }: {
   label: string;
@@ -89,6 +113,8 @@ function BarButton({
   pendingLabel?: string;
   buttonRef?: RefObject<HTMLButtonElement | null>;
   pending?: boolean;
+  disabled?: boolean;
+  title?: string;
   "aria-haspopup"?: boolean | "menu";
   "aria-expanded"?: boolean;
 }) {
@@ -99,8 +125,9 @@ function BarButton({
       type={type}
       className={`ops-selection-bar__btn${danger ? " ops-selection-bar__btn--danger" : ""}`}
       onClick={onClick}
-      disabled={busy}
+      disabled={busy || disabled}
       aria-busy={busy || undefined}
+      title={title}
       {...rest}
     >
       <span className="ops-selection-bar__icon">{children}</span>
@@ -120,9 +147,11 @@ type Props = {
   onExport: () => void;
   onClear: () => void;
   linkToXero?: (() => void) | null;
+  onFromXero?: (() => void) | null;
+  fromXeroEnabled?: boolean;
 };
 
-export function SelectionBar({ count, idsValue, onExport, onClear, linkToXero }: Props) {
+export function SelectionBar({ count, idsValue, onExport, onClear, linkToXero, onFromXero, fromXeroEnabled }: Props) {
   const [moveOpen, setMoveOpen] = useState(false);
   const moveBtnRef = useRef<HTMLButtonElement>(null);
   const [moveStyle, setMoveStyle] = useState<CSSProperties>({});
@@ -194,6 +223,17 @@ export function SelectionBar({ count, idsValue, onExport, onClear, linkToXero }:
           <IconArchive />
         </FormBarButton>
       </AdminActionForm>
+
+      {onFromXero ? (
+        <BarButton
+          label="From Xero"
+          onClick={fromXeroEnabled ? onFromXero : undefined}
+          disabled={!fromXeroEnabled}
+          title={fromXeroEnabled ? "Update this project from its linked Xero document" : "Select one project"}
+        >
+          <IconFromXero />
+        </BarButton>
+      ) : null}
 
       <AdminActionForm
         action={deleteProjectsAction}
