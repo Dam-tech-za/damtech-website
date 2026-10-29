@@ -87,7 +87,7 @@ export function RfqInboxTableRow({
       aria-label={`RFQ for ${row.customerName}`}
       aria-selected={selected}
     >
-      <td className="rfq-inbox-row__checkbox rfq-col-check">
+      <td className="rfq-inbox-row__checkbox rfq-col-check admin-sheet__check">
         <label className="sr-only" htmlFor={`select-${row.id}`}>
           Select {row.customerName}
         </label>
@@ -108,12 +108,12 @@ export function RfqInboxTableRow({
         </td>
       ) : null}
 
-      <td className="rfq-inbox-row__customer rfq-col-customer">
-        <span className="rfq-inbox-row__primary rfq-inbox-row__truncate">
+      <td className="rfq-inbox-row__customer rfq-col-customer admin-sheet__lead">
+        <span className="rfq-inbox-row__primary admin-sheet__main rfq-inbox-row__truncate">
           {row.customerName}
         </span>
         {row.companyName || row.sourceBadgeLabel ? (
-          <span className="rfq-inbox-row__secondary rfq-inbox-row__truncate">
+          <span className="rfq-inbox-row__secondary admin-sheet__sub rfq-inbox-row__truncate">
             {row.companyName ? (
               <span>{row.companyName}</span>
             ) : null}
@@ -132,7 +132,7 @@ export function RfqInboxTableRow({
             {row.phone ? (
               <a
                 href={`tel:${row.phone.replace(/\s/g, "")}`}
-                className="rfq-inbox-row__contact-line rfq-inbox-row__truncate"
+                className="rfq-inbox-row__contact-line rfq-inbox-row__truncate admin-sheet__phone"
                 aria-label={`Phone ${row.customerName}`}
                 title={row.phone}
                 onClick={(event) => event.stopPropagation()}
@@ -144,7 +144,7 @@ export function RfqInboxTableRow({
             {row.email ? (
               <a
                 href={`mailto:${row.email}`}
-                className="rfq-inbox-row__contact-line rfq-inbox-row__truncate"
+                className="rfq-inbox-row__contact-line rfq-inbox-row__truncate admin-sheet__phone"
                 aria-label={`Email ${row.customerName}`}
                 title={row.email}
                 onClick={(event) => event.stopPropagation()}
@@ -153,54 +153,54 @@ export function RfqInboxTableRow({
               </a>
             ) : null}
             {!row.phone && !row.email ? (
-              <span className="rfq-inbox-row__muted">Not provided</span>
+              <span className="rfq-inbox-row__muted admin-sheet__empty admin-sheet__empty">Not provided</span>
             ) : null}
           </>
         ) : (
-          <span className="rfq-inbox-row__muted">Restricted</span>
+          <span className="rfq-inbox-row__muted admin-sheet__empty admin-sheet__empty">Restricted</span>
         )}
       </td>
 
       <td className="rfq-inbox-row__location rfq-col-location">
         {row.projectLocation || row.province ? (
           <>
-            <span className="rfq-inbox-row__primary rfq-inbox-row__truncate rfq-col-location-combined">
+            <span className="rfq-inbox-row__primary admin-sheet__main rfq-inbox-row__truncate rfq-col-location-combined">
               {locationPrimary(row)}
             </span>
             {row.projectLocation && row.province ? (
               <>
-                <span className="rfq-inbox-row__primary rfq-inbox-row__truncate rfq-col-location-town">
+                <span className="rfq-inbox-row__primary admin-sheet__main rfq-inbox-row__truncate rfq-col-location-town">
                   {row.projectLocation}
                 </span>
-                <span className="rfq-inbox-row__secondary rfq-inbox-row__truncate rfq-col-location-province">
+                <span className="rfq-inbox-row__secondary admin-sheet__sub rfq-inbox-row__truncate rfq-col-location-province">
                   {row.province}
                 </span>
               </>
             ) : (
-              <span className="rfq-inbox-row__primary rfq-inbox-row__truncate rfq-col-location-town">
+              <span className="rfq-inbox-row__primary admin-sheet__main rfq-inbox-row__truncate rfq-col-location-town">
                 {row.projectLocation || row.province}
               </span>
             )}
           </>
         ) : (
-          <span className="rfq-inbox-row__muted">Not provided</span>
+          <span className="rfq-inbox-row__muted admin-sheet__empty admin-sheet__empty">Not provided</span>
         )}
       </td>
 
       <td className="rfq-inbox-row__service rfq-col-service">
-        <span className="rfq-inbox-row__primary rfq-inbox-row__truncate">
+        <span className="rfq-inbox-row__primary admin-sheet__main rfq-inbox-row__truncate">
           {row.serviceLabel}
         </span>
         {row.projectSummary ? (
           <span
-            className="rfq-inbox-row__secondary rfq-inbox-row__truncate"
+            className="rfq-inbox-row__secondary admin-sheet__sub rfq-inbox-row__truncate"
             title={row.projectSummary}
           >
             {row.projectSummary}
           </span>
         ) : null}
         {row.approximateSize.displayValue ? (
-          <span className="rfq-inbox-row__secondary rfq-inbox-row__truncate rfq-col-size-inline">
+          <span className="rfq-inbox-row__secondary admin-sheet__sub rfq-inbox-row__truncate rfq-col-size-inline">
             {row.approximateSize.displayValue}
             {sizeSource ? ` · ${sizeSource}` : ""}
           </span>
@@ -211,17 +211,17 @@ export function RfqInboxTableRow({
       <td className="rfq-inbox-row__size rfq-col-size">
         {row.approximateSize.displayValue ? (
           <>
-            <span className="rfq-inbox-row__primary rfq-inbox-row__truncate">
+            <span className="rfq-inbox-row__primary admin-sheet__main rfq-inbox-row__truncate">
               {row.approximateSize.displayValue}
             </span>
             {sizeSource ? (
-              <span className="rfq-inbox-row__secondary rfq-inbox-row__truncate rfq-col-size-meta">
+              <span className="rfq-inbox-row__secondary admin-sheet__sub rfq-inbox-row__truncate rfq-col-size-meta">
                 {sizeSource}
               </span>
             ) : null}
           </>
         ) : (
-          <span className="rfq-inbox-row__muted">Not provided</span>
+          <span className="rfq-inbox-row__muted admin-sheet__empty admin-sheet__empty">Not provided</span>
         )}
       </td>
       ) : null}
@@ -233,30 +233,30 @@ export function RfqInboxTableRow({
           domain="rfq"
         />
         {row.assignedUserName ? (
-          <span className="rfq-inbox-row__secondary rfq-inbox-row__truncate rfq-col-assigned">
+          <span className="rfq-inbox-row__secondary admin-sheet__sub rfq-inbox-row__truncate rfq-col-assigned">
             Assigned to {row.assignedUserName}
           </span>
         ) : optionalColumns.includes("assigned") ? (
-          <span className="rfq-inbox-row__muted rfq-col-assigned">Unassigned</span>
+          <span className="rfq-inbox-row__muted admin-sheet__empty rfq-col-assigned">Unassigned</span>
         ) : null}
       </td>
 
       <td className="rfq-inbox-row__submitted rfq-col-submitted">
-        <span className="rfq-inbox-row__primary" title={submitted.tooltip}>
+        <span className="rfq-inbox-row__primary admin-sheet__main" title={submitted.tooltip}>
           {submitted.dateLine}
         </span>
-        <span className="rfq-inbox-row__secondary rfq-col-submitted-time">
+        <span className="rfq-inbox-row__secondary admin-sheet__sub rfq-col-submitted-time">
           {submitted.timeLine}
         </span>
       </td>
 
       {optionalColumns.includes("lastUpdated") ? (
-        <td className="rfq-inbox-row__muted rfq-col-updated">
+        <td className="rfq-inbox-row__muted admin-sheet__empty rfq-col-updated">
           {formatSubmittedDate(row.updatedAt).dateLine}
         </td>
       ) : null}
 
-      <td className="rfq-inbox-row__actions rfq-col-actions">
+      <td className="rfq-inbox-row__actions rfq-col-actions admin-sheet__actions">
         <RfqRowActions
           summary={toDeleteSummary(row)}
           canManage={canManage}

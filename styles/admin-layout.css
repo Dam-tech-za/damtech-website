@@ -4469,28 +4469,22 @@ body:has(.ops-projects-page) {
 }
 
 /* ---------------------------------------------------------------
-   Enquiries table in the projects-board style: one row height,
-   light grid lines, centred cells, two short lines at most.
-   Desktop table only (phones keep the card list below 900px).
+   Admin sheet: the shared table template for admin lists, in the
+   projects-board style. One row height, light grid lines, centred
+   cells, at most two short lines per cell (a main line and a muted
+   one). Use <AdminSheet> or add class "admin-sheet" to a <table>.
+   Guide: docs/design/admin-sheet-template.md. The projects board has
+   its own sheet (ops-sheet) and does not use this.
    --------------------------------------------------------------- */
-.rfq-inbox-table {
+table.admin-sheet {
+  width: 100%;
+  table-layout: fixed;
+  border-collapse: collapse;
   font-size: 13px;
 }
 
-.rfq-inbox-table col.rfq-col-check { width: 40px; }
-.rfq-inbox-table col.rfq-col-rfq { width: 9%; }
-.rfq-inbox-table col.rfq-col-customer { width: 20%; }
-.rfq-inbox-table col.rfq-col-contact { width: 19%; }
-.rfq-inbox-table col.rfq-col-location { width: 13%; }
-.rfq-inbox-table col.rfq-col-service { width: 22%; }
-.rfq-inbox-table col.rfq-col-size { width: 9%; }
-.rfq-inbox-table col.rfq-col-status { width: 10%; }
-.rfq-inbox-table col.rfq-col-submitted { width: 9%; }
-.rfq-inbox-table col.rfq-col-updated { width: 9%; }
-.rfq-inbox-table col.rfq-col-actions { width: 52px; min-width: 52px; }
-
-.rfq-inbox-table th,
-.rfq-inbox-table td {
+table.admin-sheet th,
+table.admin-sheet td {
   height: 52px;
   padding: 0 10px;
   vertical-align: middle;
@@ -4506,12 +4500,12 @@ body:has(.ops-projects-page) {
   box-sizing: border-box;
 }
 
-.rfq-inbox-table th:last-child,
-.rfq-inbox-table td:last-child {
+table.admin-sheet th:last-child,
+table.admin-sheet td:last-child {
   border-right: 0;
 }
 
-.rfq-inbox-table thead th {
+table.admin-sheet thead th {
   height: 40px;
   background: #fff;
   font-size: 11px;
@@ -4519,25 +4513,24 @@ body:has(.ops-projects-page) {
   letter-spacing: 0.04em;
   text-transform: uppercase;
   color: #8a97a6;
-  border-bottom: 1px solid #e6e9ef;
 }
 
-/* Customer reads best left-aligned, like the project name on the board. */
-.rfq-inbox-table td.rfq-col-customer,
-.rfq-inbox-table th.rfq-col-customer {
+/* The first text column (name / title) reads best left-aligned. */
+table.admin-sheet .admin-sheet__lead {
   text-align: left;
 }
 
-.rfq-inbox-table td.rfq-col-check,
-.rfq-inbox-table th.rfq-col-check,
-.rfq-inbox-table td.rfq-col-actions,
-.rfq-inbox-table th.rfq-col-actions {
+/* Narrow columns: checkbox and the "…" menu. */
+table.admin-sheet .admin-sheet__check,
+table.admin-sheet .admin-sheet__actions {
   padding: 0;
   text-align: center;
 }
 
-.rfq-inbox-table td.rfq-col-check input,
-.rfq-inbox-table th.rfq-col-check input {
+table.admin-sheet col.admin-sheet__check { width: 40px; }
+table.admin-sheet col.admin-sheet__actions { width: 52px; }
+
+table.admin-sheet .admin-sheet__check input {
   margin: 0;
   width: 16px;
   height: 16px;
@@ -4545,22 +4538,22 @@ body:has(.ops-projects-page) {
   cursor: pointer;
 }
 
-.rfq-inbox-table tbody tr {
-  min-height: 0;
-}
-
-.rfq-inbox-table tbody tr:hover td {
+table.admin-sheet tbody tr:hover td {
   background: #f5f8fc;
 }
 
-.rfq-inbox-table tbody tr.is-selected td {
+table.admin-sheet tbody tr.is-selected td {
   background: #e8f2ff;
 }
 
-.rfq-inbox-table .rfq-inbox-row__primary,
-.rfq-inbox-table .rfq-inbox-row__secondary,
-.rfq-inbox-table .rfq-inbox-row__contact-line,
-.rfq-inbox-table .rfq-inbox-row__muted {
+table.admin-sheet tbody tr[data-href],
+table.admin-sheet tbody tr[tabindex] {
+  cursor: pointer;
+}
+
+/* Cell lines: one main line, one muted line under it. */
+.admin-sheet__main,
+.admin-sheet__sub {
   display: block;
   max-width: 100%;
   overflow: hidden;
@@ -4569,26 +4562,55 @@ body:has(.ops-projects-page) {
   line-height: 1.35;
 }
 
-.rfq-inbox-table .rfq-inbox-row__primary {
+.admin-sheet__main {
   font-weight: 600;
   font-size: 13px;
 }
 
-.rfq-inbox-table .rfq-inbox-row__secondary {
+.admin-sheet__sub {
   font-size: 12px;
   color: #6b7a8a;
 }
 
-.rfq-inbox-table .rfq-inbox-row__muted {
+.admin-sheet__empty {
   font-size: 12px;
   color: #a0abb8;
 }
 
-.rfq-inbox-table .rfq-inbox-row__contact-line {
-  display: flex;
+/* A phone with its country flag, centred. */
+.admin-sheet__phone {
+  display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 6px;
+  max-width: 100%;
+}
+
+.admin-sheet__phone .ops-flag {
+  flex: 0 0 auto;
+  width: 1.1rem;
+}
+
+table.admin-sheet .admin-status {
+  max-width: 100%;
+}
+
+/* Enquiries: column widths and the bits only this table has. */
+.rfq-inbox-table col.rfq-col-check { width: 40px; }
+.rfq-inbox-table col.rfq-col-actions { width: 52px; min-width: 52px; }
+.rfq-inbox-table col.rfq-col-rfq { width: 9%; }
+.rfq-inbox-table col.rfq-col-customer { width: 20%; }
+.rfq-inbox-table col.rfq-col-contact { width: 19%; }
+.rfq-inbox-table col.rfq-col-location { width: 13%; }
+.rfq-inbox-table col.rfq-col-service { width: 22%; }
+.rfq-inbox-table col.rfq-col-size { width: 9%; }
+.rfq-inbox-table col.rfq-col-status { width: 10%; }
+.rfq-inbox-table col.rfq-col-submitted { width: 9%; }
+.rfq-inbox-table col.rfq-col-updated { width: 9%; }
+
+.rfq-inbox-table .rfq-inbox-row__contact-line {
+  display: flex;
+  justify-content: center;
   font-size: 12px;
   color: #486581;
   text-decoration: none;
@@ -4597,15 +4619,6 @@ body:has(.ops-projects-page) {
 .rfq-inbox-table .rfq-inbox-row__contact-line:first-child {
   font-size: 13px;
   color: var(--admin-text);
-}
-
-.rfq-inbox-table .rfq-inbox-row__contact-line .ops-flag {
-  flex: 0 0 auto;
-  width: 1.1rem;
-}
-
-.rfq-inbox-table .admin-status {
-  max-width: 100%;
 }
 
 .rfq-inbox-table .rfq-row-actions {
@@ -4631,4 +4644,12 @@ body:has(.ops-projects-page) {
 .rfq-inbox-table .rfq-col-location-town,
 .rfq-inbox-table .rfq-col-location-province {
   display: block !important;
+}
+
+.admin-sheet-wrap {
+  width: 100%;
+  overflow-x: auto;
+  border: 1px solid #e6e9ef;
+  border-radius: 8px;
+  background: #fff;
 }

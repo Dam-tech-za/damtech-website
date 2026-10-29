@@ -40,6 +40,7 @@ export { AdminTabs } from "./AdminTabs";
 export { AdminMobileCard } from "./AdminMobileCard";
 export { AdminPagination } from "./AdminPagination";
 export { AdminTable } from "./AdminTable";
+export { AdminSheet } from "./AdminSheet";
 export { AdminTableActions } from "./AdminTableActions";
 export { AdminDrawer } from "./AdminDrawer";
 export { AdminDialog } from "./AdminDialog";

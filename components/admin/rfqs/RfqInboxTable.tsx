@@ -133,9 +133,9 @@ export function RfqInboxTable({
       ) : null}
 
       <div className="rfq-inbox-table-wrap">
-        <table className="admin-table rfq-inbox-table">
+        <table className="admin-table rfq-inbox-table admin-sheet">
           <colgroup>
-            <col className="rfq-col-check" />
+            <col className="rfq-col-check admin-sheet__check" />
             {optionalColumns.includes("rfqNumber") ? (
               <col className="rfq-col-rfq" />
             ) : null}
@@ -149,11 +149,11 @@ export function RfqInboxTable({
             {optionalColumns.includes("lastUpdated") ? (
               <col className="rfq-col-updated" />
             ) : null}
-            <col className="rfq-col-actions" />
+            <col className="rfq-col-actions admin-sheet__actions" />
           </colgroup>
           <thead>
             <tr>
-              <th scope="col" className="rfq-col-check">
+              <th scope="col" className="rfq-col-check admin-sheet__check">
                 <input
                   type="checkbox"
                   checked={effectiveSelected.length === visibleRows.length && visibleRows.length > 0}
@@ -166,7 +166,7 @@ export function RfqInboxTable({
                   RFQ
                 </th>
               ) : null}
-              <th scope="col" className="rfq-col-customer">
+              <th scope="col" className="rfq-col-customer admin-sheet__lead">
                 Customer
               </th>
               <th scope="col" className="rfq-col-contact">
@@ -194,7 +194,7 @@ export function RfqInboxTable({
                   Last updated
                 </th>
               ) : null}
-              <th scope="col" className="rfq-col-actions">
+              <th scope="col" className="rfq-col-actions admin-sheet__actions">
                 <span className="sr-only">Actions</span>
               </th>
             </tr>
