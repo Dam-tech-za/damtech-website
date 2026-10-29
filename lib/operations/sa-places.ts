@@ -114,9 +114,13 @@ export function findTown(province: string, town: string): SaTown | null {
   return SA_TOWNS.find((t) => t.province === province && t.name.toLowerCase() === name) ?? null;
 }
 
-/** Best-effort match when Xero only gives a city or region string. */
+/** Best-effort match when Xero only gives a city or region string, or a title that names a town. */
 export function findTownByName(raw: string | null | undefined): SaTown | null {
   const name = (raw ?? "").trim().toLowerCase();
   if (!name) return null;
-  return SA_TOWNS.find((t) => t.name.toLowerCase() === name) ?? null;
+  const exact = SA_TOWNS.find((t) => t.name.toLowerCase() === name);
+  if (exact) return exact;
+  // Prefer longer town names so "Cape Town" wins over a stray "Cape".
+  const sorted = [...SA_TOWNS].sort((a, b) => b.name.length - a.name.length);
+  return sorted.find((t) => name.includes(t.name.toLowerCase())) ?? null;
 }

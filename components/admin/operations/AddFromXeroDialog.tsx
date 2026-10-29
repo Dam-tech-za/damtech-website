@@ -6,6 +6,16 @@ import { formatOpsMoney } from "./ops-format";
 import type { ProjectGroup } from "@/lib/operations/board";
 import type { XeroStartItem } from "@/lib/operations/xero-start";
 
+function quoteSubtitle(item: XeroStartItem): string {
+  const title = (item.label ?? "").trim();
+  const number = (item.number ?? "").trim();
+  const parts: string[] = [];
+  if (title && title.toUpperCase() !== number.toUpperCase()) parts.push(title);
+  else if (number) parts.push(number);
+  if (item.total) parts.push(formatOpsMoney(item.total));
+  return parts.join(" · ");
+}
+
 export function AddFromXeroDialog({
   open,
   onClose,
@@ -38,19 +48,16 @@ export function AddFromXeroDialog({
           : "Accepted quotes from the last 30 days. The job is added to the stage you clicked."
       }
     >
-      {loading ? <p className="ops-table__meta">Loading quotes from Xero…</p> : null}
+      {loading && quotes.length === 0 ? <p className="ops-table__meta">Loading quotes from Xero…</p> : null}
       {!loading && error ? <p className="ops-xero-picker__error">{error}</p> : null}
       {!loading && !error && quotes.length === 0 ? <p className="ops-table__meta">No unclaimed accepted quotes in the last 30 days.</p> : null}
-      {!loading && quotes.length ? (
+      {quotes.length ? (
         <ul className="ops-xero-picker">
           {quotes.map((item) => (
             <li key={item.id} className="ops-xero-picker__row">
               <span className="ops-xero-picker__main">
                 <strong>{item.contact}</strong>
-                <span className="ops-table__meta">
-                  {item.label || item.number} · {item.number}
-                  {item.total ? ` · ${formatOpsMoney(item.total)}` : ""}
-                </span>
+                <span className="ops-table__meta">{quoteSubtitle(item)}</span>
               </span>
               {linking && linkProjectId ? (
                 <AdminActionForm action={linkProjectToXeroQuoteAction} className="ops-xero-picker__add">

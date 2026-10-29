@@ -18,6 +18,7 @@ import {
   kmForOffice,
   matchesDistanceBand,
   matchesPriceBand,
+  matchesPriceRange,
   matchesSearch,
   sortProjects,
   type BoardFilters,
@@ -35,6 +36,7 @@ import {
   AdminSubmitButton,
 } from "@/components/admin/ui";
 import { OpsSetupBanners } from "@/components/admin/operations/OpsParts";
+import { BoardViewControls } from "@/components/admin/operations/BoardViewControls";
 import { ProjectsBoard } from "@/components/admin/operations/ProjectsBoard";
 import { updateXeroBoardAction } from "@/app/admin/operations/project-actions";
 
@@ -54,7 +56,7 @@ const QUICK: { id: Quick; label: string }[] = [
   { id: "week", label: "Due this week" },
 ];
 
-function readFilters(sp: Search): Required<Pick<BoardFilters, "sort" | "show">> & BoardFilters & { quick: Quick } {
+function readFilters(sp: Search): Required<Pick<BoardFilters, "sort" | "show">> & BoardFilters & { quick: Quick; add: boolean } {
   const sortRaw = one(sp.sort);
   const sort: BoardFilters["sort"] =
     sortRaw === "updated" || sortRaw === "name" || sortRaw === "lead" || sortRaw === "price" || sortRaw === "distance"
@@ -68,11 +70,14 @@ function readFilters(sp: Search): Required<Pick<BoardFilters, "sort" | "show">> 
     payment: one(sp.payment),
     lead: one(sp.lead),
     price: one(sp.price),
+    price_min: one(sp.price_min).slice(0, 12),
+    price_max: one(sp.price_max).slice(0, 12),
     office: one(sp.office),
     distance: one(sp.distance),
     sort,
     show,
     quick: (["mine", "overdue", "week"] as const).find((q) => q === one(sp.quick)) ?? "all",
+    add: one(sp.add) === "1",
   };
 }
 
@@ -81,6 +86,7 @@ function hrefWith(filters: BoardFilters & { quick?: Quick }, patch: Partial<Boar
   const params = new URLSearchParams();
   for (const [key, value] of Object.entries(merged)) {
     if (!value) continue;
+    if (key === "add") continue;
     if ((key === "quick" && value === "all") || (key === "sort" && value === "next_action") || (key === "show" && value === "active")) continue;
     params.set(key, String(value));
   }
@@ -121,6 +127,7 @@ async function ProjectsPageInner({ searchParams }: PageProps) {
             (!filters.payment || (p.payment && (filters.payment === "overdue" ? p.payment.overdue : p.payment.label === filters.payment))) &&
             (!filters.lead || p.project_lead_id === filters.lead) &&
             matchesPriceBand(p.quoted_total_incl_vat, filters.price) &&
+            matchesPriceRange(p.quoted_total_incl_vat, filters.price_min, filters.price_max) &&
             matchesDistanceBand(kmForOffice(p, filters.office), filters.distance) &&
             (filters.quick === "all" ||
               (filters.quick === "mine" && p.project_lead_id === admin.profile.id) ||
@@ -131,6 +138,8 @@ async function ProjectsPageInner({ searchParams }: PageProps) {
         filters.office,
       )
     : [];
+
+  const primaryFilterKeys = ["lead", "payment", "price", "price_min", "price_max", "office", "distance", "stage"] as const;
 
   return (
     <div className="admin-stack--page ops">
@@ -145,8 +154,8 @@ async function ProjectsPageInner({ searchParams }: PageProps) {
           <span className="sr-only">Search projects</span>
           <input className="admin-input" type="search" name="q" defaultValue={filters.q} placeholder="Search customer, site, QU or INV number" />
         </label>
-        {Object.entries({ ...filters, q: "" })
-          .filter(([key, value]) => value && !(key === "sort" && value === "next_action") && !(key === "show" && value === "active") && !(key === "quick" && value === "all"))
+        {Object.entries({ ...filters, q: "", add: false })
+          .filter(([key, value]) => value && !(key === "sort" && value === "next_action") && !(key === "show" && value === "active") && !(key === "quick" && value === "all") && key !== "add")
           .map(([key, value]) => (
             <input key={key} type="hidden" name={key} value={String(value)} />
           ))}
@@ -177,56 +186,91 @@ async function ProjectsPageInner({ searchParams }: PageProps) {
         </nav>
       </div>
 
+      <form className="ops-board-filters ops-board-filters--primary" method="get" aria-label="Project filters">
+        <input type="hidden" name="q" value={filters.q} />
+        <input type="hidden" name="quick" value={filters.quick} />
+        {Object.entries(filters)
+          .filter(([key, value]) => value && !primaryFilterKeys.includes(key as (typeof primaryFilterKeys)[number]) && key !== "q" && key !== "quick" && key !== "add" && !(key === "sort" && value === "next_action") && !(key === "show" && value === "active"))
+          .map(([key, value]) => (
+            <input key={key} type="hidden" name={key} value={String(value)} />
+          ))}
+        <AdminSelect name="lead" defaultValue={filters.lead} aria-label="Project lead">
+          <option value="">Any lead</option>
+          {staff.map((s) => (
+            <option key={s.id} value={s.id}>
+              {s.full_name || s.email}
+            </option>
+          ))}
+        </AdminSelect>
+        <AdminSelect name="payment" defaultValue={filters.payment} aria-label="Payment status">
+          <option value="">Any payment</option>
+          {PAYMENT_LABELS.map((l) => (
+            <option key={l} value={l}>
+              {PAYMENT_LABEL_TEXT[l]}
+            </option>
+          ))}
+          <option value="overdue">Overdue</option>
+        </AdminSelect>
+        <AdminSelect name="price" defaultValue={filters.price} aria-label="Price band">
+          <option value="">Any price band</option>
+          {PRICE_BANDS.map((b) => (
+            <option key={b} value={b}>
+              {PRICE_BAND_LABELS[b]}
+            </option>
+          ))}
+        </AdminSelect>
+        <label className="ops-price-range">
+          <span className="sr-only">Minimum price</span>
+          <input className="admin-input" type="number" name="price_min" min={0} step={1000} defaultValue={filters.price_min} placeholder="Min R" />
+        </label>
+        <label className="ops-price-range">
+          <span className="sr-only">Maximum price</span>
+          <input className="admin-input" type="number" name="price_max" min={0} step={1000} defaultValue={filters.price_max} placeholder="Max R" />
+        </label>
+        <AdminSelect name="office" defaultValue={filters.office} aria-label="Office for distance">
+          <option value="">Nearest office</option>
+          {OFFICE_FILTERS.map((o) => (
+            <option key={o} value={o}>
+              {OFFICE_FILTER_LABELS[o]}
+            </option>
+          ))}
+        </AdminSelect>
+        <AdminSelect name="distance" defaultValue={filters.distance} aria-label="Distance">
+          <option value="">Any distance</option>
+          {DISTANCE_BANDS.map((b) => (
+            <option key={b} value={b}>
+              {DISTANCE_BAND_LABELS[b]}
+            </option>
+          ))}
+        </AdminSelect>
+        <AdminSelect name="stage" defaultValue={filters.stage} aria-label="Stage">
+          <option value="">All stages</option>
+          {PROJECT_STAGES.map((s) => (
+            <option key={s} value={s}>
+              {STAGE_LABELS[s]}
+            </option>
+          ))}
+        </AdminSelect>
+        <button type="submit" className="admin-btn admin-btn--secondary">
+          Apply
+        </button>
+        <BoardViewControls />
+        <Link href="/admin/operations/projects/new/" className="admin-btn admin-btn--ghost">
+          Full form
+        </Link>
+      </form>
+
       <details
         className="ops-more-filters"
-        open={Boolean(
-          filters.service ||
-            filters.stage ||
-            filters.payment ||
-            filters.lead ||
-            filters.price ||
-            filters.office ||
-            filters.distance ||
-            filters.sort !== "next_action" ||
-            filters.show !== "active",
-        )}
+        open={Boolean(filters.service || filters.sort !== "next_action" || filters.show !== "active")}
       >
         <summary>More filters</summary>
         <form className="ops-board-filters" method="get" aria-label="More project filters">
           <input type="hidden" name="q" value={filters.q} />
           <input type="hidden" name="quick" value={filters.quick} />
-          <AdminSelect name="lead" defaultValue={filters.lead} aria-label="Project lead">
-            <option value="">Any project lead</option>
-            {staff.map((s) => (
-              <option key={s.id} value={s.id}>
-                {s.full_name || s.email}
-              </option>
-            ))}
-          </AdminSelect>
-          <AdminSelect name="price" defaultValue={filters.price} aria-label="Price">
-            <option value="">Any price</option>
-            {PRICE_BANDS.map((b) => (
-              <option key={b} value={b}>
-                {PRICE_BAND_LABELS[b]}
-              </option>
-            ))}
-          </AdminSelect>
-          <AdminSelect name="office" defaultValue={filters.office} aria-label="Office for distance">
-            <option value="">Nearest office</option>
-            {OFFICE_FILTERS.map((o) => (
-              <option key={o} value={o}>
-                {OFFICE_FILTER_LABELS[o]}
-              </option>
-            ))}
-          </AdminSelect>
-          <AdminSelect name="distance" defaultValue={filters.distance} aria-label="Distance">
-            <option value="">Any distance</option>
-            {DISTANCE_BANDS.map((b) => (
-              <option key={b} value={b}>
-                {DISTANCE_BAND_LABELS[b]}
-              </option>
-            ))}
-          </AdminSelect>
+          {primaryFilterKeys.map((key) =>
+            filters[key] ? <input key={key} type="hidden" name={key} value={String(filters[key])} /> : null,
+          )}
           <AdminSelect name="service" defaultValue={filters.service} aria-label="Service">
             <option value="">All services</option>
             {PROJECT_SERVICES.map((s) => (
@@ -234,23 +278,6 @@ async function ProjectsPageInner({ searchParams }: PageProps) {
                 {SERVICE_LABELS[s]}
               </option>
             ))}
-          </AdminSelect>
-          <AdminSelect name="stage" defaultValue={filters.stage} aria-label="Stage">
-            <option value="">All stages</option>
-            {PROJECT_STAGES.map((s) => (
-              <option key={s} value={s}>
-                {STAGE_LABELS[s]}
-              </option>
-            ))}
-          </AdminSelect>
-          <AdminSelect name="payment" defaultValue={filters.payment} aria-label="Payment status">
-            <option value="">Any payment status</option>
-            {PAYMENT_LABELS.map((l) => (
-              <option key={l} value={l}>
-                {PAYMENT_LABEL_TEXT[l]}
-              </option>
-            ))}
-            <option value="overdue">Payment overdue</option>
           </AdminSelect>
           <AdminSelect name="sort" defaultValue={filters.sort} aria-label="Sort">
             <option value="next_action">Next step date</option>
@@ -274,6 +301,12 @@ async function ProjectsPageInner({ searchParams }: PageProps) {
         </form>
       </details>
 
+      {staff.length < 2 ? (
+        <p className="ops-table__meta">
+          Lead filter lists signed-in staff only. Arno and Andre appear here after they are invited and sign in once.
+        </p>
+      ) : null}
+
       {!load.ok ? (
         load.error === "load_failed" ? <AdminErrorState title="Projects could not be loaded." message="Refresh in a moment." /> : null
       ) : (
@@ -281,7 +314,7 @@ async function ProjectsPageInner({ searchParams }: PageProps) {
           {visible.length === 0 && load.data.length > 0 ? (
             <AdminEmptyState compact title="No projects match." description="Try All, or clear the search and filters." />
           ) : null}
-          <ProjectsBoard projects={visible} canEdit={canEdit} />
+          <ProjectsBoard projects={visible} canEdit={canEdit} focusAdd={filters.add && canEdit} />
         </AdminPanel>
       )}
     </div>

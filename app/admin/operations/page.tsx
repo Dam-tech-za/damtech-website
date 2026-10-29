@@ -65,7 +65,7 @@ export default async function OperationsOverviewPage() {
       <AdminPageHeader
         title="Operations"
         description="Won jobs, what happens next, and supplier orders. Money comes from Xero."
-        primaryActionNode={canEdit ? <AdminButton href="/admin/operations/projects/new/" variant="primary">New project</AdminButton> : null}
+        primaryActionNode={canEdit ? <AdminButton href="/admin/operations/projects/?add=1" variant="primary">New project</AdminButton> : null}
         secondaryAction={{ href: "/admin/operations/projects/", label: "All projects" }}
       />
 

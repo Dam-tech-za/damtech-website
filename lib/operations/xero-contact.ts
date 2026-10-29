@@ -95,7 +95,10 @@ export function fillFromXeroContact<T extends Record<string, unknown>>(
 ): Partial<T> {
   const patch: Record<string, unknown> = {};
   if (!current.customer_name?.trim() && extras.name) patch.customer_name = extras.name.slice(0, 200);
-  if (!current.contact_person?.trim() && extras.person) patch.contact_person = extras.person.slice(0, 200);
+  // Prefer a person name; fall back to the Xero contact/company so Client is not blank.
+  if (!current.contact_person?.trim() && (extras.person || extras.name)) {
+    patch.contact_person = (extras.person || extras.name || "").slice(0, 200);
+  }
   if (!current.contact_phone?.trim() && extras.phone) patch.contact_phone = extras.phone.slice(0, 40);
   if (!current.contact_email?.trim() && extras.email) patch.contact_email = extras.email.slice(0, 200);
   if (!current.xero_contact_id && extras.id) patch.xero_contact_id = extras.id;

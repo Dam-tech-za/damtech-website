@@ -1,7 +1,6 @@
 "use client";
 
-import Link from "next/link";
-import { useMemo, useState, useSyncExternalStore } from "react";
+import { useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import {
   AdminActionForm,
   AdminButton,
@@ -30,12 +29,13 @@ import type { BoardProject } from "@/lib/operations/queries";
 import { AddFromXeroDialog } from "./AddFromXeroDialog";
 import { PaymentPictureBadge } from "./PaymentPictureBadge";
 import { PhoneCell } from "./PhoneCell";
+import { ProjectPeekDrawer } from "./ProjectPeekDrawer";
 import { formatOpsMoney } from "./ops-format";
 
 const COLLAPSE_KEY = "ops-board-collapsed-groups";
 const COLLAPSE_EVENT = "ops-board-collapsed";
+const FREEZE_KEY = "ops-board-freeze-columns";
 
-/** Store the raw string so getSnapshot stays referentially stable between reads. */
 function subscribeCollapsed(onStoreChange: () => void) {
   window.addEventListener(COLLAPSE_EVENT, onStoreChange);
   window.addEventListener("storage", onStoreChange);
@@ -63,6 +63,23 @@ function parseCollapsed(raw: string): ProjectGroup[] {
   }
 }
 
+function subscribeFreeze(onStoreChange: () => void) {
+  window.addEventListener("ops-board-freeze", onStoreChange);
+  window.addEventListener("storage", onStoreChange);
+  return () => {
+    window.removeEventListener("ops-board-freeze", onStoreChange);
+    window.removeEventListener("storage", onStoreChange);
+  };
+}
+
+function getFreezeRaw(): string {
+  try {
+    return window.localStorage.getItem(FREEZE_KEY) ?? "1";
+  } catch {
+    return "1";
+  }
+}
+
 function csvCell(value: string): string {
   return `"${value.replaceAll('"', '""')}"`;
 }
@@ -78,7 +95,7 @@ function downloadCsv(projects: BoardProject[]) {
         p.payment.label ? PAYMENT_LABEL_TEXT[p.payment.label] : "",
         p.contact_person ?? "",
         p.contact_phone ?? "",
-        [...p.xero_quote_numbers, ...p.xero_invoice_numbers].join(" "),
+        [...(p.xero_quote_numbers ?? []), ...(p.xero_invoice_numbers ?? [])].join(" "),
         p.quoted_total_incl_vat == null ? "" : String(p.quoted_total_incl_vat),
         formatLocationCell(p) ?? "",
       ]
@@ -95,23 +112,84 @@ function downloadCsv(projects: BoardProject[]) {
   URL.revokeObjectURL(url);
 }
 
+function XeroCell({ quotes, invoices }: { quotes: string[]; invoices: string[] }) {
+  const numbers = [...quotes, ...invoices].filter(Boolean);
+  if (!numbers.length) return <span className="ops-table__meta">—</span>;
+  if (numbers.length === 1) return <span className="ops-xero-cell">{numbers[0]}</span>;
+  return (
+    <span className="ops-xero-cell" title={numbers.join(" · ")}>
+      {numbers[0]} <span className="ops-xero-cell__more">+{numbers.length - 1}</span>
+    </span>
+  );
+}
+
+function AddProjectRow({
+  group,
+  canEdit,
+  autoFocus,
+  onAddFromXero,
+}: {
+  group: ProjectGroup;
+  canEdit: boolean;
+  autoFocus?: boolean;
+  onAddFromXero: () => void;
+}) {
+  const inputRef = useRef<HTMLInputElement>(null);
+  useEffect(() => {
+    if (autoFocus) inputRef.current?.focus();
+  }, [autoFocus]);
+  if (!canEdit || group === "completed") return null;
+  return (
+    <tr className="ops-sheet__add-row">
+      <td className="ops-sheet__c-check ops-sheet__sticky" />
+      <td colSpan={7} className="ops-sheet__add">
+        <AdminActionForm action={createProjectQuickAction} className="ops-sheet__add-form" resetOnSuccess>
+          <input type="hidden" name="group" value={group} />
+          <input
+            ref={inputRef}
+            className="admin-input ops-sheet__add-input"
+            name="title"
+            maxLength={200}
+            placeholder="+ Add Project"
+            aria-label={`Add project to ${GROUP_LABELS[group]}`}
+            autoComplete="off"
+          />
+          <button type="submit" className="sr-only">
+            Add
+          </button>
+        </AdminActionForm>
+        <button type="button" className="ops-sheet__xero-link" onClick={onAddFromXero}>
+          + Add from Xero
+        </button>
+      </td>
+    </tr>
+  );
+}
+
 export function ProjectsBoard({
   projects,
   canEdit,
+  focusAdd = false,
 }: {
   projects: BoardProject[];
   canEdit: boolean;
+  /** When true (from ?add=1), focus the first stage add input. */
+  focusAdd?: boolean;
 }) {
   const groups = useMemo(() => boardGroups(projects), [projects]);
   const collapsedRaw = useSyncExternalStore(subscribeCollapsed, getCollapsedRaw, () => "");
   const collapsed = useMemo(() => parseCollapsed(collapsedRaw), [collapsedRaw]);
-  const [frozen, setFrozen] = useState(true);
+  const freezeRaw = useSyncExternalStore(subscribeFreeze, getFreezeRaw, () => "1");
+  const frozen = freezeRaw !== "0";
   const [selected, setSelected] = useState<Set<string>>(new Set());
+  const [peekId, setPeekId] = useState<string | null>(null);
   const [xeroGroup, setXeroGroup] = useState<ProjectGroup | null>(null);
   const [linkId, setLinkId] = useState<string | null>(null);
   const [xeroQuotes, setXeroQuotes] = useState<XeroStartItem[]>([]);
   const [xeroError, setXeroError] = useState<string | null>(null);
   const [xeroLoading, setXeroLoading] = useState(false);
+
+  const peek = peekId ? projects.find((p) => p.id === peekId) ?? null : null;
 
   const openXeroPicker = async (next: { group?: ProjectGroup | null; linkId?: string | null }) => {
     setXeroGroup(next.group ?? null);
@@ -130,15 +208,31 @@ export function ProjectsBoard({
     }
   };
 
-  const toggleGroup = (group: ProjectGroup) => {
-    const next = collapsed.includes(group) ? collapsed.filter((g) => g !== group) : [...collapsed, group];
+  const writeCollapsed = (next: ProjectGroup[]) => {
     try {
       window.localStorage.setItem(COLLAPSE_KEY, JSON.stringify(next));
     } catch {
-      // Private mode: collapse still works until reload.
+      // Private mode.
     }
     window.dispatchEvent(new Event(COLLAPSE_EVENT));
   };
+
+  const toggleGroup = (group: ProjectGroup) => {
+    writeCollapsed(collapsed.includes(group) ? collapsed.filter((g) => g !== group) : [...collapsed, group]);
+  };
+
+  // Warm the 30-day Xero quote cache so Add from Xero opens quickly.
+  useEffect(() => {
+    if (!canEdit) return;
+    void loadBoardXeroQuotesAction()
+      .then((result) => {
+        setXeroQuotes(result.items);
+        setXeroError(result.error);
+      })
+      .catch(() => {
+        // Leave picker to load on demand if prefetch fails.
+      });
+  }, [canEdit]);
 
   const visibleIds = projects.map((p) => p.id);
   const selectedProjects = projects.filter((p) => selected.has(p.id));
@@ -159,13 +253,10 @@ export function ProjectsBoard({
     setSelected(allVisibleSelected ? new Set() : new Set(visibleIds));
   };
 
+  const firstEditableGroup = PROJECT_GROUPS.find((g) => g !== "completed") ?? "awaiting";
+
   return (
     <div className={`ops-sheet${frozen ? " ops-sheet--frozen" : ""}`}>
-      <div className="ops-sheet__toolbar">
-        <AdminButton type="button" variant="ghost" size="sm" onClick={() => setFrozen((v) => !v)}>
-          {frozen ? "Unfreeze columns" : "Freeze columns"}
-        </AdminButton>
-      </div>
       <div className="ops-sheet__scroll">
         <table className="admin-table ops-table ops-board-table ops-sheet__table">
           <thead>
@@ -179,16 +270,24 @@ export function ProjectsBoard({
               <th className="ops-sheet__c-project ops-sheet__sticky" scope="col">
                 Project
               </th>
-              <th className="ops-sheet__c-lead ops-sheet__sticky" scope="col">
-                Project lead
+              <th className="ops-sheet__c-lead" scope="col">
+                Lead
               </th>
               <th className="ops-sheet__c-pay ops-sheet__sticky" scope="col">
                 Payment
               </th>
-              <th scope="col">Client</th>
-              <th scope="col">Xero</th>
-              <th scope="col">Value</th>
-              <th scope="col">Location</th>
+              <th className="ops-sheet__c-client" scope="col">
+                Client
+              </th>
+              <th className="ops-sheet__c-xero" scope="col">
+                Xero
+              </th>
+              <th className="ops-sheet__c-value" scope="col">
+                Value
+              </th>
+              <th className="ops-sheet__c-location" scope="col">
+                Location
+              </th>
             </tr>
           </thead>
           {groups.map(({ group, projects: rows }) => {
@@ -225,54 +324,44 @@ export function ProjectsBoard({
                           ) : null}
                         </td>
                         <td className="ops-sheet__c-project ops-sheet__sticky" data-label="Project">
-                          <Link href={`/admin/operations/projects/${p.id}/`} className="ops-table__title">
+                          <button
+                            type="button"
+                            className="ops-table__title ops-table__title-btn"
+                            title={p.title}
+                            onClick={() => setPeekId(p.id)}
+                          >
                             {p.title}
-                          </Link>
+                          </button>
                           {p.needs_review ? <span className="ops-table__meta">Check details</span> : null}
                         </td>
-                        <td className="ops-sheet__c-lead ops-sheet__sticky" data-label="Project lead">
+                        <td className="ops-sheet__c-lead" data-label="Lead">
                           {p.leadName || <span className="ops-table__meta">—</span>}
                         </td>
                         <td className="ops-sheet__c-pay ops-sheet__sticky" data-label="Payment">
                           <PaymentPictureBadge payment={p.payment} />
                         </td>
-                        <td data-label="Client">
-                          <PhoneCell name={p.contact_person} phone={p.contact_phone} />
+                        <td className="ops-sheet__c-client" data-label="Client">
+                          <PhoneCell name={p.contact_person || p.customer_name} phone={p.contact_phone} />
                         </td>
-                        <td data-label="Xero">
-                          {[...(Array.isArray(p.xero_quote_numbers) ? p.xero_quote_numbers : []), ...(Array.isArray(p.xero_invoice_numbers) ? p.xero_invoice_numbers : [])].join(" · ") || (
-                            <span className="ops-table__meta">—</span>
-                          )}
+                        <td className="ops-sheet__c-xero" data-label="Xero">
+                          <XeroCell quotes={p.xero_quote_numbers ?? []} invoices={p.xero_invoice_numbers ?? []} />
                         </td>
-                        <td data-label="Value">{formatOpsMoney(p.quoted_total_incl_vat)}</td>
-                        <td data-label="Location">
+                        <td className="ops-sheet__c-value" data-label="Value">
+                          {formatOpsMoney(p.quoted_total_incl_vat)}
+                        </td>
+                        <td className="ops-sheet__c-location" data-label="Location">
                           {formatLocationCell(p) || <span className="ops-table__meta">—</span>}
                         </td>
                       </tr>
                     ))
                   : null}
-                {open && canEdit && group !== "completed" ? (
-                  <tr className="ops-sheet__add-row">
-                    <td className="ops-sheet__c-check ops-sheet__sticky" />
-                    <td colSpan={7} className="ops-sheet__add">
-                      <AdminActionForm action={createProjectQuickAction} className="ops-sheet__add-form" resetOnSuccess>
-                        <input type="hidden" name="group" value={group} />
-                        <input
-                          className="admin-input ops-sheet__add-input"
-                          name="title"
-                          maxLength={200}
-                          placeholder="+ Add Project"
-                          aria-label={`Add project to ${GROUP_LABELS[group]}`}
-                        />
-                        <AdminSubmitButton variant="outline" pendingLabel="Adding…">
-                          Add
-                        </AdminSubmitButton>
-                      </AdminActionForm>
-                      <AdminButton type="button" variant="ghost" size="sm" onClick={() => void openXeroPicker({ group })}>
-                        + Add from Xero
-                      </AdminButton>
-                    </td>
-                  </tr>
+                {open ? (
+                  <AddProjectRow
+                    group={group}
+                    canEdit={canEdit}
+                    autoFocus={focusAdd && group === firstEditableGroup}
+                    onAddFromXero={() => void openXeroPicker({ group })}
+                  />
                 ) : null}
               </tbody>
             );
@@ -283,7 +372,7 @@ export function ProjectsBoard({
       {selectedProjects.length > 0 && canEdit ? (
         <div className="ops-selection-bar" role="toolbar" aria-label="Selected projects">
           <strong className="ops-selection-bar__count">
-            {selectedProjects.length} {selectedProjects.length === 1 ? "Item selected" : "Items selected"}
+            {selectedProjects.length} selected
           </strong>
           <AdminActionForm action={duplicateProjectsAction} className="ops-selection-bar__action">
             <input type="hidden" name="ids" value={idsValue} />
@@ -292,7 +381,7 @@ export function ProjectsBoard({
             </AdminSubmitButton>
           </AdminActionForm>
           <AdminButton type="button" variant="ghost" onClick={() => downloadCsv(selectedProjects)}>
-            Export
+            Export CSV
           </AdminButton>
           <AdminActionForm
             action={bulkArchiveProjectsAction}
@@ -316,7 +405,16 @@ export function ProjectsBoard({
           </AdminActionForm>
           <AdminActionForm action={bulkMoveProjectsAction} className="ops-selection-bar__move">
             <input type="hidden" name="ids" value={idsValue} />
-            <AdminSelect name="group" aria-label="Move to stage" defaultValue="">
+            <AdminSelect
+              name="group"
+              aria-label="Move to stage"
+              defaultValue=""
+              onChange={(event) => {
+                const form = event.currentTarget.form;
+                if (!event.currentTarget.value || !form) return;
+                form.requestSubmit();
+              }}
+            >
               <option value="" disabled>
                 Move to
               </option>
@@ -326,12 +424,9 @@ export function ProjectsBoard({
                 </option>
               ))}
             </AdminSelect>
-            <AdminSubmitButton variant="outline" pendingLabel="Moving…">
-              Move
-            </AdminSubmitButton>
           </AdminActionForm>
           {singleUnlinked ? (
-            <AdminButton type="button" variant="secondary" onClick={() => void openXeroPicker({ linkId: singleUnlinked.id })}>
+            <AdminButton type="button" variant="ghost" onClick={() => void openXeroPicker({ linkId: singleUnlinked.id })}>
               Link to Xero
             </AdminButton>
           ) : null}
@@ -353,6 +448,8 @@ export function ProjectsBoard({
         group={xeroGroup}
         linkProjectId={linkId}
       />
+
+      <ProjectPeekDrawer project={peek} onClose={() => setPeekId(null)} />
     </div>
   );
 }

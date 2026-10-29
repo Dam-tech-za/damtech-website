@@ -1,6 +1,8 @@
 import { adminOpsDb, isMissingColumnError, isMissingTableError } from "./admin-db";
 import { paymentPicture, materialsRollup, type MaterialsRollup, type PaymentPicture } from "./board";
+import { locationPatch } from "./distance";
 import { todayInSouthAfrica } from "./lifecycle";
+import { findTownByName } from "./sa-places";
 import type {
   OpsDocument,
   OpsTask,
@@ -243,8 +245,17 @@ export async function listBoardProjects(show: "active" | "completed" | "archived
           .filter((l) => l.project_id === p.id)
           .map((l) => ({ ...l, total_incl_vat: Number(l.total_incl_vat), amount_paid: Number(l.amount_paid), amount_due: Number(l.amount_due) }));
         const projectOrders = (orders.data ?? []).filter((o) => o.project_id === p.id) as Pick<OpsMaterialOrder, "status">[];
-        return {
+        const fromTitle =
+        !p.site_province && !p.site_town ? findTownByName(p.title) || findTownByName(p.site_location) : null;
+      const inferred = fromTitle ? locationPatch(fromTitle.province, fromTitle.name) : null;
+      return {
           ...p,
+          // Show company as Client until a person name is filled from Xero.
+          contact_person: p.contact_person?.trim() || p.customer_name?.trim() || null,
+          site_province: p.site_province ?? inferred?.site_province ?? null,
+          site_town: p.site_town ?? inferred?.site_town ?? null,
+          km_from_pretoria: p.km_from_pretoria ?? inferred?.km_from_pretoria ?? null,
+          km_from_western_cape: p.km_from_western_cape ?? inferred?.km_from_western_cape ?? null,
           payment: paymentPicture(projectLinks as Parameters<typeof paymentPicture>[0], p.quoted_total_incl_vat, today),
           materialsStatus: materialsRollup(projectOrders, p.materials_by_client),
           openOrders: projectOrders.filter((o) => o.status !== "collected_delivered" && o.status !== "cancelled").length,

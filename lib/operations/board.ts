@@ -331,6 +331,10 @@ export type BoardFilters = {
   payment?: string;
   lead?: string;
   price?: string;
+  /** Inclusive minimum quoted total in rand. */
+  price_min?: string;
+  /** Inclusive maximum quoted total in rand. */
+  price_max?: string;
   office?: string;
   distance?: string;
   sort?: "next_action" | "updated" | "name" | "lead" | "price" | "distance";
@@ -354,6 +358,20 @@ export function matchesPriceBand(value: number | null, band: string | undefined)
   if (band === "under_50k") return value < 50000;
   if (band === "50_150k") return value >= 50000 && value < 150000;
   if (band === "over_150k") return value >= 150000;
+  return true;
+}
+
+export function matchesPriceRange(
+  value: number | null,
+  minRaw: string | undefined,
+  maxRaw: string | undefined,
+): boolean {
+  const min = minRaw?.trim() ? Number(minRaw.replace(/[\s,]/g, "")) : null;
+  const max = maxRaw?.trim() ? Number(maxRaw.replace(/[\s,]/g, "")) : null;
+  if (min === null && max === null) return true;
+  if (value === null || !Number.isFinite(value)) return false;
+  if (min !== null && Number.isFinite(min) && value < min) return false;
+  if (max !== null && Number.isFinite(max) && value > max) return false;
   return true;
 }
 

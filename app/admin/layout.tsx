@@ -71,7 +71,7 @@ export default async function AdminLayout({
   const newItems = [
     { href: "/quote/", label: "Enquiry", hint: "Log a phone or walk-in enquiry on the quote form" },
     ...(canPerform(role, "manageOperations")
-      ? [{ href: "/admin/operations/projects/new/", label: "Project", hint: "From a Xero quote or invoice, or by hand" }]
+      ? [{ href: "/admin/operations/projects/?add=1", label: "Project", hint: "Adds a blank row on the board — type a name and press Enter" }]
       : []),
     ...(canPerform(role, "manageCustomers")
       ? [{ href: "/admin/customers/?new=1#add-customer", label: "Customer", hint: "Name, contact details and addresses" }]

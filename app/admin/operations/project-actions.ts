@@ -18,6 +18,7 @@ import { summarisePayment } from "@/lib/operations/payment";
 import { guessInvoiceKind } from "@/lib/operations/payment";
 import { buildQuoteImportPayload, inferService, quoteNumbersInReference } from "@/lib/operations/quote-import";
 import { runConfiguredXeroSync } from "@/lib/operations/run-sync";
+import { daysBefore } from "@/lib/operations/sync";
 import { createXeroBridgeClient, xeroBridgeConfigFromEnv, type XeroInvoiceSummary, type XeroQuoteDetail } from "@/lib/operations/xero-bridge";
 import { stageFromInvoice } from "@/lib/operations/xero-start";
 import {
@@ -106,15 +107,18 @@ const idsFrom = (formData: FormData): string[] =>
 // ---------------------------------------------------------------------------
 
 export async function createProjectAction(_prev: AdminActionState, formData: FormData): Promise<AdminActionState> {
-  const title = text(formData, "title", 200);
+  const title = text(formData, "title", 200) || "Untitled project";
   const customer = text(formData, "customer_name", 200);
   const service = text(formData, "service", 40) || "unclassified";
   const stage = text(formData, "stage", 40) || "awaiting_deposit";
-  if (!title) return actionFailure("Give the project a name.");
-  if (!customer) return actionFailure("Enter the customer.");
   if (!isProjectService(service)) return actionFailure("Choose a service.");
   if (!isProjectStage(stage) || stage === "completed") return actionFailure("Choose a starting stage.");
-  const next = checkNextAction(stage, text(formData, "next_action", 600), text(formData, "next_action_due", 10));
+  const today = todayInSouthAfrica();
+  const next = checkNextAction(
+    stage,
+    text(formData, "next_action", 600) || "Fill in the site, scope and dates",
+    text(formData, "next_action_due", 10) || today,
+  );
   if (!next.ok) return actionFailure(next.reason);
   const quotes = splitNumbers(text(formData, "xero_quote_numbers", 300), /^QU-?\d{3,6}$/).map((q) => q.replace("-", ""));
   const invoices = splitNumbers(text(formData, "xero_invoice_numbers", 300), /^INV-?\d{3,6}$/);
@@ -172,7 +176,7 @@ export async function createProjectAction(_prev: AdminActionState, formData: For
   } catch (error) {
     return fail("create project", error);
   }
-  redirect(`/admin/operations/projects/${createdId}/?created=1`);
+  redirect(`/admin/operations/projects/?created=1`);
 }
 
 // ---------------------------------------------------------------------------
@@ -723,6 +727,19 @@ export async function createProjectFromXeroAction(_prev: AdminActionState, formD
         contactId: detail.contact_id,
         contactName: detail.contact,
       });
+      // Ensure value is filled even when the RPC left it null.
+      if (detail.total != null) {
+        const { data: row } = await db.from("ops_projects").select("quoted_total_incl_vat").eq("id", projectId).maybeSingle();
+        if (row && row.quoted_total_incl_vat == null) {
+          await db
+            .from("ops_projects")
+            .update({
+              quoted_total_incl_vat: detail.total,
+              quoted_total_excl_vat: detail.subtotal ?? null,
+            })
+            .eq("id", projectId);
+        }
+      }
     } else {
       const { data: existing, error: existingError } = await db
         .from("ops_xero_invoice_links")
@@ -899,9 +916,8 @@ async function recomputeProjectPayment(db: SupabaseClient, projectId: string, qu
 // ---------------------------------------------------------------------------
 
 export async function createProjectQuickAction(_prev: AdminActionState, formData: FormData): Promise<AdminActionState> {
-  const title = text(formData, "title", 200);
-  const group = text(formData, "group", 40);
-  if (!title) return actionFailure("Give the project a name.");
+  const title = text(formData, "title", 200) || "Untitled project";
+  const group = text(formData, "group", 40) || "awaiting";
   if (!isProjectGroup(group) || group === "completed") return actionFailure("Choose a stage.");
   const today = todayInSouthAfrica();
   try {
@@ -913,6 +929,7 @@ export async function createProjectQuickAction(_prev: AdminActionState, formData
         customer_name: "",
         service: "unclassified",
         stage: stageForGroup(group),
+        // DB requires a next action on open jobs; keep it silent for board adds.
         next_action: "Fill in the site, scope and dates",
         next_action_due: today,
         source: "manual",
@@ -1164,33 +1181,104 @@ export async function updateXeroBoardAction(
     }
     if (result.status === "failed") return actionFailure(`Update failed: ${result.errors[0] ?? "unknown error"}`);
     const bridge = bridgeOrNull();
+    let backfilled = 0;
     if (bridge) {
       const { data: projects } = await db
         .from("ops_projects")
-        .select("id, customer_name, contact_person, contact_phone, contact_email, xero_contact_id")
-        .not("xero_contact_id", "is", null)
+        .select(
+          "id, customer_name, contact_person, contact_phone, contact_email, xero_contact_id, quoted_total_incl_vat, site_province, site_town, xero_quote_numbers",
+        )
         .is("archived_at", null)
-        .limit(40);
-      for (const project of projects ?? []) {
-        if (project.contact_person && project.contact_phone && project.contact_email) continue;
-        await applyXeroExtras(db, project.id as string, {
-          group: "",
-          created: false,
-          contactId: project.xero_contact_id as string,
-          contactName: project.customer_name as string,
-        });
+        .limit(80);
+      let quoteTotals = new Map<string, { total: number; subtotal: number | null }>();
+      try {
+        const today = todayInSouthAfrica();
+        const [accepted, invoiced] = await Promise.all([
+          bridge.call<Array<{ number?: string; total?: number; subtotal?: number }>>("get_quotes", {
+            status: "ACCEPTED",
+            date_from: daysBefore(today, 365),
+            page: 1,
+          }),
+          bridge.call<Array<{ number?: string; total?: number; subtotal?: number }>>("get_quotes", {
+            status: "INVOICED",
+            date_from: daysBefore(today, 365),
+            page: 1,
+          }),
+        ]);
+        quoteTotals = new Map(
+          [...accepted, ...invoiced]
+            .filter((q) => q.number && q.total != null)
+            .map((q) => [
+              String(q.number).replace("-", "").toUpperCase(),
+              { total: Number(q.total), subtotal: q.subtotal == null ? null : Number(q.subtotal) },
+            ]),
+        );
+      } catch {
+        quoteTotals = new Map();
       }
+      for (const project of projects ?? []) {
+        const needsPeople =
+          !project.customer_name || !project.contact_person || !project.contact_phone || !project.contact_email;
+        const needsPlace = !project.site_province && !project.site_town;
+        if ((needsPeople || needsPlace) && (project.xero_contact_id || project.customer_name)) {
+          await applyXeroExtras(db, project.id as string, {
+            group: "",
+            created: false,
+            contactId: (project.xero_contact_id as string | null) ?? null,
+            contactName: (project.customer_name as string | null) ?? null,
+          });
+          backfilled += 1;
+        }
+        if (project.quoted_total_incl_vat == null) {
+          const { data: links } = await db
+            .from("ops_xero_invoice_links")
+            .select("total_incl_vat, xero_status")
+            .eq("project_id", project.id);
+          const live = (links ?? []).filter((l) => {
+            const s = String(l.xero_status ?? "").toUpperCase();
+            return s === "AUTHORISED" || s === "PAID";
+          });
+          const total = live.reduce((sum, l) => sum + Number(l.total_incl_vat ?? 0), 0);
+          if (total > 0) {
+            await db.from("ops_projects").update({ quoted_total_incl_vat: Math.round(total * 100) / 100 }).eq("id", project.id);
+            backfilled += 1;
+          } else {
+            const quoteNumbers = Array.isArray(project.xero_quote_numbers)
+              ? (project.xero_quote_numbers as string[])
+              : [];
+            const firstQuote = quoteNumbers[0]?.replace("-", "").toUpperCase();
+            const match = firstQuote ? quoteTotals.get(firstQuote) : undefined;
+            if (match) {
+              await db
+                .from("ops_projects")
+                .update({
+                  quoted_total_incl_vat: match.total,
+                  quoted_total_excl_vat: match.subtotal,
+                })
+                .eq("id", project.id);
+              backfilled += 1;
+            }
+          }
+        }
+      }
+    }
+    try {
+      const { invalidateBoardXeroQuotesCache } = await import("./board-xero-actions");
+      await invalidateBoardXeroQuotesCache();
+    } catch {
+      // Cache module optional for this path.
     }
     await writeAuditLog({
       actorUserId: admin.user.id,
       actorEmail: admin.profile.email,
       action: "ops.xero_sync",
       entityType: "ops_sync",
-      afterData: { status: result.status, counts: result.counts, board: true },
+      afterData: { status: result.status, counts: result.counts, board: true, backfilled },
     });
     refresh();
     const c = result.counts;
     const parts = [`${c.invoices_linked} invoices linked`, `${c.projects_updated} payment updates`];
+    if (backfilled) parts.push(`${backfilled} contact/value refreshes`);
     return result.status === "partial"
       ? actionFailure(`Updated with problems (${parts.join(", ")}). ${result.errors[0] ?? ""}`)
       : actionSuccess(`Updated from Xero: ${parts.join(", ")}.`);
