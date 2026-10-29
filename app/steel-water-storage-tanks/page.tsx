@@ -229,7 +229,8 @@ export default function SteelTanksPage() {
 
       <Hero
         compact
-        image={SITE_IMAGES.steelTank}
+        image={SITE_IMAGES.steelReservoirServicesCard}
+        imagePosition="center 45%"
         eyebrow="Fixed-price supply-only kits"
 
         title={seo.h1}
