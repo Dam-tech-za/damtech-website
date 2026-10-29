@@ -1,6 +1,16 @@
 "use client";
 
-import { useId, useRef, useState, type KeyboardEvent, type ReactNode } from "react";
+import {
+  useEffect,
+  useId,
+  useLayoutEffect,
+  useRef,
+  useState,
+  type CSSProperties,
+  type KeyboardEvent,
+  type ReactNode,
+} from "react";
+import { createPortal } from "react-dom";
 import { updateBoardFieldAction } from "@/app/admin/operations/board-field-actions";
 import {
   PAYMENT_CELL_TONE,
@@ -13,6 +23,15 @@ import { displayPhone } from "@/lib/operations/phone-display";
 import type { BoardProject } from "@/lib/operations/queries";
 import { formatOpsMoney } from "./ops-format";
 import { PaymentPictureBadge } from "./PaymentPictureBadge";
+
+const PAYMENT_MENU_OPTIONS: Array<{ value: string; label: string; tone: string }> = [
+  { value: "", label: "Unset", tone: "ops-pay--empty" },
+  ...PAYMENT_LABELS.map((l) => ({
+    value: l,
+    label: PAYMENT_LABEL_TEXT[l],
+    tone: PAYMENT_CELL_TONE[l],
+  })),
+];
 
 type SaveFn = (field: string, value: string, extra?: string) => Promise<boolean>;
 
@@ -246,10 +265,26 @@ export function PaymentEditCell({
 }) {
   const save = useCellSave(project.id);
   const [open, setOpen] = useState(false);
-  if (!canEdit) return <PaymentPictureBadge payment={project.payment} />;
+  const [menuStyle, setMenuStyle] = useState<CSSProperties>({});
+  const [activeIndex, setActiveIndex] = useState(0);
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const menuRef = useRef<HTMLUListElement>(null);
+  const activeIndexRef = useRef(0);
+  activeIndexRef.current = activeIndex;
+
+  const currentValue = project.payment.label ?? "";
+  const selectedIndex = Math.max(
+    0,
+    PAYMENT_MENU_OPTIONS.findIndex((o) => o.value === currentValue),
+  );
+
+  const closeMenu = () => {
+    setOpen(false);
+    triggerRef.current?.focus();
+  };
 
   const pick = (next: string) => {
-    setOpen(false);
+    closeMenu();
     void (async () => {
       const ok = await save("payment", next);
       if (ok) {
@@ -262,9 +297,105 @@ export function PaymentEditCell({
     })();
   };
 
+  const placeMenu = () => {
+    const el = triggerRef.current;
+    if (!el) return;
+    const rect = el.getBoundingClientRect();
+    const menuHeight = Math.min(280, 8 + PAYMENT_MENU_OPTIONS.length * 34);
+    const spaceBelow = window.innerHeight - rect.bottom;
+    const flipUp = spaceBelow < menuHeight + 8 && rect.top > spaceBelow;
+    const top = flipUp ? Math.max(8, rect.top - menuHeight - 4) : rect.bottom + 4;
+    const width = Math.max(176, rect.width);
+    let left = rect.left;
+    if (left + width > window.innerWidth - 8) left = Math.max(8, window.innerWidth - width - 8);
+    setMenuStyle({ top, left, width, maxHeight: menuHeight });
+  };
+
+  useLayoutEffect(() => {
+    if (!open) return;
+    setActiveIndex(selectedIndex);
+    placeMenu();
+  }, [open, selectedIndex]);
+
+  useEffect(() => {
+    if (!open) return;
+    const onScrollOrResize = () => placeMenu();
+    window.addEventListener("resize", onScrollOrResize);
+    window.addEventListener("scroll", onScrollOrResize, true);
+    const onPointer = (event: MouseEvent) => {
+      const t = event.target as Node;
+      if (menuRef.current?.contains(t) || triggerRef.current?.contains(t)) return;
+      closeMenu();
+    };
+    const onKey = (event: globalThis.KeyboardEvent) => {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        closeMenu();
+        return;
+      }
+      if (event.key === "ArrowDown" || event.key === "ArrowUp") {
+        event.preventDefault();
+        setActiveIndex((i) =>
+          event.key === "ArrowDown"
+            ? (i + 1) % PAYMENT_MENU_OPTIONS.length
+            : (i - 1 + PAYMENT_MENU_OPTIONS.length) % PAYMENT_MENU_OPTIONS.length,
+        );
+        return;
+      }
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        const option = PAYMENT_MENU_OPTIONS[activeIndexRef.current];
+        if (option) pick(option.value);
+      }
+    };
+    document.addEventListener("mousedown", onPointer);
+    document.addEventListener("keydown", onKey);
+    return () => {
+      window.removeEventListener("resize", onScrollOrResize);
+      window.removeEventListener("scroll", onScrollOrResize, true);
+      document.removeEventListener("mousedown", onPointer);
+      document.removeEventListener("keydown", onKey);
+    };
+    // pick/closeMenu are stable enough for open lifetime; re-bind when menu opens.
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- intentional open-only
+  }, [open]);
+
+  if (!canEdit) return <PaymentPictureBadge payment={project.payment} />;
+
+  const menu =
+    open && typeof document !== "undefined"
+      ? createPortal(
+          <ul
+            ref={menuRef}
+            className="ops-pay-edit__menu"
+            role="listbox"
+            style={menuStyle}
+            aria-label={`Payment options for ${project.title}`}
+          >
+            {PAYMENT_MENU_OPTIONS.map((option, index) => (
+              <li key={option.value || "unset"}>
+                <button
+                  type="button"
+                  role="option"
+                  className={`ops-pay ops-pay--cell ${option.tone}${option.value === currentValue ? " is-selected" : ""}${index === activeIndex ? " is-active" : ""}`}
+                  aria-selected={option.value === currentValue}
+                  tabIndex={index === activeIndex ? 0 : -1}
+                  onMouseEnter={() => setActiveIndex(index)}
+                  onClick={() => pick(option.value)}
+                >
+                  <span className="ops-pay__text">{option.label}</span>
+                </button>
+              </li>
+            ))}
+          </ul>,
+          document.body,
+        )
+      : null;
+
   return (
     <div className={`ops-pay-edit ops-pay-edit--cell${open ? " is-open" : ""}`}>
       <button
+        ref={triggerRef}
         type="button"
         data-ops-cell
         className="ops-pay-edit__trigger"
@@ -272,37 +403,16 @@ export function PaymentEditCell({
         aria-expanded={open}
         aria-label={`Payment for ${project.title}`}
         onClick={() => setOpen((v) => !v)}
+        onKeyDown={(e) => {
+          if (e.key === "ArrowDown" && !open) {
+            e.preventDefault();
+            setOpen(true);
+          }
+        }}
       >
         <PaymentPictureBadge payment={project.payment} />
       </button>
-      {open ? (
-        <ul className="ops-pay-edit__menu" role="listbox">
-          <li>
-            <button
-              type="button"
-              role="option"
-              className={`ops-pay ops-pay--cell ops-pay--empty${!project.payment.label ? " is-selected" : ""}`}
-              aria-selected={!project.payment.label}
-              onClick={() => pick("")}
-            >
-              <span className="ops-pay__text">Unset</span>
-            </button>
-          </li>
-          {PAYMENT_LABELS.map((l) => (
-            <li key={l}>
-              <button
-                type="button"
-                role="option"
-                className={`ops-pay ops-pay--cell ${PAYMENT_CELL_TONE[l]}${project.payment.label === l ? " is-selected" : ""}`}
-                aria-selected={project.payment.label === l}
-                onClick={() => pick(l)}
-              >
-                <span className="ops-pay__text">{PAYMENT_LABEL_TEXT[l]}</span>
-              </button>
-            </li>
-          ))}
-        </ul>
-      ) : null}
+      {menu}
     </div>
   );
 }

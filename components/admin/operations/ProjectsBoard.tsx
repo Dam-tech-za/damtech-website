@@ -294,11 +294,11 @@ export function ProjectsBoard({
               <th className="ops-sheet__c-project ops-sheet__sticky" scope="col">
                 Project
               </th>
-              <th className="ops-sheet__c-lead" scope="col">
-                Lead
-              </th>
               <th className="ops-sheet__c-pay ops-sheet__sticky" scope="col">
                 Payment
+              </th>
+              <th className="ops-sheet__c-lead" scope="col">
+                Lead
               </th>
               <th className="ops-sheet__c-client" scope="col">
                 Client
@@ -353,11 +353,11 @@ export function ProjectsBoard({
                         <td className="ops-sheet__c-project ops-sheet__sticky" data-label="Project">
                           <TitleCell project={p} canEdit={canEdit} onPeek={() => setPeekId(p.id)} onPatched={patchRow} />
                         </td>
-                        <td className="ops-sheet__c-lead" data-label="Lead">
-                          <LeadCell project={p} canEdit={canEdit} suggestions={leads} onPatched={patchRow} />
-                        </td>
                         <td className="ops-sheet__c-pay ops-sheet__sticky" data-label="Payment">
                           <PaymentEditCell project={p} canEdit={canEdit} onPatched={patchRow} />
+                        </td>
+                        <td className="ops-sheet__c-lead" data-label="Lead">
+                          <LeadCell project={p} canEdit={canEdit} suggestions={leads} onPatched={patchRow} />
                         </td>
                         <td className="ops-sheet__c-client" data-label="Client">
                           <ClientEditCell project={p} canEdit={canEdit} onPatched={patchRow} />
@@ -395,6 +395,7 @@ export function ProjectsBoard({
           })}
         </table>
       </div>
+      <div className="ops-sheet__after" aria-hidden="true" />
 
       {selectedProjects.length > 0 && canEdit ? (
         <div className="ops-selection-bar" role="toolbar" aria-label="Selected projects">
