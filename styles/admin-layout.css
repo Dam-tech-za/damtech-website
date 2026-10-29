@@ -4129,3 +4129,235 @@ body:has(.ops-projects-page) {
   padding-left: 1.1rem;
   font-size: 0.85rem;
 }
+
+/* ---------------------------------------------------------------
+   Projects on phones: compact table grouped by stage.
+   Desktop is unchanged: the wrapper is display: contents and the
+   phone list is hidden from 768px up.
+   --------------------------------------------------------------- */
+.ops-workspace__desktop {
+  display: contents;
+}
+
+.ops-mlist {
+  display: none;
+}
+
+@media (max-width: 767px) {
+  .ops-workspace__desktop {
+    display: none;
+  }
+
+  /* The projects page is a fixed-height app on phones too: the list scrolls inside it. */
+  .ops-mlist {
+    display: grid;
+    align-content: start;
+    gap: 0.75rem;
+    flex: 1 1 0;
+    min-height: 0;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 1rem;
+  }
+
+  .ops-mlist__bar {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .ops-mlist__count {
+    flex: 1;
+    font-size: 0.82rem;
+    color: var(--admin-text-muted);
+  }
+
+  .ops-mlist__icon {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    border: 1px solid var(--admin-border);
+    border-radius: 999px;
+    background: #fff;
+    color: var(--admin-text);
+  }
+
+  .ops-mlist__icon.is-on {
+    border-color: var(--admin-primary);
+    color: var(--admin-primary);
+  }
+
+  .ops-mlist__dot {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--admin-primary);
+  }
+
+  .ops-mlist__search {
+    width: 100%;
+  }
+
+  .ops-mlist__filters {
+    display: grid;
+    gap: 0.5rem;
+    padding: 0.75rem;
+    border: 1px solid var(--admin-border);
+    border-radius: var(--admin-radius-md);
+    background: #fff;
+  }
+
+  .ops-mlist__filters label {
+    display: grid;
+    gap: 2px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--admin-text-muted);
+  }
+
+  .ops-mlist__clear {
+    justify-self: start;
+    border: 0;
+    background: none;
+    padding: 0;
+    color: var(--admin-primary);
+    font-weight: 600;
+    font-size: 0.85rem;
+  }
+
+  .ops-mlist__group {
+    --ops-mlist-accent: var(--admin-border);
+  }
+
+  .ops-mlist__group--awaiting { --ops-mlist-accent: #b45309; }
+  .ops-mlist__group--planning { --ops-mlist-accent: #026bc6; }
+  .ops-mlist__group--on_site { --ops-mlist-accent: #7c3aed; }
+  .ops-mlist__group--handover { --ops-mlist-accent: #0f766e; }
+  .ops-mlist__group--completed { --ops-mlist-accent: #166534; }
+
+  .ops-mlist__group-title {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    width: 100%;
+    padding: 0.2rem 0;
+    border: 0;
+    background: none;
+    color: var(--ops-mlist-accent);
+    font-size: 0.9rem;
+    font-weight: 650;
+    text-align: left;
+  }
+
+  .ops-mlist__chevron {
+    width: 0.9rem;
+  }
+
+  .ops-mlist__n {
+    padding: 0 0.4rem;
+    border-radius: 999px;
+    background: #eef2f7;
+    color: var(--admin-text-muted);
+    font-size: 0.72rem;
+    font-weight: 600;
+  }
+
+  .ops-mlist__rows {
+    list-style: none;
+    margin: 0.35rem 0 0;
+    padding: 0;
+    border: 1px solid var(--admin-border);
+    border-left: 4px solid var(--ops-mlist-accent);
+    border-radius: 6px;
+    background: #fff;
+    overflow: hidden;
+  }
+
+  .ops-mlist__rows li + li {
+    border-top: 1px solid var(--admin-border);
+  }
+
+  .ops-mlist__row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 3.4rem 7.5rem;
+    align-items: stretch;
+    min-height: 2.9rem;
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .ops-mlist__row:active {
+    background: #f2f6fb;
+  }
+
+  .ops-mlist__name {
+    display: grid;
+    align-content: center;
+    min-width: 0;
+    padding: 0.35rem 0.6rem;
+  }
+
+  .ops-mlist__title,
+  .ops-mlist__client {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .ops-mlist__title {
+    font-size: 0.85rem;
+    font-weight: 600;
+  }
+
+  .ops-mlist__client {
+    font-size: 0.75rem;
+    color: var(--admin-text-muted);
+  }
+
+  .ops-mlist__value {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding-right: 0.45rem;
+    border-left: 1px solid var(--admin-border);
+    font-size: 0.78rem;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .ops-mlist__pay {
+    display: flex;
+    border-left: 1px solid var(--admin-border);
+  }
+
+  .ops-mlist__pay .ops-pay {
+    flex: 1;
+    height: auto;
+    min-height: 100%;
+    align-self: stretch;
+    margin: 0;
+    padding: 0 0.3rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 0;
+    border-radius: 0;
+    font-size: 0.7rem;
+    text-align: center;
+    white-space: normal;
+    line-height: 1.15;
+  }
+
+  .ops-mlist__none,
+  .ops-mlist__empty {
+    padding: 0.6rem;
+    font-size: 0.8rem;
+    color: var(--admin-text-muted);
+  }
+}
