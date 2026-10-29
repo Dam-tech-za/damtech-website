@@ -19,7 +19,8 @@ import {
 } from "@/lib/operations/board-meta";
 import { distancesFromPoint, locationPatch } from "@/lib/operations/distance";
 import { findTownByName } from "@/lib/operations/sa-places";
-import { fetchXeroContactById, fillFromXeroContact, locationFromXeroCity } from "@/lib/operations/xero-contact";
+import { fillFromXeroContact, locationFromXeroCity } from "@/lib/operations/xero-contact";
+import { documentKindOf, getXeroDocumentWithContact, XeroDocumentError } from "@/lib/operations/xero-document";
 import { createXeroBridgeClient, xeroBridgeConfigFromEnv } from "@/lib/operations/xero-bridge";
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -298,7 +299,7 @@ export async function refreshProjectFromXeroAction(payload: { id: string }): Pro
     const { data: project, error } = await db
       .from("ops_projects")
       .select(
-        "id, customer_name, contact_person, contact_phone, contact_email, xero_contact_id, site_province, site_town, site_location, quoted_total_incl_vat, quoted_total_manual, manual_fields, scope, xero_quote_numbers",
+        "id, customer_name, contact_person, contact_phone, contact_email, xero_contact_id, site_province, site_town, site_location, quoted_total_incl_vat, quoted_total_manual, manual_fields, scope, xero_quote_numbers, xero_invoice_numbers",
       )
       .eq("id", id)
       .maybeSingle();
@@ -315,50 +316,47 @@ export async function refreshProjectFromXeroAction(payload: { id: string }): Pro
     const bridge = createXeroBridgeClient(config);
 
     const patch: Record<string, unknown> = {};
-    if (
-      (!manual.client || !manual.phone || !manual.email || !manual.company || !manual.location) &&
-      project.xero_contact_id
-    ) {
-      // ContactID only — never match by customer name (K&S49 overwrite bug).
-      const extras = await fetchXeroContactById(bridge, project.xero_contact_id as string);
-      if (extras) {
-        const fill = fillFromXeroContact(
-          {
-            customer_name: manual.company ? (project.customer_name as string) : null,
-            contact_person: manual.client ? (project.contact_person as string) : null,
-            contact_phone: manual.phone ? (project.contact_phone as string) : null,
-            contact_email: manual.email ? (project.contact_email as string) : null,
-            xero_contact_id: project.xero_contact_id as string | null,
-          },
-          extras,
-        );
-        Object.assign(patch, fill);
-        if (!manual.location && !project.site_town && !project.site_province) {
-          const loc = locationFromXeroCity(extras.city, extras.region);
-          if (loc) Object.assign(patch, loc);
-        }
+    const quotes = Array.isArray(project.xero_quote_numbers) ? (project.xero_quote_numbers as string[]) : [];
+    const invoices = Array.isArray(project.xero_invoice_numbers) ? (project.xero_invoice_numbers as string[]) : [];
+    const number = quotes[0] ?? invoices[0] ?? null;
+    if (!number) return actionFailure("No Xero quote or invoice number on this project yet.");
+    const kind = documentKindOf(number);
+    if (!kind) return actionFailure(`“${number}” isn't a Xero quote or invoice number.`);
+
+    // Document → its ContactID → that contact. Never a name search or a list.
+    let found;
+    try {
+      found = await getXeroDocumentWithContact(bridge, kind, number, {
+        projectId: id,
+        storedContactId: (project.xero_contact_id as string | null) ?? null,
+      });
+    } catch (error) {
+      if (error instanceof XeroDocumentError) return actionFailure(error.message);
+      throw error;
+    }
+
+    if (!manual.client || !manual.phone || !manual.email || !manual.company || !manual.location) {
+      const fill = fillFromXeroContact(
+        // Only empty fields are filled; anything already on the project stays
+        // (changes to filled values go through the From Xero review card).
+        {
+          customer_name: project.customer_name as string | null,
+          contact_person: project.contact_person as string | null,
+          contact_phone: project.contact_phone as string | null,
+          contact_email: project.contact_email as string | null,
+          xero_contact_id: project.xero_contact_id as string | null,
+        },
+        found.contact,
+      );
+      Object.assign(patch, fill);
+      if (!manual.location && !project.site_town && !project.site_province) {
+        const loc = locationFromXeroCity(found.contact.city, found.contact.region);
+        if (loc) Object.assign(patch, loc);
       }
     }
 
-    if (!manual.value && !project.quoted_total_manual && project.quoted_total_incl_vat == null) {
-      const quotes = Array.isArray(project.xero_quote_numbers) ? (project.xero_quote_numbers as string[]) : [];
-      if (quotes[0]) {
-        try {
-          const rows = await bridge.call<Array<{ number?: string; total?: number; subtotal?: number }>>("get_quotes", {
-            status: "ACCEPTED",
-            page: 1,
-          });
-          const match = (rows ?? []).find(
-            (q) => String(q.number ?? "").replace(/-/g, "").toUpperCase() === quotes[0].replace(/-/g, "").toUpperCase(),
-          );
-          if (match?.total != null) {
-            patch.quoted_total_incl_vat = match.total;
-            patch.quoted_total_excl_vat = match.subtotal ?? null;
-          }
-        } catch {
-          // Optional.
-        }
-      }
+    if (kind === "quote" && !manual.value && !project.quoted_total_manual && project.quoted_total_incl_vat == null && found.document.total != null) {
+      patch.quoted_total_incl_vat = found.document.total;
     }
 
     if (!Object.keys(patch).length) {

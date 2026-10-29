@@ -7,6 +7,7 @@ import { writeAuditLog } from "@/lib/auth/audit";
 import { adminOpsDb } from "@/lib/operations/admin-db";
 import { createXeroBridgeClient, xeroBridgeConfigFromEnv } from "@/lib/operations/xero-bridge";
 import { locationFromXeroCity } from "@/lib/operations/xero-contact";
+import { documentKindOf, getXeroDocumentWithContact, XeroDocumentError } from "@/lib/operations/xero-document";
 import {
   buildProjectXeroReview,
   type ReviewApplyItem,
@@ -79,6 +80,33 @@ export async function applyFromXeroAction(payload: {
       .maybeSingle();
     if (readError) throw readError;
     if (!project) return actionFailure("This project no longer exists.");
+
+    // Re-read the document on the server: the contact id written comes from
+    // Xero's document, never from the browser.
+    const kind = documentKindOf(payload.documentNumber);
+    const bridge = bridgeOrNull();
+    if (!kind) return actionFailure("This isn't a Xero quote or invoice number.");
+    if (!bridge) return actionFailure("The Xero connection is not set up on this site.");
+    let verifiedContactId: string;
+    try {
+      const doc = await getXeroDocumentWithContact(bridge, kind, payload.documentNumber, {
+        projectId,
+        storedContactId: project.xero_contact_id ?? null,
+      });
+      verifiedContactId = doc.contactId;
+    } catch (error) {
+      if (error instanceof XeroDocumentError) return actionFailure(error.message);
+      throw error;
+    }
+    if (payload.contactId && payload.contactId !== verifiedContactId) {
+      console.error("[operations] apply from xero: contact changed since preview", {
+        projectId,
+        document: payload.documentNumber,
+        previewContactId: payload.contactId,
+        documentContactId: verifiedContactId,
+      });
+      return actionFailure(`The customer on ${payload.documentNumber} changed in Xero since you opened this. Open it again. Nothing was changed.`);
+    }
 
     const patch: Record<string, unknown> = {};
     const changes: Array<{
@@ -173,9 +201,9 @@ export async function applyFromXeroAction(payload: {
       }
     }
 
-    if (payload.contactId && UUID.test(payload.contactId)) {
-      record("xero_contact_id", project.xero_contact_id, payload.contactId);
-      patch.xero_contact_id = payload.contactId;
+    if (UUID.test(verifiedContactId)) {
+      record("xero_contact_id", project.xero_contact_id, verifiedContactId);
+      patch.xero_contact_id = verifiedContactId;
     }
 
     if (!Object.keys(patch).length) return actionFailure("Nothing to update.");

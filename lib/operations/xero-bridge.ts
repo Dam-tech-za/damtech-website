@@ -10,7 +10,11 @@
 
 export const XERO_BRIDGE_READ_TOOLS = [
   "get_organisation",
+  // Typed searches only (exact name or email). Never used to resolve a document's customer.
   "get_contacts",
+  // Document → its ContactID → that contact (bridge v7+). The only customer lookup for documents.
+  "get_document_with_contact",
+  "get_contact",
   "get_quotes",
   "get_quote",
   "get_invoices",
@@ -66,10 +70,15 @@ export type XeroBridgeStatus = { connected: boolean; [key: string]: unknown };
 
 export class XeroBridgeError extends Error {
   readonly status: number | null;
-  constructor(message: string, status: number | null) {
+  /** Xero's own HTTP status when the bridge answers 502 (e.g. 429 rate limit). */
+  readonly upstreamStatus: number | null;
+  readonly retryAfterSeconds: number | null;
+  constructor(message: string, status: number | null, extra: { upstreamStatus?: number | null; retryAfterSeconds?: number | null } = {}) {
     super(message);
     this.name = "XeroBridgeError";
     this.status = status;
+    this.upstreamStatus = extra.upstreamStatus ?? null;
+    this.retryAfterSeconds = extra.retryAfterSeconds ?? null;
   }
 }
 
@@ -117,7 +126,12 @@ export function createXeroBridgeClient(config: XeroBridgeConfig): XeroBridgeClie
       if (!res.ok) {
         const message =
           body && typeof body === "object" && "error" in body ? String((body as { error: unknown }).error) : `HTTP ${res.status}`;
-        throw new XeroBridgeError(`Xero bridge: ${message}`, res.status);
+        const upstream = body && typeof body === "object" && "status" in body ? Number((body as { status: unknown }).status) : null;
+        const retry = Number(res.headers.get("retry-after") ?? "");
+        throw new XeroBridgeError(`Xero bridge: ${message}`, res.status, {
+          upstreamStatus: Number.isFinite(upstream) ? upstream : null,
+          retryAfterSeconds: Number.isFinite(retry) && retry > 0 ? Math.min(retry, 30) : null,
+        });
       }
       return body;
     } catch (error) {

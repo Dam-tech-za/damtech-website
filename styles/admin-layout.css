@@ -4096,3 +4096,36 @@ body:has(.ops-projects-page) {
 .ops-toolbar__menu-list button:hover {
   background: #eef1f5;
 }
+
+/* Sync from Xero: one review table for all projects */
+.ops-xero-sync {
+  width: min(64rem, 96vw);
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.ops-xero-sync__body {
+  overflow-y: auto;
+  display: grid;
+  gap: var(--admin-space-3);
+}
+
+.ops-xero-sync__project h3 {
+  margin: 0 0 var(--admin-space-1);
+  font-size: 0.92rem;
+}
+
+.ops-xero-sync__accept {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.82rem;
+  white-space: nowrap;
+}
+
+.ops-xero-sync__list {
+  margin: 0;
+  padding-left: 1.1rem;
+  font-size: 0.85rem;
+}

@@ -4,13 +4,22 @@
  */
 
 import type { SupabaseClient } from "@supabase/supabase-js";
-import type { XeroBridgeClient, XeroInvoiceSummary, XeroQuoteDetail, XeroQuoteSummary } from "./xero-bridge.ts";
+import type { XeroBridgeClient } from "./xero-bridge.ts";
+import { BLOCKED_XERO_CONTACT_IDS, locationFromXeroCity, type XeroContactExtras } from "./xero-contact.ts";
 import {
-  fetchXeroContactByIdStrict,
-  locationFromXeroCity,
-  type XeroContactExtras,
-  XeroContactLookupError,
-} from "./xero-contact.ts";
+  documentKindOf,
+  getXeroDocumentWithContact,
+  XeroDocumentError,
+  type XeroDocumentKind,
+  type XeroDocumentWithContact,
+} from "./xero-document.ts";
+
+/** Same signature as getXeroDocumentWithContact minus the bridge; bulk runs pass a cached one. */
+export type DocumentLookup = (
+  kind: XeroDocumentKind,
+  number: string,
+  context?: { projectId?: string | null; storedContactId?: string | null },
+) => Promise<XeroDocumentWithContact>;
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
@@ -89,88 +98,6 @@ function pushRow(
   });
 }
 
-async function findQuoteByNumber(
-  db: SupabaseClient,
-  bridge: XeroBridgeClient,
-  number: string,
-): Promise<{ detail: XeroQuoteDetail; number: string } | null> {
-  const want = normNumber(number);
-  const { data: links } = await db.from("ops_xero_quote_links").select("xero_quote_id, quote_number").limit(500);
-  const linked = (links ?? []).find((r) => normNumber(String(r.quote_number ?? "")) === want);
-  if (linked?.xero_quote_id && UUID.test(String(linked.xero_quote_id))) {
-    const detail = await bridge.call<XeroQuoteDetail>("get_quote", { quote_id: linked.xero_quote_id });
-    return { detail, number: String(detail.number ?? linked.quote_number ?? want).toUpperCase() };
-  }
-
-  // Bridge may accept quote_number; fall back to scanning recent statuses.
-  try {
-    const byNumber = await bridge.call<XeroQuoteSummary[]>("get_quotes", { quote_number: want, page: 1 });
-    const hit = Array.isArray(byNumber) ? byNumber.find((q) => normNumber(String(q.number ?? "")) === want) : undefined;
-    if (hit?.id) {
-      const detail = await bridge.call<XeroQuoteDetail>("get_quote", { quote_id: hit.id });
-      return { detail, number: String(detail.number ?? want).toUpperCase() };
-    }
-  } catch {
-    // ignore and scan
-  }
-
-  for (const status of ["ACCEPTED", "INVOICED", "SENT", "DRAFT"]) {
-    try {
-      const batch = await bridge.call<XeroQuoteSummary[]>("get_quotes", { status, page: 1 });
-      const hit = batch.find((q) => normNumber(String(q.number ?? "")) === want);
-      if (hit?.id) {
-        const detail = await bridge.call<XeroQuoteDetail>("get_quote", { quote_id: hit.id });
-        return { detail, number: String(detail.number ?? want).toUpperCase() };
-      }
-    } catch {
-      // try next status
-    }
-  }
-  return null;
-}
-
-async function findInvoiceByNumber(
-  db: SupabaseClient,
-  bridge: XeroBridgeClient,
-  number: string,
-): Promise<{ detail: XeroInvoiceSummary; number: string } | null> {
-  const want = normNumber(number);
-  const { data: link } = await db
-    .from("ops_xero_invoice_links")
-    .select("xero_invoice_id, invoice_number")
-    .limit(200);
-  const linked = (link ?? []).find((r) => normNumber(String(r.invoice_number ?? "")) === want);
-  if (linked?.xero_invoice_id && UUID.test(String(linked.xero_invoice_id))) {
-    const detail = await bridge.call<XeroInvoiceSummary>("get_invoice", { invoice_id: linked.xero_invoice_id });
-    return { detail, number: String(detail.number ?? linked.invoice_number ?? want).toUpperCase() };
-  }
-
-  try {
-    const byNumber = await bridge.call<XeroInvoiceSummary[]>("get_invoices", {
-      kind: "sales",
-      InvoiceNumbers: want,
-      page: 1,
-    });
-    const hit = Array.isArray(byNumber) ? byNumber.find((i) => normNumber(String(i.number ?? "")) === want) : undefined;
-    if (hit) return { detail: hit, number: String(hit.number ?? want).toUpperCase() };
-  } catch {
-    // scan
-  }
-
-  try {
-    const batch = await bridge.call<XeroInvoiceSummary[]>("get_invoices", {
-      kind: "sales",
-      status: "AUTHORISED,PAID",
-      page: 1,
-    });
-    const hit = batch.find((i) => normNumber(String(i.number ?? "")) === want);
-    if (hit) return { detail: hit, number: String(hit.number ?? want).toUpperCase() };
-  } catch {
-    return null;
-  }
-  return null;
-}
-
 function buildRowsFromContact(
   project: {
     title: string;
@@ -216,6 +143,7 @@ export async function buildProjectXeroReview(
   bridge: XeroBridgeClient,
   projectId: string,
   documentNumberHint?: string | null,
+  lookup?: DocumentLookup,
 ): Promise<ReviewPreview | { error: string; needsDocument?: boolean }> {
   const { data: project, error } = await db
     .from("ops_projects")
@@ -239,55 +167,13 @@ export async function buildProjectXeroReview(
   }
 
   const want = normNumber(stored);
+  const kind = documentKindOf(want) ?? documentKindOf(`QU${want}`);
+  const number = documentKindOf(want) ? want : `QU${want}`;
+  if (!kind) return { error: `“${stored}” isn't a Xero quote or invoice number.` };
   try {
-    if (want.startsWith("INV")) {
-      const found = await findInvoiceByNumber(db, bridge, want);
-      if (!found) return { error: `Could not find ${want} in Xero.` };
-      const contactId = found.detail.contact_id?.trim() ?? "";
-      if (!contactId) return { error: `${found.number} has no ContactID in Xero. Nothing was changed.` };
-      const extras = await fetchXeroContactByIdStrict(bridge, {
-        projectId,
-        documentNumber: found.number,
-        documentContactId: contactId,
-      });
-      const built = buildRowsFromContact(
-        {
-          title: project.title,
-          customer_name: project.customer_name,
-          contact_person: project.contact_person,
-          contact_phone: project.contact_phone,
-          contact_email: project.contact_email,
-          quoted_total_incl_vat: project.quoted_total_incl_vat == null ? null : Number(project.quoted_total_incl_vat),
-          site_province: project.site_province,
-          site_town: project.site_town,
-          xero_quote_numbers: project.xero_quote_numbers,
-          xero_invoice_numbers: project.xero_invoice_numbers,
-        },
-        extras,
-        found.number,
-        found.detail.total ?? null,
-        null,
-      );
-      return {
-        projectId,
-        projectTitle: project.title,
-        documentNumber: found.number,
-        documentKind: "invoice",
-        documentContactId: contactId,
-        contactId: extras.id!,
-        rows: built.rows,
-        matchCount: built.matchCount,
-      };
-    }
-
-    const found = await findQuoteByNumber(db, bridge, want.startsWith("QU") ? want : `QU${want}`);
-    if (!found) return { error: `Could not find ${want} in Xero.` };
-    const contactId = found.detail.contact_id?.trim() ?? "";
-    if (!contactId) return { error: `${found.number} has no ContactID in Xero. Nothing was changed.` };
-    const extras = await fetchXeroContactByIdStrict(bridge, {
+    const found = await (lookup ?? ((k, n, c) => getXeroDocumentWithContact(bridge, k, n, c)))(kind, number, {
       projectId,
-      documentNumber: found.number,
-      documentContactId: contactId,
+      storedContactId: project.xero_contact_id ?? null,
     });
     const built = buildRowsFromContact(
       {
@@ -302,23 +188,30 @@ export async function buildProjectXeroReview(
         xero_quote_numbers: project.xero_quote_numbers,
         xero_invoice_numbers: project.xero_invoice_numbers,
       },
-      extras,
-      found.number,
-      found.detail.total ?? null,
-      found.detail.title,
+      found.contact,
+      found.document.number,
+      found.document.total,
+      kind === "quote" ? found.document.title : null,
     );
+    // A project still carrying a known wrong contact gets the contact rows
+    // pre-ticked: they are corrections, shown as normal rows to accept.
+    if (project.xero_contact_id && BLOCKED_XERO_CONTACT_IDS.has(project.xero_contact_id) && project.xero_contact_id !== found.contactId) {
+      for (const row of built.rows) {
+        if (row.field === "customer_name" || row.field === "contact_phone" || row.field === "contact_email") row.defaultAccept = Boolean(row.proposed);
+      }
+    }
     return {
       projectId,
       projectTitle: project.title,
-      documentNumber: found.number,
-      documentKind: "quote",
-      documentContactId: contactId,
-      contactId: extras.id!,
+      documentNumber: found.document.number,
+      documentKind: kind,
+      documentContactId: found.contactId,
+      contactId: found.contact.id!,
       rows: built.rows,
       matchCount: built.matchCount,
     };
   } catch (err) {
-    if (err instanceof XeroContactLookupError) return { error: err.message };
+    if (err instanceof XeroDocumentError) return { error: err.message };
     console.error("[xero-review]", err instanceof Error ? err.message : err);
     return { error: "Xero didn't answer, nothing was changed." };
   }
