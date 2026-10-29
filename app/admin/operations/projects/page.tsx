@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Suspense } from "react";
 import type { Metadata } from "next";
+import { unstable_rethrow } from "next/navigation";
 import { requireAdmin } from "@/lib/auth/require-admin";
 import { canPerform } from "@/lib/auth/permissions";
 import { listBoardProjects, listStaffOptions } from "@/lib/operations/queries";
@@ -38,6 +39,7 @@ import { ProjectsBoard } from "@/components/admin/operations/ProjectsBoard";
 import { updateXeroBoardAction } from "@/app/admin/operations/project-actions";
 
 export const metadata: Metadata = { title: "Projects" };
+export const maxDuration = 30;
 
 type Search = Record<string, string | string[] | undefined>;
 type PageProps = { searchParams: Promise<Search> };
@@ -86,7 +88,22 @@ function hrefWith(filters: BoardFilters & { quick?: Quick }, patch: Partial<Boar
   return `/admin/operations/projects/${query ? `?${query}` : ""}`;
 }
 
-export default async function OperationsProjectsPage({ searchParams }: PageProps) {
+export default async function OperationsProjectsPage(props: PageProps) {
+  try {
+    return await ProjectsPageInner(props);
+  } catch (error) {
+    unstable_rethrow(error);
+    console.error("[operations] projects page:", error instanceof Error ? error.message : error);
+    return (
+      <div className="admin-stack--page ops">
+        <AdminPageHeader title="Projects" description="Every won job, by stage. Payment comes from Xero." />
+        <AdminErrorState title="Projects could not be loaded." message="Refresh in a moment." />
+      </div>
+    );
+  }
+}
+
+async function ProjectsPageInner({ searchParams }: PageProps) {
   const admin = await requireAdmin();
   const canEdit = canPerform(admin.profile.role, "manageOperations");
   const canSync = canPerform(admin.profile.role, "runXeroSync");
@@ -101,7 +118,7 @@ export default async function OperationsProjectsPage({ searchParams }: PageProps
             matchesSearch(p, filters.q ?? "") &&
             (!filters.service || p.service === filters.service) &&
             (!filters.stage || p.stage === filters.stage) &&
-            (!filters.payment || (filters.payment === "overdue" ? p.payment.overdue : p.payment.label === filters.payment)) &&
+            (!filters.payment || (p.payment && (filters.payment === "overdue" ? p.payment.overdue : p.payment.label === filters.payment))) &&
             (!filters.lead || p.project_lead_id === filters.lead) &&
             matchesPriceBand(p.quoted_total_incl_vat, filters.price) &&
             matchesDistanceBand(kmForOffice(p, filters.office), filters.distance) &&

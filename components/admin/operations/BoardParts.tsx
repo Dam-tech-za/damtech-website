@@ -6,33 +6,16 @@ import {
   PROJECT_GROUPS,
   groupForStage,
   MATERIALS_ROLLUP_LABELS,
-  PAYMENT_LABEL_TEXT,
   type MaterialsRollup,
-  type PaymentPicture,
   type ProjectGroup,
 } from "@/lib/operations/board";
 import { SERVICE_LABELS, stageLabel, stagePath } from "@/lib/operations/lifecycle";
 import type { BoardProject } from "@/lib/operations/queries";
 import { StageBadge } from "./OpsParts";
 import { formatOpsDate, formatOpsMoney } from "./ops-format";
+import { PaymentPictureBadge } from "./PaymentPictureBadge";
 
-const PAYMENT_TONE: Record<NonNullable<PaymentPicture["label"]>, string> = {
-  deposit_invoiced: "ops-warn",
-  portion_of_deposit_paid: "ops-warn",
-  deposit_paid: "ops-info",
-  balance_due: "ops-warn",
-  paid_in_full: "ops-good",
-};
-
-export function PaymentPictureBadge({ payment }: { payment: PaymentPicture }) {
-  if (!payment.label && !payment.overdue) return <span className="ops-table__meta">—</span>;
-  return (
-    <span className="ops-stage">
-      {payment.label ? <AdminStatusBadge status={PAYMENT_TONE[payment.label]} label={PAYMENT_LABEL_TEXT[payment.label]} /> : null}
-      {payment.overdue ? <AdminStatusBadge status="ops-bad" label="Overdue" /> : null}
-    </span>
-  );
-}
+export { PaymentPictureBadge };
 
 const MATERIALS_TONE: Record<MaterialsRollup, string> = {
   client_supplies: "ops-neutral",

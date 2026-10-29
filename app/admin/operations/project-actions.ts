@@ -11,8 +11,6 @@ import {
 } from "@/lib/admin/action-state";
 import { writeAuditLog } from "@/lib/auth/audit";
 import { adminOpsDb, isMissingColumnError } from "@/lib/operations/admin-db";
-import { loadXeroStart } from "@/lib/operations/queries";
-import type { XeroStartItem } from "@/lib/operations/xero-start";
 import { isProjectGroup, isLinkedToXero, stageForGroup } from "@/lib/operations/board";
 import { locationFromXeroCity, fetchXeroContactExtras, fillFromXeroContact } from "@/lib/operations/xero-contact";
 import { checkNextAction, checkStageChange, todayInSouthAfrica, stageLabel } from "@/lib/operations/lifecycle";
@@ -1150,17 +1148,12 @@ export async function linkProjectToXeroQuoteAction(_prev: AdminActionState, form
   }
 }
 
-export async function loadBoardXeroQuotesAction(): Promise<{ items: XeroStartItem[]; error: string | null }> {
-  try {
-    const load = await loadXeroStart({ quotesOnly: true, quoteDays: 30 });
-    if (!load.ok) return { items: [], error: "Xero quotes could not be loaded." };
-    return { items: load.data.items, error: load.data.xeroError };
-  } catch {
-    return { items: [], error: "Xero could not be reached just now." };
-  }
-}
-
-export async function updateXeroBoardAction(): Promise<AdminActionState> {
+export async function updateXeroBoardAction(
+  prev: AdminActionState,
+  formData: FormData,
+): Promise<AdminActionState> {
+  void prev;
+  void formData;
   try {
     const { db, admin } = await adminOpsDb({ permission: "runXeroSync" });
     const result = await runConfiguredXeroSync("manual", { createProjects: false });

@@ -68,8 +68,8 @@ function toProject(row: Record<string, unknown>): OpsProject {
     amount_invoiced: Number(row.amount_invoiced ?? 0),
     amount_paid: Number(row.amount_paid ?? 0),
     amount_due: Number(row.amount_due ?? 0),
-    xero_quote_numbers: (row.xero_quote_numbers as string[] | null) ?? [],
-    xero_invoice_numbers: (row.xero_invoice_numbers as string[] | null) ?? [],
+    xero_quote_numbers: Array.isArray(row.xero_quote_numbers) ? (row.xero_quote_numbers as string[]) : [],
+    xero_invoice_numbers: Array.isArray(row.xero_invoice_numbers) ? (row.xero_invoice_numbers as string[]) : [],
   };
 }
 

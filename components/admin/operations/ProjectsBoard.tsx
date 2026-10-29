@@ -14,8 +14,8 @@ import {
   createProjectQuickAction,
   deleteProjectsAction,
   duplicateProjectsAction,
-  loadBoardXeroQuotesAction,
 } from "@/app/admin/operations/project-actions";
+import { loadBoardXeroQuotesAction } from "@/app/admin/operations/board-xero-actions";
 import type { XeroStartItem } from "@/lib/operations/xero-start";
 import {
   GROUP_LABELS,
@@ -28,7 +28,7 @@ import {
 import { formatLocationCell } from "@/lib/operations/distance";
 import type { BoardProject } from "@/lib/operations/queries";
 import { AddFromXeroDialog } from "./AddFromXeroDialog";
-import { PaymentPictureBadge } from "./BoardParts";
+import { PaymentPictureBadge } from "./PaymentPictureBadge";
 import { PhoneCell } from "./PhoneCell";
 import { formatOpsMoney } from "./ops-format";
 
@@ -225,7 +225,9 @@ export function ProjectsBoard({
                           <PhoneCell name={p.contact_person} phone={p.contact_phone} />
                         </td>
                         <td data-label="Xero">
-                          {[...p.xero_quote_numbers, ...p.xero_invoice_numbers].join(" · ") || <span className="ops-table__meta">—</span>}
+                          {[...(Array.isArray(p.xero_quote_numbers) ? p.xero_quote_numbers : []), ...(Array.isArray(p.xero_invoice_numbers) ? p.xero_invoice_numbers : [])].join(" · ") || (
+                            <span className="ops-table__meta">—</span>
+                          )}
                         </td>
                         <td data-label="Value">{formatOpsMoney(p.quoted_total_incl_vat)}</td>
                         <td data-label="Location">

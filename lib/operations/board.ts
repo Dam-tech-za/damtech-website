@@ -84,8 +84,8 @@ export type InvoiceForLabel = {
   due_date: string | null;
 };
 
-const live = (status: string) => {
-  const s = status.toUpperCase();
+const live = (status: string | null | undefined) => {
+  const s = (status ?? "").toUpperCase();
   return s === "AUTHORISED" || s === "PAID";
 };
 
@@ -295,7 +295,9 @@ export function boardGroups<T extends Pick<OpsProject, "stage">>(projects: T[]):
 export function isLinkedToXero(
   p: Pick<OpsProject, "xero_quote_numbers" | "xero_invoice_numbers">,
 ): boolean {
-  return p.xero_quote_numbers.length > 0 || p.xero_invoice_numbers.length > 0;
+  const quotes = Array.isArray(p.xero_quote_numbers) ? p.xero_quote_numbers : [];
+  const invoices = Array.isArray(p.xero_invoice_numbers) ? p.xero_invoice_numbers : [];
+  return quotes.length > 0 || invoices.length > 0;
 }
 
 export const PRICE_BANDS = ["under_50k", "50_150k", "over_150k"] as const;
