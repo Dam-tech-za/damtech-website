@@ -12,20 +12,12 @@ import {
 import { writeAuditLog } from "@/lib/auth/audit";
 import { adminOpsDb, isMissingColumnError } from "@/lib/operations/admin-db";
 import { isProjectGroup, isLinkedToXero, stageForGroup } from "@/lib/operations/board";
-import { locationFromXeroCity, fetchXeroContactById, fillFromXeroContact } from "@/lib/operations/xero-contact";
-import {
-  applyFieldChanges,
-  previewContactBackfill,
-  restorePatchForTitle,
-  undoFieldChanges,
-  type FieldChange,
-} from "@/lib/operations/xero-contact-backfill";
+import { locationFromXeroCity, fillFromXeroContact, type XeroContactExtras } from "@/lib/operations/xero-contact";
+import { getXeroDocumentWithContact, type XeroDocumentKind } from "@/lib/operations/xero-document";
 import { checkNextAction, checkStageChange, todayInSouthAfrica, stageLabel } from "@/lib/operations/lifecycle";
 import { summarisePayment } from "@/lib/operations/payment";
 import { guessInvoiceKind } from "@/lib/operations/payment";
 import { buildQuoteImportPayload, inferService, quoteNumbersInReference } from "@/lib/operations/quote-import";
-import { runConfiguredXeroSync } from "@/lib/operations/run-sync";
-import { daysBefore } from "@/lib/operations/sync";
 import { createXeroBridgeClient, xeroBridgeConfigFromEnv, type XeroInvoiceSummary, type XeroQuoteDetail } from "@/lib/operations/xero-bridge";
 import { stageFromInvoice } from "@/lib/operations/xero-start";
 import {
@@ -733,6 +725,7 @@ export async function createProjectFromXeroAction(_prev: AdminActionState, formD
         created,
         contactId: detail.contact_id,
         contactName: detail.contact,
+        document: { kind: "quote", number: detail.number },
       });
       // Ensure value is filled even when the RPC left it null.
       if (detail.total != null) {
@@ -793,6 +786,15 @@ export async function createProjectFromXeroAction(_prev: AdminActionState, formD
         await linkInvoiceToProject(db, { id: projectId, xero_invoice_numbers: data.xero_invoice_numbers as string[] }, inv, null);
         await recomputeProjectPayment(db, projectId, null);
         await log(db, projectId, who, "project.created", `Project created from Xero invoice ${number ?? xeroId}`);
+        if (number) {
+          await applyXeroExtras(db, projectId, {
+            group,
+            created,
+            contactId: inv.xero_contact_id,
+            contactName: inv.contact_name,
+            document: { kind: "invoice", number },
+          });
+        }
       }
       // Close any review-queue entry for this invoice.
       await db
@@ -823,7 +825,7 @@ export async function createProjectFromXeroAction(_prev: AdminActionState, formD
 async function applyXeroExtras(
   db: SupabaseClient,
   projectId: string,
-  options: { group: string; created: boolean; contactId: string | null | undefined; contactName: string | null | undefined },
+  options: { group: string; created: boolean; contactId: string | null | undefined; contactName: string | null | undefined; document?: { kind: XeroDocumentKind; number: string } | null },
 ) {
   const { data: project } = await db
     .from("ops_projects")
@@ -846,7 +848,7 @@ async function applyXeroExtras(
 async function applyXeroExtrasFromRow(
   db: SupabaseClient,
   projectId: string,
-  options: { group: string; created: boolean; contactId: string | null | undefined; contactName: string | null | undefined },
+  options: { group: string; created: boolean; contactId: string | null | undefined; contactName: string | null | undefined; document?: { kind: XeroDocumentKind; number: string } | null },
   project: {
     customer_name?: string | null;
     contact_person?: string | null;
@@ -863,9 +865,21 @@ async function applyXeroExtrasFromRow(
     patch.stage = stageForGroup(options.group);
   }
   const bridge = bridgeOrNull();
-  // Contact extras only by ContactID from the linked Xero document.
-  if (bridge && options.contactId && UUID.test(options.contactId)) {
-    const extras = await fetchXeroContactById(bridge, options.contactId);
+  // Contact extras only through the document: its ContactID, then that contact.
+  if (bridge && options.document) {
+    let extras: XeroContactExtras | null = null;
+    try {
+      const found = await getXeroDocumentWithContact(bridge, options.document.kind, options.document.number, {
+        projectId,
+        storedContactId: project.xero_contact_id ?? null,
+      });
+      // The project was just made from this document; its contact must agree.
+      if (!options.contactId || found.contactId === options.contactId) extras = found.contact;
+      else console.error("[operations] add from xero: document contact differs", { projectId, document: options.document.number, expected: options.contactId, got: found.contactId });
+    } catch (error) {
+      // The project itself is created; contact details can be filled later from the review card.
+      console.error("[operations] add from xero: contact details skipped:", error instanceof Error ? error.message : error);
+    }
     if (extras) {
       Object.assign(patch, fillFromXeroContact(project, extras));
       if (!project.site_town && !project.site_province) {
@@ -1160,7 +1174,7 @@ export async function linkProjectToXeroQuoteAction(_prev: AdminActionState, form
     if (numberError) throw numberError;
     const { error: rpcError } = await db.rpc("ops_import_accepted_quote", { p: buildQuoteImportPayload(detail, todayInSouthAfrica()) });
     if (rpcError) throw rpcError;
-    await applyXeroExtras(db, id, { group: "", created: false, contactId: detail.contact_id, contactName: detail.contact });
+    await applyXeroExtras(db, id, { group: "", created: false, contactId: detail.contact_id, contactName: detail.contact, document: { kind: "quote", number } });
     await log(db, id, who, "xero.numbers_linked", `Linked Xero ${number}`);
     await writeAuditLog({
       actorUserId: admin.user.id,
@@ -1174,309 +1188,5 @@ export async function linkProjectToXeroQuoteAction(_prev: AdminActionState, form
     return actionSuccess(`Linked ${number}.`);
   } catch (error) {
     return fail("link xero", error);
-  }
-}
-
-type ContactPreviewRow = {
-  id: string;
-  title: string;
-  customer_name: string | null;
-  contact_person: string | null;
-  contact_phone: string | null;
-  contact_email: string | null;
-  xero_contact_id: string | null;
-  site_province: string | null;
-  site_town: string | null;
-  xero_quote_numbers: string[] | null;
-  xero_invoice_numbers: string[] | null;
-};
-
-async function loadCustomerPhoneMap(db: SupabaseClient): Promise<Map<string, string>> {
-  const map = new Map<string, string>();
-  const { data, error } = await db.from("customers").select("name, company_name, phone").limit(500);
-  if (error || !data) return map;
-  for (const row of data) {
-    const phone = String(row.phone ?? "").trim();
-    if (!phone) continue;
-    for (const key of [row.name, row.company_name]) {
-      const k = String(key ?? "")
-        .trim()
-        .toLowerCase();
-      if (k && !map.has(k)) map.set(k, phone);
-    }
-  }
-  return map;
-}
-
-async function loadBoardContactProjects(db: SupabaseClient): Promise<ContactPreviewRow[]> {
-  const { data } = await db
-    .from("ops_projects")
-    .select(
-      "id, title, customer_name, contact_person, contact_phone, contact_email, xero_contact_id, site_province, site_town, xero_quote_numbers, xero_invoice_numbers",
-    )
-    .is("archived_at", null)
-    .limit(120);
-  return (data ?? []) as ContactPreviewRow[];
-}
-
-/** One-shot repair for the K&S49 / Sharon overwrite. Safe to call repeatedly. */
-export async function restoreCorruptedXeroContactsAction(): Promise<{
-  restored: number;
-  dualFlags: string[];
-}> {
-  const { db, admin } = await adminOpsDb({ permission: "runXeroSync" });
-  const projects = await loadBoardContactProjects(db);
-  let restored = 0;
-  const dualFlags: string[] = [];
-  for (const project of projects) {
-    const result = restorePatchForTitle(project.title, {
-      contact_person: project.contact_person,
-      contact_email: project.contact_email,
-      contact_phone: project.contact_phone,
-    });
-    if (!result) continue;
-    let { error } = await db.from("ops_projects").update(result.patch).eq("id", project.id);
-    if (error && isMissingColumnError(error) && "xero_dual_contact" in result.patch) {
-      const withoutDual = { ...result.patch };
-      delete withoutDual.xero_dual_contact;
-      ({ error } = await db.from("ops_projects").update(withoutDual).eq("id", project.id));
-    }
-    if (!error) {
-      restored += 1;
-      if (result.dual) dualFlags.push(project.title);
-      await log(db, project.id, { id: admin.user.id, label: admin.profile.full_name || admin.profile.email }, "xero_restore", "Restored client details after wrong Xero contact overwrite", result.patch);
-    }
-  }
-  if (restored) refresh();
-  return { restored, dualFlags };
-}
-
-export type XeroUpdatePreview = {
-  ok: true;
-  projectCount: number;
-  changes: FieldChange[];
-  skippedNoContactId: string[];
-  skippedNoPhoneInXero: string[];
-  dualContactFlags: string[];
-  lastRun: { at: string; changeCount: number; undone: boolean } | null;
-};
-
-export async function previewUpdateXeroBoardAction(): Promise<XeroUpdatePreview | { ok: false; error: string }> {
-  try {
-    // Always attempt K&S49 restore before previewing fills.
-    await restoreCorruptedXeroContactsAction();
-    const { db } = await adminOpsDb({ permission: "runXeroSync" });
-    const bridge = bridgeOrNull();
-    if (!bridge) return { ok: false, error: "The Xero bridge key is not set on the server (XERO_BRIDGE_API_KEY)." };
-    const projects = await loadBoardContactProjects(db);
-    const phones = await loadCustomerPhoneMap(db);
-    const preview = await previewContactBackfill(db, bridge, projects, phones);
-    const lastRun = await readLastSyncLog(db);
-    return {
-      ok: true,
-      projectCount: projects.length,
-      changes: preview.changes,
-      skippedNoContactId: preview.skippedNoContactId,
-      skippedNoPhoneInXero: preview.skippedNoPhoneInXero,
-      dualContactFlags: preview.dualContactFlags,
-      lastRun,
-    };
-  } catch (error) {
-    unstable_rethrow(error);
-    return { ok: false, error: describeActionError(error) };
-  }
-}
-
-async function readLastSyncLog(
-  db: SupabaseClient,
-): Promise<{ at: string; changeCount: number; undone: boolean } | null> {
-  const { data, error } = await db
-    .from("ops_xero_sync_log")
-    .select("created_at, change_count, undone_at")
-    .order("created_at", { ascending: false })
-    .limit(1)
-    .maybeSingle();
-  if (error || !data) return null;
-  return {
-    at: String(data.created_at),
-    changeCount: Number(data.change_count ?? 0),
-    undone: Boolean(data.undone_at),
-  };
-}
-
-export async function applyUpdateXeroBoardAction(payload: {
-  changes: FieldChange[];
-}): Promise<AdminActionState> {
-  try {
-    const { db, admin } = await adminOpsDb({ permission: "runXeroSync" });
-    const result = await runConfiguredXeroSync("manual", { createProjects: false });
-    if (result.status === "skipped") {
-      if (result.reason === "already_running") return actionFailure("A sync is already running. Try again in a minute.");
-      if (result.reason === "needs_baseline") return actionFailure("Run the first (baseline) sync from Operations overview before updating.");
-      return actionFailure("The Xero bridge key is not set on the server (XERO_BRIDGE_API_KEY).");
-    }
-    if (result.status === "failed") return actionFailure(`Update failed: ${result.errors[0] ?? "unknown error"}`);
-
-    const changes = Array.isArray(payload.changes) ? payload.changes.slice(0, 500) : [];
-    const backfilled = changes.length ? await applyFieldChanges(db, changes) : 0;
-
-    // Quote totals for empty value cells (never overwrite quoted_total_manual).
-    const bridge = bridgeOrNull();
-    let valuesFilled = 0;
-    if (bridge) {
-      const { data: projects } = await db
-        .from("ops_projects")
-        .select("id, quoted_total_incl_vat, quoted_total_manual, xero_quote_numbers")
-        .is("archived_at", null)
-        .limit(120);
-      let quoteTotals = new Map<string, { total: number; subtotal: number | null }>();
-      try {
-        const today = todayInSouthAfrica();
-        const [accepted, invoiced] = await Promise.all([
-          bridge.call<Array<{ number?: string; total?: number; subtotal?: number }>>("get_quotes", {
-            status: "ACCEPTED",
-            date_from: daysBefore(today, 365),
-            page: 1,
-          }),
-          bridge.call<Array<{ number?: string; total?: number; subtotal?: number }>>("get_quotes", {
-            status: "INVOICED",
-            date_from: daysBefore(today, 365),
-            page: 1,
-          }),
-        ]);
-        quoteTotals = new Map(
-          [...accepted, ...invoiced]
-            .filter((q) => q.number && q.total != null)
-            .map((q) => [
-              String(q.number).replace("-", "").toUpperCase(),
-              { total: Number(q.total), subtotal: q.subtotal == null ? null : Number(q.subtotal) },
-            ]),
-        );
-      } catch {
-        quoteTotals = new Map();
-      }
-      for (const project of projects ?? []) {
-        if (project.quoted_total_manual || project.quoted_total_incl_vat != null) continue;
-        const { data: links } = await db
-          .from("ops_xero_invoice_links")
-          .select("total_incl_vat, xero_status")
-          .eq("project_id", project.id);
-        const live = (links ?? []).filter((l) => {
-          const s = String(l.xero_status ?? "").toUpperCase();
-          return s === "AUTHORISED" || s === "PAID";
-        });
-        const total = live.reduce((sum, l) => sum + Number(l.total_incl_vat ?? 0), 0);
-        if (total > 0) {
-          const { error } = await db
-            .from("ops_projects")
-            .update({ quoted_total_incl_vat: Math.round(total * 100) / 100 })
-            .eq("id", project.id);
-          if (!error) valuesFilled += 1;
-        } else {
-          const quoteNumbers = Array.isArray(project.xero_quote_numbers)
-            ? (project.xero_quote_numbers as string[])
-            : [];
-          const firstQuote = quoteNumbers[0]?.replace("-", "").toUpperCase();
-          const match = firstQuote ? quoteTotals.get(firstQuote) : undefined;
-          if (match) {
-            const { error } = await db
-              .from("ops_projects")
-              .update({ quoted_total_incl_vat: match.total, quoted_total_excl_vat: match.subtotal })
-              .eq("id", project.id);
-            if (!error) valuesFilled += 1;
-          }
-        }
-      }
-    }
-
-    const { error: logError } = await db.from("ops_xero_sync_log").insert({
-      actor_id: admin.user.id,
-      actor_email: admin.profile.email,
-      change_count: changes.length,
-      changes,
-      sync_counts: result.counts,
-    });
-    if (logError) {
-      // Table may not be migrated yet — sync still succeeded; undo will be unavailable.
-      console.error("[operations] xero sync log insert failed:", logError.message);
-    }
-
-    try {
-      const { invalidateBoardXeroQuotesCache } = await import("./board-xero-actions");
-      await invalidateBoardXeroQuotesCache();
-    } catch {
-      // optional
-    }
-    await writeAuditLog({
-      actorUserId: admin.user.id,
-      actorEmail: admin.profile.email,
-      action: "ops.xero_sync",
-      entityType: "ops_sync",
-      afterData: { status: result.status, counts: result.counts, board: true, backfilled, valuesFilled, changeCount: changes.length },
-    });
-    refresh();
-    const c = result.counts;
-    const parts = [`${c.invoices_linked} invoices linked`, `${c.projects_updated} payment updates`, `${changes.length} empty fields filled`];
-    if (valuesFilled) parts.push(`${valuesFilled} values filled`);
-    return result.status === "partial"
-      ? actionFailure(`Updated with problems (${parts.join(", ")}). ${result.errors[0] ?? ""}`)
-      : actionSuccess(`Updated from Xero: ${parts.join(", ")}.`);
-  } catch (error) {
-    return fail("update xero", error);
-  }
-}
-
-/** Legacy form entry point — redirects into the confirm/preview client flow. */
-export async function updateXeroBoardAction(
-  prev: AdminActionState,
-  formData: FormData,
-): Promise<AdminActionState> {
-  void prev;
-  void formData;
-  return actionFailure("Use the Update Xero button (confirm preview) to sync.");
-}
-
-export async function undoLastXeroSyncAction(): Promise<AdminActionState> {
-  try {
-    const { db, admin } = await adminOpsDb({ permission: "runXeroSync" });
-    const { data: last, error } = await db
-      .from("ops_xero_sync_log")
-      .select("id, changes, undone_at")
-      .order("created_at", { ascending: false })
-      .limit(1)
-      .maybeSingle();
-    if (error) throw error;
-    if (!last) return actionFailure("No sync to undo.");
-    if (last.undone_at) return actionFailure("The last sync was already undone.");
-    const changes = (last.changes as FieldChange[]) ?? [];
-    const n = await undoFieldChanges(db, changes);
-    await db
-      .from("ops_xero_sync_log")
-      .update({ undone_at: new Date().toISOString(), undone_by: admin.user.id })
-      .eq("id", last.id);
-    await writeAuditLog({
-      actorUserId: admin.user.id,
-      actorEmail: admin.profile.email,
-      action: "ops.xero_sync_undo",
-      entityType: "ops_sync",
-      afterData: { logId: last.id, projects: n, fields: changes.length },
-    });
-    refresh();
-    return actionSuccess(`Undid last sync (${changes.length} field${changes.length === 1 ? "" : "s"} restored).`);
-  } catch (error) {
-    return fail("undo xero sync", error);
-  }
-}
-
-export async function getLastXeroSyncSummaryAction(): Promise<{
-  at: string;
-  changeCount: number;
-  undone: boolean;
-} | null> {
-  try {
-    const { db } = await adminOpsDb({ permission: "runXeroSync" });
-    return await readLastSyncLog(db);
-  } catch {
-    return null;
   }
 }

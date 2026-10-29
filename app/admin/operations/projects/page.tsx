@@ -12,7 +12,7 @@ import {
 } from "@/components/admin/ui";
 import { OpsSetupBanners } from "@/components/admin/operations/OpsParts";
 import { ProjectsWorkspace } from "@/components/admin/operations/ProjectsWorkspace";
-import { UpdateXeroControls } from "@/components/admin/operations/UpdateXeroControls";
+import { SyncFromXeroDialog } from "@/components/admin/operations/SyncFromXeroDialog";
 import type { BoardFilters } from "@/lib/operations/board";
 
 export const metadata: Metadata = { title: "Projects" };
@@ -65,7 +65,7 @@ async function ProjectsPageInner({ searchParams }: PageProps) {
         title="Projects"
         description="Every won job, by stage."
         primaryActionNode={
-          canSync && load.ok && load.setup.bridgeConfigured ? <UpdateXeroControls /> : null
+          canSync && load.ok && load.setup.bridgeConfigured ? <SyncFromXeroDialog /> : null
         }
       />
       <Suspense fallback={null}>

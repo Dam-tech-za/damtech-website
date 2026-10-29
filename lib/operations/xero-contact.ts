@@ -84,6 +84,8 @@ function pickPhone(raw: UnknownRecord): {
   let sawEntry = false;
   for (const p of ranked) {
     sawEntry = true;
+    const ready = str(p.e164);
+    if (ready) return { phone: ready, phoneCountry: ready.startsWith("+27") ? "ZA" : null, phonesPresentButEmpty: false };
     const e164 = combineXeroPhoneParts({
       country: str(p.country_code ?? p.PhoneCountryCode),
       area: str(p.area_code ?? p.PhoneAreaCode),
@@ -123,7 +125,8 @@ function pickAddress(raw: UnknownRecord): { city: string | null; region: string 
     });
   const first = ranked[0];
   if (!first) return { city: null, region: null, line: null };
-  const line = [str(first.address_line1 ?? first.AddressLine1), str(first.address_line2 ?? first.AddressLine2)]
+  // Bridge v7 sends line1/line2; older payloads used address_line1 or Xero's AddressLine1.
+  const line = [str(first.line1 ?? first.address_line1 ?? first.AddressLine1), str(first.line2 ?? first.address_line2 ?? first.AddressLine2)]
     .filter(Boolean)
     .join(", ");
   return {
@@ -214,8 +217,9 @@ export type ContactLookupContext = {
 };
 
 /**
- * Fetch a Xero contact by ContactID only. Never falls back to Contacts[0],
- * name search, or an unfiltered list. Throws on any failure.
+ * Fetch a Xero contact by ContactID only (bridge get_contact). Never a name
+ * search, a list, or Contacts[0]. Throws on any failure. Prefer
+ * getXeroDocumentWithContact when a document number is known.
  */
 export async function fetchXeroContactByIdStrict(
   bridge: XeroBridgeClient,
@@ -226,49 +230,32 @@ export async function fetchXeroContactByIdStrict(
     throw new XeroContactLookupError("This Xero document has no ContactID.");
   }
 
-  let rows: unknown[];
+  // One contact by its ContactID (bridge get_contact). Never get_contacts: it
+  // ignores unknown arguments and returns the first page, with K&S49 first.
+  let match: XeroContactExtras;
   try {
-    const result = await bridge.call<unknown[]>("get_contacts", { contact_id: documentContactId, page: 1 });
-    if (!Array.isArray(result)) {
-      throw new XeroContactLookupError("Xero didn't answer, nothing was changed.");
-    }
-    rows = result;
+    match = mapXeroContact(await bridge.call<unknown>("get_contact", { contact_id: documentContactId }));
   } catch (error) {
-    if (error instanceof XeroContactLookupError) throw error;
+    console.error("[xero-contact] get_contact failed", {
+      projectId: ctx.projectId,
+      documentNumber: ctx.documentNumber,
+      documentContactId,
+      message: error instanceof Error ? error.message : String(error),
+    });
     throw new XeroContactLookupError("Xero didn't answer, nothing was changed.");
   }
+  const resolvedContactId = match.id;
 
-  if (!rows.length) {
-    console.error("[xero-contact] empty contacts response", {
+  if (resolvedContactId !== documentContactId) {
+    console.error("[xero-contact] ContactID mismatch", {
       projectId: ctx.projectId,
       documentNumber: ctx.documentNumber,
       documentContactId,
+      resolvedContactId,
     });
-    throw new XeroContactLookupError("Xero contact not found for this document.");
-  }
-
-  const mapped = rows.map(mapXeroContact);
-  // NEVER take mapped[0] — that is how K&S49 (first by name) overwrote every project.
-  const match = mapped.find((c) => c.id === documentContactId);
-  const resolvedContactId = match?.id ?? null;
-  const matched = resolvedContactId === documentContactId;
-
-  console.info("[xero-contact] sync lookup", {
-    projectId: ctx.projectId ?? null,
-    documentNumber: ctx.documentNumber ?? null,
-    documentContactId,
-    resolvedContactId,
-    matched,
-  });
-
-  if (!match || !resolvedContactId) {
-    console.error("[xero-contact] ContactID mismatch — refusing Contacts[0] fallback", {
-      projectId: ctx.projectId,
-      documentNumber: ctx.documentNumber,
-      documentContactId,
-      returnedIds: mapped.map((c) => c.id),
-    });
-    throw new XeroContactLookupError("Xero returned a different contact. Nothing was changed.");
+    throw new XeroContactLookupError(
+      `Xero returned a different contact (document has ${documentContactId}, the lookup gave ${resolvedContactId ?? "none"}). Nothing was changed.`,
+    );
   }
 
   if (BLOCKED_XERO_CONTACT_IDS.has(resolvedContactId) && !BLOCKED_XERO_CONTACT_IDS.has(documentContactId)) {
@@ -282,34 +269,4 @@ export async function fetchXeroContactByIdStrict(
   }
 
   return match;
-}
-
-/**
- * Fetch a Xero contact by ContactID only. Returns null on failure (legacy callers).
- * Never returns a contact whose id does not equal the requested ContactID.
- */
-export async function fetchXeroContactById(
-  bridge: XeroBridgeClient,
-  contactId: string | null | undefined,
-): Promise<XeroContactExtras | null> {
-  const id = (contactId ?? "").trim();
-  if (!id || !UUID.test(id)) return null;
-  try {
-    return await fetchXeroContactByIdStrict(bridge, { documentContactId: id });
-  } catch (error) {
-    if (error instanceof XeroContactLookupError) {
-      console.error("[xero-contact]", error.message);
-      return null;
-    }
-    throw error;
-  }
-}
-
-/** @deprecated Use fetchXeroContactById — name lookup is forbidden. */
-export async function fetchXeroContactExtras(
-  bridge: XeroBridgeClient,
-  search: { id?: string | null; name?: string | null },
-): Promise<XeroContactExtras | null> {
-  void search.name;
-  return fetchXeroContactById(bridge, search.id);
 }
