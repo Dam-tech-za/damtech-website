@@ -247,6 +247,142 @@ export const PROJECT_CASE_STUDIES: ProjectCaseStudy[] = [
     homepageLinkLabel: "View Stellenbosch HDPE dam lining project",
   },
   {
+    slug: "western-cape-steel-reservoir-12m",
+    verified: true,
+    shortTitle: "12 m Steel Reservoir, Western Cape",
+    title: "12 m Corrugated Steel Reservoir — Western Cape",
+    h1: "12 m Corrugated Steel Water Reservoir in the Western Cape",
+    location: "Western Cape",
+    province: "Western Cape",
+    serviceType: "Steel Water Tanks",
+    material: "Corrugated galvanised steel reservoir on a prepared base",
+    scope: "12 m diameter × 2.29 m high corrugated steel reservoir, built on a prepared surface",
+    background:
+      "This farm in the Western Cape mountains needed a large, dedicated water store above ground. A corrugated galvanised steel reservoir gives that storage without building a concrete reservoir: the panels are bolted together on site, and the reservoir can be extended, relined or moved later.",
+    challenge:
+      "A reservoir of this size puts its whole weight on the ground under it, so the base had to be level, firm and free of stones before the first ring went up. The site sits on a slope below the mountains, with wind and heavy rain to plan around.",
+    approach:
+      "Damtech prepared the surface first: a levelled, compacted sand base sized to the 12 m footprint. The corrugated steel rings and uprights were then bolted up course by course to a wall height of 2.29 m, with the reservoir liner laid on the prepared base inside the walls.",
+    result:
+      "The finished reservoir is 12 m across and 2.29 m high, which works out at about 259 000 litres (259 m³) of gross volume. Usable volume depends on the outlet and overflow heights.",
+    outcomes: [
+      "12 m diameter × 2.29 m high corrugated galvanised steel reservoir.",
+      "About 259 m³ (259 000 litres) gross volume.",
+      "Built on a levelled, compacted sand base prepared by Damtech.",
+      "Finished with a shade-net roof cover and inlet and outlet pipework connected.",
+      "Modular steel construction that can be extended or relined later.",
+    ],
+    summary:
+      "A 12 m × 2.29 m corrugated galvanised steel reservoir on a prepared base in the Western Cape, holding about 259 000 litres.",
+    galleryIntro:
+      "From prepared base to the covered, fully installed reservoir: Damtech's 12 m corrugated steel reservoir in the Western Cape.",
+    images: [
+      projectImage(
+        IMAGE_PATHS.westernCapeSteelReservoir12mCompleted,
+        undefined,
+        "Fully installed: the 12 m × 2.29 m reservoir with its shade-net roof cover and pipework connected.",
+      ),
+      projectImage(
+        IMAGE_PATHS.westernCapeSteelReservoir12m,
+        undefined,
+        "The 12 m × 2.29 m corrugated galvanised steel reservoir walls below the mountains.",
+      ),
+      projectImage(
+        IMAGE_PATHS.westernCapeSteelReservoir12mWalls,
+        undefined,
+        "Galvanised corrugated walls and uprights bolted up to the full 2.29 m height.",
+      ),
+      projectImage(
+        IMAGE_PATHS.westernCapeSteelReservoir12mBase,
+        undefined,
+        "The prepared, levelled sand base inside the first ring, with the liner ready to lay.",
+      ),
+    ],
+    relatedServices: [
+      { href: "/steel-water-storage-tanks", label: "Steel water tanks and reservoirs" },
+      {
+        href: "/steel-water-storage-tanks/100000-litre-water-tank/",
+        label: "100 000L steel water reservoir",
+      },
+      { href: "/reservoir-lining", label: "Reservoir lining" },
+      { href: "/agricultural-water-storage", label: "Agricultural water storage" },
+      { href: "/calculators", label: "Work out the tank size you need" },
+      { href: "/quote", label: "Request a steel reservoir quote" },
+    ],
+    seo: {
+      title: "12 m Steel Water Reservoir Project, Western Cape | Damtech",
+      description:
+        "Damtech's 12 m × 2.29 m corrugated galvanised steel reservoir on a prepared base in the Western Cape, holding about 259 000 litres. Photos and details.",
+    },
+    ctaTitle: "Request a Steel Reservoir Quote",
+    categories: ["Steel Water Tanks", "Western Cape", "Water Storage", "Agricultural Water Storage"],
+    featuredOnHome: true,
+    featuredOrder: 4.5,
+    featuredArea: "12 m × 2.29 m",
+    homepageLocationLabel: "Western Cape",
+    homepageServiceLabel: "Steel Reservoirs",
+    homepageLinkLabel: "View the 12 m steel reservoir project",
+    needsOwnerConfirmation: true,
+    internalNotes:
+      "Owner supplied photos and size (12 m × 2.29 m, prepared surface) on 29 Oct 2026. Town, liner material and completion month not given: add them when confirmed (Western Cape SEO convention prefers a town).",
+  },
+  {
+    slug: "barberton-pecan-farm-hdpe-dam-lining",
+    verified: true,
+    shortTitle: "Barberton Pecan Farm HDPE Dam",
+    title: "HDPE Dam Lining for a Pecan Nut Farm — Barberton",
+    h1: "HDPE Dam Lining for a Pecan Nut Farm in Barberton, Mpumalanga",
+    location: "Barberton, Mpumalanga",
+    province: "Mpumalanga",
+    serviceType: "HDPE Dam Lining",
+    material: "HDPE geomembrane (1 mm)",
+    scope: "About 1,000 m² of 1 mm HDPE lining for a pecan nut farm's irrigation dam",
+    background:
+      "Pecan orchards need dependable irrigation water, especially while young trees establish and when nuts fill in late summer. This farm near Barberton in the Mpumalanga Lowveld needed its earth dam to hold water instead of losing it into the ground.",
+    challenge:
+      "The dam had to keep its stored water through the dry winter and the hot months before the summer rains. Seepage through the soil would have meant less water for the orchard exactly when the trees need it.",
+    approach:
+      "Damtech prepared the dam basin and batters to a smooth profile, then laid 1 mm HDPE geomembrane across about 1,000 m², welded the seams and anchored the liner along the crest.",
+    result:
+      "The lined dam now holds water for the orchard, with about 1,000 m² of 1 mm HDPE sealing the basin and side slopes.",
+    outcomes: [
+      "About 1,000 m² of 1 mm HDPE geomembrane installed.",
+      "Welded seams and crest anchoring across the dam basin and batters.",
+      "Seepage stopped, so more stored water is available for pecan irrigation.",
+    ],
+    summary:
+      "About 1,000 m² of 1 mm HDPE dam lining for a pecan nut farm near Barberton, Mpumalanga, keeping irrigation water in the dam.",
+    galleryIntro: "The lined irrigation dam at the pecan nut farm near Barberton, Mpumalanga.",
+    images: [
+      projectImage(
+        IMAGE_PATHS.barbertonHdpeDamLiningPecanFarm,
+        undefined,
+        "About 1,000 m² of 1 mm HDPE lining holding water at the pecan farm near Barberton.",
+      ),
+    ],
+    relatedServices: [
+      { href: "/dam-liners", label: "Dam linings" },
+      { href: "/mpumalanga-dam-liners", label: "Mpumalanga dam linings" },
+      { href: "/farm-dam-liners", label: "Farm dam liners" },
+      { href: "/agricultural-water-storage", label: "Agricultural water storage" },
+      { href: "/quote", label: "Request a dam lining quote" },
+    ],
+    seo: {
+      title: "HDPE Dam Lining, Pecan Nut Farm Barberton | Damtech",
+      description:
+        "About 1,000 m² of 1 mm HDPE dam lining installed by Damtech for a pecan nut farm near Barberton, Mpumalanga. See the project and photos.",
+    },
+    ctaTitle: "Request a Similar Dam Lining Quote",
+    categories: ["HDPE Dam Lining", "Earth Dam Lining", "Mpumalanga", "Agricultural Water Storage"],
+    featuredOnHome: false,
+    featuredArea: "~1,000 m²",
+    homepageLocationLabel: "Barberton, Mpumalanga",
+    homepageServiceLabel: "HDPE Dam Lining",
+    homepageLinkLabel: "View the Barberton pecan farm dam lining",
+    internalNotes:
+      "Owner supplied photo, area (about 1,000 m²), thickness (1 mm) and client type (pecan nut farm, Barberton) on 29 Oct 2026. Completion month not given; the photo file is dated May 2026.",
+  },
+  {
     slug: "tulbagh-steel-water-tank",
     verified: true,
     shortTitle: "Tulbagh Steel Water Tank",
