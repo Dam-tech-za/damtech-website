@@ -10,7 +10,9 @@ import {
   type AdminActionState,
 } from "@/lib/admin/action-state";
 import { writeAuditLog } from "@/lib/auth/audit";
-import { adminOpsDb } from "@/lib/operations/admin-db";
+import { adminOpsDb, isMissingColumnError } from "@/lib/operations/admin-db";
+import { loadXeroStart } from "@/lib/operations/queries";
+import type { XeroStartItem } from "@/lib/operations/xero-start";
 import { isProjectGroup, isLinkedToXero, stageForGroup } from "@/lib/operations/board";
 import { locationFromXeroCity, fetchXeroContactExtras, fillFromXeroContact } from "@/lib/operations/xero-contact";
 import { checkNextAction, checkStageChange, todayInSouthAfrica, stageLabel } from "@/lib/operations/lifecycle";
@@ -806,7 +808,33 @@ async function applyXeroExtras(
     .select("customer_name, contact_person, contact_phone, contact_email, xero_contact_id, site_province, site_town")
     .eq("id", projectId)
     .maybeSingle();
-  if (!project) return;
+  if (!project) {
+    const fallback = await db
+      .from("ops_projects")
+      .select("customer_name, contact_person, contact_phone, contact_email, xero_contact_id")
+      .eq("id", projectId)
+      .maybeSingle();
+    if (!fallback.data) return;
+    await applyXeroExtrasFromRow(db, projectId, options, fallback.data);
+    return;
+  }
+  await applyXeroExtrasFromRow(db, projectId, options, project);
+}
+
+async function applyXeroExtrasFromRow(
+  db: SupabaseClient,
+  projectId: string,
+  options: { group: string; created: boolean; contactId: string | null | undefined; contactName: string | null | undefined },
+  project: {
+    customer_name?: string | null;
+    contact_person?: string | null;
+    contact_phone?: string | null;
+    contact_email?: string | null;
+    xero_contact_id?: string | null;
+    site_province?: string | null;
+    site_town?: string | null;
+  },
+) {
   const patch: Record<string, unknown> = {};
   if (options.created && isProjectGroup(options.group) && options.group !== "awaiting") {
     patch.stage = stageForGroup(options.group);
@@ -823,7 +851,18 @@ async function applyXeroExtras(
     }
   }
   if (!Object.keys(patch).length) return;
-  await db.from("ops_projects").update(patch).eq("id", projectId);
+  const { error } = await db.from("ops_projects").update(patch).eq("id", projectId);
+  if (error && isMissingColumnError(error)) {
+    const withoutLocation = { ...patch };
+    delete withoutLocation.site_province;
+    delete withoutLocation.site_town;
+    delete withoutLocation.km_from_pretoria;
+    delete withoutLocation.km_from_western_cape;
+    delete withoutLocation.one_way_km;
+    if (Object.keys(withoutLocation).length) {
+      await db.from("ops_projects").update(withoutLocation).eq("id", projectId);
+    }
+  }
 }
 
 /** Recompute a project's cached payment fields from its linked invoices (same rules as the sync). */
@@ -922,10 +961,14 @@ export async function duplicateProjectsAction(_prev: AdminActionState, formData:
           service: row.service,
           is_supply_only: row.is_supply_only,
           site_location: row.site_location,
-          site_province: row.site_province,
-          site_town: row.site_town,
-          km_from_pretoria: row.km_from_pretoria,
-          km_from_western_cape: row.km_from_western_cape,
+          ...(row.site_province !== undefined
+            ? {
+                site_province: row.site_province,
+                site_town: row.site_town,
+                km_from_pretoria: row.km_from_pretoria,
+                km_from_western_cape: row.km_from_western_cape,
+              }
+            : {}),
           one_way_km: row.one_way_km,
           scope: row.scope,
           stage: row.stage === "completed" ? "planning" : row.stage,
@@ -1061,7 +1104,7 @@ export async function linkProjectToXeroQuoteAction(_prev: AdminActionState, form
     const { db, admin, who } = await actor();
     const { data: project, error: readError } = await db
       .from("ops_projects")
-      .select("id, title, customer_name, xero_quote_numbers, xero_invoice_numbers, contact_person, contact_phone, contact_email, xero_contact_id, site_province, site_town, quoted_total_incl_vat")
+      .select("id, title, customer_name, xero_quote_numbers, xero_invoice_numbers, contact_person, contact_phone, contact_email, xero_contact_id, quoted_total_incl_vat")
       .eq("id", id)
       .maybeSingle();
     if (readError) throw readError;
@@ -1107,6 +1150,16 @@ export async function linkProjectToXeroQuoteAction(_prev: AdminActionState, form
   }
 }
 
+export async function loadBoardXeroQuotesAction(): Promise<{ items: XeroStartItem[]; error: string | null }> {
+  try {
+    const load = await loadXeroStart({ quotesOnly: true, quoteDays: 30 });
+    if (!load.ok) return { items: [], error: "Xero quotes could not be loaded." };
+    return { items: load.data.items, error: load.data.xeroError };
+  } catch {
+    return { items: [], error: "Xero could not be reached just now." };
+  }
+}
+
 export async function updateXeroBoardAction(): Promise<AdminActionState> {
   try {
     const { db, admin } = await adminOpsDb({ permission: "runXeroSync" });
@@ -1121,7 +1174,7 @@ export async function updateXeroBoardAction(): Promise<AdminActionState> {
     if (bridge) {
       const { data: projects } = await db
         .from("ops_projects")
-        .select("id, customer_name, contact_person, contact_phone, contact_email, xero_contact_id, site_province, site_town")
+        .select("id, customer_name, contact_person, contact_phone, contact_email, xero_contact_id")
         .not("xero_contact_id", "is", null)
         .is("archived_at", null)
         .limit(40);

@@ -10,7 +10,7 @@ import {
   type AdminActionState,
 } from "@/lib/admin/action-state";
 import { writeAuditLog } from "@/lib/auth/audit";
-import { adminOpsDb } from "@/lib/operations/admin-db";
+import { adminOpsDb, isMissingColumnError } from "@/lib/operations/admin-db";
 import { locationPatch } from "@/lib/operations/distance";
 import {
   checkNextAction,
@@ -201,28 +201,47 @@ export async function updateProjectDetailsAction(_prev: AdminActionState, formDa
     if (supplyOnly && (project.stage === "in_progress" || project.stage === "handover")) {
       return actionFailure("Move the project out of installation stages before marking it supply-only.");
     }
-    const { error } = await db
-      .from("ops_projects")
-      .update({
-        service,
-        is_supply_only: supplyOnly,
-        site_location: optionalText(formData, "site_location", 300),
-        site_province: location.site_province,
-        site_town: location.site_town,
-        km_from_pretoria: location.km_from_pretoria,
-        km_from_western_cape: location.km_from_western_cape,
-        one_way_km: km ?? location.one_way_km,
-        contact_person: optionalText(formData, "contact_person", 200),
-        contact_phone: optionalText(formData, "contact_phone", 40),
-        contact_email: optionalText(formData, "contact_email", 200),
-        crew: optionalText(formData, "crew", 300),
-        scheduled_start: start,
-        scheduled_end: end,
-        scope: optionalText(formData, "scope", 8000),
-        needs_review: false,
-      })
-      .eq("id", id);
-    if (error) throw error;
+    const detailsPatch = {
+      service,
+      is_supply_only: supplyOnly,
+      site_location: optionalText(formData, "site_location", 300),
+      site_province: location.site_province,
+      site_town: location.site_town,
+      km_from_pretoria: location.km_from_pretoria,
+      km_from_western_cape: location.km_from_western_cape,
+      one_way_km: km ?? location.one_way_km,
+      contact_person: optionalText(formData, "contact_person", 200),
+      contact_phone: optionalText(formData, "contact_phone", 40),
+      contact_email: optionalText(formData, "contact_email", 200),
+      crew: optionalText(formData, "crew", 300),
+      scheduled_start: start,
+      scheduled_end: end,
+      scope: optionalText(formData, "scope", 8000),
+      needs_review: false,
+    };
+    const { error } = await db.from("ops_projects").update(detailsPatch).eq("id", id);
+    if (error && isMissingColumnError(error)) {
+      const retry = await db
+        .from("ops_projects")
+        .update({
+          service: detailsPatch.service,
+          is_supply_only: detailsPatch.is_supply_only,
+          site_location: detailsPatch.site_location,
+          one_way_km: detailsPatch.one_way_km,
+          contact_person: detailsPatch.contact_person,
+          contact_phone: detailsPatch.contact_phone,
+          contact_email: detailsPatch.contact_email,
+          crew: detailsPatch.crew,
+          scheduled_start: detailsPatch.scheduled_start,
+          scheduled_end: detailsPatch.scheduled_end,
+          scope: detailsPatch.scope,
+          needs_review: detailsPatch.needs_review,
+        })
+        .eq("id", id);
+      if (retry.error) throw retry.error;
+    } else if (error) {
+      throw error;
+    }
     await logActivity(db, id, { id: admin.user.id, label: admin.profile.full_name || admin.profile.email }, "details.updated", "Project details updated");
     refresh(id);
     return actionSuccess("Details saved.");

@@ -11,6 +11,7 @@ export function AddFromXeroDialog({
   onClose,
   items,
   error,
+  loading,
   group,
   linkProjectId,
 }: {
@@ -18,6 +19,7 @@ export function AddFromXeroDialog({
   onClose: () => void;
   items: XeroStartItem[];
   error: string | null;
+  loading: boolean;
   group: ProjectGroup | null;
   /** When set, attach the chosen quote to this existing project instead of creating one. */
   linkProjectId?: string | null;
@@ -36,9 +38,10 @@ export function AddFromXeroDialog({
           : "Accepted quotes from the last 30 days. The job is added to the stage you clicked."
       }
     >
-      {error ? <p className="ops-xero-picker__error">{error}</p> : null}
-      {!error && quotes.length === 0 ? <p className="ops-table__meta">No unclaimed accepted quotes in the last 30 days.</p> : null}
-      {quotes.length ? (
+      {loading ? <p className="ops-table__meta">Loading quotes from Xero…</p> : null}
+      {!loading && error ? <p className="ops-xero-picker__error">{error}</p> : null}
+      {!loading && !error && quotes.length === 0 ? <p className="ops-table__meta">No unclaimed accepted quotes in the last 30 days.</p> : null}
+      {!loading && quotes.length ? (
         <ul className="ops-xero-picker">
           {quotes.map((item) => (
             <li key={item.id} className="ops-xero-picker__row">

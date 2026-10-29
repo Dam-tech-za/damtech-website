@@ -23,5 +23,18 @@ export async function adminOpsDb(
 /** True when a Supabase error means the Operations tables are not installed yet. */
 export function isMissingTableError(error: { code?: string; message?: string } | null): boolean {
   if (!error) return false;
-  return error.code === "42P01" || error.code === "PGRST205" || /does not exist|could not find the table/i.test(error.message ?? "");
+  const message = error.message ?? "";
+  return error.code === "42P01" || error.code === "PGRST205" || /could not find the table/i.test(message);
+}
+
+/** True when a selected column is not in the schema yet (migration not applied). */
+export function isMissingColumnError(error: { code?: string; message?: string } | null): boolean {
+  if (!error) return false;
+  const message = error.message ?? "";
+  return (
+    error.code === "42703" ||
+    error.code === "PGRST204" ||
+    /column .+ does not exist/i.test(message) ||
+    /could not find the ['"][^'"]+['"] column/i.test(message)
+  );
 }

@@ -3,7 +3,7 @@ import { Suspense } from "react";
 import type { Metadata } from "next";
 import { requireAdmin } from "@/lib/auth/require-admin";
 import { canPerform } from "@/lib/auth/permissions";
-import { listBoardProjects, listStaffOptions, loadXeroStart } from "@/lib/operations/queries";
+import { listBoardProjects, listStaffOptions } from "@/lib/operations/queries";
 import {
   DISTANCE_BAND_LABELS,
   DISTANCE_BANDS,
@@ -91,14 +91,8 @@ export default async function OperationsProjectsPage({ searchParams }: PageProps
   const canEdit = canPerform(admin.profile.role, "manageOperations");
   const canSync = canPerform(admin.profile.role, "runXeroSync");
   const filters = readFilters(await searchParams);
-  const [load, staff, xero] = await Promise.all([
-    listBoardProjects(filters.show),
-    listStaffOptions(),
-    canEdit ? loadXeroStart({ quotesOnly: true, quoteDays: 30 }) : Promise.resolve(null),
-  ]);
+  const [load, staff] = await Promise.all([listBoardProjects(filters.show), listStaffOptions()]);
   const today = todayInSouthAfrica();
-  const xeroQuotes = xero?.ok ? xero.data.items : [];
-  const xeroError = xero?.ok ? xero.data.xeroError : xero ? "Xero quotes could not be loaded." : null;
 
   const visible = load.ok
     ? sortProjects(
@@ -270,7 +264,7 @@ export default async function OperationsProjectsPage({ searchParams }: PageProps
           {visible.length === 0 && load.data.length > 0 ? (
             <AdminEmptyState compact title="No projects match." description="Try All, or clear the search and filters." />
           ) : null}
-          <ProjectsBoard projects={visible} canEdit={canEdit} xeroQuotes={xeroQuotes} xeroError={xeroError} />
+          <ProjectsBoard projects={visible} canEdit={canEdit} />
         </AdminPanel>
       )}
     </div>

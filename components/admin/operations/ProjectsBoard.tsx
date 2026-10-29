@@ -14,7 +14,9 @@ import {
   createProjectQuickAction,
   deleteProjectsAction,
   duplicateProjectsAction,
+  loadBoardXeroQuotesAction,
 } from "@/app/admin/operations/project-actions";
+import type { XeroStartItem } from "@/lib/operations/xero-start";
 import {
   GROUP_LABELS,
   PROJECT_GROUPS,
@@ -25,7 +27,6 @@ import {
 } from "@/lib/operations/board";
 import { formatLocationCell } from "@/lib/operations/distance";
 import type { BoardProject } from "@/lib/operations/queries";
-import type { XeroStartItem } from "@/lib/operations/xero-start";
 import { AddFromXeroDialog } from "./AddFromXeroDialog";
 import { PaymentPictureBadge } from "./BoardParts";
 import { PhoneCell } from "./PhoneCell";
@@ -88,13 +89,9 @@ function downloadCsv(projects: BoardProject[]) {
 export function ProjectsBoard({
   projects,
   canEdit,
-  xeroQuotes,
-  xeroError,
 }: {
   projects: BoardProject[];
   canEdit: boolean;
-  xeroQuotes: XeroStartItem[];
-  xeroError: string | null;
 }) {
   const groups = useMemo(() => boardGroups(projects), [projects]);
   const collapsed = useSyncExternalStore(subscribeCollapsed, readCollapsed, () => []);
@@ -102,6 +99,26 @@ export function ProjectsBoard({
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [xeroGroup, setXeroGroup] = useState<ProjectGroup | null>(null);
   const [linkId, setLinkId] = useState<string | null>(null);
+  const [xeroQuotes, setXeroQuotes] = useState<XeroStartItem[]>([]);
+  const [xeroError, setXeroError] = useState<string | null>(null);
+  const [xeroLoading, setXeroLoading] = useState(false);
+
+  const openXeroPicker = async (next: { group?: ProjectGroup | null; linkId?: string | null }) => {
+    setXeroGroup(next.group ?? null);
+    setLinkId(next.linkId ?? null);
+    setXeroLoading(true);
+    setXeroError(null);
+    try {
+      const result = await loadBoardXeroQuotesAction();
+      setXeroQuotes(result.items);
+      setXeroError(result.error);
+    } catch {
+      setXeroQuotes([]);
+      setXeroError("Xero quotes could not be loaded.");
+    } finally {
+      setXeroLoading(false);
+    }
+  };
 
   const toggleGroup = (group: ProjectGroup) => {
     const next = collapsed.includes(group) ? collapsed.filter((g) => g !== group) : [...collapsed, group];
@@ -234,7 +251,7 @@ export function ProjectsBoard({
                           Add
                         </AdminSubmitButton>
                       </AdminActionForm>
-                      <AdminButton type="button" variant="ghost" size="sm" onClick={() => setXeroGroup(group)}>
+                      <AdminButton type="button" variant="ghost" size="sm" onClick={() => void openXeroPicker({ group })}>
                         + Add from Xero
                       </AdminButton>
                     </td>
@@ -297,7 +314,7 @@ export function ProjectsBoard({
             </AdminSubmitButton>
           </AdminActionForm>
           {singleUnlinked ? (
-            <AdminButton type="button" variant="secondary" onClick={() => setLinkId(singleUnlinked.id)}>
+            <AdminButton type="button" variant="secondary" onClick={() => void openXeroPicker({ linkId: singleUnlinked.id })}>
               Link to Xero
             </AdminButton>
           ) : null}
@@ -315,6 +332,7 @@ export function ProjectsBoard({
         }}
         items={xeroQuotes}
         error={xeroError}
+        loading={xeroLoading}
         group={xeroGroup}
         linkProjectId={linkId}
       />

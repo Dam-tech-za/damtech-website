@@ -1,4 +1,4 @@
-import { adminOpsDb, isMissingTableError } from "./admin-db";
+import { adminOpsDb, isMissingColumnError, isMissingTableError } from "./admin-db";
 import { paymentPicture, materialsRollup, type MaterialsRollup, type PaymentPicture } from "./board";
 import { todayInSouthAfrica } from "./lifecycle";
 import type {
@@ -41,13 +41,25 @@ function failure<T>(error: { code?: string; message?: string } | null, context: 
   return { ok: false, setup: { tablesReady: true, bridgeConfigured: bridgeConfigured() }, error: "load_failed" };
 }
 
-const PROJECT_COLUMNS =
-  "id, title, customer_name, xero_contact_id, contact_person, contact_email, contact_phone, service, is_supply_only, site_location, site_province, site_town, km_from_pretoria, km_from_western_cape, one_way_km, scope, stage, on_hold, on_hold_reason, next_action, next_action_due, project_lead_id, crew, scheduled_start, scheduled_end, xero_quote_numbers, xero_invoice_numbers, quoted_total_incl_vat, quoted_total_excl_vat, payment_status, amount_invoiced, amount_paid, amount_due, payment_synced_at, source, needs_review, monday_item_id, created_at, updated_at, completed_at, next_action_owner, materials_by_client, onedrive_url, archived_at";
+const PROJECT_COLUMNS_CORE =
+  "id, title, customer_name, xero_contact_id, contact_person, contact_email, contact_phone, service, is_supply_only, site_location, one_way_km, scope, stage, on_hold, on_hold_reason, next_action, next_action_due, project_lead_id, crew, scheduled_start, scheduled_end, xero_quote_numbers, xero_invoice_numbers, quoted_total_incl_vat, quoted_total_excl_vat, payment_status, amount_invoiced, amount_paid, amount_due, payment_synced_at, source, needs_review, monday_item_id, created_at, updated_at, completed_at, next_action_owner, materials_by_client, onedrive_url, archived_at";
+
+const PROJECT_COLUMNS = `${PROJECT_COLUMNS_CORE}, site_province, site_town, km_from_pretoria, km_from_western_cape`;
+
+type ProjectQueryResult<T> = { data: T; error: { code?: string; message?: string } | null };
+
+async function selectProjects<T>(run: (columns: string) => PromiseLike<ProjectQueryResult<T>>): Promise<ProjectQueryResult<T>> {
+  const full = await run(PROJECT_COLUMNS);
+  if (!full.error || !isMissingColumnError(full.error)) return full;
+  return run(PROJECT_COLUMNS_CORE);
+}
 
 function toProject(row: Record<string, unknown>): OpsProject {
   const n = (v: unknown) => (v === null || v === undefined ? null : Number(v));
   return {
     ...(row as unknown as OpsProject),
+    site_province: (row.site_province as string | null | undefined) ?? null,
+    site_town: (row.site_town as string | null | undefined) ?? null,
     one_way_km: n(row.one_way_km),
     km_from_pretoria: n(row.km_from_pretoria),
     km_from_western_cape: n(row.km_from_western_cape),
@@ -78,7 +90,9 @@ export type OverviewData = {
 export async function getOperationsOverview(): Promise<OpsLoad<OverviewData>> {
   const { db } = await adminOpsDb();
   const [projects, orders, runs, baseline, unmatched] = await Promise.all([
-    db.from("ops_projects").select(PROJECT_COLUMNS).neq("stage", "completed").is("archived_at", null).order("next_action_due", { ascending: true }),
+    selectProjects((columns) =>
+      db.from("ops_projects").select(columns).neq("stage", "completed").is("archived_at", null).order("next_action_due", { ascending: true }),
+    ),
     db
       .from("ops_material_orders")
       .select("id, project_id, supplier_name, description, status, expected_date, ops_projects(title)", { count: "exact" })
@@ -101,7 +115,7 @@ export async function getOperationsOverview(): Promise<OpsLoad<OverviewData>> {
     ok: true,
     setup: { tablesReady: true, bridgeConfigured: bridgeConfigured() },
     data: {
-      open: (projects.data ?? []).map(toProject),
+      open: ((projects.data ?? []) as unknown as Record<string, unknown>[]).map(toProject),
       openMaterialOrders: orders.count ?? 0,
       openOrders: (orders.data ?? []).map((o) => ({
         id: o.id as string,
@@ -122,12 +136,14 @@ export async function getOperationsOverview(): Promise<OpsLoad<OverviewData>> {
 
 export async function listOpsProjects(filter: { stage?: ProjectStage | "open" | "all" } = {}): Promise<OpsLoad<OpsProject[]>> {
   const { db } = await adminOpsDb();
-  let query = db.from("ops_projects").select(PROJECT_COLUMNS).order("updated_at", { ascending: false }).limit(500);
-  if (!filter.stage || filter.stage === "open") query = query.neq("stage", "completed");
-  else if (filter.stage !== "all") query = query.eq("stage", filter.stage);
-  const { data, error } = await query;
+  const { data, error } = await selectProjects((columns) => {
+    let query = db.from("ops_projects").select(columns).order("updated_at", { ascending: false }).limit(500);
+    if (!filter.stage || filter.stage === "open") query = query.neq("stage", "completed");
+    else if (filter.stage !== "all") query = query.eq("stage", filter.stage);
+    return query;
+  });
   if (error) return failure(error, "list projects");
-  return { ok: true, setup: { tablesReady: true, bridgeConfigured: bridgeConfigured() }, data: (data ?? []).map(toProject) };
+  return { ok: true, setup: { tablesReady: true, bridgeConfigured: bridgeConfigured() }, data: ((data ?? []) as unknown as Record<string, unknown>[]).map(toProject) };
 }
 
 export type ProjectDetail = {
@@ -146,7 +162,7 @@ export type ProjectDetail = {
 export async function getOpsProject(id: string): Promise<OpsLoad<ProjectDetail | null>> {
   const { db } = await adminOpsDb();
   const [project, materials, invoices, quotes, activity, tasks, documents, leads] = await Promise.all([
-    db.from("ops_projects").select(PROJECT_COLUMNS).eq("id", id).maybeSingle(),
+    selectProjects((columns) => db.from("ops_projects").select(columns).eq("id", id).maybeSingle()),
     db.from("ops_material_orders").select("*").eq("project_id", id).order("created_at"),
     db.from("ops_xero_invoice_links").select("*").eq("project_id", id).order("invoice_date"),
     db.from("ops_xero_quote_links").select("xero_quote_id, quote_number, xero_status, total_incl_vat").eq("project_id", id),
@@ -159,7 +175,7 @@ export async function getOpsProject(id: string): Promise<OpsLoad<ProjectDetail |
   if (err) return failure(err, "project detail");
   const setup = { tablesReady: true, bridgeConfigured: bridgeConfigured() };
   if (!project.data) return { ok: true, setup, data: null };
-  const projectRow = toProject(project.data);
+  const projectRow = toProject(project.data as unknown as Record<string, unknown>);
   const materialRows = (materials.data ?? []).map((m) => ({ ...m, cost_excl_vat: m.cost_excl_vat === null ? null : Number(m.cost_excl_vat) })) as OpsMaterialOrder[];
   const invoiceRows = (invoices.data ?? []).map((i) => ({
     ...i,
@@ -196,43 +212,49 @@ export type BoardProject = OpsProject & {
 
 /** Projects with their Xero payment picture and materials status, for the board and table. */
 export async function listBoardProjects(show: "active" | "completed" | "archived" = "active"): Promise<OpsLoad<BoardProject[]>> {
-  const { db } = await adminOpsDb();
-  let query = db.from("ops_projects").select(PROJECT_COLUMNS).order("next_action_due", { ascending: true, nullsFirst: false }).limit(500);
-  if (show === "active") query = query.neq("stage", "completed").is("archived_at", null);
-  else if (show === "completed") query = query.eq("stage", "completed").is("archived_at", null);
-  else query = query.not("archived_at", "is", null);
-  const { data, error } = await query;
-  if (error) return failure(error, "board projects");
-  const projects = (data ?? []).map(toProject);
-  const ids = projects.map((p) => p.id);
-  const setup = { tablesReady: true, bridgeConfigured: bridgeConfigured() };
-  if (!ids.length) return { ok: true, setup, data: [] };
-  const [links, orders, staff] = await Promise.all([
-    db.from("ops_xero_invoice_links").select("project_id, kind, xero_status, total_incl_vat, amount_paid, amount_due, due_date").in("project_id", ids),
-    db.from("ops_material_orders").select("project_id, status").in("project_id", ids),
-    db.from("admin_profiles").select("id, email, full_name"),
-  ]);
-  const err = links.error ?? orders.error ?? staff.error;
-  if (err) return failure(err, "board details");
-  const today = todayInSouthAfrica();
-  const names = new Map((staff.data ?? []).map((s) => [s.id as string, (s.full_name as string | null) || (s.email as string)]));
-  return {
-    ok: true,
-    setup,
-    data: projects.map((p) => {
-      const projectLinks = (links.data ?? [])
-        .filter((l) => l.project_id === p.id)
-        .map((l) => ({ ...l, total_incl_vat: Number(l.total_incl_vat), amount_paid: Number(l.amount_paid), amount_due: Number(l.amount_due) }));
-      const projectOrders = (orders.data ?? []).filter((o) => o.project_id === p.id) as Pick<OpsMaterialOrder, "status">[];
-      return {
-        ...p,
-        payment: paymentPicture(projectLinks as Parameters<typeof paymentPicture>[0], p.quoted_total_incl_vat, today),
-        materialsStatus: materialsRollup(projectOrders, p.materials_by_client),
-        openOrders: projectOrders.filter((o) => o.status !== "collected_delivered" && o.status !== "cancelled").length,
-        leadName: p.project_lead_id ? names.get(p.project_lead_id) ?? null : null,
-      };
-    }),
-  };
+  try {
+    const { db } = await adminOpsDb();
+    const { data, error } = await selectProjects((columns) => {
+      let query = db.from("ops_projects").select(columns).order("next_action_due", { ascending: true, nullsFirst: false }).limit(500);
+      if (show === "active") query = query.neq("stage", "completed").is("archived_at", null);
+      else if (show === "completed") query = query.eq("stage", "completed").is("archived_at", null);
+      else query = query.not("archived_at", "is", null);
+      return query;
+    });
+    if (error) return failure(error, "board projects");
+    const projects = ((data ?? []) as unknown as Record<string, unknown>[]).map(toProject);
+    const ids = projects.map((p) => p.id);
+    const setup = { tablesReady: true, bridgeConfigured: bridgeConfigured() };
+    if (!ids.length) return { ok: true, setup, data: [] };
+    const [links, orders, staff] = await Promise.all([
+      db.from("ops_xero_invoice_links").select("project_id, kind, xero_status, total_incl_vat, amount_paid, amount_due, due_date").in("project_id", ids),
+      db.from("ops_material_orders").select("project_id, status").in("project_id", ids),
+      db.from("admin_profiles").select("id, email, full_name"),
+    ]);
+    const err = links.error ?? orders.error ?? staff.error;
+    if (err) return failure(err, "board details");
+    const today = todayInSouthAfrica();
+    const names = new Map((staff.data ?? []).map((s) => [s.id as string, (s.full_name as string | null) || (s.email as string)]));
+    return {
+      ok: true,
+      setup,
+      data: projects.map((p) => {
+        const projectLinks = (links.data ?? [])
+          .filter((l) => l.project_id === p.id)
+          .map((l) => ({ ...l, total_incl_vat: Number(l.total_incl_vat), amount_paid: Number(l.amount_paid), amount_due: Number(l.amount_due) }));
+        const projectOrders = (orders.data ?? []).filter((o) => o.project_id === p.id) as Pick<OpsMaterialOrder, "status">[];
+        return {
+          ...p,
+          payment: paymentPicture(projectLinks as Parameters<typeof paymentPicture>[0], p.quoted_total_incl_vat, today),
+          materialsStatus: materialsRollup(projectOrders, p.materials_by_client),
+          openOrders: projectOrders.filter((o) => o.status !== "collected_delivered" && o.status !== "cancelled").length,
+          leadName: p.project_lead_id ? names.get(p.project_lead_id) ?? null : null,
+        };
+      }),
+    };
+  } catch (error) {
+    return failure({ message: error instanceof Error ? error.message : "unknown" }, "board projects");
+  }
 }
 
 export type ReviewQueue = {
