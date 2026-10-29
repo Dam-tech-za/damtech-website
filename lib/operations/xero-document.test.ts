@@ -200,3 +200,35 @@ describe("review card preview", () => {
     assert.equal(writes.length, 0);
   });
 });
+
+describe("review card: matches and gaps", () => {
+  it("lists matching fields, never offers to blank one Xero lacks, and treats 074… and +2774… as the same phone", async () => {
+    const { bridge } = v7Bridge({
+      QU0348: () => ({
+        number: "QU0348",
+        document: { id: "d", title: "Job", total: 1000 },
+        contact_id: DOCS.QU0348.id,
+        contact: { id: DOCS.QU0348.id, name: "Customer A", email: null, phone: "+27740000001", addresses: [] },
+      }),
+    });
+    const { db } = dbWith({
+      id: "p1",
+      title: "Job",
+      customer_name: "Customer A",
+      contact_person: "Customer A",
+      contact_phone: "074 000 0001",
+      contact_email: "keep@example.com",
+      quoted_total_incl_vat: 1000,
+      site_province: "Gauteng",
+      site_town: "Pretoria",
+      xero_quote_numbers: ["QU0348"],
+      xero_invoice_numbers: [],
+      xero_contact_id: DOCS.QU0348.id,
+    });
+    const preview = await buildProjectXeroReview(db, bridge, "p1");
+    assert.ok(!("error" in preview));
+    assert.equal(preview.rows.length, 0);
+    assert.ok(preview.matched.some((r) => r.field === "contact_phone"));
+    assert.deepEqual(preview.missingInXero, ["Email", "Location"]);
+  });
+});

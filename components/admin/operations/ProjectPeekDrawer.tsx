@@ -14,8 +14,9 @@ import { PROJECT_STAGES } from "@/lib/operations/types";
 import { stripBoardMetaFromScope } from "@/lib/operations/board-meta";
 import { formatLocationCell } from "@/lib/operations/distance";
 import type { BoardProject } from "@/lib/operations/queries";
+import { displayPhone, splitPhone } from "@/lib/operations/phone-display";
+import { CountryFlag } from "./CountryFlag";
 import {
-  ClientEditCell,
   LeadCell,
   LocationEditCell,
   PaymentEditCell,
@@ -38,6 +39,10 @@ function PeekForm({
   const [title, setTitle] = useState(project.title);
   const [company, setCompany] = useState(project.customer_name ?? "");
   const [email, setEmail] = useState(project.contact_email ?? "");
+  const [client, setClient] = useState(project.contact_person ?? "");
+  const initialPhone = splitPhone(project.contact_phone);
+  const [phoneCode, setPhoneCode] = useState(initialPhone.code);
+  const [phoneNumber, setPhoneNumber] = useState(initialPhone.national);
   const [notes, setNotes] = useState(stripBoardMetaFromScope(project.scope));
   const [nextAction, setNextAction] = useState(project.next_action ?? "");
   const [nextDue, setNextDue] = useState(project.next_action_due ?? "");
@@ -85,9 +90,42 @@ function PeekForm({
           onBlur={() => void save("company", company)}
         />
       </label>
-      <div className="ops-peek-form__field">
+      <label className="ops-peek-form__field">
         <span>Client</span>
-        <ClientEditCell project={project} canEdit onPatched={onPatched} />
+        <input
+          className="admin-input"
+          value={client}
+          maxLength={200}
+          onChange={(e) => setClient(e.target.value)}
+          onBlur={() => void save("client", client)}
+        />
+      </label>
+      <div className="ops-peek-form__field">
+        <span id={`peek-phone-${project.id}`}>Client phone</span>
+        <span className="ops-peek-phone" role="group" aria-labelledby={`peek-phone-${project.id}`}>
+          <span className="ops-peek-phone__flag">
+            <CountryFlag country={displayPhone(`${phoneCode}${phoneNumber}`)?.country ?? null} />
+          </span>
+          <input
+            className="admin-input ops-peek-phone__code"
+            value={phoneCode}
+            maxLength={5}
+            inputMode="tel"
+            aria-label="Country code"
+            onChange={(e) => setPhoneCode(e.target.value.replace(/[^\d+]/g, "").replace(/^(?!\+)/, "+"))}
+            onBlur={() => phoneNumber.trim() && void save("phone", `${phoneCode}${phoneNumber}`)}
+          />
+          <input
+            className="admin-input"
+            value={phoneNumber}
+            maxLength={20}
+            inputMode="tel"
+            placeholder="74 123 4567"
+            aria-label="Phone number"
+            onChange={(e) => setPhoneNumber(e.target.value)}
+            onBlur={() => void save("phone", phoneNumber.trim() ? `${phoneCode}${phoneNumber.replace(/^0/, "")}` : "")}
+          />
+        </span>
       </div>
       <label className="ops-peek-form__field">
         <span>Client email</span>

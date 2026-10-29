@@ -4361,3 +4361,109 @@ body:has(.ops-projects-page) {
     color: var(--admin-text-muted);
   }
 }
+
+/* Client cell: three invisible columns (flag | name over number | spacer)
+   so the flag sits centred on its own and the name and number stay centred. */
+.ops-client.ops-client--grid {
+  display: grid;
+  grid-template-columns: 1.6rem minmax(0, 1fr) 1.6rem;
+  grid-template-rows: auto auto;
+  align-items: center;
+  justify-items: center;
+  column-gap: 0.25rem;
+  row-gap: 0.1rem;
+  width: 100%;
+  text-align: center;
+}
+
+.ops-client--grid > .ops-client__flagcol {
+  grid-column: 1;
+  grid-row: 1 / span 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ops-client--grid > :not(.ops-client__flagcol) {
+  grid-column: 2;
+  max-width: 100%;
+  min-width: 0;
+}
+
+.ops-client--grid > .ops-inline-phone {
+  display: flex;
+  justify-content: center;
+}
+
+.ops-flag {
+  display: block;
+  width: 1.3rem;
+  height: auto;
+  border-radius: 2px;
+  box-shadow: 0 0 0 1px rgb(3 25 38 / 12%);
+}
+
+.ops-flag--code {
+  width: auto;
+  padding: 0 0.2rem;
+  font-size: 0.62rem;
+  font-weight: 700;
+  color: var(--admin-text-muted);
+  box-shadow: none;
+}
+
+/* Details panel: phone as country code + number */
+.ops-peek-phone {
+  display: grid;
+  grid-template-columns: auto 4.2rem minmax(0, 1fr);
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.ops-peek-phone__flag {
+  display: flex;
+  width: 1.4rem;
+  justify-content: center;
+}
+
+.ops-peek-phone__code {
+  text-align: center;
+}
+
+/* From Xero card: fields that already match, and what Xero doesn't have */
+.ops-xero-review__same {
+  list-style: none;
+  margin: 0 0 0.5rem;
+  padding: 0;
+  display: grid;
+  gap: 0.15rem;
+  font-size: 0.82rem;
+  color: var(--admin-text-muted);
+}
+
+.ops-xero-review__same li {
+  display: grid;
+  grid-template-columns: 1rem 8rem minmax(0, 1fr);
+  gap: 0.4rem;
+  align-items: baseline;
+}
+
+.ops-xero-review__same-tick {
+  color: #15803d;
+  font-weight: 700;
+}
+
+.ops-xero-review__same .ops-xero-review__current {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ops-xero-review__missing {
+  margin: 0 0 0.5rem;
+  padding: 0.45rem 0.6rem;
+  border-radius: 6px;
+  background: #fff8e6;
+  color: #92400e;
+  font-size: 0.82rem;
+}
