@@ -23,6 +23,7 @@ import {
   type BoardToolbarState,
 } from "./BoardToolbar";
 import { ProjectsBoard } from "./ProjectsBoard";
+import { ProjectsMobileList } from "./ProjectsMobileList";
 
 type Props = {
   projects: BoardProject[];
@@ -183,6 +184,16 @@ export function ProjectsWorkspace({ projects, canEdit, focusAdd, initial }: Prop
 
   return (
     <div className="ops-workspace">
+      {/* Phones get their own compact table; the desktop board below is hidden there by CSS only. */}
+      <ProjectsMobileList
+        projects={visible}
+        leads={leads}
+        state={toolbar}
+        filterActive={filterActive}
+        onChange={(patch) => setToolbar((s) => ({ ...s, ...patch }))}
+        onClear={clearAll}
+      />
+      <div className="ops-workspace__desktop">
       <BoardToolbar
         state={toolbar}
         leads={leads}
@@ -213,6 +224,7 @@ export function ProjectsWorkspace({ projects, canEdit, focusAdd, initial }: Prop
         leadSuggestions={leads}
         hiddenColumns={toolbar.hiddenColumns as BoardColumnId[]}
       />
+      </div>
     </div>
   );
 }
