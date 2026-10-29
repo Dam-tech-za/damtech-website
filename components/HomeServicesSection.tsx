@@ -29,7 +29,7 @@ const SERVICE_CARDS: readonly ServiceCard[] = [
     linkLabel: "View steel tank sizes and prices",
     href: "/steel-water-storage-tanks/#popular-tank-sizes",
     featured: false,
-    image: SITE_IMAGES.steelTank,
+    image: SITE_IMAGES.steelReservoirHome,
   },
   {
     id: "waterproofing",

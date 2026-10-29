@@ -11,7 +11,7 @@ import {
 /** Closing enquiry block — oversized headline, three-photo collage, reassurance row. */
 export function HomeFinalCtaSection() {
   const mainImage = SITE_IMAGES.damLiners;
-  const tankImage = SITE_IMAGES.steelTank;
+  const tankImage = SITE_IMAGES.steelReservoirHome;
   const waterproofingImage = SITE_IMAGES.bitumen;
 
   return (
@@ -68,7 +68,7 @@ export function HomeFinalCtaSection() {
             <figure className="dt-cta__photo dt-cta__photo--top">
               <Image
                 src={tankImage.image}
-                alt="Corrugated steel water tank for farm and commercial water storage"
+                alt={tankImage.alt}
                 fill
                 loading="lazy"
                 sizes="(max-width: 1023px) 45vw, 18vw"

@@ -31,6 +31,11 @@ import hdpeDamLinerInstallationLimpopo from "@/public/images/hdpe-dam-liner-inst
 import villiersdorpWesternCapeHdpeDamLining8230m2 from "@/public/images/hdpe-dam-lining-villiersdorp-western-cape-8230m2.webp";
 import villiersdorpWesternCapeHdpeDamLining8230m22 from "@/public/images/villiersdorp-western-cape-hdpe-dam-lining-8230m2-2.webp";
 import tulbaghWesternCapeSteelWaterTankProject from "@/public/images/corrugated-steel-water-tank-tulbagh-western-cape.webp";
+// Owner photos (Oct 2026): 12 m steel reservoir in the Western Cape, HDPE dam at a Barberton pecan farm.
+import westernCapeSteelReservoir12m from "@/public/images/western-cape-corrugated-steel-reservoir-12m-diameter-damtech.webp";
+import westernCapeSteelReservoir12mWalls from "@/public/images/western-cape-corrugated-steel-reservoir-12m-walls-installed.webp";
+import westernCapeSteelReservoir12mBase from "@/public/images/western-cape-corrugated-steel-reservoir-12m-prepared-sand-base.webp";
+import barbertonHdpeDamLiningPecanFarm from "@/public/images/barberton-mpumalanga-hdpe-dam-lining-pecan-nut-farm-1000m2.webp";
 import hdpeDamLiningAfterGeotextile from "@/public/images/hdpe-dam-lining-after-geotextile.webp";
 import hdpeDamLiningBeforeInstallation from "@/public/images/hdpe-dam-lining-before-installation.webp";
 import hdpeDamLiningEarthDam from "@/public/images/hdpe-dam-lining-earth-dam.webp";
@@ -77,6 +82,14 @@ export const IMAGE_PATHS = {
     "/images/villiersdorp-western-cape-hdpe-dam-lining-8230m2-2.webp",
   tulbaghWesternCapeSteelWaterTankProject:
     "/images/corrugated-steel-water-tank-tulbagh-western-cape.webp",
+  westernCapeSteelReservoir12m:
+    "/images/western-cape-corrugated-steel-reservoir-12m-diameter-damtech.webp",
+  westernCapeSteelReservoir12mWalls:
+    "/images/western-cape-corrugated-steel-reservoir-12m-walls-installed.webp",
+  westernCapeSteelReservoir12mBase:
+    "/images/western-cape-corrugated-steel-reservoir-12m-prepared-sand-base.webp",
+  barbertonHdpeDamLiningPecanFarm:
+    "/images/barberton-mpumalanga-hdpe-dam-lining-pecan-nut-farm-1000m2.webp",
   flatRoofWaterproofingMembrane: "/images/flat-roof-waterproofing-membrane.webp",
   risingDampCausesDiagram: "/images/rising-damp-causes-damp-walls-south-africa.webp",
   foundationLeakPointsDiagram: "/images/foundation-waterproofing-leak-points-diagram.webp",
@@ -138,6 +151,14 @@ export const IMAGE_ALTS: Record<ImagePath, string> = {
     "HDPE dam lining field installation for a large water storage application in Villiersdorp, Western Cape",
   [IMAGE_PATHS.tulbaghWesternCapeSteelWaterTankProject]:
     "Corrugated steel water tank installed in Tulbagh, Western Cape",
+  [IMAGE_PATHS.westernCapeSteelReservoir12m]:
+    "12 m diameter corrugated galvanised steel water reservoir, 2.29 m high, installed by Damtech on a farm in the Western Cape mountains",
+  [IMAGE_PATHS.westernCapeSteelReservoir12mWalls]:
+    "Galvanised corrugated steel reservoir walls and uprights of a 12 m Damtech reservoir standing on its prepared base in the Western Cape",
+  [IMAGE_PATHS.westernCapeSteelReservoir12mBase]:
+    "Levelled sand base inside the first ring of a 12 m corrugated steel reservoir in the Western Cape, with the reservoir liner ready to be laid",
+  [IMAGE_PATHS.barbertonHdpeDamLiningPecanFarm]:
+    "1 mm HDPE dam lining of about 1,000 m² holding water at a pecan nut farm near Barberton, Mpumalanga",
   // Representative roof photo supplied by the owner (Oct 2026); not a specific Damtech job or location.
   // Explanatory diagrams supplied by the owner (Oct 2026); illustrations, not project photos.
   [IMAGE_PATHS.risingDampCausesDiagram]:
@@ -195,6 +216,8 @@ export const FEATURED_PROJECT_IMAGES = {
     worcesterWesternCapeBitumenEarthDamLining15000m2,
   "villiersdorp-hdpe-dam-lining": villiersdorpWesternCapeHdpeDamLining8230m2,
   "tulbagh-steel-water-tank": tulbaghWesternCapeSteelWaterTankProject,
+  "western-cape-steel-reservoir-12m": westernCapeSteelReservoir12m,
+  "barberton-pecan-farm-hdpe-dam-lining": barbertonHdpeDamLiningPecanFarm,
   "north-west-game-lodge-hdpe-dam-lining": hdpeDamLiningEarthDam,
   "centurion-hdpe-dam-liner": hartswaterHdpeDamLiningProject,
   "tzaneen-torch-on-bitumen-concrete-dam-18m": torchOnConcreteDam18mTzaneen,
@@ -313,6 +336,23 @@ export const SITE_IMAGES = {
     flatRoofWaterproofingMembrane,
     IMAGE_PATHS.flatRoofWaterproofingMembrane,
     IMAGE_ALTS[IMAGE_PATHS.flatRoofWaterproofingMembrane],
+  ),
+  /** Home page Steel Reservoirs card and closing banner (owner photo, Oct 2026). */
+  steelReservoirHome: siteImage(
+    westernCapeSteelReservoir12m,
+    IMAGE_PATHS.westernCapeSteelReservoir12m,
+    "12 m corrugated galvanised steel water reservoir installed by Damtech in the Western Cape",
+    "Corrugated steel reservoirs for farms, estates and commercial water storage.",
+  ),
+  westernCapeSteelReservoir12mWalls: siteImage(
+    westernCapeSteelReservoir12mWalls,
+    IMAGE_PATHS.westernCapeSteelReservoir12mWalls,
+    IMAGE_ALTS[IMAGE_PATHS.westernCapeSteelReservoir12mWalls],
+  ),
+  westernCapeSteelReservoir12mBase: siteImage(
+    westernCapeSteelReservoir12mBase,
+    IMAGE_PATHS.westernCapeSteelReservoir12mBase,
+    IMAGE_ALTS[IMAGE_PATHS.westernCapeSteelReservoir12mBase],
   ),
   steelTank: siteImage(
     tulbaghWesternCapeSteelWaterTankProject,
