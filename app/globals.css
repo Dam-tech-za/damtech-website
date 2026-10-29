@@ -5389,34 +5389,6 @@ a.admin-metric-compact:focus-visible {
   color: #5b6b7c;
 }
 
-.rfq-bulk-actions {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.55rem;
-  padding: 0.6rem 1rem;
-  background: #f0f7fc;
-  border-bottom: 1px solid #d9e2ec;
-}
-
-.rfq-bulk-actions--hidden {
-  background: transparent;
-  border-bottom: 1px solid #e8eef4;
-}
-
-.rfq-bulk-actions__summary {
-  margin: 0;
-  font-size: 0.8125rem;
-  font-weight: 600;
-}
-
-.rfq-bulk-actions__form {
-  display: inline-flex;
-  flex-wrap: wrap;
-  gap: 0.45rem;
-  align-items: center;
-}
-
 .rfq-inbox-table-wrap {
   width: 100%;
   min-width: 0;

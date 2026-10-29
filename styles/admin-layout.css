@@ -3381,6 +3381,8 @@ form[aria-busy="true"] {
   box-shadow: 0 6px 16px rgb(16 24 40 / 0.12);
   display: grid;
   gap: 2px;
+  max-height: min(320px, 50vh);
+  overflow-y: auto;
 }
 
 .ops-selection-bar__move-item {
@@ -4625,9 +4627,9 @@ table.admin-sheet .admin-status {
   justify-content: center;
 }
 
-/* The header checkbox replaces the separate "Select page" line. */
-.rfq-bulk-actions--hidden {
-  display: none;
+.rfq-inbox-panel--has-selection {
+  /* Keep the last rows clear of the fixed selection card. */
+  padding-bottom: 88px;
 }
 
 /* Location: town over province (the combined one-line version stays hidden). */
@@ -4698,8 +4700,7 @@ table.admin-sheet .admin-status {
 }
 
 .rfq-peek__ok,
-.rfq-peek__err,
-.rfq-bulk-actions__note {
+.rfq-peek__err {
   flex-basis: 100%;
   margin: 0;
   font-size: 0.82rem;
