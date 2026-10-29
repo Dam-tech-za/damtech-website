@@ -112,6 +112,11 @@ export type SyncOptions = {
   baseline?: boolean;
   quoteLookbackDays?: number;
   invoiceLookbackDays?: number;
+  /**
+   * When false (the board “Update Xero” button), refresh linked quotes and
+   * invoices but do not create new project rows from unclaimed quotes.
+   */
+  createProjects?: boolean;
 };
 
 const emptyCounts = (): SyncCounts => ({
@@ -200,6 +205,7 @@ async function syncQuotes(
       toIgnore.push({ xero_quote_id: quote.id, quote_number: quote.number, reason: "baseline" });
       continue;
     }
+    if (!claimed && options.createProjects === false) continue;
     try {
       const detail = await bridge.call<XeroQuoteDetail>("get_quote", { quote_id: quote.id });
       const { projectId, created } = await store.importQuote(buildQuoteImportPayload(detail, options.today));

@@ -539,6 +539,18 @@ describe("Xero → project sync", () => {
     assert.equal(idle.counts.projects_updated, 0);
   });
 
+  it("Update Xero path refreshes linked records without creating new projects", async () => {
+    const mem = memoryStore();
+    const state = { quotes: [] as XeroQuoteSummary[], invoices: [] as XeroInvoiceSummary[] };
+    const { bridge } = fakeBridge(state);
+    await runXeroProjectSync(bridge, mem.store, { trigger: "manual", today: TODAY, baseline: true });
+    state.quotes.push(quote("q-new", "QU0400", "ACCEPTED"));
+    const r = await runXeroProjectSync(bridge, mem.store, { trigger: "manual", today: TODAY, createProjects: false });
+    assert.equal(r.status, "ok");
+    assert.equal(r.counts.projects_created, 0);
+    assert.equal(mem.projects.length, 0);
+  });
+
   it("skips a run while another is in progress", async () => {
     const mem = memoryStore();
     const { bridge } = fakeBridge({ quotes: [], invoices: [] });

@@ -11,6 +11,7 @@ import {
 } from "@/lib/admin/action-state";
 import { writeAuditLog } from "@/lib/auth/audit";
 import { adminOpsDb } from "@/lib/operations/admin-db";
+import { locationPatch } from "@/lib/operations/distance";
 import {
   checkNextAction,
   checkStageChange,
@@ -191,6 +192,7 @@ export async function updateProjectDetailsAction(_prev: AdminActionState, formDa
   const kmRaw = text(formData, "one_way_km", 12);
   const km = kmRaw ? Number(kmRaw.replace(",", ".")) : null;
   if (km !== null && (!Number.isFinite(km) || km < 0 || km > 5000)) return actionFailure("Distance must be between 0 and 5,000 km.");
+  const location = locationPatch(text(formData, "site_province", 40), text(formData, "site_town", 80));
   try {
     const { db, admin } = await adminOpsDb({ permission: "manageOperations" });
     const project = await loadProject(db, id);
@@ -205,7 +207,11 @@ export async function updateProjectDetailsAction(_prev: AdminActionState, formDa
         service,
         is_supply_only: supplyOnly,
         site_location: optionalText(formData, "site_location", 300),
-        one_way_km: km,
+        site_province: location.site_province,
+        site_town: location.site_town,
+        km_from_pretoria: location.km_from_pretoria,
+        km_from_western_cape: location.km_from_western_cape,
+        one_way_km: km ?? location.one_way_km,
         contact_person: optionalText(formData, "contact_person", 200),
         contact_phone: optionalText(formData, "contact_phone", 40),
         contact_email: optionalText(formData, "contact_email", 200),

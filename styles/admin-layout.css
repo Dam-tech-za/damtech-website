@@ -2310,3 +2310,272 @@ form[aria-busy="true"] {
   cursor: not-allowed;
   opacity: 0.55;
 }
+
+/* Monday-style grouped projects sheet */
+.ops-sheet {
+  display: grid;
+  gap: var(--admin-space-2);
+}
+
+.ops-sheet__toolbar {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.ops-sheet__scroll {
+  overflow-x: auto;
+  max-width: 100%;
+}
+
+.ops-sheet__table {
+  min-width: 64rem;
+}
+
+.ops-sheet__c-check {
+  width: 2.4rem;
+  min-width: 2.4rem;
+}
+
+.ops-sheet__c-project {
+  min-width: 16rem;
+}
+
+.ops-sheet__c-lead {
+  min-width: 8rem;
+}
+
+.ops-sheet__c-pay {
+  min-width: 9.5rem;
+}
+
+.ops-sheet--frozen .ops-sheet__sticky {
+  position: sticky;
+  background: #fff;
+  z-index: 2;
+}
+
+.ops-sheet--frozen thead .ops-sheet__sticky {
+  z-index: 3;
+}
+
+.ops-sheet--frozen .ops-sheet__c-check {
+  left: 0;
+}
+
+.ops-sheet--frozen .ops-sheet__c-project {
+  left: 2.4rem;
+}
+
+.ops-sheet--frozen .ops-sheet__c-lead {
+  left: 18.4rem;
+}
+
+.ops-sheet--frozen .ops-sheet__c-pay {
+  left: 26.4rem;
+  box-shadow: 1px 0 0 var(--admin-border);
+}
+
+.ops-sheet__group-row th {
+  padding: 0.45rem 0.4rem 0.25rem;
+  background: #f4f7fb;
+  border-bottom: 0;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.ops-sheet__group-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin: 0;
+  padding: 0.15rem 0.2rem;
+  border: 0;
+  background: transparent;
+  font: inherit;
+  font-weight: 650;
+  cursor: pointer;
+  color: inherit;
+}
+
+.ops-sheet__group-btn--awaiting { color: #b45309; }
+.ops-sheet__group-btn--planning { color: #026bc6; }
+.ops-sheet__group-btn--on_site { color: #7c3aed; }
+.ops-sheet__group-btn--handover { color: #0f766e; }
+.ops-sheet__group-btn--completed { color: #166534; }
+
+.ops-sheet__chevron {
+  display: inline-block;
+  width: 1rem;
+  font-size: 0.85rem;
+}
+
+.ops-sheet__add-row td {
+  border-bottom: 0;
+  background: #fafbfc;
+}
+
+.ops-sheet__add {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--admin-space-2);
+}
+
+.ops-sheet__add-form {
+  flex: 1 1 14rem;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.ops-sheet__add-form .admin-action-message:empty {
+  display: none;
+}
+
+.ops-sheet__add-input {
+  border: 0;
+  background: transparent;
+  min-height: 2.2rem;
+  box-shadow: none;
+}
+
+.ops-sheet__add-input:focus {
+  outline: none;
+}
+
+.ops-sheet tr.is-selected td {
+  background: #e8f2ff;
+}
+
+.ops-client {
+  display: grid;
+  gap: 2px;
+}
+
+.ops-client__name {
+  font-weight: 600;
+}
+
+.ops-client__phone {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.8rem;
+  white-space: nowrap;
+}
+
+.ops-client__flag {
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.ops-xero-picker {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.35rem;
+}
+
+.ops-xero-picker__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--admin-space-3);
+  padding: 0.45rem 0;
+  border-bottom: 1px solid var(--admin-border);
+}
+
+.ops-xero-picker__main {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.ops-xero-picker__add {
+  margin: 0;
+}
+
+.ops-xero-picker__add .admin-action-message:empty {
+  display: none;
+}
+
+.ops-xero-picker__error {
+  color: var(--admin-danger, #b42318);
+}
+
+.ops-board-filters__sync {
+  margin: 0;
+}
+
+.ops-board-filters__sync .admin-action-message:empty {
+  display: none;
+}
+
+.ops-selection-bar {
+  position: sticky;
+  bottom: 0.75rem;
+  z-index: 5;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem 0.6rem;
+  padding: 0.55rem 0.85rem;
+  background: #1f2a37;
+  color: #fff;
+  border-radius: 999px;
+  box-shadow: 0 8px 24px rgb(16 24 40 / 0.18);
+}
+
+.ops-selection-bar__count {
+  margin-right: 0.4rem;
+  font-size: 0.85rem;
+}
+
+.ops-selection-bar .admin-btn,
+.ops-selection-bar .admin-btn--ghost {
+  color: #fff;
+}
+
+.ops-selection-bar__action,
+.ops-selection-bar__move {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.ops-selection-bar .admin-action-message:empty {
+  display: none;
+}
+
+.ops-selection-bar .admin-action-message {
+  color: #fff;
+}
+
+.ops-selection-bar select {
+  min-width: 9rem;
+}
+
+@media (max-width: 899px) {
+  .ops-sheet__table {
+    min-width: 0;
+  }
+
+  .ops-sheet--frozen .ops-sheet__sticky {
+    position: static;
+    box-shadow: none;
+  }
+
+  .ops-sheet__c-check,
+  .ops-sheet__c-project,
+  .ops-sheet__c-lead,
+  .ops-sheet__c-pay {
+    left: auto;
+  }
+
+  .ops-selection-bar {
+    border-radius: 12px;
+  }
+}

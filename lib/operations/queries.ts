@@ -42,13 +42,15 @@ function failure<T>(error: { code?: string; message?: string } | null, context: 
 }
 
 const PROJECT_COLUMNS =
-  "id, title, customer_name, xero_contact_id, contact_person, contact_email, contact_phone, service, is_supply_only, site_location, one_way_km, scope, stage, on_hold, on_hold_reason, next_action, next_action_due, project_lead_id, crew, scheduled_start, scheduled_end, xero_quote_numbers, xero_invoice_numbers, quoted_total_incl_vat, quoted_total_excl_vat, payment_status, amount_invoiced, amount_paid, amount_due, payment_synced_at, source, needs_review, monday_item_id, created_at, updated_at, completed_at, next_action_owner, materials_by_client, onedrive_url, archived_at";
+  "id, title, customer_name, xero_contact_id, contact_person, contact_email, contact_phone, service, is_supply_only, site_location, site_province, site_town, km_from_pretoria, km_from_western_cape, one_way_km, scope, stage, on_hold, on_hold_reason, next_action, next_action_due, project_lead_id, crew, scheduled_start, scheduled_end, xero_quote_numbers, xero_invoice_numbers, quoted_total_incl_vat, quoted_total_excl_vat, payment_status, amount_invoiced, amount_paid, amount_due, payment_synced_at, source, needs_review, monday_item_id, created_at, updated_at, completed_at, next_action_owner, materials_by_client, onedrive_url, archived_at";
 
 function toProject(row: Record<string, unknown>): OpsProject {
   const n = (v: unknown) => (v === null || v === undefined ? null : Number(v));
   return {
     ...(row as unknown as OpsProject),
     one_way_km: n(row.one_way_km),
+    km_from_pretoria: n(row.km_from_pretoria),
+    km_from_western_cape: n(row.km_from_western_cape),
     quoted_total_incl_vat: n(row.quoted_total_incl_vat),
     quoted_total_excl_vat: n(row.quoted_total_excl_vat),
     amount_invoiced: Number(row.amount_invoiced ?? 0),
@@ -302,12 +304,26 @@ export type XeroStartData = {
   xeroError: string | null;
 };
 
+export async function listStaffOptions(): Promise<StaffOption[]> {
+  const { db } = await adminOpsDb();
+  const { data, error } = await db.from("admin_profiles").select("id, email, full_name").eq("is_active", true).order("email");
+  if (error) return [];
+  return (data ?? []) as StaffOption[];
+}
+
 /**
- * Recent accepted quotes and sales invoices that are not on a project yet,
- * plus a Xero customer search. Read-only through the bridge; one page of each
- * list to protect the daily Xero call budget.
+ * Recent accepted quotes (and, on the old new-project form, sales invoices)
+ * that are not on a project yet. Read-only through the bridge.
  */
-export async function loadXeroStart(options: { search?: string; contact?: { id: string; name: string } | null } = {}): Promise<OpsLoad<XeroStartData>> {
+export async function loadXeroStart(
+  options: {
+    search?: string;
+    contact?: { id: string; name: string } | null;
+    /** Board picker: accepted/invoiced quotes from the last 30 days, no invoices. */
+    quotesOnly?: boolean;
+    quoteDays?: number;
+  } = {},
+): Promise<OpsLoad<XeroStartData>> {
   const { db } = await adminOpsDb();
   const [projects, invoiceLinks, quoteLinks] = await Promise.all([
     db.from("ops_projects").select("xero_quote_numbers, xero_invoice_numbers").limit(2000),
@@ -323,18 +339,20 @@ export async function loadXeroStart(options: { search?: string; contact?: { id: 
   const bridge = createXeroBridgeClient({ ...config, timeoutMs: 15000 });
   const today = todayInSouthAfrica();
   const search = options.search?.trim().slice(0, 80) ?? "";
-  // One customer: all their quotes; everyone: only recent ones.
+  const quoteDays = options.quoteDays ?? (options.quotesOnly ? 30 : 180);
   const forContact = (days: number) => (options.contact ? { contact_id: options.contact.id } : { date_from: daysBefore(today, days) });
   try {
     const [accepted, invoiced, invoices, contacts] = await Promise.all([
-      bridge.call<XeroQuoteSummary[]>("get_quotes", { status: "ACCEPTED", ...forContact(180), page: 1 }),
-      bridge.call<XeroQuoteSummary[]>("get_quotes", { status: "INVOICED", ...forContact(120), page: 1 }),
-      bridge.call<XeroInvoiceSummary[]>("get_invoices", {
-        kind: "sales",
-        status: "AUTHORISED,PAID",
-        ...(options.contact?.name ? { contact_name: options.contact.name } : { date_from: daysBefore(today, 120) }),
-        page: 1,
-      }),
+      bridge.call<XeroQuoteSummary[]>("get_quotes", { status: "ACCEPTED", ...forContact(quoteDays), page: 1 }),
+      bridge.call<XeroQuoteSummary[]>("get_quotes", { status: "INVOICED", ...forContact(options.quotesOnly ? quoteDays : 120), page: 1 }),
+      options.quotesOnly
+        ? Promise.resolve([] as XeroInvoiceSummary[])
+        : bridge.call<XeroInvoiceSummary[]>("get_invoices", {
+            kind: "sales",
+            status: "AUTHORISED,PAID",
+            ...(options.contact?.name ? { contact_name: options.contact.name } : { date_from: daysBefore(today, 120) }),
+            page: 1,
+          }),
       search
         ? bridge.call<{ id: string; name: string; email: string | null; is_customer?: boolean; status?: string }[]>("get_contacts", { search, page: 1 })
         : Promise.resolve([]),

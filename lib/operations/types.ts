@@ -84,6 +84,10 @@ export type OpsProject = {
   service: ProjectService;
   is_supply_only: boolean;
   site_location: string | null;
+  site_province: string | null;
+  site_town: string | null;
+  km_from_pretoria: number | null;
+  km_from_western_cape: number | null;
   one_way_km: number | null;
   scope: string | null;
   stage: ProjectStage;

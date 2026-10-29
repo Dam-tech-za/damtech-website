@@ -59,8 +59,8 @@ export function groupProjects<T extends Pick<OpsProject, "stage">>(projects: T[]
 // ---------------------------------------------------------------------------
 
 export const PAYMENT_LABELS = [
-  "deposit_not_invoiced",
   "deposit_invoiced",
+  "portion_of_deposit_paid",
   "deposit_paid",
   "balance_due",
   "paid_in_full",
@@ -68,8 +68,8 @@ export const PAYMENT_LABELS = [
 export type PaymentLabel = (typeof PAYMENT_LABELS)[number];
 
 export const PAYMENT_LABEL_TEXT: Record<PaymentLabel, string> = {
-  deposit_not_invoiced: "Deposit not invoiced",
   deposit_invoiced: "Deposit invoiced",
+  portion_of_deposit_paid: "Portion of deposit paid",
   deposit_paid: "Deposit paid",
   balance_due: "Balance due",
   paid_in_full: "Paid in full",
@@ -98,7 +98,8 @@ function looksLikeDeposit(invoice: InvoiceForLabel, quotedTotalInclVat: number |
 }
 
 export type PaymentPicture = {
-  label: PaymentLabel;
+  /** Null when Xero has not issued any live invoices yet. */
+  label: PaymentLabel | null;
   overdue: boolean;
   /** Sum of live invoice totals (gross; credit notes reduce what is due, not this). */
   invoiced: number;
@@ -130,16 +131,23 @@ export function paymentPicture(
   const notYetInvoiced =
     quotedTotalInclVat === null ? null : round2(Math.max(0, quotedTotalInclVat - invoiced));
 
-  let label: PaymentLabel;
+  const depositOnly =
+    issued.length > 0 &&
+    issued.every((i) => looksLikeDeposit(i, quotedTotalInclVat)) &&
+    (notYetInvoiced === null || notYetInvoiced > 1);
+
+  let label: PaymentLabel | null;
   if (issued.length === 0) {
-    label = "deposit_not_invoiced";
+    label = null;
   } else if (due <= 0 && (notYetInvoiced === null || notYetInvoiced <= 1)) {
     label = "paid_in_full";
   } else if (due <= 0) {
     // Everything issued so far is settled; the rest of the contract is still to be invoiced.
     label = "deposit_paid";
-  } else if (paid <= 0 && issued.length === 1 && looksLikeDeposit(issued[0], quotedTotalInclVat)) {
+  } else if (depositOnly && paid <= 0) {
     label = "deposit_invoiced";
+  } else if (depositOnly && paid > 0) {
+    label = "portion_of_deposit_paid";
   } else {
     label = "balance_due";
   }
@@ -258,29 +266,134 @@ export function orderNeedsAction(
 // Board filters and sorting
 // ---------------------------------------------------------------------------
 
+export const GROUP_DEFAULT_STAGE: Record<ProjectGroup, ProjectStage> = {
+  awaiting: "awaiting_deposit",
+  planning: "planning",
+  on_site: "scheduled",
+  handover: "handover",
+  completed: "completed",
+};
+
+export function isProjectGroup(value: string): value is ProjectGroup {
+  return (PROJECT_GROUPS as readonly string[]).includes(value);
+}
+
+/** Stage to write when creating or moving a job into a board group. */
+export function stageForGroup(group: ProjectGroup, current?: ProjectStage): ProjectStage {
+  if (group === "on_site" && current === "in_progress") return "in_progress";
+  return GROUP_DEFAULT_STAGE[group];
+}
+
+/** Always five groups, including empty ones, so each stage keeps an add row. */
+export function boardGroups<T extends Pick<OpsProject, "stage">>(projects: T[]): { group: ProjectGroup; projects: T[] }[] {
+  return PROJECT_GROUPS.map((group) => ({
+    group,
+    projects: projects.filter((p) => groupForStage(p.stage) === group),
+  }));
+}
+
+export function isLinkedToXero(
+  p: Pick<OpsProject, "xero_quote_numbers" | "xero_invoice_numbers">,
+): boolean {
+  return p.xero_quote_numbers.length > 0 || p.xero_invoice_numbers.length > 0;
+}
+
+export const PRICE_BANDS = ["under_50k", "50_150k", "over_150k"] as const;
+export type PriceBand = (typeof PRICE_BANDS)[number];
+export const PRICE_BAND_LABELS: Record<PriceBand, string> = {
+  under_50k: "Under R50,000",
+  "50_150k": "R50,000 – R150,000",
+  over_150k: "Over R150,000",
+};
+
+export const DISTANCE_BANDS = ["50", "100", "250", "500"] as const;
+export type DistanceBand = (typeof DISTANCE_BANDS)[number];
+export const DISTANCE_BAND_LABELS: Record<DistanceBand, string> = {
+  "50": "Within 50 km",
+  "100": "Within 100 km",
+  "250": "Within 250 km",
+  "500": "Within 500 km",
+};
+
+export const OFFICE_FILTERS = ["pretoria", "western-cape"] as const;
+export type OfficeFilter = (typeof OFFICE_FILTERS)[number];
+export const OFFICE_FILTER_LABELS: Record<OfficeFilter, string> = {
+  pretoria: "Pretoria office",
+  "western-cape": "Western Cape office",
+};
+
 export type BoardFilters = {
   q?: string;
   service?: string;
   stage?: string;
   payment?: string;
-  view?: "board" | "table";
-  sort?: "next_action" | "updated" | "customer";
+  lead?: string;
+  price?: string;
+  office?: string;
+  distance?: string;
+  sort?: "next_action" | "updated" | "name" | "lead" | "price" | "distance";
   show?: "active" | "completed" | "archived";
 };
 
-export function matchesSearch(p: Pick<OpsProject, "title" | "customer_name" | "site_location" | "xero_quote_numbers" | "xero_invoice_numbers">, q: string): boolean {
+export function matchesSearch(
+  p: Pick<OpsProject, "title" | "customer_name" | "site_location" | "contact_person" | "xero_quote_numbers" | "xero_invoice_numbers">,
+  q: string,
+): boolean {
   const needle = q.trim().toLowerCase();
   if (!needle) return true;
-  return [p.title, p.customer_name, p.site_location ?? "", ...p.xero_quote_numbers, ...p.xero_invoice_numbers]
-    .some((v) => v.toLowerCase().includes(needle));
+  return [p.title, p.customer_name, p.site_location ?? "", p.contact_person ?? "", ...p.xero_quote_numbers, ...p.xero_invoice_numbers].some((v) =>
+    v.toLowerCase().includes(needle),
+  );
 }
 
-export function sortProjects<T extends Pick<OpsProject, "next_action_due" | "updated_at" | "customer_name">>(
-  projects: T[],
-  sort: BoardFilters["sort"],
-): T[] {
+export function matchesPriceBand(value: number | null, band: string | undefined): boolean {
+  if (!band) return true;
+  if (value === null) return false;
+  if (band === "under_50k") return value < 50000;
+  if (band === "50_150k") return value >= 50000 && value < 150000;
+  if (band === "over_150k") return value >= 150000;
+  return true;
+}
+
+export function matchesDistanceBand(
+  km: number | null,
+  band: string | undefined,
+): boolean {
+  if (!band) return true;
+  if (km === null) return false;
+  const max = Number(band);
+  return Number.isFinite(max) && km <= max;
+}
+
+export function kmForOffice(
+  p: Pick<OpsProject, "km_from_pretoria" | "km_from_western_cape">,
+  office: string | undefined,
+): number | null {
+  if (office === "western-cape") return p.km_from_western_cape;
+  if (office === "pretoria") return p.km_from_pretoria;
+  const a = p.km_from_pretoria;
+  const b = p.km_from_western_cape;
+  if (a === null) return b;
+  if (b === null) return a;
+  return Math.min(a, b);
+}
+
+type SortableProject = Pick<OpsProject, "next_action_due" | "updated_at" | "customer_name" | "title" | "quoted_total_incl_vat" | "km_from_pretoria" | "km_from_western_cape"> & {
+  leadName?: string | null;
+};
+
+export function sortProjects<T extends SortableProject>(projects: T[], sort: BoardFilters["sort"], office?: string): T[] {
   const copy = [...projects];
   if (sort === "updated") return copy.sort((a, b) => b.updated_at.localeCompare(a.updated_at));
-  if (sort === "customer") return copy.sort((a, b) => a.customer_name.localeCompare(b.customer_name));
+  if (sort === "name") return copy.sort((a, b) => a.title.localeCompare(b.title, "en", { sensitivity: "base" }));
+  if (sort === "lead") {
+    return copy.sort((a, b) => (a.leadName ?? "zzz").localeCompare(b.leadName ?? "zzz", "en", { sensitivity: "base" }));
+  }
+  if (sort === "price") {
+    return copy.sort((a, b) => (b.quoted_total_incl_vat ?? -1) - (a.quoted_total_incl_vat ?? -1));
+  }
+  if (sort === "distance") {
+    return copy.sort((a, b) => (kmForOffice(a, office) ?? 99999) - (kmForOffice(b, office) ?? 99999));
+  }
   return copy.sort((a, b) => (a.next_action_due ?? "9999").localeCompare(b.next_action_due ?? "9999"));
 }

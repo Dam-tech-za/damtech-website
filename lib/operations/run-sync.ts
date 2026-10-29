@@ -9,7 +9,10 @@ import { createXeroBridgeClient, xeroBridgeConfigFromEnv } from "./xero-bridge";
  * Wires the sync engine to the real bridge and database. Callers (the cron
  * route and the admin "Sync now" action) do their own authorisation first.
  */
-export async function runConfiguredXeroSync(trigger: SyncTrigger, options: { baseline?: boolean } = {}): Promise<SyncRunResult> {
+export async function runConfiguredXeroSync(
+  trigger: SyncTrigger,
+  options: { baseline?: boolean; createProjects?: boolean } = {},
+): Promise<SyncRunResult> {
   const config = xeroBridgeConfigFromEnv();
   if (!config || !isSupabaseServiceConfigured()) {
     return {
@@ -25,5 +28,6 @@ export async function runConfiguredXeroSync(trigger: SyncTrigger, options: { bas
     trigger,
     today: todayInSouthAfrica(),
     baseline: options.baseline,
+    createProjects: options.createProjects,
   });
 }

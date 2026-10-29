@@ -2,14 +2,19 @@ import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import {
   attentionBuckets,
+  boardGroups,
   bucketForProject,
   groupForStage,
   groupProjects,
+  isLinkedToXero,
   materialsRollup,
+  matchesDistanceBand,
+  matchesPriceBand,
   matchesSearch,
   orderNeedsAction,
   paymentPicture,
   sortProjects,
+  stageForGroup,
   type InvoiceForLabel,
 } from "./board.ts";
 import { classifyInvoice, type InvoiceMatchProject } from "./quote-import.ts";
@@ -44,8 +49,8 @@ describe("automatic groups", () => {
 });
 
 describe("payment labels from Xero", () => {
-  it("no invoices: deposit not invoiced", () => {
-    assert.equal(paymentPicture([], 100000, TODAY).label, "deposit_not_invoiced");
+  it("no invoices: blank (nothing to show)", () => {
+    assert.equal(paymentPicture([], 100000, TODAY).label, null);
   });
 
   it("unpaid deposit invoice: deposit invoiced", () => {
@@ -113,8 +118,18 @@ describe("payment labels from Xero", () => {
       5000,
       TODAY,
     );
-    assert.equal(p.label, "deposit_not_invoiced");
+    assert.equal(p.label, null);
     assert.equal(p.invoiced, 0);
+  });
+
+  it("partial payment on a deposit invoice: portion of deposit paid", () => {
+    const p = paymentPicture(
+      [inv({ kind: "deposit", total_incl_vat: 50000, amount_paid: 20000, amount_due: 30000 })],
+      100000,
+      TODAY,
+    );
+    assert.equal(p.label, "portion_of_deposit_paid");
+    assert.equal(p.due, 30000);
   });
 
   it("paid in full when the quote is unknown and nothing is owed", () => {
@@ -179,21 +194,63 @@ describe("what needs attention", () => {
 });
 
 describe("search and sort", () => {
-  const p = { title: "Clinton – HDPE relining", customer_name: "Clinton", site_location: "Lanseria", xero_quote_numbers: ["QU0301"], xero_invoice_numbers: ["INV0143"] };
-  it("searches title, customer, site and Xero numbers", () => {
+  const p = {
+    title: "Clinton – HDPE relining",
+    customer_name: "Clinton",
+    site_location: "Lanseria",
+    contact_person: "Francois",
+    xero_quote_numbers: ["QU0301"],
+    xero_invoice_numbers: ["INV0143"],
+  };
+  it("searches title, customer, site, contact and Xero numbers", () => {
     assert.ok(matchesSearch(p, "lanseria"));
     assert.ok(matchesSearch(p, "inv0143"));
+    assert.ok(matchesSearch(p, "francois"));
     assert.ok(!matchesSearch(p, "gansbaai"));
   });
   it("sorts by next action date by default", () => {
     const sorted = sortProjects(
       [
-        { next_action_due: "2026-11-01", updated_at: "1", customer_name: "B" },
-        { next_action_due: "2026-10-01", updated_at: "2", customer_name: "A" },
+        { next_action_due: "2026-11-01", updated_at: "1", customer_name: "B", title: "B", quoted_total_incl_vat: null, km_from_pretoria: null, km_from_western_cape: null },
+        { next_action_due: "2026-10-01", updated_at: "2", customer_name: "A", title: "A", quoted_total_incl_vat: null, km_from_pretoria: null, km_from_western_cape: null },
       ],
       undefined,
     );
     assert.equal(sorted[0].next_action_due, "2026-10-01");
+  });
+  it("sorts by price high to low", () => {
+    const sorted = sortProjects(
+      [
+        { next_action_due: null, updated_at: "1", customer_name: "A", title: "A", quoted_total_incl_vat: 10, km_from_pretoria: null, km_from_western_cape: null },
+        { next_action_due: null, updated_at: "2", customer_name: "B", title: "B", quoted_total_incl_vat: 90, km_from_pretoria: null, km_from_western_cape: null },
+      ],
+      "price",
+    );
+    assert.equal(sorted[0].quoted_total_incl_vat, 90);
+  });
+});
+
+describe("board helpers", () => {
+  it("keeps empty groups so every stage has an add row", () => {
+    assert.equal(boardGroups([]).length, 5);
+    assert.equal(boardGroups([{ stage: "planning" as const }]).filter((g) => g.projects.length).length, 1);
+  });
+  it("maps a group to a default stage, keeping on-site jobs in progress", () => {
+    assert.equal(stageForGroup("planning"), "planning");
+    assert.equal(stageForGroup("on_site"), "scheduled");
+    assert.equal(stageForGroup("on_site", "in_progress"), "in_progress");
+  });
+  it("treats a job as unlinked until a Xero number is stored", () => {
+    assert.equal(isLinkedToXero({ xero_quote_numbers: [], xero_invoice_numbers: [] }), false);
+    assert.equal(isLinkedToXero({ xero_quote_numbers: ["QU0301"], xero_invoice_numbers: [] }), true);
+  });
+  it("filters price and distance bands", () => {
+    assert.equal(matchesPriceBand(40000, "under_50k"), true);
+    assert.equal(matchesPriceBand(40000, "over_150k"), false);
+    assert.equal(matchesPriceBand(null, "under_50k"), false);
+    assert.equal(matchesDistanceBand(40, "50"), true);
+    assert.equal(matchesDistanceBand(80, "50"), false);
+    assert.equal(matchesDistanceBand(null, "50"), false);
   });
 });
 

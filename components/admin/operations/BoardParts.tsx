@@ -16,18 +16,19 @@ import type { BoardProject } from "@/lib/operations/queries";
 import { StageBadge } from "./OpsParts";
 import { formatOpsDate, formatOpsMoney } from "./ops-format";
 
-const PAYMENT_TONE: Record<PaymentPicture["label"], string> = {
-  deposit_not_invoiced: "ops-neutral",
+const PAYMENT_TONE: Record<NonNullable<PaymentPicture["label"]>, string> = {
   deposit_invoiced: "ops-warn",
+  portion_of_deposit_paid: "ops-warn",
   deposit_paid: "ops-info",
   balance_due: "ops-warn",
   paid_in_full: "ops-good",
 };
 
 export function PaymentPictureBadge({ payment }: { payment: PaymentPicture }) {
+  if (!payment.label && !payment.overdue) return <span className="ops-table__meta">—</span>;
   return (
     <span className="ops-stage">
-      <AdminStatusBadge status={PAYMENT_TONE[payment.label]} label={PAYMENT_LABEL_TEXT[payment.label]} />
+      {payment.label ? <AdminStatusBadge status={PAYMENT_TONE[payment.label]} label={PAYMENT_LABEL_TEXT[payment.label]} /> : null}
       {payment.overdue ? <AdminStatusBadge status="ops-bad" label="Overdue" /> : null}
     </span>
   );

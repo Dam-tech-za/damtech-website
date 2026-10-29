@@ -12,6 +12,7 @@ import {
   todayInSouthAfrica,
 } from "@/lib/operations/lifecycle";
 import { DOCUMENT_KINDS, MATERIAL_FULFILMENT, MATERIAL_ORDER_STATUSES, PROJECT_SERVICES } from "@/lib/operations/types";
+import { SiteLocationFields } from "@/components/admin/operations/SiteLocationFields";
 import {
   addMaterialOrderAction,
   changeStageAction,
@@ -256,7 +257,8 @@ export default async function OpsProjectPage({ params, searchParams }: PageProps
                   </AdminSelect>
                 </AdminField>
                 <AdminCheckbox name="is_supply_only" defaultChecked={p.is_supply_only} label="Supply only (no installation)" />
-                <AdminField label="Site address" htmlFor="site_location">
+                <SiteLocationFields province={p.site_province} town={p.site_town} />
+                <AdminField label="Site address (optional extra)" htmlFor="site_location">
                   <AdminInput id="site_location" name="site_location" defaultValue={p.site_location ?? ""} maxLength={300} />
                 </AdminField>
                 <AdminField label="One-way km from base" htmlFor="one_way_km">

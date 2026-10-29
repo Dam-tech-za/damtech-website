@@ -11,10 +11,13 @@ import {
 } from "@/lib/admin/action-state";
 import { writeAuditLog } from "@/lib/auth/audit";
 import { adminOpsDb } from "@/lib/operations/admin-db";
-import { checkNextAction, todayInSouthAfrica } from "@/lib/operations/lifecycle";
+import { isProjectGroup, isLinkedToXero, stageForGroup } from "@/lib/operations/board";
+import { locationFromXeroCity, fetchXeroContactExtras, fillFromXeroContact } from "@/lib/operations/xero-contact";
+import { checkNextAction, checkStageChange, todayInSouthAfrica, stageLabel } from "@/lib/operations/lifecycle";
 import { summarisePayment } from "@/lib/operations/payment";
 import { guessInvoiceKind } from "@/lib/operations/payment";
 import { buildQuoteImportPayload, inferService, quoteNumbersInReference } from "@/lib/operations/quote-import";
+import { runConfiguredXeroSync } from "@/lib/operations/run-sync";
 import { createXeroBridgeClient, xeroBridgeConfigFromEnv, type XeroInvoiceSummary, type XeroQuoteDetail } from "@/lib/operations/xero-bridge";
 import { stageFromInvoice } from "@/lib/operations/xero-start";
 import {
@@ -94,6 +97,9 @@ function fail(context: string, error: unknown): AdminActionState {
 
 const splitNumbers = (raw: string, prefix: RegExp): string[] =>
   [...new Set(raw.toUpperCase().split(/[\s,;/+]+/).map((s) => s.trim()).filter((s) => prefix.test(s)))];
+
+const idsFrom = (formData: FormData): string[] =>
+  [...new Set(text(formData, "ids", 4000).split(/[\s,]+/).filter((id) => UUID.test(id)))].slice(0, 50);
 
 // ---------------------------------------------------------------------------
 // Create a project by hand
@@ -329,7 +335,6 @@ export async function archiveProjectAction(_prev: AdminActionState, formData: Fo
     const { data: project, error: readError } = await db.from("ops_projects").select("stage").eq("id", id).maybeSingle();
     if (readError) throw readError;
     if (!project) return actionFailure("This project no longer exists.");
-    if (archive && project.stage !== "completed") return actionFailure("Only completed projects can be archived.");
     const { error } = await db.from("ops_projects").update({ archived_at: archive ? new Date().toISOString() : null }).eq("id", id);
     if (error) throw error;
     await log(db, id, who, archive ? "project.archived" : "project.unarchived", archive ? "Archived" : "Restored from the archive");
@@ -689,6 +694,8 @@ async function readInvoice(db: SupabaseClient, xeroId: string): Promise<StoredIn
 export async function createProjectFromXeroAction(_prev: AdminActionState, formData: FormData): Promise<AdminActionState> {
   const kind = text(formData, "kind", 10);
   const xeroId = text(formData, "xero_id", 64);
+  const stay = text(formData, "stay", 8) === "1";
+  const group = text(formData, "group", 40);
   if ((kind !== "quote" && kind !== "invoice") || !UUID.test(xeroId)) return actionFailure("This Xero record could not be found.");
   let projectId: string | null = null;
   let created = false;
@@ -710,6 +717,12 @@ export async function createProjectFromXeroAction(_prev: AdminActionState, formD
       projectId = row.result_project_id;
       created = row.result_created === true;
       if (created) await log(db, projectId, who, "project.created", `Project created from Xero quote ${detail.number}`);
+      await applyXeroExtras(db, projectId, {
+        group,
+        created,
+        contactId: detail.contact_id,
+        contactName: detail.contact,
+      });
     } else {
       const { data: existing, error: existingError } = await db
         .from("ops_xero_invoice_links")
@@ -776,10 +789,41 @@ export async function createProjectFromXeroAction(_prev: AdminActionState, formD
       });
     }
     refresh(projectId ?? undefined);
+    if (stay) return actionSuccess(created ? "Project added from Xero." : "That quote is already on a project.");
   } catch (error) {
     return fail("create from xero", error);
   }
   redirect(`/admin/operations/projects/${projectId}/?${created ? "created=xero" : "existing=1"}`);
+}
+
+async function applyXeroExtras(
+  db: SupabaseClient,
+  projectId: string,
+  options: { group: string; created: boolean; contactId: string | null | undefined; contactName: string | null | undefined },
+) {
+  const { data: project } = await db
+    .from("ops_projects")
+    .select("customer_name, contact_person, contact_phone, contact_email, xero_contact_id, site_province, site_town")
+    .eq("id", projectId)
+    .maybeSingle();
+  if (!project) return;
+  const patch: Record<string, unknown> = {};
+  if (options.created && isProjectGroup(options.group) && options.group !== "awaiting") {
+    patch.stage = stageForGroup(options.group);
+  }
+  const bridge = bridgeOrNull();
+  if (bridge) {
+    const extras = await fetchXeroContactExtras(bridge, { id: options.contactId, name: options.contactName });
+    if (extras) {
+      Object.assign(patch, fillFromXeroContact(project, extras));
+      if (!project.site_town && !project.site_province) {
+        const loc = locationFromXeroCity(extras.city, extras.region);
+        if (loc) Object.assign(patch, loc);
+      }
+    }
+  }
+  if (!Object.keys(patch).length) return;
+  await db.from("ops_projects").update(patch).eq("id", projectId);
 }
 
 /** Recompute a project's cached payment fields from its linked invoices (same rules as the sync). */
@@ -811,4 +855,300 @@ async function recomputeProjectPayment(db: SupabaseClient, projectId: string, qu
     })
     .eq("id", projectId);
   if (updateError) throw updateError;
+}
+
+// ---------------------------------------------------------------------------
+// Board: quick add, bulk actions, link to Xero, Update Xero
+// ---------------------------------------------------------------------------
+
+export async function createProjectQuickAction(_prev: AdminActionState, formData: FormData): Promise<AdminActionState> {
+  const title = text(formData, "title", 200);
+  const group = text(formData, "group", 40);
+  if (!title) return actionFailure("Give the project a name.");
+  if (!isProjectGroup(group) || group === "completed") return actionFailure("Choose a stage.");
+  const today = todayInSouthAfrica();
+  try {
+    const { db, admin, who } = await actor();
+    const { data, error } = await db
+      .from("ops_projects")
+      .insert({
+        title,
+        customer_name: "",
+        service: "unclassified",
+        stage: stageForGroup(group),
+        next_action: "Fill in the site, scope and dates",
+        next_action_due: today,
+        source: "manual",
+        needs_review: true,
+      })
+      .select("id")
+      .single();
+    if (error) throw error;
+    await log(db, data.id as string, who, "project.created", "Project created from the board");
+    await writeAuditLog({
+      actorUserId: admin.user.id,
+      actorEmail: admin.profile.email,
+      action: "ops_project.created",
+      entityType: "ops_project",
+      entityId: data.id as string,
+      afterData: { title, stage: stageForGroup(group), source: "board" },
+    });
+    refresh(data.id as string);
+    return actionSuccess("Project added.");
+  } catch (error) {
+    return fail("quick create", error);
+  }
+}
+
+export async function duplicateProjectsAction(_prev: AdminActionState, formData: FormData): Promise<AdminActionState> {
+  const ids = idsFrom(formData);
+  if (!ids.length) return actionFailure("Select a project first.");
+  const today = todayInSouthAfrica();
+  try {
+    const { db, admin, who } = await actor();
+    const { data, error } = await db.from("ops_projects").select("*").in("id", ids);
+    if (error) throw error;
+    let count = 0;
+    for (const row of data ?? []) {
+      const title = `${String(row.title ?? "Project").slice(0, 190)} copy`;
+      const { data: created, error: insertError } = await db
+        .from("ops_projects")
+        .insert({
+          title,
+          customer_name: row.customer_name ?? "",
+          contact_person: row.contact_person,
+          contact_phone: row.contact_phone,
+          contact_email: row.contact_email,
+          service: row.service,
+          is_supply_only: row.is_supply_only,
+          site_location: row.site_location,
+          site_province: row.site_province,
+          site_town: row.site_town,
+          km_from_pretoria: row.km_from_pretoria,
+          km_from_western_cape: row.km_from_western_cape,
+          one_way_km: row.one_way_km,
+          scope: row.scope,
+          stage: row.stage === "completed" ? "planning" : row.stage,
+          next_action: "Fill in the site, scope and dates",
+          next_action_due: today,
+          project_lead_id: row.project_lead_id,
+          crew: row.crew,
+          source: "manual",
+          needs_review: true,
+        })
+        .select("id")
+        .single();
+      if (insertError) throw insertError;
+      await log(db, created.id as string, who, "project.created", `Copied from ${row.title}`);
+      count += 1;
+    }
+    await writeAuditLog({
+      actorUserId: admin.user.id,
+      actorEmail: admin.profile.email,
+      action: "ops_project.duplicated",
+      entityType: "ops_project",
+      afterData: { ids, count },
+    });
+    refresh();
+    return actionSuccess(count === 1 ? "Project copied." : `${count} projects copied.`);
+  } catch (error) {
+    return fail("duplicate", error);
+  }
+}
+
+export async function bulkArchiveProjectsAction(_prev: AdminActionState, formData: FormData): Promise<AdminActionState> {
+  const ids = idsFrom(formData);
+  if (!ids.length) return actionFailure("Select a project first.");
+  try {
+    const { db, admin, who } = await actor();
+    const { error } = await db.from("ops_projects").update({ archived_at: new Date().toISOString() }).in("id", ids);
+    if (error) throw error;
+    for (const id of ids) await log(db, id, who, "project.archived", "Archived from the board");
+    await writeAuditLog({
+      actorUserId: admin.user.id,
+      actorEmail: admin.profile.email,
+      action: "ops_project.archived",
+      entityType: "ops_project",
+      afterData: { ids },
+    });
+    refresh();
+    return actionSuccess(ids.length === 1 ? "Project archived." : `${ids.length} projects archived.`);
+  } catch (error) {
+    return fail("archive", error);
+  }
+}
+
+export async function deleteProjectsAction(_prev: AdminActionState, formData: FormData): Promise<AdminActionState> {
+  const ids = idsFrom(formData);
+  if (!ids.length) return actionFailure("Select a project first.");
+  try {
+    const { db, admin } = await actor();
+    const { data: titles, error: readError } = await db.from("ops_projects").select("id, title").in("id", ids);
+    if (readError) throw readError;
+    const { error: ordersError } = await db.from("ops_material_orders").delete().in("project_id", ids);
+    if (ordersError) throw ordersError;
+    const { error: quoteError } = await db.from("ops_xero_quote_links").delete().in("project_id", ids);
+    if (quoteError) throw quoteError;
+    const { error: invoiceError } = await db.from("ops_xero_invoice_links").delete().in("project_id", ids);
+    if (invoiceError) throw invoiceError;
+    const { error } = await db.from("ops_projects").delete().in("id", ids);
+    if (error) throw error;
+    await writeAuditLog({
+      actorUserId: admin.user.id,
+      actorEmail: admin.profile.email,
+      action: "ops_project.deleted",
+      entityType: "ops_project",
+      afterData: { ids, titles: (titles ?? []).map((t) => t.title) },
+    });
+    refresh();
+    return actionSuccess(ids.length === 1 ? "Project deleted." : `${ids.length} projects deleted.`);
+  } catch (error) {
+    return fail("delete", error);
+  }
+}
+
+export async function bulkMoveProjectsAction(_prev: AdminActionState, formData: FormData): Promise<AdminActionState> {
+  const ids = idsFrom(formData);
+  const group = text(formData, "group", 40);
+  if (!ids.length) return actionFailure("Select a project first.");
+  if (!isProjectGroup(group)) return actionFailure("Choose a stage.");
+  try {
+    const { db, admin, who } = await actor();
+    const { data, error } = await db
+      .from("ops_projects")
+      .select("id, stage, is_supply_only, payment_status, next_action, next_action_due")
+      .in("id", ids);
+    if (error) throw error;
+    const failures: string[] = [];
+    let moved = 0;
+    for (const project of data ?? []) {
+      if (!isProjectStage(project.stage)) continue;
+      const next = stageForGroup(group, project.stage);
+      if (next === project.stage) continue;
+      const check = checkStageChange(project, next, { allowWithoutDeposit: true });
+      if (!check.ok) {
+        failures.push(check.reason);
+        continue;
+      }
+      const { error: updateError } = await db
+        .from("ops_projects")
+        .update({ stage: next, completed_at: next === "completed" ? new Date().toISOString() : null })
+        .eq("id", project.id);
+      if (updateError) throw updateError;
+      await log(db, project.id, who, "stage.changed", `Stage moved from the board to ${stageLabel(next, project.is_supply_only)}`);
+      moved += 1;
+    }
+    await writeAuditLog({
+      actorUserId: admin.user.id,
+      actorEmail: admin.profile.email,
+      action: "ops_project.stage_changed",
+      entityType: "ops_project",
+      afterData: { ids, group, moved },
+    });
+    refresh();
+    if (!moved && failures.length) return actionFailure(failures[0]);
+    return actionSuccess(moved === 1 ? "Moved." : `${moved} projects moved.`);
+  } catch (error) {
+    return fail("move", error);
+  }
+}
+
+export async function linkProjectToXeroQuoteAction(_prev: AdminActionState, formData: FormData): Promise<AdminActionState> {
+  const id = text(formData, "id", 64);
+  const xeroId = text(formData, "xero_id", 64);
+  if (!UUID.test(id) || !UUID.test(xeroId)) return actionFailure("This project or quote could not be found.");
+  try {
+    const { db, admin, who } = await actor();
+    const { data: project, error: readError } = await db
+      .from("ops_projects")
+      .select("id, title, customer_name, xero_quote_numbers, xero_invoice_numbers, contact_person, contact_phone, contact_email, xero_contact_id, site_province, site_town, quoted_total_incl_vat")
+      .eq("id", id)
+      .maybeSingle();
+    if (readError) throw readError;
+    if (!project) return actionFailure("This project no longer exists.");
+    if (isLinkedToXero({ xero_quote_numbers: project.xero_quote_numbers ?? [], xero_invoice_numbers: project.xero_invoice_numbers ?? [] })) {
+      return actionFailure("This project is already linked to Xero.");
+    }
+    const bridge = bridgeOrNull();
+    if (!bridge) return actionFailure("The Xero connection is not set up on this site.");
+    const detail = await bridge.call<XeroQuoteDetail>("get_quote", { quote_id: xeroId });
+    const number = String(detail.number ?? "").toUpperCase();
+    if (!number) return actionFailure("That quote has no number in Xero.");
+    const { data: clash, error: clashError } = await db.from("ops_projects").select("title").overlaps("xero_quote_numbers", [number]).neq("id", id).limit(1);
+    if (clashError) throw clashError;
+    if (clash?.length) return actionFailure(`${number} already belongs to “${clash[0].title}”.`);
+    const { error: numberError } = await db
+      .from("ops_projects")
+      .update({
+        xero_quote_numbers: [number],
+        xero_contact_id: detail.contact_id && UUID.test(detail.contact_id) ? detail.contact_id : project.xero_contact_id,
+        customer_name: project.customer_name?.trim() ? project.customer_name : (detail.contact ?? "").slice(0, 200),
+        quoted_total_incl_vat: project.quoted_total_incl_vat ?? detail.total,
+        quoted_total_excl_vat: detail.subtotal,
+      })
+      .eq("id", id);
+    if (numberError) throw numberError;
+    const { error: rpcError } = await db.rpc("ops_import_accepted_quote", { p: buildQuoteImportPayload(detail, todayInSouthAfrica()) });
+    if (rpcError) throw rpcError;
+    await applyXeroExtras(db, id, { group: "", created: false, contactId: detail.contact_id, contactName: detail.contact });
+    await log(db, id, who, "xero.numbers_linked", `Linked Xero ${number}`);
+    await writeAuditLog({
+      actorUserId: admin.user.id,
+      actorEmail: admin.profile.email,
+      action: "ops_project.xero_linked",
+      entityType: "ops_project",
+      entityId: id,
+      afterData: { quote: number },
+    });
+    refresh(id);
+    return actionSuccess(`Linked ${number}.`);
+  } catch (error) {
+    return fail("link xero", error);
+  }
+}
+
+export async function updateXeroBoardAction(): Promise<AdminActionState> {
+  try {
+    const { db, admin } = await adminOpsDb({ permission: "runXeroSync" });
+    const result = await runConfiguredXeroSync("manual", { createProjects: false });
+    if (result.status === "skipped") {
+      if (result.reason === "already_running") return actionFailure("A sync is already running. Try again in a minute.");
+      if (result.reason === "needs_baseline") return actionFailure("Run the first (baseline) sync from Operations overview before updating.");
+      return actionFailure("The Xero bridge key is not set on the server (XERO_BRIDGE_API_KEY).");
+    }
+    if (result.status === "failed") return actionFailure(`Update failed: ${result.errors[0] ?? "unknown error"}`);
+    const bridge = bridgeOrNull();
+    if (bridge) {
+      const { data: projects } = await db
+        .from("ops_projects")
+        .select("id, customer_name, contact_person, contact_phone, contact_email, xero_contact_id, site_province, site_town")
+        .not("xero_contact_id", "is", null)
+        .is("archived_at", null)
+        .limit(40);
+      for (const project of projects ?? []) {
+        if (project.contact_person && project.contact_phone && project.contact_email) continue;
+        await applyXeroExtras(db, project.id as string, {
+          group: "",
+          created: false,
+          contactId: project.xero_contact_id as string,
+          contactName: project.customer_name as string,
+        });
+      }
+    }
+    await writeAuditLog({
+      actorUserId: admin.user.id,
+      actorEmail: admin.profile.email,
+      action: "ops.xero_sync",
+      entityType: "ops_sync",
+      afterData: { status: result.status, counts: result.counts, board: true },
+    });
+    refresh();
+    const c = result.counts;
+    const parts = [`${c.invoices_linked} invoices linked`, `${c.projects_updated} payment updates`];
+    return result.status === "partial"
+      ? actionFailure(`Updated with problems (${parts.join(", ")}). ${result.errors[0] ?? ""}`)
+      : actionSuccess(`Updated from Xero: ${parts.join(", ")}.`);
+  } catch (error) {
+    return fail("update xero", error);
+  }
 }
