@@ -60,7 +60,7 @@ async function ProjectsPageInner({ searchParams }: PageProps) {
   };
 
   return (
-    <div className="admin-stack--page ops">
+    <div className="admin-stack--page ops ops-projects-page">
       <AdminPageHeader
         title="Projects"
         description="Every won job, by stage."
@@ -76,7 +76,7 @@ async function ProjectsPageInner({ searchParams }: PageProps) {
       {!load.ok ? (
         load.error === "load_failed" ? <AdminErrorState title="Projects could not be loaded." message="Refresh in a moment." /> : null
       ) : (
-        <AdminPanel>
+        <AdminPanel className="admin-panel--board">
           <ProjectsWorkspace projects={load.data} canEdit={canEdit} focusAdd={Boolean(initial.add) && canEdit} initial={initial} />
         </AdminPanel>
       )}

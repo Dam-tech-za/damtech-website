@@ -19,7 +19,7 @@ import type { BoardProject } from "@/lib/operations/queries";
 import { PaymentPictureBadge } from "./PaymentPictureBadge";
 
 const PAYMENT_MENU_OPTIONS: Array<{ value: string; label: string; tone: string }> = [
-  { value: "", label: "Unset", tone: "ops-pay--empty" },
+  { value: "", label: "Set status", tone: "ops-pay--empty" },
   ...PAYMENT_LABELS.map((l) => ({
     value: l,
     label: PAYMENT_LABEL_TEXT[l],
@@ -194,6 +194,11 @@ export function PaymentEditCell({
                   onClick={() => commitPayment(option.value)}
                 >
                   <span className="ops-pay__text">{option.label}</span>
+                  {option.value === currentValue ? (
+                    <span className="ops-pay__tick" aria-hidden="true">
+                      ✓
+                    </span>
+                  ) : null}
                 </button>
               </li>
             ))}
@@ -220,7 +225,7 @@ export function PaymentEditCell({
           }
         }}
       >
-        <PaymentPictureBadge payment={project.payment} />
+        <PaymentPictureBadge payment={project.payment} showChevron />
       </button>
       {menu}
     </div>

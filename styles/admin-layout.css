@@ -2322,21 +2322,24 @@ form[aria-busy="true"] {
 
 /* Monday-style grouped projects sheet */
 .ops-sheet {
-  display: grid;
-  gap: var(--admin-space-2);
-  /* Fixed pixel columns so sticky offsets never drift from percentage squeeze. */
-  --col-check: 40px;
-  --col-project: 420px;
-  --col-pay: 160px;
-  --col-lead: 140px;
-  --col-client: 200px;
-  --col-email: 220px;
-  --col-xero: 130px;
-  --col-value: 130px;
-  --col-location: 240px;
-  /* check + project + pay + lead + client + email + xero + value + location */
-  --ops-sheet-min: 1680px;
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0;
+  gap: 0;
+  --col-check: 36px;
+  --col-project: 360px; /* measured live; sticky Payment uses this */
+  --col-pay: 150px;
+  --col-lead: 120px;
+  --col-client: 190px;
+  --col-email: 210px;
+  --col-xero: 110px;
+  --col-value: 120px;
+  --col-location: 230px;
+  /* fixed cols (~1166) + project min 360 */
+  --ops-sheet-min: 1526px;
   padding-bottom: 0;
+  width: 100%;
 }
 
 .ops-sheet__toolbar {
@@ -2372,18 +2375,25 @@ form[aria-busy="true"] {
 }
 
 .ops-sheet__scroll {
+  flex: 1 1 auto;
+  min-height: 0;
+  width: 100%;
   max-width: 100%;
-  overflow-x: scroll;
-  overflow-y: auto;
-  max-height: min(70vh, calc(100vh - 11rem));
-  overscroll-behavior-x: contain;
-  scrollbar-gutter: stable;
+  overflow: auto;
+  overscroll-behavior: contain;
   scrollbar-width: thin;
+  border: 1px solid #e6e9ef;
+  border-radius: 8px;
+  background: #fff;
 }
 
 .ops-sheet__scroll::-webkit-scrollbar {
-  height: 10px;
-  width: 10px;
+  height: 8px;
+  width: 8px;
+}
+
+.ops-sheet__scroll::-webkit-scrollbar-track {
+  background: transparent;
 }
 
 .ops-sheet__scroll::-webkit-scrollbar-thumb {
@@ -2393,16 +2403,27 @@ form[aria-busy="true"] {
 
 .ops-sheet__table {
   table-layout: fixed;
-  width: max-content;
-  min-width: max(100%, var(--ops-sheet-min));
+  width: 100%;
+  min-width: var(--ops-sheet-min);
   border-collapse: collapse;
+  font-size: 13px;
 }
+
+.ops-sheet__col-check { width: var(--col-check); }
+.ops-sheet__col-project { width: auto; min-width: 360px; }
+.ops-sheet__col-pay { width: var(--col-pay); }
+.ops-sheet__col-lead { width: var(--col-lead); }
+.ops-sheet__col-client { width: var(--col-client); }
+.ops-sheet__col-email { width: var(--col-email); }
+.ops-sheet__col-xero { width: var(--col-xero); }
+.ops-sheet__col-value { width: var(--col-value); }
+.ops-sheet__col-location { width: var(--col-location); }
 
 .ops-sheet__table th,
 .ops-sheet__table td {
-  padding: 0.3rem 0.45rem;
-  height: 3.25rem;
-  max-height: 3.25rem;
+  padding: 0 10px;
+  height: 44px;
+  max-height: 48px;
   vertical-align: middle;
   border-bottom: 1px solid #e6e9ef;
   border-right: 1px solid #e6e9ef;
@@ -2411,6 +2432,20 @@ form[aria-busy="true"] {
   text-overflow: ellipsis;
   white-space: nowrap;
   box-sizing: border-box;
+  text-align: center;
+  background: #fff;
+}
+
+.ops-sheet__table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 4;
+  background: #fff;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #8a97a6;
 }
 
 .ops-sheet__table th:last-child,
@@ -2429,21 +2464,22 @@ form[aria-busy="true"] {
   width: var(--col-check);
   min-width: var(--col-check);
   max-width: var(--col-check);
-  padding-left: 0.35rem !important;
-  padding-right: 0.2rem !important;
+  padding: 0 !important;
+  text-align: center;
 }
 
 .ops-sheet__c-project {
-  width: var(--col-project);
   min-width: 360px;
-  max-width: var(--col-project);
+  text-align: left !important;
+  font-weight: 650;
 }
 
 .ops-sheet__c-pay {
   width: var(--col-pay);
   min-width: var(--col-pay);
   max-width: var(--col-pay);
-  padding: 1px !important;
+  padding: 6px 10px !important;
+  background: #fff !important;
 }
 
 .ops-sheet__c-lead {
@@ -2456,6 +2492,9 @@ form[aria-busy="true"] {
   width: var(--col-client);
   min-width: var(--col-client);
   max-width: var(--col-client);
+  height: 48px;
+  max-height: 48px;
+  white-space: normal;
 }
 
 .ops-sheet__c-email {
@@ -2474,33 +2513,26 @@ form[aria-busy="true"] {
   width: var(--col-value);
   min-width: var(--col-value);
   max-width: var(--col-value);
+  font-variant-numeric: tabular-nums;
 }
 
 .ops-sheet__c-location {
   width: var(--col-location);
   min-width: var(--col-location);
   max-width: var(--col-location);
+  white-space: normal;
 }
 
 @media (max-width: 1100px) {
   .ops-sheet {
-    --ops-sheet-min: 1460px; /* without email */
+    --ops-sheet-min: 1316px; /* without email */
   }
 
   .ops-sheet__c-email,
   td.ops-sheet__c-email,
-  th.ops-sheet__c-email {
+  th.ops-sheet__c-email,
+  .ops-sheet__col-email {
     display: none;
-  }
-}
-
-/* Extra room on wide screens goes to Project, Client and Location. */
-@media (min-width: 1920px) {
-  .ops-sheet {
-    --col-project: 520px;
-    --col-client: 260px;
-    --col-location: 300px;
-    --ops-sheet-min: 1880px;
   }
 }
 
@@ -2511,7 +2543,7 @@ form[aria-busy="true"] {
 }
 
 .ops-sheet--frozen thead .ops-sheet__sticky {
-  z-index: 3;
+  z-index: 5;
 }
 
 .ops-sheet--frozen .ops-sheet__c-check {
@@ -2522,15 +2554,16 @@ form[aria-busy="true"] {
   left: var(--col-check);
 }
 
-/* Payment sits immediately after Project in the DOM for exact sticky offsets. */
+/* Payment sits immediately after Project; --col-project is measured in px. */
 .ops-sheet--frozen .ops-sheet__c-pay {
   left: calc(var(--col-check) + var(--col-project));
-  box-shadow: 2px 0 4px rgb(16 24 40 / 0.08);
+  box-shadow: 2px 0 4px rgb(16 24 40 / 0.06);
   z-index: 2;
+  background: #fff !important;
 }
 
 .ops-sheet--frozen thead .ops-sheet__c-pay {
-  z-index: 3;
+  z-index: 5;
 }
 
 .ops-sheet--frozen .ops-sheet__c-lead {
@@ -2539,18 +2572,14 @@ form[aria-busy="true"] {
   box-shadow: none;
 }
 
-/* Space for the floating selection bar — after the scroll area, not under it. */
-.ops-sheet__after {
-  height: 5.5rem;
-}
-
 .ops-sheet__group-row th {
-  padding: 0.35rem 0.4rem 0.2rem;
-  background: transparent;
-  border-bottom: 1px solid #e8eef4;
+  padding: 10px 10px 6px;
+  background: #f5f6f8;
+  border-bottom: 1px solid #e6e9ef;
   text-transform: none;
   letter-spacing: 0;
   box-shadow: none;
+  text-align: left !important;
 }
 
 .ops-group__count {
@@ -2766,7 +2795,7 @@ form[aria-busy="true"] {
 }
 
 .ops-sheet--frozen td.ops-sheet__c-pay {
-  background: transparent;
+  background: #fff !important;
 }
 
 .ops-client--edit {
@@ -2849,26 +2878,56 @@ form[aria-busy="true"] {
   white-space: nowrap;
 }
 
-/* Monday full-cell fill (board + filter chips + drawer). */
+/* Soft inset payment pills (board + menu). */
 .ops-pay--cell {
   position: relative;
-  display: flex;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   width: 100%;
-  height: 100%;
-  min-height: 2.6rem;
-  padding: 0.35rem 0.4rem;
-  border-radius: 0;
-  font-size: 0.7rem;
-  font-weight: 700;
-  letter-spacing: 0.01em;
-  text-transform: uppercase;
+  height: 28px;
+  min-height: 0;
+  padding: 0 22px 0 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0;
+  text-transform: none;
   text-align: center;
   box-sizing: border-box;
+  border: 0;
+  box-shadow: none;
+  cursor: pointer;
+}
+
+.ops-pay--cell:hover {
+  filter: brightness(0.97);
 }
 
 .ops-pay__text {
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.ops-pay__chevron {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+.ops-pay--cell:hover .ops-pay__chevron,
+.ops-pay-edit__trigger:hover .ops-pay__chevron {
+  opacity: 1;
+}
+
+.ops-pay__tick {
+  position: absolute;
+  right: 8px;
+  font-size: 11px;
+  opacity: 0.85;
 }
 
 .ops-pay__overdue {
@@ -2883,43 +2942,63 @@ form[aria-busy="true"] {
 }
 
 .ops-pay--not-invoiced {
-  background: #df2f4a;
-  color: #fff;
+  background: #fde2e6;
+  color: #b42339;
 }
 
 .ops-pay--invoiced {
-  background: #ffcb00;
-  color: #323338;
+  background: #fff3c4;
+  color: #8a6d00;
 }
 
 .ops-pay--portion {
-  background: #ffa64d;
-  color: #fff;
+  background: #ffe6cc;
+  color: #a65a00;
 }
 
 .ops-pay--deposit {
-  background: #fdab3d;
-  color: #fff;
+  background: #ffe9cf;
+  color: #9a5600;
 }
 
 .ops-pay--balance {
-  background: #ff7a45;
-  color: #fff;
+  background: #ffdccb;
+  color: #b0431a;
 }
 
 .ops-pay--paid {
-  background: #00c875;
-  color: #fff;
+  background: #cdf3e0;
+  color: #0b7a47;
 }
 
 .ops-pay--empty,
 .ops-pay--overdue {
-  background: #c4c4c4;
-  color: #323338;
+  background: #f1f3f5;
+  color: #9aa5b1;
 }
 
 .ops-pay.is-overdue {
   /* Overdue is the corner dot only — no second pill / border. */
+}
+
+.ops-pay-edit--cell,
+.ops-pay-edit__trigger {
+  position: relative;
+  width: 100%;
+  height: auto;
+  min-height: 0;
+}
+
+.ops-pay-edit__menu {
+  gap: 4px;
+  padding: 6px;
+  border: 1px solid #e6e9ef;
+  border-radius: 8px;
+  box-shadow: 0 6px 16px rgb(16 24 40 / 0.1);
+}
+
+.ops-pay-edit__menu .ops-pay--cell {
+  padding-right: 28px;
 }
 
 .ops-peek {
@@ -3289,4 +3368,367 @@ form[aria-busy="true"] {
   flex-wrap: wrap;
   gap: 0.5rem;
   justify-content: flex-end;
+}
+
+/* ----- Projects page: near full-width, no card, flex fill ----- */
+.admin-shell__main:has(.ops-projects-page) {
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.admin-shell__main:has(.ops-projects-page) .admin-header {
+  flex: 0 0 auto;
+}
+
+.admin-shell__content:has(.ops-projects-page) {
+  max-width: none;
+  padding: 12px 20px 0;
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: hidden;
+  background: #f5f6f8;
+}
+
+.admin-shell__content:has(.ops-projects-page) .admin-section-tabs {
+  flex: 0 0 auto;
+}
+
+.ops-projects-page {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0;
+  gap: 8px;
+}
+
+.ops-projects-page .admin-page-header {
+  flex: 0 0 auto;
+  margin-bottom: 0;
+}
+
+.ops-projects-page .admin-page-header__description {
+  color: #9aa5b1;
+  font-size: 13px;
+}
+
+.ops-projects-page .ops-xero-update .admin-btn {
+  background: transparent;
+  border: 0;
+  color: #323338;
+  box-shadow: none;
+}
+
+.ops-projects-page .ops-xero-update .admin-btn:hover {
+  background: #eef1f5;
+}
+
+.ops-projects-page .admin-action-message--success {
+  font-size: 12px;
+  color: #0b7a47;
+  background: transparent;
+  border: 0;
+  padding: 0;
+}
+
+.ops-projects-page .admin-panel--board {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  padding: 0;
+}
+
+.ops-projects-page .ops-workspace {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0;
+  gap: 8px;
+}
+
+.ops-client,
+.ops-client--edit {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 0.1rem;
+  min-width: 0;
+}
+
+.ops-sheet__c-lead .ops-inline-input,
+.ops-sheet__c-client .ops-inline-input,
+.ops-sheet__c-email .ops-inline-input,
+.ops-sheet__c-xero .ops-inline-input,
+.ops-sheet__c-value .ops-inline-input,
+.ops-sheet__c-location .ops-inline-input {
+  text-align: center;
+}
+
+.ops-sheet__c-project .ops-inline-input {
+  text-align: left;
+}
+
+.ops-sheet__add-row td {
+  background: #fff;
+}
+
+.ops-sheet__add {
+  background: #fff;
+}
+
+.ops-sheet__add-input,
+.ops-sheet__xero-link {
+  color: #9aa5b1;
+  font-size: 13px;
+  background: transparent !important;
+}
+
+.ops-sheet__add-input:hover,
+.ops-sheet__xero-link:hover {
+  color: #323338;
+}
+
+.ops-sheet__add-input:focus {
+  background: transparent !important;
+}
+
+/* monday.com slim toolbar */
+.ops-toolbar {
+  flex: 0 0 auto;
+  display: grid;
+  gap: 6px;
+}
+
+.ops-toolbar__row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  height: 40px;
+}
+
+.ops-toolbar__primary {
+  height: 32px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 6px;
+  background: #0073ea;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.ops-toolbar__primary:hover {
+  filter: brightness(0.96);
+}
+
+.ops-toolbar__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 32px;
+  padding: 0 10px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: #323338;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.ops-toolbar__btn:hover,
+.ops-toolbar__btn.is-active {
+  background: #eef1f5;
+}
+
+.ops-toolbar__btn--icon {
+  padding: 0 8px;
+}
+
+.ops-toolbar__chevron {
+  opacity: 0.55;
+}
+
+.ops-toolbar__badge {
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  border-radius: 999px;
+  background: #0073ea;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 16px;
+  text-align: center;
+}
+
+.ops-toolbar__dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #0073ea;
+}
+
+.ops-toolbar__search {
+  display: inline-flex;
+  align-items: center;
+  gap: 0;
+}
+
+.ops-toolbar__search-input {
+  width: 0;
+  opacity: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  transition: width 0.15s ease, opacity 0.15s ease;
+  font-size: 13px;
+  height: 32px;
+}
+
+.ops-toolbar__search.is-open .ops-toolbar__search-input {
+  width: 220px;
+  opacity: 1;
+  margin-left: 4px;
+  padding: 0 8px;
+  border-radius: 6px;
+  background: #fff;
+  border: 1px solid #e6e9ef;
+}
+
+.ops-toolbar__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  align-items: center;
+}
+
+.ops-toolbar__chip,
+.ops-toolbar__chips-inline .ops-toolbar__chip {
+  height: 24px;
+  padding: 0 8px;
+  border: 1px solid #e6e9ef;
+  border-radius: 999px;
+  background: #fff;
+  color: #323338;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.ops-toolbar__chip.is-on {
+  background: #eef1f5;
+  border-color: #c5ced9;
+}
+
+.ops-toolbar__chip-clear,
+.ops-toolbar__text-btn {
+  border: 0;
+  background: transparent;
+  color: #627d98;
+  font-size: 12px;
+  cursor: pointer;
+  padding: 0 6px;
+}
+
+.ops-toolbar__popover {
+  position: fixed;
+  z-index: 1000;
+  background: #fff;
+  border: 1px solid #e6e9ef;
+  border-radius: 8px;
+  box-shadow: 0 6px 16px rgb(16 24 40 / 0.1);
+  padding: 10px;
+  max-height: min(70vh, 420px);
+  overflow: auto;
+}
+
+.ops-toolbar__popover-title {
+  margin: 0 0 8px;
+  font-size: 12px;
+  font-weight: 650;
+  color: #627d98;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.ops-toolbar__form {
+  display: grid;
+  gap: 10px;
+  font-size: 13px;
+}
+
+.ops-toolbar__form label,
+.ops-toolbar__form fieldset {
+  display: grid;
+  gap: 4px;
+  border: 0;
+  margin: 0;
+  padding: 0;
+  font-weight: 600;
+  color: #627d98;
+  font-size: 12px;
+}
+
+.ops-toolbar__form .admin-select,
+.ops-toolbar__form .admin-input {
+  font-weight: 400;
+  color: #323338;
+}
+
+.ops-toolbar__pair {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.ops-toolbar__chips-inline {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.ops-toolbar__check-list,
+.ops-toolbar__radio-list,
+.ops-toolbar__menu-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 4px;
+}
+
+.ops-toolbar__check-list label,
+.ops-toolbar__radio-list label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: #323338;
+  font-weight: 400;
+  cursor: pointer;
+}
+
+.ops-toolbar__menu-list button {
+  width: 100%;
+  text-align: left;
+  border: 0;
+  background: transparent;
+  padding: 8px 6px;
+  border-radius: 6px;
+  font-size: 13px;
+  color: #323338;
+  cursor: pointer;
+}
+
+.ops-toolbar__menu-list button:hover {
+  background: #eef1f5;
 }

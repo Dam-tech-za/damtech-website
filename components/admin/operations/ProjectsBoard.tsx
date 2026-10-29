@@ -139,7 +139,7 @@ function AddProjectRow({
   return (
     <tr className="ops-sheet__add-row">
       <td className="ops-sheet__c-check ops-sheet__sticky" />
-      <td colSpan={8} className="ops-sheet__add">
+      <td colSpan={99} className="ops-sheet__add">
         <AdminActionForm action={createProjectQuickAction} className="ops-sheet__add-form" resetOnSuccess>
           <input type="hidden" name="group" value={group} />
           <input
@@ -171,6 +171,7 @@ export function ProjectsBoard({
   focusAdd = false,
   hideEmptyGroups = false,
   leadSuggestions = [],
+  hiddenColumns = [],
 }: {
   projects: BoardProject[];
   canEdit: boolean;
@@ -179,9 +180,14 @@ export function ProjectsBoard({
   /** When a stage/payment filter is active, hide empty stage headers. */
   hideEmptyGroups?: boolean;
   leadSuggestions?: string[];
+  hiddenColumns?: Array<"lead" | "client" | "email" | "xero" | "value" | "location">;
 }) {
+  const sheetRef = useRef<HTMLDivElement>(null);
+  const projectThRef = useRef<HTMLTableCellElement>(null);
   const [rows, setRows] = useState(projectsProp);
   const [rowsSource, setRowsSource] = useState(projectsProp);
+  const hide = (id: "lead" | "client" | "email" | "xero" | "value" | "location") =>
+    hiddenColumns.includes(id);
   // Reset optimistic rows when the filtered server list changes (React-recommended render sync).
   if (projectsProp !== rowsSource) {
     setRowsSource(projectsProp);
@@ -258,6 +264,24 @@ export function ProjectsBoard({
       });
   }, [canEdit]);
 
+  // Keep Payment sticky offset equal to the live Project column width.
+  useEffect(() => {
+    const sheet = sheetRef.current;
+    const th = projectThRef.current;
+    if (!sheet || !th) return;
+    const sync = () => {
+      sheet.style.setProperty("--col-project", `${Math.round(th.getBoundingClientRect().width)}px`);
+    };
+    sync();
+    const ro = new ResizeObserver(sync);
+    ro.observe(th);
+    window.addEventListener("resize", sync);
+    return () => {
+      ro.disconnect();
+      window.removeEventListener("resize", sync);
+    };
+  }, [hiddenColumns, rows.length, frozen]);
+
   const visibleIds = rows.map((p) => p.id);
   const selectedProjects = rows.filter((p) => selected.has(p.id));
   const allVisibleSelected = visibleIds.length > 0 && visibleIds.every((id) => selected.has(id));
@@ -280,9 +304,20 @@ export function ProjectsBoard({
   const firstEditableGroup = PROJECT_GROUPS[0] ?? "awaiting";
 
   return (
-    <div className={`ops-sheet${frozen ? " ops-sheet--frozen" : ""}`}>
+    <div ref={sheetRef} className={`ops-sheet${frozen ? " ops-sheet--frozen" : ""}`}>
       <div className="ops-sheet__scroll">
         <table className="admin-table ops-table ops-board-table ops-sheet__table">
+          <colgroup>
+            <col className="ops-sheet__col-check" />
+            <col className="ops-sheet__col-project" />
+            <col className="ops-sheet__col-pay" />
+            {!hide("lead") ? <col className="ops-sheet__col-lead" /> : null}
+            {!hide("client") ? <col className="ops-sheet__col-client" /> : null}
+            {!hide("email") ? <col className="ops-sheet__col-email" /> : null}
+            {!hide("xero") ? <col className="ops-sheet__col-xero" /> : null}
+            {!hide("value") ? <col className="ops-sheet__col-value" /> : null}
+            {!hide("location") ? <col className="ops-sheet__col-location" /> : null}
+          </colgroup>
           <thead>
             <tr>
               <th className="ops-sheet__c-check ops-sheet__sticky" scope="col">
@@ -291,30 +326,42 @@ export function ProjectsBoard({
                   <input type="checkbox" checked={allVisibleSelected} onChange={toggleAll} aria-label="Select all projects" />
                 ) : null}
               </th>
-              <th className="ops-sheet__c-project ops-sheet__sticky" scope="col">
+              <th ref={projectThRef} className="ops-sheet__c-project ops-sheet__sticky" scope="col">
                 Project
               </th>
               <th className="ops-sheet__c-pay ops-sheet__sticky" scope="col">
                 Payment
               </th>
-              <th className="ops-sheet__c-lead" scope="col">
-                Lead
-              </th>
-              <th className="ops-sheet__c-client" scope="col">
-                Client
-              </th>
-              <th className="ops-sheet__c-email" scope="col">
-                Email
-              </th>
-              <th className="ops-sheet__c-xero" scope="col">
-                Xero
-              </th>
-              <th className="ops-sheet__c-value" scope="col">
-                Value
-              </th>
-              <th className="ops-sheet__c-location" scope="col">
-                Location
-              </th>
+              {!hide("lead") ? (
+                <th className="ops-sheet__c-lead" scope="col">
+                  Lead
+                </th>
+              ) : null}
+              {!hide("client") ? (
+                <th className="ops-sheet__c-client" scope="col">
+                  Client
+                </th>
+              ) : null}
+              {!hide("email") ? (
+                <th className="ops-sheet__c-email" scope="col">
+                  Email
+                </th>
+              ) : null}
+              {!hide("xero") ? (
+                <th className="ops-sheet__c-xero" scope="col">
+                  Xero
+                </th>
+              ) : null}
+              {!hide("value") ? (
+                <th className="ops-sheet__c-value" scope="col">
+                  Value
+                </th>
+              ) : null}
+              {!hide("location") ? (
+                <th className="ops-sheet__c-location" scope="col">
+                  Location
+                </th>
+              ) : null}
             </tr>
           </thead>
           {groups.map(({ group, projects: rows }) => {
@@ -322,7 +369,7 @@ export function ProjectsBoard({
             return (
               <tbody key={group} className={`ops-sheet__group ops-sheet__group--${group}${open ? "" : " is-collapsed"}`}>
                 <tr className="ops-sheet__group-row">
-                  <th colSpan={9} scope="colgroup">
+                  <th colSpan={3 + (9 - 3 - hiddenColumns.length)} scope="colgroup">
                     <button
                       type="button"
                       className={`ops-sheet__group-btn ops-sheet__group-btn--${group}`}
@@ -356,29 +403,41 @@ export function ProjectsBoard({
                         <td className="ops-sheet__c-pay ops-sheet__sticky" data-label="Payment">
                           <PaymentEditCell project={p} canEdit={canEdit} onPatched={patchRow} />
                         </td>
-                        <td className="ops-sheet__c-lead" data-label="Lead">
-                          <LeadCell project={p} canEdit={canEdit} suggestions={leads} onPatched={patchRow} />
-                        </td>
-                        <td className="ops-sheet__c-client" data-label="Client">
-                          <ClientEditCell project={p} canEdit={canEdit} onPatched={patchRow} />
-                        </td>
-                        <td className="ops-sheet__c-email" data-label="Email">
-                          <EmailEditCell project={p} canEdit={canEdit} onPatched={patchRow} />
-                        </td>
-                        <td className="ops-sheet__c-xero" data-label="Xero">
-                          <XeroEditCell project={p} canEdit={canEdit} onPatched={patchRow} />
-                        </td>
-                        <td className="ops-sheet__c-value" data-label="Value">
-                          <ValueEditCell project={p} canEdit={canEdit} onPatched={patchRow} />
-                        </td>
-                        <td className="ops-sheet__c-location" data-label="Location">
-                          <LocationEditCell
-                            project={p}
-                            canEdit={canEdit}
-                            display={formatLocationCell(p)}
-                            onPatched={patchRow}
-                          />
-                        </td>
+                        {!hide("lead") ? (
+                          <td className="ops-sheet__c-lead" data-label="Lead">
+                            <LeadCell project={p} canEdit={canEdit} suggestions={leads} onPatched={patchRow} />
+                          </td>
+                        ) : null}
+                        {!hide("client") ? (
+                          <td className="ops-sheet__c-client" data-label="Client">
+                            <ClientEditCell project={p} canEdit={canEdit} onPatched={patchRow} />
+                          </td>
+                        ) : null}
+                        {!hide("email") ? (
+                          <td className="ops-sheet__c-email" data-label="Email">
+                            <EmailEditCell project={p} canEdit={canEdit} onPatched={patchRow} />
+                          </td>
+                        ) : null}
+                        {!hide("xero") ? (
+                          <td className="ops-sheet__c-xero" data-label="Xero">
+                            <XeroEditCell project={p} canEdit={canEdit} onPatched={patchRow} />
+                          </td>
+                        ) : null}
+                        {!hide("value") ? (
+                          <td className="ops-sheet__c-value" data-label="Value">
+                            <ValueEditCell project={p} canEdit={canEdit} onPatched={patchRow} />
+                          </td>
+                        ) : null}
+                        {!hide("location") ? (
+                          <td className="ops-sheet__c-location" data-label="Location">
+                            <LocationEditCell
+                              project={p}
+                              canEdit={canEdit}
+                              display={formatLocationCell(p)}
+                              onPatched={patchRow}
+                            />
+                          </td>
+                        ) : null}
                       </tr>
                     ))
                   : null}
@@ -395,7 +454,6 @@ export function ProjectsBoard({
           })}
         </table>
       </div>
-      <div className="ops-sheet__after" aria-hidden="true" />
 
       {selectedProjects.length > 0 && canEdit ? (
         <div className="ops-selection-bar" role="toolbar" aria-label="Selected projects">
