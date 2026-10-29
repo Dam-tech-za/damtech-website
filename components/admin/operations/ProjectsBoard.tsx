@@ -14,7 +14,7 @@ import {
   createProjectQuickAction,
   deleteProjectsAction,
   duplicateProjectsAction,
-} from "@/app/admin/operations/board-project-actions";
+} from "@/app/admin/operations/project-actions";
 import { loadBoardXeroQuotesAction } from "@/app/admin/operations/board-xero-actions";
 import type { XeroStartItem } from "@/lib/operations/xero-start";
 import {
@@ -33,48 +33,34 @@ import { PhoneCell } from "./PhoneCell";
 import { formatOpsMoney } from "./ops-format";
 
 const COLLAPSE_KEY = "ops-board-collapsed-groups";
-const EMPTY_COLLAPSED: ProjectGroup[] = [];
-let collapsedCache: ProjectGroup[] = EMPTY_COLLAPSED;
+const COLLAPSE_EVENT = "ops-board-collapsed";
 
-function parseCollapsed(raw: string | null): ProjectGroup[] {
-  try {
-    const parsed = raw ? (JSON.parse(raw) as unknown) : [];
-    return Array.isArray(parsed) ? parsed.filter((g): g is ProjectGroup => PROJECT_GROUPS.includes(g as ProjectGroup)) : EMPTY_COLLAPSED;
-  } catch {
-    return EMPTY_COLLAPSED;
-  }
-}
-
-/** Stable snapshot for useSyncExternalStore — a new array every read causes an infinite render loop. */
-function readCollapsed(): ProjectGroup[] {
-  try {
-    const next = parseCollapsed(window.localStorage.getItem(COLLAPSE_KEY));
-    if (
-      next.length === collapsedCache.length &&
-      next.every((g, i) => g === collapsedCache[i])
-    ) {
-      return collapsedCache;
-    }
-    collapsedCache = next.length ? next : EMPTY_COLLAPSED;
-    return collapsedCache;
-  } catch {
-    return EMPTY_COLLAPSED;
-  }
-}
-
+/** Store the raw string so getSnapshot stays referentially stable between reads. */
 function subscribeCollapsed(onStoreChange: () => void) {
-  window.addEventListener("ops-board-collapsed", onStoreChange);
+  window.addEventListener(COLLAPSE_EVENT, onStoreChange);
   window.addEventListener("storage", onStoreChange);
   return () => {
-    window.removeEventListener("ops-board-collapsed", onStoreChange);
+    window.removeEventListener(COLLAPSE_EVENT, onStoreChange);
     window.removeEventListener("storage", onStoreChange);
   };
 }
 
-function writeCollapsed(next: ProjectGroup[]) {
-  collapsedCache = next.length ? next : EMPTY_COLLAPSED;
-  window.localStorage.setItem(COLLAPSE_KEY, JSON.stringify(collapsedCache));
-  window.dispatchEvent(new Event("ops-board-collapsed"));
+function getCollapsedRaw(): string {
+  try {
+    return window.localStorage.getItem(COLLAPSE_KEY) ?? "";
+  } catch {
+    return "";
+  }
+}
+
+function parseCollapsed(raw: string): ProjectGroup[] {
+  if (!raw) return [];
+  try {
+    const parsed = JSON.parse(raw) as unknown;
+    return Array.isArray(parsed) ? parsed.filter((g): g is ProjectGroup => PROJECT_GROUPS.includes(g as ProjectGroup)) : [];
+  } catch {
+    return [];
+  }
 }
 
 function csvCell(value: string): string {
@@ -117,7 +103,8 @@ export function ProjectsBoard({
   canEdit: boolean;
 }) {
   const groups = useMemo(() => boardGroups(projects), [projects]);
-  const collapsed = useSyncExternalStore(subscribeCollapsed, readCollapsed, () => EMPTY_COLLAPSED);
+  const collapsedRaw = useSyncExternalStore(subscribeCollapsed, getCollapsedRaw, () => "");
+  const collapsed = useMemo(() => parseCollapsed(collapsedRaw), [collapsedRaw]);
   const [frozen, setFrozen] = useState(true);
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [xeroGroup, setXeroGroup] = useState<ProjectGroup | null>(null);
@@ -145,7 +132,12 @@ export function ProjectsBoard({
 
   const toggleGroup = (group: ProjectGroup) => {
     const next = collapsed.includes(group) ? collapsed.filter((g) => g !== group) : [...collapsed, group];
-    writeCollapsed(next);
+    try {
+      window.localStorage.setItem(COLLAPSE_KEY, JSON.stringify(next));
+    } catch {
+      // Private mode: collapse still works until reload.
+    }
+    window.dispatchEvent(new Event(COLLAPSE_EVENT));
   };
 
   const visibleIds = projects.map((p) => p.id);
