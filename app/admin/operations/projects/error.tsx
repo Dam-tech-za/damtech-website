@@ -13,7 +13,7 @@ export default function ProjectsBoardError({
     <div className="admin-stack--page ops">
       <AdminErrorState
         title="Projects could not be loaded."
-        message="Refresh in a moment, or go back to Operations."
+        message={error.message?.trim() || "Refresh in a moment, or go back to Operations."}
         incidentId={error.digest}
       />
       <p>
