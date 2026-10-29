@@ -66,11 +66,15 @@ export function RfqInboxTable({
   const rowIds = useMemo(() => new Set(visibleRows.map((row) => row.id)), [visibleRows]);
   const effectiveSelected = selected.filter((id) => rowIds.has(id));
 
+  function showToast(message: string) {
+    setToastMessage(message);
+    window.setTimeout(() => setToastMessage(null), 5000);
+  }
+
   function handleRowDeleted(id: string) {
     setRemovedIds((prev) => (prev.includes(id) ? prev : [...prev, id]));
     setSelected((prev) => prev.filter((rowId) => rowId !== id));
-    setToastMessage("Enquiry deleted.");
-    window.setTimeout(() => setToastMessage(null), 5000);
+    showToast("Enquiry deleted.");
   }
 
   const [peek, setPeek] = useState<RfqInboxRow | null>(null);
@@ -94,7 +98,9 @@ export function RfqInboxTable({
     : `${visibleTotal} ${visibleTotal === 1 ? "enquiry" : "enquiries"}`;
 
   return (
-    <section className="rfq-inbox-panel">
+    <section
+      className={`rfq-inbox-panel${effectiveSelected.length > 0 ? " rfq-inbox-panel--has-selection" : ""}`}
+    >
       <header className="rfq-inbox-panel__header">
         <div>
           <p className="rfq-inbox-panel__count">{countLabel}</p>
@@ -105,14 +111,11 @@ export function RfqInboxTable({
 
       <RfqBulkActions
         selectedCount={effectiveSelected.length}
-        totalOnPage={visibleRows.length}
         staff={staff}
+        canManage={canManage}
         selectedIds={effectiveSelected}
-        allSelected={
-          effectiveSelected.length === visibleRows.length && visibleRows.length > 0
-        }
         onClear={() => setSelected([])}
-        onToggleAll={toggleAll}
+        onToast={showToast}
         bulkStatusAction={async (formData) => {
           const result = await bulkStatusAction(formData);
           if (result.ok) setSelected([]);
