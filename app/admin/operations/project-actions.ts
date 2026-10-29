@@ -1185,11 +1185,14 @@ export async function updateXeroBoardAction(
     if (result.status === "failed") return actionFailure(`Update failed: ${result.errors[0] ?? "unknown error"}`);
     const bridge = bridgeOrNull();
     let backfilled = 0;
+    let phonesFilled = 0;
+    let emailsFilled = 0;
+    const noPhoneInXero: string[] = [];
     if (bridge) {
       const { data: projects } = await db
         .from("ops_projects")
         .select(
-          "id, customer_name, contact_person, contact_phone, contact_email, xero_contact_id, quoted_total_incl_vat, site_province, site_town, xero_quote_numbers",
+          "id, title, customer_name, contact_person, contact_phone, contact_email, xero_contact_id, quoted_total_incl_vat, site_province, site_town, xero_quote_numbers",
         )
         .is("archived_at", null)
         .limit(80);
@@ -1220,17 +1223,52 @@ export async function updateXeroBoardAction(
         quoteTotals = new Map();
       }
       for (const project of projects ?? []) {
+        const needsPhone = !String(project.contact_phone ?? "").trim();
+        const needsEmail = !String(project.contact_email ?? "").trim();
         const needsPeople =
-          !project.customer_name || !project.contact_person || !project.contact_phone || !project.contact_email;
+          !project.customer_name || !project.contact_person || needsPhone || needsEmail;
         const needsPlace = !project.site_province && !project.site_town;
         if ((needsPeople || needsPlace) && (project.xero_contact_id || project.customer_name)) {
-          await applyXeroExtras(db, project.id as string, {
-            group: "",
-            created: false,
-            contactId: (project.xero_contact_id as string | null) ?? null,
-            contactName: (project.customer_name as string | null) ?? null,
+          const extras = await fetchXeroContactExtras(bridge, {
+            id: (project.xero_contact_id as string | null) ?? null,
+            name: (project.customer_name as string | null) ?? (project.contact_person as string | null),
           });
-          backfilled += 1;
+          if (extras) {
+            const beforePhone = needsPhone;
+            const beforeEmail = needsEmail;
+            const patch = fillFromXeroContact(
+              {
+                customer_name: project.customer_name as string | null,
+                contact_person: project.contact_person as string | null,
+                contact_phone: project.contact_phone as string | null,
+                contact_email: project.contact_email as string | null,
+                xero_contact_id: project.xero_contact_id as string | null,
+              },
+              extras,
+            );
+            if (!project.site_town && !project.site_province) {
+              const loc = locationFromXeroCity(extras.city, extras.region);
+              if (loc) Object.assign(patch, loc);
+            }
+            if (Object.keys(patch).length) {
+              const { error: patchError } = await db.from("ops_projects").update(patch).eq("id", project.id);
+              if (!patchError) {
+                backfilled += 1;
+                if (beforePhone && patch.contact_phone) phonesFilled += 1;
+                if (beforeEmail && patch.contact_email) emailsFilled += 1;
+              }
+            }
+            if (beforePhone && !extras.phone) {
+              const label = String(project.title ?? project.id);
+              noPhoneInXero.push(label);
+              console.info(
+                `[operations] Xero contact has no usable phone for “${label}”` +
+                  (extras.phonesPresentButEmpty
+                    ? " (Phones[] present but empty / fax-only)."
+                    : " (no Phones[] / PhoneNumber on the contact)."),
+              );
+            }
+          }
         }
         if (project.quoted_total_incl_vat == null) {
           const { data: links } = await db
@@ -1264,6 +1302,9 @@ export async function updateXeroBoardAction(
           }
         }
       }
+      console.info(
+        `[operations] Xero contact backfill: ${phonesFilled} phones, ${emailsFilled} emails, ${noPhoneInXero.length} contacts with no phone in Xero.`,
+      );
     }
     try {
       const { invalidateBoardXeroQuotesCache } = await import("./board-xero-actions");
@@ -1282,6 +1323,9 @@ export async function updateXeroBoardAction(
     const c = result.counts;
     const parts = [`${c.invoices_linked} invoices linked`, `${c.projects_updated} payment updates`];
     if (backfilled) parts.push(`${backfilled} contact/value refreshes`);
+    if (phonesFilled) parts.push(`${phonesFilled} phones filled`);
+    if (emailsFilled) parts.push(`${emailsFilled} emails filled`);
+    if (noPhoneInXero.length) parts.push(`${noPhoneInXero.length} with no phone in Xero`);
     return result.status === "partial"
       ? actionFailure(`Updated with problems (${parts.join(", ")}). ${result.errors[0] ?? ""}`)
       : actionSuccess(`Updated from Xero: ${parts.join(", ")}.`);

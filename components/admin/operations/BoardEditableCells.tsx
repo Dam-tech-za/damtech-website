@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useId, useRef, useState, type KeyboardEvent, type ReactNode } from "react";
+import { useId, useRef, useState, type KeyboardEvent, type ReactNode } from "react";
 import { updateBoardFieldAction } from "@/app/admin/operations/board-field-actions";
 import { PAYMENT_LABELS, PAYMENT_LABEL_TEXT, type PaymentLabel } from "@/lib/operations/board";
 import { SA_TOWNS } from "@/lib/operations/sa-places";
@@ -11,14 +11,13 @@ import { PaymentPictureBadge } from "./PaymentPictureBadge";
 
 type SaveFn = (field: string, value: string, extra?: string) => Promise<boolean>;
 
-function useCellSave(projectId: string, onPatched?: (patch: Partial<BoardProject>) => void): SaveFn {
+function useCellSave(projectId: string): SaveFn {
   return async (field, value, extra) => {
     const result = await updateBoardFieldAction({ id: projectId, field, value, extra });
     if (!result?.ok) {
       window.alert(result?.message || "Could not save.");
       return false;
     }
-    onPatched?.({});
     return true;
   };
 }
@@ -27,38 +26,126 @@ function SavedTick({ show }: { show: boolean }) {
   if (!show) return null;
   return (
     <span className="ops-cell__saved" aria-live="polite">
-      Saved
+      ✓
     </span>
   );
 }
 
-function CellShell({
-  display,
+function focusNextCell(from: HTMLElement, dir: 1 | -1) {
+  const row = from.closest("tr");
+  if (!row) return;
+  const cells = [...row.querySelectorAll<HTMLElement>("[data-ops-cell]")];
+  const i = cells.indexOf(from);
+  if (i < 0) return;
+  const next = cells[i + dir];
+  if (!next) return;
+  next.focus();
+  if (next instanceof HTMLInputElement || next instanceof HTMLTextAreaElement) {
+    const len = next.value.length;
+    try {
+      next.setSelectionRange(dir === 1 ? 0 : len, dir === 1 ? 0 : len);
+    } catch {
+      // Some input types reject selection.
+    }
+  }
+}
+
+/** Always-visible transparent text field — click places the caret natively. */
+function InlineText({
+  value,
+  displayValue,
+  placeholder,
   title,
-  editing,
-  onStart,
-  children,
+  maxLength,
+  listId,
   className,
-  multiline,
+  ariaLabel,
+  inputMode,
+  onCommit,
+  onCancelValue,
 }: {
-  display: ReactNode;
+  value: string;
+  /** When set and not focused, show this instead of `value` (e.g. formatted money/phone). */
+  displayValue?: string;
+  placeholder: string;
   title?: string;
-  editing: boolean;
-  onStart: () => void;
-  children: ReactNode;
+  maxLength?: number;
+  listId?: string;
   className?: string;
-  multiline?: boolean;
+  ariaLabel: string;
+  inputMode?: "text" | "decimal" | "email" | "tel";
+  onCommit: (next: string) => Promise<boolean>;
+  onCancelValue: string;
 }) {
-  if (editing) return <div className={`ops-cell ops-cell--editing ${className ?? ""}`}>{children}</div>;
+  const [draft, setDraft] = useState(value);
+  const [focused, setFocused] = useState(false);
+  const [saved, setSaved] = useState(false);
+  const [source, setSource] = useState(value);
+  const saving = useRef(false);
+
+  // Keep draft in sync when the parent row patches after save / filter refresh.
+  if (!focused && value !== source) {
+    setSource(value);
+    setDraft(value);
+  }
+
+  const shown = focused ? draft : (displayValue ?? draft);
+
+  const commit = async () => {
+    if (saving.current) return;
+    saving.current = true;
+    const ok = await onCommit(draft);
+    saving.current = false;
+    if (ok) {
+      setSource(draft);
+      setSaved(true);
+      window.setTimeout(() => setSaved(false), 1000);
+    } else {
+      setDraft(source);
+    }
+  };
+
+  const onKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      (e.target as HTMLInputElement).blur();
+    } else if (e.key === "Escape") {
+      e.preventDefault();
+      setDraft(onCancelValue);
+      setSource(onCancelValue);
+      (e.target as HTMLInputElement).blur();
+    } else if (e.key === "Tab") {
+      // Let blur save, then move within the row.
+      const el = e.currentTarget;
+      window.setTimeout(() => focusNextCell(el, e.shiftKey ? -1 : 1), 0);
+    }
+  };
+
   return (
-    <button
-      type="button"
-      className={`ops-cell ops-cell--btn ${multiline ? "ops-cell--multi" : ""} ${className ?? ""}`}
-      title={title}
-      onClick={onStart}
-    >
-      {display}
-    </button>
+    <span className={`ops-inline ${className ?? ""}`}>
+      <input
+        data-ops-cell
+        className={`ops-inline-input${focused ? " is-focused" : ""}`}
+        value={shown}
+        title={title}
+        placeholder={placeholder}
+        maxLength={maxLength}
+        list={listId}
+        aria-label={ariaLabel}
+        inputMode={inputMode}
+        onFocus={() => {
+          setFocused(true);
+          setDraft(value);
+        }}
+        onChange={(e) => setDraft(e.target.value)}
+        onBlur={() => {
+          setFocused(false);
+          void commit();
+        }}
+        onKeyDown={onKeyDown}
+      />
+      <SavedTick show={saved} />
+    </span>
   );
 }
 
@@ -73,65 +160,33 @@ export function TitleCell({
   onPatched?: (p: BoardProject) => void;
   canEdit: boolean;
 }) {
-  const [editing, setEditing] = useState(false);
-  const [draft, setDraft] = useState(project.title);
-  const [saved, setSaved] = useState(false);
-  const inputRef = useRef<HTMLInputElement>(null);
   const save = useCellSave(project.id);
-
-  useEffect(() => {
-    if (editing) inputRef.current?.focus();
-  }, [editing]);
-
   if (!canEdit) {
-    return <span className="ops-table__title" title={project.title}>{project.title}</span>;
+    return (
+      <span className="ops-table__title" title={project.title}>
+        {project.title}
+      </span>
+    );
   }
-
-  const commit = async () => {
-    const ok = await save("title", draft);
-    if (ok) {
-      onPatched?.({ ...project, title: draft.trim() || "Untitled project" });
-      setSaved(true);
-      setTimeout(() => setSaved(false), 1200);
-      setEditing(false);
-    }
-  };
-
   return (
     <div className="ops-title-cell">
-      <CellShell
-        editing={editing}
-        onStart={() => {
-          setDraft(project.title);
-          setEditing(true);
-        }}
+      <InlineText
+        value={project.title}
+        placeholder="+ Project"
         title={project.title}
-        display={<span className="ops-table__title ops-title-cell__text">{project.title}</span>}
-        multiline
-      >
-        <input
-          ref={inputRef}
-          className="admin-input ops-cell__input"
-          value={draft}
-          maxLength={200}
-          onChange={(e) => setDraft(e.target.value)}
-          onBlur={() => void commit()}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") {
-              e.preventDefault();
-              void commit();
-            }
-            if (e.key === "Escape") {
-              setDraft(project.title);
-              setEditing(false);
-            }
-          }}
-        />
-      </CellShell>
+        maxLength={200}
+        ariaLabel={`Project name for ${project.title}`}
+        className="ops-inline--title"
+        onCancelValue={project.title}
+        onCommit={async (next) => {
+          const ok = await save("title", next);
+          if (ok) onPatched?.({ ...project, title: next.trim() || "Untitled project" });
+          return ok;
+        }}
+      />
       <button type="button" className="ops-title-cell__peek" aria-label="Open quick view" title="Quick view" onClick={onPeek}>
         ▸
       </button>
-      <SavedTick show={saved} />
     </div>
   );
 }
@@ -148,63 +203,29 @@ export function LeadCell({
   onPatched?: (p: BoardProject) => void;
 }) {
   const listId = useId();
-  const [editing, setEditing] = useState(false);
-  const [draft, setDraft] = useState(project.leadName ?? "");
-  const [saved, setSaved] = useState(false);
-  const inputRef = useRef<HTMLInputElement>(null);
   const save = useCellSave(project.id);
-
-  useEffect(() => {
-    if (editing) inputRef.current?.focus();
-  }, [editing]);
-
   if (!canEdit) return <span>{project.leadName || "—"}</span>;
-
-  const commit = async () => {
-    const ok = await save("lead", draft);
-    if (ok) {
-      onPatched?.({ ...project, leadName: draft.trim() || null, project_lead_name: draft.trim() || null });
-      setSaved(true);
-      setTimeout(() => setSaved(false), 1200);
-      setEditing(false);
-    }
-  };
-
   return (
     <>
-      <CellShell
-        editing={editing}
-        onStart={() => {
-          setDraft(project.leadName ?? "");
-          setEditing(true);
+      <InlineText
+        value={project.leadName ?? ""}
+        placeholder="+ Lead"
+        title={project.leadName ?? undefined}
+        maxLength={120}
+        listId={listId}
+        ariaLabel={`Lead for ${project.title}`}
+        onCancelValue={project.leadName ?? ""}
+        onCommit={async (next) => {
+          const ok = await save("lead", next);
+          if (ok) onPatched?.({ ...project, leadName: next.trim() || null, project_lead_name: next.trim() || null });
+          return ok;
         }}
-        title={project.leadName ?? "Add lead"}
-        display={project.leadName || <span className="ops-table__meta">+ Lead</span>}
-      >
-        <input
-          ref={inputRef}
-          className="admin-input ops-cell__input"
-          list={listId}
-          value={draft}
-          maxLength={120}
-          placeholder="Arno, Andre…"
-          onChange={(e) => setDraft(e.target.value)}
-          onBlur={() => void commit()}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") {
-              e.preventDefault();
-              void commit();
-            }
-            if (e.key === "Escape") setEditing(false);
-          }}
-        />
-        <datalist id={listId}>
-          {suggestions.map((s) => (
-            <option key={s} value={s} />
-          ))}
-        </datalist>
-      </CellShell>
-      <SavedTick show={saved} />
+      />
+      <datalist id={listId}>
+        {suggestions.map((s) => (
+          <option key={s} value={s} />
+        ))}
+      </datalist>
     </>
   );
 }
@@ -224,6 +245,7 @@ export function PaymentEditCell({
   return (
     <div className="ops-pay-edit">
       <select
+        data-ops-cell
         className="admin-select ops-cell__select"
         aria-label={`Payment for ${project.title}`}
         value={project.payment.label ?? ""}
@@ -234,10 +256,7 @@ export function PaymentEditCell({
             if (ok) {
               onPatched?.({
                 ...project,
-                payment: {
-                  ...project.payment,
-                  label: (next || null) as PaymentLabel | null,
-                },
+                payment: { ...project.payment, label: (next || null) as PaymentLabel | null },
                 payment_label_override: next || null,
               });
             }
@@ -265,9 +284,6 @@ export function ClientEditCell({
   canEdit: boolean;
   onPatched?: (p: BoardProject) => void;
 }) {
-  const [mode, setMode] = useState<"idle" | "name" | "phone">("idle");
-  const [name, setName] = useState(project.contact_person ?? "");
-  const [phone, setPhone] = useState(project.contact_phone ?? "");
   const save = useCellSave(project.id);
   const shown = displayPhone(project.contact_phone);
 
@@ -279,88 +295,92 @@ export function ClientEditCell({
           <span className="ops-client__phone">
             {shown.flag ? <span aria-hidden="true">{shown.flag}</span> : null} {shown.text}
           </span>
-        ) : null}
+        ) : (
+          <span className="ops-table__meta">+ Phone</span>
+        )}
       </span>
-    );
-  }
-
-  if (mode === "name") {
-    return (
-      <input
-        className="admin-input ops-cell__input"
-        autoFocus
-        value={name}
-        maxLength={200}
-        placeholder="Client name"
-        onChange={(e) => setName(e.target.value)}
-        onBlur={() => {
-          void (async () => {
-            const ok = await save("client", name);
-            if (ok) onPatched?.({ ...project, contact_person: name.trim() || null });
-            setMode("idle");
-          })();
-        }}
-        onKeyDown={(e: KeyboardEvent<HTMLInputElement>) => {
-          if (e.key === "Enter") (e.target as HTMLInputElement).blur();
-          if (e.key === "Escape") setMode("idle");
-        }}
-      />
-    );
-  }
-
-  if (mode === "phone") {
-    return (
-      <input
-        className="admin-input ops-cell__input"
-        autoFocus
-        value={phone}
-        maxLength={40}
-        placeholder="083…"
-        onChange={(e) => setPhone(e.target.value)}
-        onBlur={() => {
-          void (async () => {
-            const ok = await save("phone", phone);
-            if (ok) onPatched?.({ ...project, contact_phone: phone.trim() || null });
-            setMode("idle");
-          })();
-        }}
-        onKeyDown={(e: KeyboardEvent<HTMLInputElement>) => {
-          if (e.key === "Enter") (e.target as HTMLInputElement).blur();
-          if (e.key === "Escape") setMode("idle");
-        }}
-      />
     );
   }
 
   return (
     <span className="ops-client ops-client--edit">
-      <button
-        type="button"
-        className="ops-cell--btn ops-client__name"
-        onClick={() => {
-          setName(project.contact_person ?? "");
-          setMode("name");
+      <InlineText
+        value={project.contact_person ?? ""}
+        placeholder="+ Client"
+        maxLength={200}
+        ariaLabel={`Client name for ${project.title}`}
+        className="ops-inline--name"
+        onCancelValue={project.contact_person ?? ""}
+        onCommit={async (next) => {
+          const ok = await save("client", next);
+          if (ok) onPatched?.({ ...project, contact_person: next.trim() || null });
+          return ok;
         }}
-      >
-        {project.contact_person || <span className="ops-table__meta">+ Client</span>}
-      </button>
-      <button
-        type="button"
-        className="ops-cell--btn ops-client__phone"
-        onClick={() => {
-          setPhone(project.contact_phone ?? "");
-          setMode("phone");
-        }}
-      >
-        {shown ? (
-          <>
-            {shown.flag ? <span aria-hidden="true">{shown.flag}</span> : null} {shown.text}
-          </>
-        ) : (
-          <span className="ops-table__meta">+ Phone</span>
-        )}
-      </button>
+      />
+      <span className="ops-inline-phone">
+        {shown?.flag ? (
+          <span className="ops-inline-phone__flag" aria-hidden="true">
+            {shown.flag}
+          </span>
+        ) : null}
+        <InlineText
+          value={project.contact_phone ?? ""}
+          displayValue={shown?.text}
+          placeholder="+ Phone"
+          maxLength={40}
+          inputMode="tel"
+          ariaLabel={`Phone for ${project.title}`}
+          className="ops-inline--phone"
+          onCancelValue={project.contact_phone ?? ""}
+          onCommit={async (next) => {
+            const ok = await save("phone", next);
+            if (ok) onPatched?.({ ...project, contact_phone: next.trim() || null });
+            return ok;
+          }}
+        />
+      </span>
     </span>
+  );
+}
+
+export function EmailEditCell({
+  project,
+  canEdit,
+  onPatched,
+}: {
+  project: BoardProject;
+  canEdit: boolean;
+  onPatched?: (p: BoardProject) => void;
+}) {
+  const save = useCellSave(project.id);
+  const email = project.contact_email?.trim() || "";
+
+  if (!canEdit) {
+    return email ? (
+      <a className="ops-email-link" href={`mailto:${email}`}>
+        {email}
+      </a>
+    ) : (
+      <span className="ops-table__meta">—</span>
+    );
+  }
+
+  return (
+    <InlineText
+      value={email}
+      placeholder="+ Email"
+      maxLength={200}
+      inputMode="email"
+      title={email || undefined}
+      ariaLabel={`Email for ${project.title}`}
+      className="ops-inline--email"
+      onCancelValue={email}
+      onCommit={async (next) => {
+        const ok = await save("email", next);
+        if (ok) onPatched?.({ ...project, contact_email: next.trim() || null });
+        return ok;
+      }}
+    />
   );
 }
 
@@ -374,63 +394,35 @@ export function XeroEditCell({
   onPatched?: (p: BoardProject) => void;
 }) {
   const numbers = [...(project.xero_quote_numbers ?? []), ...(project.xero_invoice_numbers ?? [])].filter(Boolean);
-  const [editing, setEditing] = useState(false);
-  const [draft, setDraft] = useState(numbers.join(", "));
+  const joined = numbers.join(", ");
+  const display =
+    numbers.length <= 1 ? joined : `${numbers[0]} +${numbers.length - 1}`;
   const save = useCellSave(project.id);
 
-  const display =
-    numbers.length === 0 ? (
-      <span className="ops-table__meta">+ Xero</span>
-    ) : numbers.length === 1 ? (
-      numbers[0]
-    ) : (
-      <span className="ops-xero-cell" title={numbers.join(" · ")}>
-        {numbers[0]} <span className="ops-xero-cell__more">+{numbers.length - 1}</span>
-      </span>
-    );
-
-  if (!canEdit) return <>{display}</>;
-
-  if (!editing) {
-    return (
-      <button
-        type="button"
-        className="ops-cell--btn"
-        title={numbers.join(" · ") || "Add quote/invoice numbers"}
-        onClick={() => {
-          setDraft(numbers.join(", "));
-          setEditing(true);
-        }}
-      >
-        {display}
-      </button>
-    );
-  }
+  if (!canEdit) return <span title={joined}>{display || "—"}</span>;
 
   return (
-    <input
-      className="admin-input ops-cell__input"
-      autoFocus
-      value={draft}
-      placeholder="QU0314, INV0143"
-      onChange={(e) => setDraft(e.target.value)}
-      onBlur={() => {
-        void (async () => {
-          const ok = await save("xero", draft);
-          if (ok) {
-            const parts = draft.split(/[,;\s]+/).map((p) => p.trim().toUpperCase()).filter(Boolean);
-            onPatched?.({
-              ...project,
-              xero_quote_numbers: parts.filter((p) => p.startsWith("QU") || p.startsWith("QT")),
-              xero_invoice_numbers: parts.filter((p) => p.startsWith("INV")),
-            });
-          }
-          setEditing(false);
-        })();
-      }}
-      onKeyDown={(e) => {
-        if (e.key === "Enter") (e.target as HTMLInputElement).blur();
-        if (e.key === "Escape") setEditing(false);
+    <InlineText
+      value={joined}
+      displayValue={display}
+      placeholder="+ Xero"
+      title={joined || undefined}
+      ariaLabel={`Xero numbers for ${project.title}`}
+      onCancelValue={joined}
+      onCommit={async (next) => {
+        const ok = await save("xero", next);
+        if (ok) {
+          const parts = next
+            .split(/[,;\s]+/)
+            .map((p) => p.trim().toUpperCase())
+            .filter(Boolean);
+          onPatched?.({
+            ...project,
+            xero_quote_numbers: parts.filter((p) => p.startsWith("QU") || p.startsWith("QT")),
+            xero_invoice_numbers: parts.filter((p) => p.startsWith("INV")),
+          });
+        }
+        return ok;
       }}
     />
   );
@@ -445,52 +437,29 @@ export function ValueEditCell({
   canEdit: boolean;
   onPatched?: (p: BoardProject) => void;
 }) {
-  const [editing, setEditing] = useState(false);
-  const [draft, setDraft] = useState(project.quoted_total_incl_vat == null ? "" : String(project.quoted_total_incl_vat));
+  const raw = project.quoted_total_incl_vat == null ? "" : String(project.quoted_total_incl_vat);
   const save = useCellSave(project.id);
-
   if (!canEdit) return <>{formatOpsMoney(project.quoted_total_incl_vat)}</>;
 
-  if (!editing) {
-    return (
-      <button
-        type="button"
-        className="ops-cell--btn"
-        onClick={() => {
-          setDraft(project.quoted_total_incl_vat == null ? "" : String(project.quoted_total_incl_vat));
-          setEditing(true);
-        }}
-      >
-        {formatOpsMoney(project.quoted_total_incl_vat)}
-      </button>
-    );
-  }
-
   return (
-    <input
-      className="admin-input ops-cell__input"
-      autoFocus
+    <InlineText
+      value={raw}
+      displayValue={formatOpsMoney(project.quoted_total_incl_vat) === "—" ? "" : formatOpsMoney(project.quoted_total_incl_vat)}
+      placeholder="+ Value"
       inputMode="decimal"
-      value={draft}
-      placeholder="12345"
-      onChange={(e) => setDraft(e.target.value)}
-      onBlur={() => {
-        void (async () => {
-          const ok = await save("value", draft);
-          if (ok) {
-            const raw = draft.trim().replace(/[\sR,]/gi, "");
-            onPatched?.({
-              ...project,
-              quoted_total_incl_vat: raw ? Number(raw) : null,
-              quoted_total_manual: true,
-            });
-          }
-          setEditing(false);
-        })();
-      }}
-      onKeyDown={(e) => {
-        if (e.key === "Enter") (e.target as HTMLInputElement).blur();
-        if (e.key === "Escape") setEditing(false);
+      ariaLabel={`Value for ${project.title}`}
+      onCancelValue={raw}
+      onCommit={async (next) => {
+        const ok = await save("value", next);
+        if (ok) {
+          const cleaned = next.trim().replace(/[\sR,]/gi, "");
+          onPatched?.({
+            ...project,
+            quoted_total_incl_vat: cleaned ? Number(cleaned) : null,
+            quoted_total_manual: true,
+          });
+        }
+        return ok;
       }}
     />
   );
@@ -508,59 +477,31 @@ export function LocationEditCell({
   onPatched?: (p: BoardProject) => void;
 }) {
   const listId = useId();
-  const [editing, setEditing] = useState(false);
-  const [draft, setDraft] = useState(display ?? "");
   const save = useCellSave(project.id);
+  const editValue =
+    project.site_province && project.site_town
+      ? `${project.site_province}, ${project.site_town}`
+      : project.site_location || "";
   const suggestions = SA_TOWNS.map((t) => `${t.province}, ${t.name}`);
 
   if (!canEdit) return <span title={display ?? undefined}>{display || "—"}</span>;
 
-  if (!editing) {
-    return (
-      <button
-        type="button"
-        className="ops-cell--btn"
-        title={display ?? "Add location"}
-        onClick={() => {
-          setDraft(
-            project.site_province && project.site_town
-              ? `${project.site_province}, ${project.site_town}`
-              : project.site_location || "",
-          );
-          setEditing(true);
-        }}
-      >
-        {display || <span className="ops-table__meta">+ Location</span>}
-      </button>
-    );
-  }
-
   return (
     <>
-      <input
-        className="admin-input ops-cell__input"
-        autoFocus
-        list={listId}
-        value={draft}
-        placeholder="Province, Town"
-        onChange={(e) => setDraft(e.target.value)}
-        onBlur={() => {
-          void (async () => {
-            const town = SA_TOWNS.find((t) => `${t.province}, ${t.name}`.toLowerCase() === draft.trim().toLowerCase());
-            const extra = town ? `${town.lat},${town.lng},` : undefined;
-            const ok = await save("location", draft, extra);
-            if (ok) {
-              onPatched?.({
-                ...project,
-                site_location: draft.trim() || null,
-              });
-            }
-            setEditing(false);
-          })();
-        }}
-        onKeyDown={(e) => {
-          if (e.key === "Enter") (e.target as HTMLInputElement).blur();
-          if (e.key === "Escape") setEditing(false);
+      <InlineText
+        value={editValue}
+        displayValue={display ?? ""}
+        placeholder="+ Location"
+        title={display ?? undefined}
+        listId={listId}
+        ariaLabel={`Location for ${project.title}`}
+        onCancelValue={editValue}
+        onCommit={async (next) => {
+          const town = SA_TOWNS.find((t) => `${t.province}, ${t.name}`.toLowerCase() === next.trim().toLowerCase());
+          const extra = town ? `${town.lat},${town.lng},` : undefined;
+          const ok = await save("location", next, extra);
+          if (ok) onPatched?.({ ...project, site_location: next.trim() || null });
+          return ok;
         }}
       />
       <datalist id={listId}>
@@ -570,4 +511,8 @@ export function LocationEditCell({
       </datalist>
     </>
   );
+}
+
+export function ReadonlyCell({ children }: { children: ReactNode }) {
+  return <>{children}</>;
 }

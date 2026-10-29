@@ -75,17 +75,42 @@ describe("Xero contact mapping", () => {
     });
     assert.equal(mapped.person, "Francois Joubert");
     assert.equal(mapped.email, "francois@ppcf.co.za");
-    assert.match(mapped.phone ?? "", /832800970/);
+    assert.equal(mapped.phone, "+27832800970");
+    assert.equal(mapped.phoneCountry, "ZA");
     assert.equal(mapped.city, "Piet Retief");
     const loc = locationFromXeroCity(mapped.city, mapped.region);
     assert.equal(loc?.site_town, "Piet Retief");
     assert.equal(findTownByName("Piet Retief")?.province, "Mpumalanga");
   });
 
+  it("prefers MOBILE then DEFAULT then DDI, and reads ContactPersons email", () => {
+    const mapped = mapXeroContact({
+      Name: "Alfred Mensah",
+      Phones: [
+        { PhoneType: "FAX", PhoneCountryCode: "27", PhoneNumber: "123" },
+        { PhoneType: "DDI", PhoneCountryCode: "27", PhoneAreaCode: "11", PhoneNumber: "5551234" },
+        { PhoneType: "MOBILE", PhoneCountryCode: "27", PhoneNumber: "0834064233" },
+      ],
+      ContactPersons: [{ EmailAddress: "mensahalfred1976@gmail.com" }],
+    });
+    assert.equal(mapped.phone, "+27834064233");
+    assert.equal(mapped.email, "mensahalfred1976@gmail.com");
+  });
+
   it("does not overwrite staff-typed fields", () => {
     const patch = fillFromXeroContact(
       { customer_name: "Already set", contact_person: "Arno", contact_phone: null, contact_email: null, xero_contact_id: null },
-      { id: "c1", name: "Xero Name", person: "Francois", phone: "+2783", email: "a@b.c", city: null, region: null },
+      {
+        id: "c1",
+        name: "Xero Name",
+        person: "Francois",
+        phone: "+2783",
+        phoneCountry: "ZA",
+        email: "a@b.c",
+        city: null,
+        region: null,
+        phonesPresentButEmpty: false,
+      },
     );
     assert.equal(patch.customer_name, undefined);
     assert.equal(patch.contact_person, undefined);

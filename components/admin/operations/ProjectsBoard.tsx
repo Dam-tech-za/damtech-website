@@ -30,6 +30,7 @@ import { mergeLeadSuggestions } from "@/lib/operations/board-meta";
 import { AddFromXeroDialog } from "./AddFromXeroDialog";
 import {
   ClientEditCell,
+  EmailEditCell,
   LeadCell,
   LocationEditCell,
   PaymentEditCell,
@@ -92,7 +93,7 @@ function csvCell(value: string): string {
 }
 
 function downloadCsv(projects: BoardProject[]) {
-  const header = ["Project", "Lead", "Payment", "Client", "Phone", "Xero", "Value", "Location"];
+  const header = ["Project", "Lead", "Payment", "Client", "Email", "Xero", "Value", "Location"];
   const lines = [
     header.join(","),
     ...projects.map((p) =>
@@ -101,7 +102,7 @@ function downloadCsv(projects: BoardProject[]) {
         p.leadName ?? "",
         p.payment.label ? PAYMENT_LABEL_TEXT[p.payment.label] : "",
         p.contact_person ?? "",
-        p.contact_phone ?? "",
+        p.contact_email ?? "",
         [...(p.xero_quote_numbers ?? []), ...(p.xero_invoice_numbers ?? [])].join(" "),
         p.quoted_total_incl_vat == null ? "" : String(p.quoted_total_incl_vat),
         formatLocationCell(p) ?? "",
@@ -138,7 +139,7 @@ function AddProjectRow({
   return (
     <tr className="ops-sheet__add-row">
       <td className="ops-sheet__c-check ops-sheet__sticky" />
-      <td colSpan={7} className="ops-sheet__add">
+      <td colSpan={8} className="ops-sheet__add">
         <AdminActionForm action={createProjectQuickAction} className="ops-sheet__add-form" resetOnSuccess>
           <input type="hidden" name="group" value={group} />
           <input
@@ -302,6 +303,9 @@ export function ProjectsBoard({
               <th className="ops-sheet__c-client" scope="col">
                 Client
               </th>
+              <th className="ops-sheet__c-email" scope="col">
+                Email
+              </th>
               <th className="ops-sheet__c-xero" scope="col">
                 Xero
               </th>
@@ -318,7 +322,7 @@ export function ProjectsBoard({
             return (
               <tbody key={group} className={`ops-sheet__group ops-sheet__group--${group}${open ? "" : " is-collapsed"}`}>
                 <tr className="ops-sheet__group-row">
-                  <th colSpan={8} scope="colgroup">
+                  <th colSpan={9} scope="colgroup">
                     <button
                       type="button"
                       className={`ops-sheet__group-btn ops-sheet__group-btn--${group}`}
@@ -357,6 +361,9 @@ export function ProjectsBoard({
                         </td>
                         <td className="ops-sheet__c-client" data-label="Client">
                           <ClientEditCell project={p} canEdit={canEdit} onPatched={patchRow} />
+                        </td>
+                        <td className="ops-sheet__c-email" data-label="Email">
+                          <EmailEditCell project={p} canEdit={canEdit} onPatched={patchRow} />
                         </td>
                         <td className="ops-sheet__c-xero" data-label="Xero">
                           <XeroEditCell project={p} canEdit={canEdit} onPatched={patchRow} />

@@ -2410,13 +2410,25 @@ form[aria-busy="true"] {
 }
 
 .ops-sheet__c-client {
-  width: 14%;
-  min-width: 8rem;
+  width: 12%;
+  min-width: 7.5rem;
+}
+
+.ops-sheet__c-email {
+  width: 12%;
+  min-width: 7rem;
 }
 
 .ops-sheet__c-xero {
-  width: 9%;
-  min-width: 5.5rem;
+  width: 8%;
+  min-width: 5rem;
+}
+
+@media (max-width: 1100px) {
+  .ops-sheet__c-email,
+  td.ops-sheet__c-email {
+    display: none;
+  }
 }
 
 .ops-sheet__c-value {
@@ -2516,39 +2528,105 @@ form[aria-busy="true"] {
   color: #026bc6;
 }
 
-.ops-cell--btn {
+.ops-inline {
+  position: relative;
   display: block;
+  min-width: 0;
+  width: 100%;
+}
+
+.ops-inline-input {
+  display: block;
+  box-sizing: border-box;
   width: 100%;
   margin: 0;
-  padding: 0;
+  padding: 0.1rem 0.2rem;
   border: 0;
+  border-radius: 0;
   background: transparent;
+  box-shadow: none;
   color: inherit;
   font: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+  line-height: 1.25;
   text-align: left;
-  cursor: pointer;
+  cursor: text;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  outline: none;
+  min-height: 1.35rem;
 }
 
-.ops-cell--btn:hover {
+.ops-inline-input:hover:not(:focus) {
+  background: #f5f7fa;
+}
+
+.ops-inline-input.is-focused,
+.ops-inline-input:focus {
+  overflow-x: auto;
+  text-overflow: clip;
+  background: transparent;
+  outline: 1px solid #0073ea;
+  outline-offset: -1px;
+  box-shadow: none;
+}
+
+.ops-inline-input::placeholder {
+  color: #829ab1;
+  font-weight: 400;
+}
+
+.ops-inline--title .ops-inline-input {
+  font-weight: 650;
+}
+
+.ops-inline--phone .ops-inline-input,
+.ops-inline--email .ops-inline-input {
+  font-size: 0.78rem;
+  color: #486581;
+}
+
+.ops-inline-phone {
+  display: flex;
+  align-items: center;
+  gap: 0.2rem;
+  min-width: 0;
+}
+
+.ops-inline-phone__flag {
+  flex: 0 0 auto;
+  font-size: 0.78rem;
+  line-height: 1;
+}
+
+.ops-email-link {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   color: #026bc6;
+  font-size: 0.78rem;
 }
 
-.ops-cell__input,
 .ops-cell__select {
   width: 100%;
   min-height: 2rem;
   font-size: 0.85rem;
+  cursor: pointer;
 }
 
 .ops-cell__saved {
-  display: inline-block;
-  margin-left: 0.35rem;
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
   color: #166534;
   font-size: 0.7rem;
   font-weight: 650;
+  opacity: 0.9;
 }
 
 .ops-pay-edit {
