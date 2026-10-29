@@ -180,9 +180,12 @@ export function ProjectsBoard({
   leadSuggestions?: string[];
 }) {
   const [rows, setRows] = useState(projectsProp);
-  useEffect(() => {
+  const [rowsSource, setRowsSource] = useState(projectsProp);
+  // Reset optimistic rows when the filtered server list changes (React-recommended render sync).
+  if (projectsProp !== rowsSource) {
+    setRowsSource(projectsProp);
     setRows(projectsProp);
-  }, [projectsProp]);
+  }
 
   const groups = useMemo(() => {
     const all = boardGroups(rows);

@@ -372,7 +372,7 @@ export async function refreshProjectFromXeroAction(payload: { id: string }): Pro
   }
 }
 
-export async function useXeroTotalAction(payload: { id: string }): Promise<AdminActionState> {
+export async function applyXeroTotalAction(payload: { id: string }): Promise<AdminActionState> {
   const id = payload.id?.trim() ?? "";
   if (!UUID.test(id)) return actionFailure("This project could not be found.");
   try {
