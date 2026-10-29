@@ -349,6 +349,13 @@ export const SITE_IMAGES = {
     "12 m corrugated galvanised steel water reservoir installed by Damtech in the Western Cape",
     "Corrugated steel reservoirs for farms, estates and commercial water storage.",
   ),
+  /** Home page services card: the fully installed reservoir (owner photo, Oct 2026). */
+  steelReservoirServicesCard: siteImage(
+    westernCapeSteelReservoir12mCompleted,
+    IMAGE_PATHS.westernCapeSteelReservoir12mCompleted,
+    "Fully installed 12 m corrugated galvanised steel water reservoir with shade-net roof cover, built by Damtech in the Western Cape",
+    "Corrugated steel reservoirs for farms, estates and commercial water storage.",
+  ),
   westernCapeSteelReservoir12mWalls: siteImage(
     westernCapeSteelReservoir12mWalls,
     IMAGE_PATHS.westernCapeSteelReservoir12mWalls,
