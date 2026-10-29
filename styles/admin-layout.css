@@ -2380,9 +2380,20 @@ form[aria-busy="true"] {
   height: 3.25rem;
   max-height: 3.25rem;
   vertical-align: middle;
-  border-bottom: 1px solid #e8eef4;
+  border-bottom: 1px solid #e6e9ef;
+  border-right: 1px solid #e6e9ef;
   box-shadow: none;
   overflow: hidden;
+}
+
+.ops-sheet__table th:last-child,
+.ops-sheet__table td:last-child {
+  border-right: 0;
+}
+
+/* Stage band: continuous horizontal strip, no vertical dividers through the title. */
+.ops-sheet__group-row th {
+  border-right: 0 !important;
 }
 
 .ops-sheet__c-check {
@@ -2394,19 +2405,29 @@ form[aria-busy="true"] {
 }
 
 .ops-sheet__c-project {
-  width: 30%;
+  width: 45%;
   min-width: 15rem;
+  max-width: 50vw;
+}
+
+@media (min-width: 1280px) {
+  .ops-sheet__c-project {
+    width: 45%;
+    min-width: 420px;
+    max-width: 50%;
+  }
 }
 
 .ops-sheet__c-lead {
-  width: 9%;
-  min-width: 6.5rem;
+  width: 7%;
+  min-width: 6rem;
   white-space: nowrap;
 }
 
 .ops-sheet__c-pay {
-  width: 11%;
+  width: 10%;
   min-width: 8.5rem;
+  padding: 1px !important;
 }
 
 .ops-sheet__c-client {
@@ -2467,8 +2488,14 @@ form[aria-busy="true"] {
 }
 
 .ops-sheet--frozen .ops-sheet__c-pay {
-  left: calc(32px + 28%);
+  left: calc(32px + min(45%, 50vw));
   box-shadow: 2px 0 4px rgb(16 24 40 / 0.08);
+}
+
+@media (min-width: 1280px) {
+  .ops-sheet--frozen .ops-sheet__c-pay {
+    left: calc(32px + min(45%, 50%));
+  }
 }
 
 .ops-sheet__group-row th {
@@ -2641,6 +2668,55 @@ form[aria-busy="true"] {
   max-width: 100%;
 }
 
+.ops-pay-edit--cell {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-height: 2.6rem;
+}
+
+.ops-pay-edit__trigger {
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-height: 2.6rem;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  text-align: center;
+}
+
+.ops-pay-edit__menu {
+  position: absolute;
+  z-index: 20;
+  top: calc(100% + 2px);
+  left: 0;
+  right: 0;
+  min-width: 11rem;
+  margin: 0;
+  padding: 0.25rem;
+  list-style: none;
+  background: #fff;
+  border: 1px solid #e6e9ef;
+  box-shadow: 0 8px 20px rgb(16 24 40 / 0.12);
+  display: grid;
+  gap: 2px;
+}
+
+.ops-pay-edit__menu .ops-pay {
+  width: 100%;
+  border: 0;
+  cursor: pointer;
+  min-height: 1.85rem;
+}
+
+.ops-pay-edit__menu .ops-pay.is-selected {
+  outline: 2px solid #323338;
+  outline-offset: -2px;
+}
+
 .ops-client--edit {
   display: flex;
   flex-direction: column;
@@ -2710,6 +2786,7 @@ form[aria-busy="true"] {
 .ops-pay {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 0.35rem;
   max-width: 100%;
   padding: 0.15rem 0.5rem;
@@ -2720,43 +2797,77 @@ form[aria-busy="true"] {
   white-space: nowrap;
 }
 
+/* Monday full-cell fill (board + filter chips + drawer). */
+.ops-pay--cell {
+  position: relative;
+  display: flex;
+  width: 100%;
+  height: 100%;
+  min-height: 2.6rem;
+  padding: 0.35rem 0.4rem;
+  border-radius: 0;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+  text-align: center;
+  box-sizing: border-box;
+}
+
 .ops-pay__text {
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
 .ops-pay__overdue {
+  position: absolute;
+  top: 4px;
+  right: 4px;
   width: 0.45rem;
   height: 0.45rem;
   border-radius: 50%;
-  background: #b42318;
+  background: #df2f4a;
   flex: 0 0 auto;
 }
 
-.ops-pay--invoiced,
-.ops-pay--portion,
-.ops-pay--balance {
-  background: #fff7ed;
-  color: #9a3412;
+.ops-pay--not-invoiced {
+  background: #df2f4a;
+  color: #fff;
+}
+
+.ops-pay--invoiced {
+  background: #ffcb00;
+  color: #323338;
+}
+
+.ops-pay--portion {
+  background: #ffa64d;
+  color: #fff;
 }
 
 .ops-pay--deposit {
-  background: #eff6ff;
-  color: #1d4ed8;
+  background: #fdab3d;
+  color: #fff;
+}
+
+.ops-pay--balance {
+  background: #ff7a45;
+  color: #fff;
 }
 
 .ops-pay--paid {
-  background: #ecfdf3;
-  color: #166534;
+  background: #00c875;
+  color: #fff;
 }
 
+.ops-pay--empty,
 .ops-pay--overdue {
-  background: #fef2f2;
-  color: #b42318;
+  background: #c4c4c4;
+  color: #323338;
 }
 
 .ops-pay.is-overdue {
-  box-shadow: inset 0 0 0 1px #fecaca;
+  /* Overdue is the corner dot only — no second pill / border. */
 }
 
 .ops-peek {
@@ -3050,4 +3161,77 @@ form[aria-busy="true"] {
   .ops-selection-bar {
     border-radius: 12px;
   }
+}
+
+.ops-xero-update {
+  display: grid;
+  gap: 0.35rem;
+  justify-items: end;
+}
+
+.ops-xero-update__row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  justify-content: flex-end;
+}
+
+.ops-xero-update__meta {
+  font-size: 0.75rem;
+  color: var(--admin-text-muted);
+}
+
+.ops-xero-update__dialog {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  background: rgb(16 24 40 / 0.45);
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+}
+
+.ops-xero-update__panel {
+  width: min(640px, 100%);
+  max-height: min(80vh, 640px);
+  overflow: auto;
+  background: #fff;
+  border-radius: var(--admin-radius-sm);
+  padding: 1rem 1.1rem;
+  display: grid;
+  gap: 0.75rem;
+  box-shadow: 0 16px 40px rgb(16 24 40 / 0.2);
+}
+
+.ops-xero-update__panel h2 {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 650;
+}
+
+.ops-xero-update__preview {
+  overflow: auto;
+  max-height: 18rem;
+  border: 1px solid #e6e9ef;
+}
+
+.ops-xero-update__preview table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8rem;
+}
+
+.ops-xero-update__preview th,
+.ops-xero-update__preview td {
+  padding: 0.35rem 0.5rem;
+  border-bottom: 1px solid #e6e9ef;
+  text-align: left;
+}
+
+.ops-xero-update__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: flex-end;
 }

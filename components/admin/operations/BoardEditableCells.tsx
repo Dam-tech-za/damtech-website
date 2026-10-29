@@ -2,7 +2,12 @@
 
 import { useId, useRef, useState, type KeyboardEvent, type ReactNode } from "react";
 import { updateBoardFieldAction } from "@/app/admin/operations/board-field-actions";
-import { PAYMENT_LABELS, PAYMENT_LABEL_TEXT, type PaymentLabel } from "@/lib/operations/board";
+import {
+  PAYMENT_CELL_TONE,
+  PAYMENT_LABELS,
+  PAYMENT_LABEL_TEXT,
+  type PaymentLabel,
+} from "@/lib/operations/board";
 import { SA_TOWNS } from "@/lib/operations/sa-places";
 import { displayPhone } from "@/lib/operations/phone-display";
 import type { BoardProject } from "@/lib/operations/queries";
@@ -240,37 +245,64 @@ export function PaymentEditCell({
   onPatched?: (p: BoardProject) => void;
 }) {
   const save = useCellSave(project.id);
+  const [open, setOpen] = useState(false);
   if (!canEdit) return <PaymentPictureBadge payment={project.payment} />;
 
+  const pick = (next: string) => {
+    setOpen(false);
+    void (async () => {
+      const ok = await save("payment", next);
+      if (ok) {
+        onPatched?.({
+          ...project,
+          payment: { ...project.payment, label: (next || null) as PaymentLabel | null },
+          payment_label_override: next || null,
+        });
+      }
+    })();
+  };
+
   return (
-    <div className="ops-pay-edit">
-      <select
+    <div className={`ops-pay-edit ops-pay-edit--cell${open ? " is-open" : ""}`}>
+      <button
+        type="button"
         data-ops-cell
-        className="admin-select ops-cell__select"
+        className="ops-pay-edit__trigger"
+        aria-haspopup="listbox"
+        aria-expanded={open}
         aria-label={`Payment for ${project.title}`}
-        value={project.payment.label ?? ""}
-        onChange={(e) => {
-          const next = e.target.value;
-          void (async () => {
-            const ok = await save("payment", next);
-            if (ok) {
-              onPatched?.({
-                ...project,
-                payment: { ...project.payment, label: (next || null) as PaymentLabel | null },
-                payment_label_override: next || null,
-              });
-            }
-          })();
-        }}
+        onClick={() => setOpen((v) => !v)}
       >
-        <option value="">—</option>
-        {PAYMENT_LABELS.map((l) => (
-          <option key={l} value={l}>
-            {PAYMENT_LABEL_TEXT[l]}
-          </option>
-        ))}
-      </select>
-      {project.payment.overdue ? <span className="ops-pay__overdue" aria-label="Overdue" title="Overdue" /> : null}
+        <PaymentPictureBadge payment={project.payment} />
+      </button>
+      {open ? (
+        <ul className="ops-pay-edit__menu" role="listbox">
+          <li>
+            <button
+              type="button"
+              role="option"
+              className={`ops-pay ops-pay--cell ops-pay--empty${!project.payment.label ? " is-selected" : ""}`}
+              aria-selected={!project.payment.label}
+              onClick={() => pick("")}
+            >
+              <span className="ops-pay__text">Unset</span>
+            </button>
+          </li>
+          {PAYMENT_LABELS.map((l) => (
+            <li key={l}>
+              <button
+                type="button"
+                role="option"
+                className={`ops-pay ops-pay--cell ${PAYMENT_CELL_TONE[l]}${project.payment.label === l ? " is-selected" : ""}`}
+                aria-selected={project.payment.label === l}
+                onClick={() => pick(l)}
+              >
+                <span className="ops-pay__text">{PAYMENT_LABEL_TEXT[l]}</span>
+              </button>
+            </li>
+          ))}
+        </ul>
+      ) : null}
     </div>
   );
 }

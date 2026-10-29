@@ -59,6 +59,7 @@ export function groupProjects<T extends Pick<OpsProject, "stage">>(projects: T[]
 // ---------------------------------------------------------------------------
 
 export const PAYMENT_LABELS = [
+  "deposit_not_invoiced",
   "deposit_invoiced",
   "portion_of_deposit_paid",
   "deposit_paid",
@@ -68,11 +69,22 @@ export const PAYMENT_LABELS = [
 export type PaymentLabel = (typeof PAYMENT_LABELS)[number];
 
 export const PAYMENT_LABEL_TEXT: Record<PaymentLabel, string> = {
+  deposit_not_invoiced: "Deposit not invoiced",
   deposit_invoiced: "Deposit invoiced",
   portion_of_deposit_paid: "Portion of deposit paid",
   deposit_paid: "Deposit paid",
   balance_due: "Balance due",
   paid_in_full: "Paid in full",
+};
+
+/** Monday-style full-cell fill classes for each payment label. */
+export const PAYMENT_CELL_TONE: Record<PaymentLabel, string> = {
+  deposit_not_invoiced: "ops-pay--not-invoiced",
+  deposit_invoiced: "ops-pay--invoiced",
+  portion_of_deposit_paid: "ops-pay--portion",
+  deposit_paid: "ops-pay--deposit",
+  balance_due: "ops-pay--balance",
+  paid_in_full: "ops-pay--paid",
 };
 
 export type InvoiceForLabel = {

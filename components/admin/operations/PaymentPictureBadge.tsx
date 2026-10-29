@@ -1,22 +1,20 @@
-import { PAYMENT_LABEL_TEXT, type PaymentPicture } from "@/lib/operations/board";
+import {
+  PAYMENT_CELL_TONE,
+  PAYMENT_LABEL_TEXT,
+  type PaymentPicture,
+} from "@/lib/operations/board";
 
-const PAYMENT_TONE: Record<NonNullable<PaymentPicture["label"]>, string> = {
-  deposit_invoiced: "ops-pay--invoiced",
-  portion_of_deposit_paid: "ops-pay--portion",
-  deposit_paid: "ops-pay--deposit",
-  balance_due: "ops-pay--balance",
-  paid_in_full: "ops-pay--paid",
-};
-
-/** One payment pill. Overdue is a red mark on the same pill — never a second badge. */
+/** Full-cell Monday-style payment fill. Overdue is a red corner dot only. */
 export function PaymentPictureBadge({ payment }: { payment: PaymentPicture }) {
-  if (!payment?.label && !payment?.overdue) return <span className="ops-table__meta">—</span>;
-  const label = payment.label ? PAYMENT_LABEL_TEXT[payment.label] : "Overdue";
-  const tone = payment.label ? PAYMENT_TONE[payment.label] : "ops-pay--overdue";
+  const label = payment?.label ? PAYMENT_LABEL_TEXT[payment.label] : "";
+  const tone = payment?.label ? PAYMENT_CELL_TONE[payment.label] : "ops-pay--empty";
   return (
-    <span className={`ops-pay ${tone}${payment.overdue ? " is-overdue" : ""}`} title={payment.overdue ? `${label} · Overdue` : label}>
-      <span className="ops-pay__text">{label}</span>
-      {payment.overdue ? <span className="ops-pay__overdue" aria-label="Overdue" /> : null}
+    <span
+      className={`ops-pay ops-pay--cell ${tone}${payment?.overdue ? " is-overdue" : ""}`}
+      title={payment?.overdue ? `${label || "Unset"} · Overdue` : label || "Unset"}
+    >
+      {label ? <span className="ops-pay__text">{label}</span> : null}
+      {payment?.overdue ? <span className="ops-pay__overdue" aria-label="Overdue" /> : null}
     </span>
   );
 }

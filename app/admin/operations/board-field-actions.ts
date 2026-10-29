@@ -19,7 +19,7 @@ import {
 } from "@/lib/operations/board-meta";
 import { distancesFromPoint, locationPatch } from "@/lib/operations/distance";
 import { findTownByName } from "@/lib/operations/sa-places";
-import { fetchXeroContactExtras, fillFromXeroContact, locationFromXeroCity } from "@/lib/operations/xero-contact";
+import { fetchXeroContactById, fillFromXeroContact, locationFromXeroCity } from "@/lib/operations/xero-contact";
 import { createXeroBridgeClient, xeroBridgeConfigFromEnv } from "@/lib/operations/xero-bridge";
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -315,11 +315,12 @@ export async function refreshProjectFromXeroAction(payload: { id: string }): Pro
     const bridge = createXeroBridgeClient(config);
 
     const patch: Record<string, unknown> = {};
-    if (!manual.client || !manual.phone || !manual.email || !manual.company || !manual.location) {
-      const extras = await fetchXeroContactExtras(bridge, {
-        id: project.xero_contact_id as string | null,
-        name: project.customer_name as string | null,
-      });
+    if (
+      (!manual.client || !manual.phone || !manual.email || !manual.company || !manual.location) &&
+      project.xero_contact_id
+    ) {
+      // ContactID only — never match by customer name (K&S49 overwrite bug).
+      const extras = await fetchXeroContactById(bridge, project.xero_contact_id as string);
       if (extras) {
         const fill = fillFromXeroContact(
           {

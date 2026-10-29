@@ -5,16 +5,14 @@ import { requireAdmin } from "@/lib/auth/require-admin";
 import { canPerform } from "@/lib/auth/permissions";
 import { listBoardProjects } from "@/lib/operations/queries";
 import {
-  AdminActionForm,
   AdminErrorState,
   AdminListMemory,
   AdminPageHeader,
   AdminPanel,
-  AdminSubmitButton,
 } from "@/components/admin/ui";
 import { OpsSetupBanners } from "@/components/admin/operations/OpsParts";
 import { ProjectsWorkspace } from "@/components/admin/operations/ProjectsWorkspace";
-import { updateXeroBoardAction } from "@/app/admin/operations/project-actions";
+import { UpdateXeroControls } from "@/components/admin/operations/UpdateXeroControls";
 import type { BoardFilters } from "@/lib/operations/board";
 
 export const metadata: Metadata = { title: "Projects" };
@@ -67,13 +65,7 @@ async function ProjectsPageInner({ searchParams }: PageProps) {
         title="Projects"
         description="Every won job, by stage."
         primaryActionNode={
-          canSync && load.ok && load.setup.bridgeConfigured ? (
-            <AdminActionForm action={updateXeroBoardAction} className="ops-board-filters__sync">
-              <AdminSubmitButton variant="secondary" pendingLabel="Updating…">
-                Update Xero
-              </AdminSubmitButton>
-            </AdminActionForm>
-          ) : null
+          canSync && load.ok && load.setup.bridgeConfigured ? <UpdateXeroControls /> : null
         }
       />
       <Suspense fallback={null}>
