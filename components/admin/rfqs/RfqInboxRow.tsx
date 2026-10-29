@@ -3,14 +3,13 @@
 import { useRouter } from "next/navigation";
 import type { RfqDeleteSummary } from "@/lib/admin/rfqs/delete-rfq";
 import {
-  RFQ_STATUS_LABELS,
   type RfqInboxRow,
   type RfqOptionalColumnId,
 } from "@/lib/admin/rfqs/rfq-inbox-types";
 import { approximateSizeSourceLabel } from "@/lib/admin/rfqs/rfq-size-summary";
 import { formatSubmittedDate } from "@/lib/admin/rfqs/rfq-inbox-utils";
-import { AdminStatusBadge } from "@/components/admin/ui";
 import { RfqRowActions } from "./RfqRowActions";
+import { RfqStatusCell } from "./RfqStatusCell";
 import { CountryFlag } from "@/components/admin/operations/CountryFlag";
 import { displayPhone } from "@/lib/operations/phone-display";
 
@@ -23,6 +22,8 @@ type RfqInboxRowProps = {
   canManage: boolean;
   canDelete: boolean;
   onDeleted?: () => void;
+  /** Opens the quick view beside the list. */
+  onOpen?: (row: RfqInboxRow) => void;
 };
 
 function toDeleteSummary(row: RfqInboxRow): RfqDeleteSummary {
@@ -53,6 +54,7 @@ export function RfqInboxTableRow({
   canManage,
   canDelete,
   onDeleted,
+  onOpen,
 }: RfqInboxRowProps) {
   const router = useRouter();
   const submitted = formatSubmittedDate(row.submittedAt);
@@ -68,13 +70,15 @@ export function RfqInboxTableRow({
     ) {
       return;
     }
-    router.push(detailHref);
+    if (onOpen) onOpen(row);
+      else router.push(detailHref);
   }
 
   function handleRowKeyDown(event: React.KeyboardEvent<HTMLTableRowElement>) {
     if (event.key === "Enter" || event.key === " ") {
       event.preventDefault();
-      router.push(detailHref);
+      if (onOpen) onOpen(row);
+      else router.push(detailHref);
     }
   }
 
@@ -227,11 +231,7 @@ export function RfqInboxTableRow({
       ) : null}
 
       <td className="rfq-inbox-row__status rfq-col-status">
-        <AdminStatusBadge
-          status={row.status}
-          label={RFQ_STATUS_LABELS[row.status]}
-          domain="rfq"
-        />
+        <RfqStatusCell rfqId={row.id} status={row.status} label={row.customerName} canEdit={canManage} />
         {row.assignedUserName ? (
           <span className="rfq-inbox-row__secondary admin-sheet__sub rfq-inbox-row__truncate rfq-col-assigned">
             Assigned to {row.assignedUserName}

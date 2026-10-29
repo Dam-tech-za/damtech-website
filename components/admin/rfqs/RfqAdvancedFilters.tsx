@@ -26,12 +26,15 @@ type RfqAdvancedFiltersTriggerProps = {
   filters: RfqInboxFilters;
   staff: StaffMember[];
   advancedCount: number;
+  /** Draw the button differently (e.g. as a toolbar button); the drawer stays the same. */
+  trigger?: { className: string; content: React.ReactNode };
 };
 
 export function RfqAdvancedFiltersTrigger({
   filters,
   staff,
   advancedCount,
+  trigger,
 }: RfqAdvancedFiltersTriggerProps) {
   const [open, setOpen] = useState(false);
   const router = useRouter();
@@ -55,16 +58,29 @@ export function RfqAdvancedFiltersTrigger({
 
   return (
     <>
-      <AdminButton
-        ref={triggerRef}
-        type="button"
-        variant="secondary"
-        aria-expanded={open}
-        aria-controls="rfq-advanced-filters"
-        onClick={() => setOpen(true)}
-      >
-        More filters{advancedCount > 0 ? ` (${advancedCount})` : ""}
-      </AdminButton>
+      {trigger ? (
+        <button
+          ref={triggerRef}
+          type="button"
+          className={trigger.className}
+          aria-expanded={open}
+          aria-controls="rfq-advanced-filters"
+          onClick={() => setOpen(true)}
+        >
+          {trigger.content}
+        </button>
+      ) : (
+        <AdminButton
+          ref={triggerRef}
+          type="button"
+          variant="secondary"
+          aria-expanded={open}
+          aria-controls="rfq-advanced-filters"
+          onClick={() => setOpen(true)}
+        >
+          More filters{advancedCount > 0 ? ` (${advancedCount})` : ""}
+        </AdminButton>
+      )}
 
       <AdminFilterDrawer
         open={open}

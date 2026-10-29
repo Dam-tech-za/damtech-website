@@ -26,6 +26,14 @@ export const XERO_BRIDGE_READ_TOOLS = [
 ] as const;
 export type XeroBridgeReadTool = (typeof XERO_BRIDGE_READ_TOOLS)[number];
 
+/**
+ * The only writes the website may ask the bridge for. Each one is a narrow
+ * bridge tool that refuses to change existing Xero records (it matches or
+ * creates, never edits or deletes). Owner-approved 29 Oct 2026.
+ */
+export const XERO_BRIDGE_WEBSITE_WRITE_TOOLS = ["create_contact_from_website"] as const;
+export type XeroBridgeWebsiteWriteTool = (typeof XERO_BRIDGE_WEBSITE_WRITE_TOOLS)[number];
+
 export type XeroQuoteSummary = {
   id: string;
   number: string;
@@ -102,6 +110,8 @@ export function xeroBridgeConfigFromEnv(env: Record<string, string | undefined> 
 export type XeroBridgeClient = {
   status(): Promise<XeroBridgeStatus>;
   call<T>(tool: XeroBridgeReadTool, args?: Record<string, unknown>): Promise<T>;
+  /** One of the narrow website write tools above; anything else is refused here. */
+  write<T>(tool: XeroBridgeWebsiteWriteTool, args: Record<string, unknown>): Promise<T>;
 };
 
 export function createXeroBridgeClient(config: XeroBridgeConfig): XeroBridgeClient {
@@ -149,6 +159,16 @@ export function createXeroBridgeClient(config: XeroBridgeConfig): XeroBridgeClie
     },
     async call<T>(tool: XeroBridgeReadTool, args: Record<string, unknown> = {}) {
       if (!(XERO_BRIDGE_READ_TOOLS as readonly string[]).includes(tool)) {
+        throw new XeroBridgeError(`Tool ${tool} is not allowed from the website`, null);
+      }
+      return (await request(`/api/${tool}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(args),
+      })) as T;
+    },
+    async write<T>(tool: XeroBridgeWebsiteWriteTool, args: Record<string, unknown>) {
+      if (!(XERO_BRIDGE_WEBSITE_WRITE_TOOLS as readonly string[]).includes(tool)) {
         throw new XeroBridgeError(`Tool ${tool} is not allowed from the website`, null);
       }
       return (await request(`/api/${tool}`, {
