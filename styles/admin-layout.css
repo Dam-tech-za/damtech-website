@@ -4467,3 +4467,168 @@ body:has(.ops-projects-page) {
   color: #92400e;
   font-size: 0.82rem;
 }
+
+/* ---------------------------------------------------------------
+   Enquiries table in the projects-board style: one row height,
+   light grid lines, centred cells, two short lines at most.
+   Desktop table only (phones keep the card list below 900px).
+   --------------------------------------------------------------- */
+.rfq-inbox-table {
+  font-size: 13px;
+}
+
+.rfq-inbox-table col.rfq-col-check { width: 40px; }
+.rfq-inbox-table col.rfq-col-rfq { width: 9%; }
+.rfq-inbox-table col.rfq-col-customer { width: 20%; }
+.rfq-inbox-table col.rfq-col-contact { width: 19%; }
+.rfq-inbox-table col.rfq-col-location { width: 13%; }
+.rfq-inbox-table col.rfq-col-service { width: 22%; }
+.rfq-inbox-table col.rfq-col-size { width: 9%; }
+.rfq-inbox-table col.rfq-col-status { width: 10%; }
+.rfq-inbox-table col.rfq-col-submitted { width: 9%; }
+.rfq-inbox-table col.rfq-col-updated { width: 9%; }
+.rfq-inbox-table col.rfq-col-actions { width: 52px; min-width: 52px; }
+
+.rfq-inbox-table th,
+.rfq-inbox-table td {
+  height: 52px;
+  padding: 0 10px;
+  vertical-align: middle;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  overflow-wrap: normal;
+  word-break: normal;
+  border-bottom: 1px solid #e6e9ef;
+  border-right: 1px solid #e6e9ef;
+  background: #fff;
+  box-sizing: border-box;
+}
+
+.rfq-inbox-table th:last-child,
+.rfq-inbox-table td:last-child {
+  border-right: 0;
+}
+
+.rfq-inbox-table thead th {
+  height: 40px;
+  background: #fff;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #8a97a6;
+  border-bottom: 1px solid #e6e9ef;
+}
+
+/* Customer reads best left-aligned, like the project name on the board. */
+.rfq-inbox-table td.rfq-col-customer,
+.rfq-inbox-table th.rfq-col-customer {
+  text-align: left;
+}
+
+.rfq-inbox-table td.rfq-col-check,
+.rfq-inbox-table th.rfq-col-check,
+.rfq-inbox-table td.rfq-col-actions,
+.rfq-inbox-table th.rfq-col-actions {
+  padding: 0;
+  text-align: center;
+}
+
+.rfq-inbox-table td.rfq-col-check input,
+.rfq-inbox-table th.rfq-col-check input {
+  margin: 0;
+  width: 16px;
+  height: 16px;
+  vertical-align: middle;
+  cursor: pointer;
+}
+
+.rfq-inbox-table tbody tr {
+  min-height: 0;
+}
+
+.rfq-inbox-table tbody tr:hover td {
+  background: #f5f8fc;
+}
+
+.rfq-inbox-table tbody tr.is-selected td {
+  background: #e8f2ff;
+}
+
+.rfq-inbox-table .rfq-inbox-row__primary,
+.rfq-inbox-table .rfq-inbox-row__secondary,
+.rfq-inbox-table .rfq-inbox-row__contact-line,
+.rfq-inbox-table .rfq-inbox-row__muted {
+  display: block;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  line-height: 1.35;
+}
+
+.rfq-inbox-table .rfq-inbox-row__primary {
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.rfq-inbox-table .rfq-inbox-row__secondary {
+  font-size: 12px;
+  color: #6b7a8a;
+}
+
+.rfq-inbox-table .rfq-inbox-row__muted {
+  font-size: 12px;
+  color: #a0abb8;
+}
+
+.rfq-inbox-table .rfq-inbox-row__contact-line {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-size: 12px;
+  color: #486581;
+  text-decoration: none;
+}
+
+.rfq-inbox-table .rfq-inbox-row__contact-line:first-child {
+  font-size: 13px;
+  color: var(--admin-text);
+}
+
+.rfq-inbox-table .rfq-inbox-row__contact-line .ops-flag {
+  flex: 0 0 auto;
+  width: 1.1rem;
+}
+
+.rfq-inbox-table .admin-status {
+  max-width: 100%;
+}
+
+.rfq-inbox-table .rfq-row-actions {
+  justify-content: center;
+}
+
+/* The header checkbox replaces the separate "Select page" line. */
+.rfq-bulk-actions--hidden {
+  display: none;
+}
+
+/* Location: town over province (the combined one-line version stays hidden). */
+.rfq-inbox-table .rfq-col-location-combined,
+.rfq-inbox-table .rfq-col-size-inline {
+  display: none;
+}
+
+.rfq-inbox-table .rfq-row-actions .admin-btn {
+  min-height: 28px;
+  padding: 0 6px;
+}
+
+.rfq-inbox-table .rfq-col-location-town,
+.rfq-inbox-table .rfq-col-location-province {
+  display: block !important;
+}

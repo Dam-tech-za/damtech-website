@@ -143,7 +143,7 @@ export function RfqInboxTable({
             <col className="rfq-col-contact" />
             <col className="rfq-col-location" />
             <col className="rfq-col-service" />
-            <col className="rfq-col-size" />
+            {optionalColumns.includes("size") ? <col className="rfq-col-size" /> : null}
             <col className="rfq-col-status" />
             <col className="rfq-col-submitted" />
             {optionalColumns.includes("lastUpdated") ? (
@@ -154,7 +154,12 @@ export function RfqInboxTable({
           <thead>
             <tr>
               <th scope="col" className="rfq-col-check">
-                <span className="sr-only">Select</span>
+                <input
+                  type="checkbox"
+                  checked={effectiveSelected.length === visibleRows.length && visibleRows.length > 0}
+                  onChange={toggleAll}
+                  aria-label="Select all enquiries on this page"
+                />
               </th>
               {optionalColumns.includes("rfqNumber") ? (
                 <th scope="col" className="rfq-col-rfq">
@@ -165,17 +170,19 @@ export function RfqInboxTable({
                 Customer
               </th>
               <th scope="col" className="rfq-col-contact">
-                Contact
+                Phone / email
               </th>
               <th scope="col" className="rfq-col-location">
                 Location
               </th>
               <th scope="col" className="rfq-col-service">
-                Service / project
+                Service
               </th>
-              <th scope="col" className="rfq-col-size">
-                Approx. size
-              </th>
+              {optionalColumns.includes("size") ? (
+                <th scope="col" className="rfq-col-size">
+                  Approx. size
+                </th>
+              ) : null}
               <th scope="col" className="rfq-col-status">
                 Status
               </th>

@@ -118,7 +118,8 @@ export const RFQ_STATUS_LABELS: Record<string, string> = {
 };
 
 export const RFQ_OPTIONAL_COLUMNS = [
-  { id: "rfqNumber", label: "RFQ number" },
+  { id: "rfqNumber", label: "Enquiry number" },
+  { id: "size", label: "Approx. size" },
   { id: "source", label: "Source" },
   { id: "assigned", label: "Assigned estimator" },
   { id: "assetCount", label: "Asset count" },

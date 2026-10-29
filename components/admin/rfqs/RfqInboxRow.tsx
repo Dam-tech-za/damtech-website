@@ -11,6 +11,8 @@ import { approximateSizeSourceLabel } from "@/lib/admin/rfqs/rfq-size-summary";
 import { formatSubmittedDate } from "@/lib/admin/rfqs/rfq-inbox-utils";
 import { AdminStatusBadge } from "@/components/admin/ui";
 import { RfqRowActions } from "./RfqRowActions";
+import { CountryFlag } from "@/components/admin/operations/CountryFlag";
+import { displayPhone } from "@/lib/operations/phone-display";
 
 type RfqInboxRowProps = {
   row: RfqInboxRow;
@@ -135,8 +137,8 @@ export function RfqInboxTableRow({
                 title={row.phone}
                 onClick={(event) => event.stopPropagation()}
               >
-                <PhoneIcon />
-                {row.phone}
+                <CountryFlag country={displayPhone(row.phone)?.country} />
+                {displayPhone(row.phone)?.text ?? row.phone}
               </a>
             ) : null}
             {row.email ? (
@@ -147,7 +149,6 @@ export function RfqInboxTableRow({
                 title={row.email}
                 onClick={(event) => event.stopPropagation()}
               >
-                <EmailIcon />
                 {row.email}
               </a>
             ) : null}
@@ -206,6 +207,7 @@ export function RfqInboxTableRow({
         ) : null}
       </td>
 
+      {optionalColumns.includes("size") ? (
       <td className="rfq-inbox-row__size rfq-col-size">
         {row.approximateSize.displayValue ? (
           <>
@@ -222,6 +224,7 @@ export function RfqInboxTableRow({
           <span className="rfq-inbox-row__muted">Not provided</span>
         )}
       </td>
+      ) : null}
 
       <td className="rfq-inbox-row__status rfq-col-status">
         <AdminStatusBadge
@@ -265,26 +268,3 @@ export function RfqInboxTableRow({
   );
 }
 
-function PhoneIcon() {
-  return (
-    <svg viewBox="0 0 24 24" width="12" height="12" aria-hidden>
-      <path
-        d="M6.5 3h3l1.2 4.5-2 1.2a13 13 0 006.8 6.8l1.2-2L21 14.5V17.5a2 2 0 01-2 2C10.8 19.5 4.5 13.2 4.5 5.5a2 2 0 012-2.5Z"
-        fill="currentColor"
-      />
-    </svg>
-  );
-}
-
-function EmailIcon() {
-  return (
-    <svg viewBox="0 0 24 24" width="12" height="12" aria-hidden>
-      <path
-        d="M4 6h16a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V8a2 2 0 012-2Zm0 2 8 5 8-5"
-        stroke="currentColor"
-        strokeWidth="1.6"
-        fill="none"
-      />
-    </svg>
-  );
-}
