@@ -918,8 +918,10 @@ async function recomputeProjectPayment(db: SupabaseClient, projectId: string, qu
 export async function createProjectQuickAction(_prev: AdminActionState, formData: FormData): Promise<AdminActionState> {
   const title = text(formData, "title", 200) || "Untitled project";
   const group = text(formData, "group", 40) || "awaiting";
-  if (!isProjectGroup(group) || group === "completed") return actionFailure("Choose a stage.");
+  if (!isProjectGroup(group)) return actionFailure("Choose a stage.");
   const today = todayInSouthAfrica();
+  const stage = stageForGroup(group);
+  const completed = stage === "completed";
   try {
     const { db, admin, who } = await actor();
     const { data, error } = await db
@@ -928,12 +930,13 @@ export async function createProjectQuickAction(_prev: AdminActionState, formData
         title,
         customer_name: "",
         service: "unclassified",
-        stage: stageForGroup(group),
-        // DB requires a next action on open jobs; keep it silent for board adds.
-        next_action: "Fill in the site, scope and dates",
-        next_action_due: today,
+        stage,
+        // DB requires a next action on open jobs; completed rows may leave it blank.
+        next_action: completed ? null : "Fill in the site, scope and dates",
+        next_action_due: completed ? null : today,
+        completed_at: completed ? new Date().toISOString() : null,
         source: "manual",
-        needs_review: true,
+        needs_review: false,
       })
       .select("id")
       .single();
@@ -945,7 +948,7 @@ export async function createProjectQuickAction(_prev: AdminActionState, formData
       action: "ops_project.created",
       entityType: "ops_project",
       entityId: data.id as string,
-      afterData: { title, stage: stageForGroup(group), source: "board" },
+      afterData: { title, stage, source: "board" },
     });
     refresh(data.id as string);
     return actionSuccess("Project added.");
@@ -1008,7 +1011,7 @@ export async function duplicateProjectsAction(_prev: AdminActionState, formData:
       afterData: { ids, count },
     });
     refresh();
-    return actionSuccess(count === 1 ? "Project copied." : `${count} projects copied.`);
+    return actionSuccess(count === 1 ? "Project duplicated." : `${count} projects duplicated.`);
   } catch (error) {
     return fail("duplicate", error);
   }

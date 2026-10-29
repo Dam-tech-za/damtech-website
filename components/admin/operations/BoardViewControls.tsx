@@ -75,8 +75,14 @@ export function BoardViewControls() {
       <button type="button" className="ops-sheet__text-btn" onClick={() => writeCollapsed([...PROJECT_GROUPS])}>
         Collapse all
       </button>
-      <button type="button" className="ops-sheet__text-btn" onClick={() => setFrozen(!frozen)}>
-        {frozen ? "Unfreeze columns" : "Freeze columns"}
+      <button
+        type="button"
+        className={`ops-sheet__text-btn${frozen ? " is-active" : ""}`}
+        aria-pressed={frozen}
+        onClick={() => setFrozen(!frozen)}
+        title={frozen ? "Project and Payment stay fixed while scrolling" : "Pin Project and Payment while scrolling"}
+      >
+        {frozen ? "📌 Unfreeze columns" : "Freeze columns"}
       </button>
     </div>
   );

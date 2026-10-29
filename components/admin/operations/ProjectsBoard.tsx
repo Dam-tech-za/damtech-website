@@ -26,11 +26,18 @@ import {
 } from "@/lib/operations/board";
 import { formatLocationCell } from "@/lib/operations/distance";
 import type { BoardProject } from "@/lib/operations/queries";
+import { mergeLeadSuggestions } from "@/lib/operations/board-meta";
 import { AddFromXeroDialog } from "./AddFromXeroDialog";
-import { PaymentPictureBadge } from "./PaymentPictureBadge";
-import { PhoneCell } from "./PhoneCell";
+import {
+  ClientEditCell,
+  LeadCell,
+  LocationEditCell,
+  PaymentEditCell,
+  TitleCell,
+  ValueEditCell,
+  XeroEditCell,
+} from "./BoardEditableCells";
 import { ProjectPeekDrawer } from "./ProjectPeekDrawer";
-import { formatOpsMoney } from "./ops-format";
 
 const COLLAPSE_KEY = "ops-board-collapsed-groups";
 const COLLAPSE_EVENT = "ops-board-collapsed";
@@ -112,17 +119,6 @@ function downloadCsv(projects: BoardProject[]) {
   URL.revokeObjectURL(url);
 }
 
-function XeroCell({ quotes, invoices }: { quotes: string[]; invoices: string[] }) {
-  const numbers = [...quotes, ...invoices].filter(Boolean);
-  if (!numbers.length) return <span className="ops-table__meta">—</span>;
-  if (numbers.length === 1) return <span className="ops-xero-cell">{numbers[0]}</span>;
-  return (
-    <span className="ops-xero-cell" title={numbers.join(" · ")}>
-      {numbers[0]} <span className="ops-xero-cell__more">+{numbers.length - 1}</span>
-    </span>
-  );
-}
-
 function AddProjectRow({
   group,
   canEdit,
@@ -138,7 +134,7 @@ function AddProjectRow({
   useEffect(() => {
     if (autoFocus) inputRef.current?.focus();
   }, [autoFocus]);
-  if (!canEdit || group === "completed") return null;
+  if (!canEdit) return null;
   return (
     <tr className="ops-sheet__add-row">
       <td className="ops-sheet__c-check ops-sheet__sticky" />
@@ -158,25 +154,40 @@ function AddProjectRow({
             Add
           </button>
         </AdminActionForm>
-        <button type="button" className="ops-sheet__xero-link" onClick={onAddFromXero}>
-          + Add from Xero
-        </button>
+        {group !== "completed" ? (
+          <button type="button" className="ops-sheet__xero-link" onClick={onAddFromXero}>
+            + Add from Xero
+          </button>
+        ) : null}
       </td>
     </tr>
   );
 }
 
 export function ProjectsBoard({
-  projects,
+  projects: projectsProp,
   canEdit,
   focusAdd = false,
+  hideEmptyGroups = false,
+  leadSuggestions = [],
 }: {
   projects: BoardProject[];
   canEdit: boolean;
   /** When true (from ?add=1), focus the first stage add input. */
   focusAdd?: boolean;
+  /** When a stage/payment filter is active, hide empty stage headers. */
+  hideEmptyGroups?: boolean;
+  leadSuggestions?: string[];
 }) {
-  const groups = useMemo(() => boardGroups(projects), [projects]);
+  const [rows, setRows] = useState(projectsProp);
+  useEffect(() => {
+    setRows(projectsProp);
+  }, [projectsProp]);
+
+  const groups = useMemo(() => {
+    const all = boardGroups(rows);
+    return hideEmptyGroups ? all.filter((g) => g.projects.length > 0) : all;
+  }, [rows, hideEmptyGroups]);
   const collapsedRaw = useSyncExternalStore(subscribeCollapsed, getCollapsedRaw, () => "");
   const collapsed = useMemo(() => parseCollapsed(collapsedRaw), [collapsedRaw]);
   const freezeRaw = useSyncExternalStore(subscribeFreeze, getFreezeRaw, () => "1");
@@ -189,7 +200,16 @@ export function ProjectsBoard({
   const [xeroError, setXeroError] = useState<string | null>(null);
   const [xeroLoading, setXeroLoading] = useState(false);
 
-  const peek = peekId ? projects.find((p) => p.id === peekId) ?? null : null;
+  const leads = useMemo(
+    () => mergeLeadSuggestions([...leadSuggestions, ...rows.map((p) => p.leadName)]),
+    [leadSuggestions, rows],
+  );
+
+  const patchRow = (next: BoardProject) => {
+    setRows((current) => current.map((p) => (p.id === next.id ? { ...p, ...next } : p)));
+  };
+
+  const peek = peekId ? rows.find((p) => p.id === peekId) ?? null : null;
 
   const openXeroPicker = async (next: { group?: ProjectGroup | null; linkId?: string | null }) => {
     setXeroGroup(next.group ?? null);
@@ -234,8 +254,8 @@ export function ProjectsBoard({
       });
   }, [canEdit]);
 
-  const visibleIds = projects.map((p) => p.id);
-  const selectedProjects = projects.filter((p) => selected.has(p.id));
+  const visibleIds = rows.map((p) => p.id);
+  const selectedProjects = rows.filter((p) => selected.has(p.id));
   const allVisibleSelected = visibleIds.length > 0 && visibleIds.every((id) => selected.has(id));
   const idsValue = selectedProjects.map((p) => p.id).join(",");
   const singleUnlinked = selectedProjects.length === 1 && !isLinkedToXero(selectedProjects[0]) ? selectedProjects[0] : null;
@@ -253,7 +273,7 @@ export function ProjectsBoard({
     setSelected(allVisibleSelected ? new Set() : new Set(visibleIds));
   };
 
-  const firstEditableGroup = PROJECT_GROUPS.find((g) => g !== "completed") ?? "awaiting";
+  const firstEditableGroup = PROJECT_GROUPS[0] ?? "awaiting";
 
   return (
     <div className={`ops-sheet${frozen ? " ops-sheet--frozen" : ""}`}>
@@ -324,33 +344,30 @@ export function ProjectsBoard({
                           ) : null}
                         </td>
                         <td className="ops-sheet__c-project ops-sheet__sticky" data-label="Project">
-                          <button
-                            type="button"
-                            className="ops-table__title ops-table__title-btn"
-                            title={p.title}
-                            onClick={() => setPeekId(p.id)}
-                          >
-                            {p.title}
-                          </button>
-                          {p.needs_review ? <span className="ops-table__meta">Check details</span> : null}
+                          <TitleCell project={p} canEdit={canEdit} onPeek={() => setPeekId(p.id)} onPatched={patchRow} />
                         </td>
                         <td className="ops-sheet__c-lead" data-label="Lead">
-                          {p.leadName || <span className="ops-table__meta">—</span>}
+                          <LeadCell project={p} canEdit={canEdit} suggestions={leads} onPatched={patchRow} />
                         </td>
                         <td className="ops-sheet__c-pay ops-sheet__sticky" data-label="Payment">
-                          <PaymentPictureBadge payment={p.payment} />
+                          <PaymentEditCell project={p} canEdit={canEdit} onPatched={patchRow} />
                         </td>
                         <td className="ops-sheet__c-client" data-label="Client">
-                          <PhoneCell name={p.contact_person || p.customer_name} phone={p.contact_phone} />
+                          <ClientEditCell project={p} canEdit={canEdit} onPatched={patchRow} />
                         </td>
                         <td className="ops-sheet__c-xero" data-label="Xero">
-                          <XeroCell quotes={p.xero_quote_numbers ?? []} invoices={p.xero_invoice_numbers ?? []} />
+                          <XeroEditCell project={p} canEdit={canEdit} onPatched={patchRow} />
                         </td>
                         <td className="ops-sheet__c-value" data-label="Value">
-                          {formatOpsMoney(p.quoted_total_incl_vat)}
+                          <ValueEditCell project={p} canEdit={canEdit} onPatched={patchRow} />
                         </td>
                         <td className="ops-sheet__c-location" data-label="Location">
-                          {formatLocationCell(p) || <span className="ops-table__meta">—</span>}
+                          <LocationEditCell
+                            project={p}
+                            canEdit={canEdit}
+                            display={formatLocationCell(p)}
+                            onPatched={patchRow}
+                          />
                         </td>
                       </tr>
                     ))
@@ -376,8 +393,8 @@ export function ProjectsBoard({
           </strong>
           <AdminActionForm action={duplicateProjectsAction} className="ops-selection-bar__action">
             <input type="hidden" name="ids" value={idsValue} />
-            <AdminSubmitButton variant="outline" pendingLabel="Copying…">
-              Copy
+            <AdminSubmitButton variant="outline" pendingLabel="Duplicating…">
+              Duplicate
             </AdminSubmitButton>
           </AdminActionForm>
           <AdminButton type="button" variant="ghost" onClick={() => downloadCsv(selectedProjects)}>
@@ -447,9 +464,24 @@ export function ProjectsBoard({
         loading={xeroLoading}
         group={xeroGroup}
         linkProjectId={linkId}
+        existingKeys={rows.map(
+          (p) => `${(p.customer_name ?? "").trim().toLowerCase()}|${(p.title ?? "").trim().toLowerCase()}`,
+        )}
       />
 
-      <ProjectPeekDrawer project={peek} onClose={() => setPeekId(null)} />
+      <ProjectPeekDrawer
+        project={peek}
+        leadSuggestions={leads}
+        onClose={() => setPeekId(null)}
+        onPatched={patchRow}
+        onLinkXero={
+          peek && !isLinkedToXero(peek)
+            ? () => {
+                void openXeroPicker({ linkId: peek.id });
+              }
+            : undefined
+        }
+      />
     </div>
   );
 }

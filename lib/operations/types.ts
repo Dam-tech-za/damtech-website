@@ -97,7 +97,15 @@ export type OpsProject = {
   next_action_due: string | null;
   next_action_owner: string | null;
   project_lead_id: string | null;
+  /** Free-text lead name (board). Falls back to crew when the column is absent. */
+  project_lead_name: string | null;
   crew: string | null;
+  payment_label_override: string | null;
+  quoted_total_manual: boolean;
+  manual_fields: Record<string, boolean>;
+  site_place_id: string | null;
+  site_lat: number | null;
+  site_lng: number | null;
   scheduled_start: string | null;
   scheduled_end: string | null;
   xero_quote_numbers: string[];

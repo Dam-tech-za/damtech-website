@@ -6,13 +6,14 @@ import { formatOpsMoney } from "./ops-format";
 import type { ProjectGroup } from "@/lib/operations/board";
 import type { XeroStartItem } from "@/lib/operations/xero-start";
 
-function quoteSubtitle(item: XeroStartItem): string {
+function quoteSubtitle(item: XeroStartItem, possibleDuplicate: boolean): string {
   const title = (item.label ?? "").trim();
   const number = (item.number ?? "").trim();
   const parts: string[] = [];
   if (title && title.toUpperCase() !== number.toUpperCase()) parts.push(title);
   else if (number) parts.push(number);
   if (item.total) parts.push(formatOpsMoney(item.total));
+  if (possibleDuplicate) parts.push("possible duplicate");
   return parts.join(" · ");
 }
 
@@ -24,6 +25,7 @@ export function AddFromXeroDialog({
   loading,
   group,
   linkProjectId,
+  existingKeys = [],
 }: {
   open: boolean;
   onClose: () => void;
@@ -33,9 +35,12 @@ export function AddFromXeroDialog({
   group: ProjectGroup | null;
   /** When set, attach the chosen quote to this existing project instead of creating one. */
   linkProjectId?: string | null;
+  /** Lowercased "customer|title" keys already on the board, for duplicate hints. */
+  existingKeys?: string[];
 }) {
   const linking = Boolean(linkProjectId);
   const quotes = items.filter((item) => item.kind === "quote");
+  const keySet = new Set(existingKeys);
   return (
     <AdminDialog
       open={open}
@@ -53,11 +58,14 @@ export function AddFromXeroDialog({
       {!loading && !error && quotes.length === 0 ? <p className="ops-table__meta">No unclaimed accepted quotes in the last 30 days.</p> : null}
       {quotes.length ? (
         <ul className="ops-xero-picker">
-          {quotes.map((item) => (
+          {quotes.map((item) => {
+            const dupKey = `${(item.contact ?? "").trim().toLowerCase()}|${(item.label ?? item.number ?? "").trim().toLowerCase()}`;
+            const possibleDuplicate = keySet.has(dupKey);
+            return (
             <li key={item.id} className="ops-xero-picker__row">
               <span className="ops-xero-picker__main">
                 <strong>{item.contact}</strong>
-                <span className="ops-table__meta">{quoteSubtitle(item)}</span>
+                <span className="ops-table__meta">{quoteSubtitle(item, possibleDuplicate)}</span>
               </span>
               {linking && linkProjectId ? (
                 <AdminActionForm action={linkProjectToXeroQuoteAction} className="ops-xero-picker__add">
@@ -79,7 +87,8 @@ export function AddFromXeroDialog({
                 </AdminActionForm>
               )}
             </li>
-          ))}
+            );
+          })}
         </ul>
       ) : null}
     </AdminDialog>

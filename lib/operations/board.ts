@@ -337,7 +337,7 @@ export type BoardFilters = {
   price_max?: string;
   office?: string;
   distance?: string;
-  sort?: "next_action" | "updated" | "name" | "lead" | "price" | "distance";
+  sort?: "next_action" | "updated" | "name" | "lead" | "price" | "distance" | "created";
   show?: "active" | "completed" | "archived";
 };
 
@@ -398,7 +398,10 @@ export function kmForOffice(
   return Math.min(a, b);
 }
 
-type SortableProject = Pick<OpsProject, "next_action_due" | "updated_at" | "customer_name" | "title" | "quoted_total_incl_vat" | "km_from_pretoria" | "km_from_western_cape"> & {
+type SortableProject = Pick<
+  OpsProject,
+  "next_action_due" | "updated_at" | "created_at" | "customer_name" | "title" | "quoted_total_incl_vat" | "km_from_pretoria" | "km_from_western_cape"
+> & {
   leadName?: string | null;
 };
 
@@ -415,5 +418,9 @@ export function sortProjects<T extends SortableProject>(projects: T[], sort: Boa
   if (sort === "distance") {
     return copy.sort((a, b) => (kmForOffice(a, office) ?? 99999) - (kmForOffice(b, office) ?? 99999));
   }
+  if (sort === "created") {
+    return copy.sort((a, b) => (a.created_at ?? "").localeCompare(b.created_at ?? ""));
+  }
+  // Default and "next_action": by next-action date.
   return copy.sort((a, b) => (a.next_action_due ?? "9999").localeCompare(b.next_action_due ?? "9999"));
 }

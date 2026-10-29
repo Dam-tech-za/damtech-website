@@ -1,5 +1,6 @@
 import { adminOpsDb, isMissingColumnError, isMissingTableError } from "./admin-db";
-import { paymentPicture, materialsRollup, type MaterialsRollup, type PaymentPicture } from "./board";
+import { paymentPicture, materialsRollup, type MaterialsRollup, type PaymentLabel, type PaymentPicture } from "./board";
+import { parseBoardMetaFromScope, isPaymentLabel } from "./board-meta";
 import { locationPatch } from "./distance";
 import { todayInSouthAfrica } from "./lifecycle";
 import { findTownByName } from "./sa-places";
@@ -46,13 +47,17 @@ function failure<T>(error: { code?: string; message?: string } | null, context: 
 const PROJECT_COLUMNS_CORE =
   "id, title, customer_name, xero_contact_id, contact_person, contact_email, contact_phone, service, is_supply_only, site_location, one_way_km, scope, stage, on_hold, on_hold_reason, next_action, next_action_due, project_lead_id, crew, scheduled_start, scheduled_end, xero_quote_numbers, xero_invoice_numbers, quoted_total_incl_vat, quoted_total_excl_vat, payment_status, amount_invoiced, amount_paid, amount_due, payment_synced_at, source, needs_review, monday_item_id, created_at, updated_at, completed_at, next_action_owner, materials_by_client, onedrive_url, archived_at";
 
-const PROJECT_COLUMNS = `${PROJECT_COLUMNS_CORE}, site_province, site_town, km_from_pretoria, km_from_western_cape`;
+const PROJECT_COLUMNS_V3 = `${PROJECT_COLUMNS_CORE}, site_province, site_town, km_from_pretoria, km_from_western_cape`;
+
+const PROJECT_COLUMNS = `${PROJECT_COLUMNS_V3}, project_lead_name, payment_label_override, quoted_total_manual, manual_fields, site_place_id, site_lat, site_lng`;
 
 type ProjectQueryResult<T> = { data: T; error: { code?: string; message?: string } | null };
 
 async function selectProjects<T>(run: (columns: string) => PromiseLike<ProjectQueryResult<T>>): Promise<ProjectQueryResult<T>> {
   const full = await run(PROJECT_COLUMNS);
   if (!full.error || !isMissingColumnError(full.error)) return full;
+  const v3 = await run(PROJECT_COLUMNS_V3);
+  if (!v3.error || !isMissingColumnError(v3.error)) return v3;
   return run(PROJECT_COLUMNS_CORE);
 }
 
@@ -72,6 +77,13 @@ function toProject(row: Record<string, unknown>): OpsProject {
     amount_due: Number(row.amount_due ?? 0),
     xero_quote_numbers: Array.isArray(row.xero_quote_numbers) ? (row.xero_quote_numbers as string[]) : [],
     xero_invoice_numbers: Array.isArray(row.xero_invoice_numbers) ? (row.xero_invoice_numbers as string[]) : [],
+    project_lead_name: (row.project_lead_name as string | null | undefined) ?? null,
+    payment_label_override: (row.payment_label_override as string | null | undefined) ?? null,
+    quoted_total_manual: Boolean(row.quoted_total_manual),
+    manual_fields: (row.manual_fields as Record<string, boolean> | null | undefined) ?? {},
+    site_place_id: (row.site_place_id as string | null | undefined) ?? null,
+    site_lat: n(row.site_lat),
+    site_lng: n(row.site_lng),
   };
 }
 
@@ -217,8 +229,9 @@ export async function listBoardProjects(show: "active" | "completed" | "archived
   try {
     const { db } = await adminOpsDb();
     const { data, error } = await selectProjects((columns) => {
-      let query = db.from("ops_projects").select(columns).order("next_action_due", { ascending: true, nullsFirst: false }).limit(500);
-      if (show === "active") query = query.neq("stage", "completed").is("archived_at", null);
+      // Stable board order: created date within each stage (not last update).
+      let query = db.from("ops_projects").select(columns).order("created_at", { ascending: true }).limit(500);
+      if (show === "active") query = query.is("archived_at", null);
       else if (show === "completed") query = query.eq("stage", "completed").is("archived_at", null);
       else query = query.not("archived_at", "is", null);
       return query;
@@ -248,18 +261,26 @@ export async function listBoardProjects(show: "active" | "completed" | "archived
         const fromTitle =
         !p.site_province && !p.site_town ? findTownByName(p.title) || findTownByName(p.site_location) : null;
       const inferred = fromTitle ? locationPatch(fromTitle.province, fromTitle.name) : null;
+      const scopeMeta = parseBoardMetaFromScope(p.scope);
+      const overrideRaw = p.payment_label_override || scopeMeta.payment || null;
+      const override: PaymentLabel | null =
+        overrideRaw && isPaymentLabel(overrideRaw) ? overrideRaw : null;
+      const picture = paymentPicture(projectLinks as Parameters<typeof paymentPicture>[0], p.quoted_total_incl_vat, today);
+      const payment: PaymentPicture = override ? { ...picture, label: override } : picture;
+      const leadName =
+        (p.project_lead_name?.trim() || scopeMeta.lead?.trim() || p.crew?.trim() || null) ??
+        (p.project_lead_id ? names.get(p.project_lead_id) ?? null : null);
       return {
           ...p,
-          // Show company as Client until a person name is filled from Xero.
-          contact_person: p.contact_person?.trim() || p.customer_name?.trim() || null,
+          contact_person: p.contact_person?.trim() || null,
           site_province: p.site_province ?? inferred?.site_province ?? null,
           site_town: p.site_town ?? inferred?.site_town ?? null,
           km_from_pretoria: p.km_from_pretoria ?? inferred?.km_from_pretoria ?? null,
           km_from_western_cape: p.km_from_western_cape ?? inferred?.km_from_western_cape ?? null,
-          payment: paymentPicture(projectLinks as Parameters<typeof paymentPicture>[0], p.quoted_total_incl_vat, today),
+          payment,
           materialsStatus: materialsRollup(projectOrders, p.materials_by_client),
           openOrders: projectOrders.filter((o) => o.status !== "collected_delivered" && o.status !== "cancelled").length,
-          leadName: p.project_lead_id ? names.get(p.project_lead_id) ?? null : null,
+          leadName,
         };
       }),
     };
