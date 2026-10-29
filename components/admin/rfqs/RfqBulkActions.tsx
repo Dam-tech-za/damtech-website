@@ -1,8 +1,9 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { RFQ_STATUSES } from "@/lib/rfq/statuses";
 import { AdminButton, AdminSelect } from "@/components/admin/ui";
+import { sendEnquiriesToXeroAction } from "@/app/admin/rfqs/actions";
+import { RFQ_QUICK_STATUSES } from "./RfqStatusCell";
 
 type StaffMember = {
   id: string;
@@ -36,6 +37,8 @@ export function RfqBulkActions({
   const [statusPending, startStatusTransition] = useTransition();
   const [assignPending, startAssignTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
+  const [xeroPending, startXeroTransition] = useTransition();
+  const [xeroMessage, setXeroMessage] = useState<string | null>(null);
 
   if (selectedCount === 0) {
     return (
@@ -56,7 +59,7 @@ export function RfqBulkActions({
   return (
     <div className="rfq-bulk-actions" role="region" aria-label="Bulk actions">
       <p className="rfq-bulk-actions__summary">
-        {selectedCount} RFQ{selectedCount === 1 ? "" : "s"} selected
+        {selectedCount} {selectedCount === 1 ? "enquiry" : "enquiries"} selected
       </p>
 
       <form
@@ -84,13 +87,11 @@ export function RfqBulkActions({
           <option value="" disabled>
             Status…
           </option>
-          {RFQ_STATUSES.filter((s) => s !== "archived" && s !== "converted").map(
-            (status) => (
-              <option key={status} value={status}>
-                {status.replaceAll("_", " ")}
-              </option>
-            ),
-          )}
+          {RFQ_QUICK_STATUSES.map((status) => (
+            <option key={status.value} value={status.value}>
+              {status.label}
+            </option>
+          ))}
         </AdminSelect>
         <AdminButton
           type="submit"
@@ -137,9 +138,26 @@ export function RfqBulkActions({
         </AdminButton>
       </form>
 
+      <AdminButton
+        type="button"
+        variant="secondary"
+        disabled={xeroPending}
+        onClick={() => {
+          setXeroMessage(null);
+          startXeroTransition(async () => {
+            const result = await sendEnquiriesToXeroAction(selectedIds);
+            setXeroMessage(result.message);
+          });
+        }}
+      >
+        {xeroPending ? "Sending…" : "Send to Xero"}
+      </AdminButton>
+
       <AdminButton type="button" variant="secondary" onClick={onClear}>
         Clear selection
       </AdminButton>
+
+      {xeroMessage ? <p className="rfq-bulk-actions__note">{xeroMessage}</p> : null}
 
       {error ? <p className="form-error">{error}</p> : null}
     </div>

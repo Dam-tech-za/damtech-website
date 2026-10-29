@@ -4,6 +4,8 @@ import { revalidatePath } from "next/cache";
 import { redirect, unstable_rethrow } from "next/navigation";
 import { assertAdmin } from "@/lib/auth/require-admin";
 import { writeAuditLog } from "@/lib/auth/audit";
+import { XeroBridgeError } from "@/lib/operations/xero-bridge";
+import { buildCreateContactPayload, type CreateContactResult } from "@/lib/rfq/xero-contact-payload";
 import { createClient } from "@/lib/supabase/server";
 import { RFQ_STATUSES, type RfqStatus } from "@/lib/rfq/schema";
 import { convertRfqToQuote } from "@/lib/rfq/convert-to-quote";
@@ -638,5 +640,80 @@ export async function clearXeroQuoteAllocationAction(
   } catch (error) {
     unstable_rethrow(error);
     return actionFailure(describeActionError(error));
+  }
+}
+
+export type SendToXeroResult = { ok: boolean; message: string; results: { rfqId: string; ok: boolean; message: string }[] };
+
+/**
+ * "Send to Xero": make each selected enquiry's customer a Xero contact
+ * through the bridge (it matches an existing contact by email or exact
+ * name, otherwise creates one; it never edits an existing contact). The
+ * result is noted on the enquiry's history. No other Xero writes.
+ */
+export async function sendEnquiriesToXeroAction(rfqIds: string[]): Promise<SendToXeroResult> {
+  const ids = (Array.isArray(rfqIds) ? rfqIds : []).filter((id) => /^[0-9a-f-]{36}$/i.test(id)).slice(0, 25);
+  if (!ids.length) return { ok: false, message: "Select at least one enquiry.", results: [] };
+  try {
+    const admin = await assertAdmin({ permission: "manageRfqs" });
+    const config = xeroBridgeConfigFromEnv();
+    if (!config) return { ok: false, message: "The Xero connection is not set up on this site.", results: [] };
+    const bridge = createXeroBridgeClient({ ...config, timeoutMs: 10_000 });
+    const supabase = await createClient();
+    const { data: rows, error } = await supabase
+      .from("rfqs")
+      .select("id, rfq_number, contact_name, company_name, email, phone, town, province, address_line, postal_code")
+      .in("id", ids);
+    if (error) throw error;
+
+    const results: SendToXeroResult["results"] = [];
+    for (const rfq of rows ?? []) {
+      const payload = buildCreateContactPayload(rfq);
+      if ("error" in payload) {
+        results.push({ rfqId: rfq.id, ok: false, message: payload.error });
+        continue;
+      }
+      try {
+        const res = await bridge.write<CreateContactResult>("create_contact_from_website", payload as unknown as Record<string, unknown>);
+        const message = res.created
+          ? `Added to Xero as a new contact: ${res.name}.`
+          : `Already in Xero as ${res.name}${res.matched_by ? ` (matched by ${res.matched_by})` : ""}. Nothing was changed.`;
+        results.push({ rfqId: rfq.id, ok: true, message });
+        await insertRfqEvents(admin, [
+          { rfqId: rfq.id, eventType: "xero_contact", message, metadata: { contact_id: res.contact_id, created: res.created, matched_by: res.matched_by ?? null } },
+        ]);
+        await writeAuditLog({
+          actorUserId: admin.user.id,
+          actorEmail: admin.user.email,
+          action: res.created ? "rfq_xero_contact_created" : "rfq_xero_contact_matched",
+          entityType: "rfq",
+          entityId: rfq.id,
+          afterData: { contact_id: res.contact_id, created: res.created },
+        });
+      } catch (err) {
+        const status = err instanceof XeroBridgeError ? err.status : null;
+        const text = err instanceof Error ? err.message.replace(/^Xero bridge:\s*/, "") : "";
+        results.push({
+          rfqId: rfq.id,
+          ok: false,
+          message:
+            status === 404 || /not allowed|unknown tool/i.test(text)
+              ? "The Xero bridge doesn't accept new contacts from the website yet."
+              : status === 400
+                ? `${text}.`
+                : "Xero didn't answer. Nothing was changed.",
+        });
+      }
+    }
+    revalidatePath("/admin/rfqs/");
+    const done = results.filter((r) => r.ok).length;
+    return {
+      ok: done > 0,
+      message: done === results.length ? (done === 1 ? results[0].message : `${done} enquiries sent to Xero.`) : results.find((r) => !r.ok)?.message ?? "Nothing was sent.",
+      results,
+    };
+  } catch (error) {
+    unstable_rethrow(error);
+    return { ok: false, message: describeActionError(error), results: [] };
   }
 }

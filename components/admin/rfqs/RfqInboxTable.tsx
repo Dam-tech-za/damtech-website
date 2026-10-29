@@ -10,6 +10,7 @@ import { RfqColumnChooser, loadOptionalColumns } from "./RfqColumnChooser";
 import { RfqInboxCard } from "./RfqInboxCard";
 import { AdminSelect } from "@/components/admin/ui";
 import { RfqInboxTableRow } from "./RfqInboxRow";
+import { RfqPeekDrawer } from "./RfqPeekDrawer";
 
 type StaffMember = {
   id: string;
@@ -71,6 +72,8 @@ export function RfqInboxTable({
     setToastMessage("Enquiry deleted.");
     window.setTimeout(() => setToastMessage(null), 5000);
   }
+
+  const [peek, setPeek] = useState<RfqInboxRow | null>(null);
 
   function toggle(id: string) {
     setSelected((prev) =>
@@ -211,6 +214,7 @@ export function RfqInboxTable({
                 canManage={canManage}
                 canDelete={canDelete}
                 onDeleted={() => handleRowDeleted(row.id)}
+                onOpen={setPeek}
               />
             ))}
           </tbody>
@@ -231,6 +235,8 @@ export function RfqInboxTable({
           />
         ))}
       </div>
+
+      <RfqPeekDrawer row={peek} canManage={canManage} onClose={() => setPeek(null)} />
 
       <RfqInboxPagination
         filters={filters}

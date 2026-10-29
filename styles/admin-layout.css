@@ -4653,3 +4653,65 @@ table.admin-sheet .admin-status {
   border-radius: 8px;
   background: #fff;
 }
+
+/* Enquiry quick view (side panel) */
+.rfq-peek__list {
+  margin: 0;
+  display: grid;
+  gap: 0.6rem;
+}
+
+.rfq-peek__list > div {
+  display: grid;
+  gap: 2px;
+}
+
+.rfq-peek__list dt {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--admin-text-muted);
+}
+
+.rfq-peek__list dd {
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.rfq-peek__list .admin-sheet__phone {
+  justify-content: flex-start;
+}
+
+.rfq-peek__muted {
+  color: var(--admin-text-muted);
+}
+
+.rfq-peek__text {
+  white-space: pre-wrap;
+}
+
+.rfq-peek__actions,
+.rfq-peek__xero {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  align-items: center;
+}
+
+.rfq-peek__ok,
+.rfq-peek__err,
+.rfq-bulk-actions__note {
+  flex-basis: 100%;
+  margin: 0;
+  font-size: 0.82rem;
+}
+
+.rfq-peek__ok { color: #166534; }
+.rfq-peek__err { color: #9b1c1c; }
+
+.rfq-peek__full {
+  justify-self: start;
+}
+
+.rfq-peek .ops-pay-edit {
+  max-width: 12rem;
+}
