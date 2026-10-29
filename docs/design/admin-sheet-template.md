@@ -51,3 +51,12 @@ An existing `<table>` can use the template by adding `className="admin-sheet"`. 
 - **Empty values:** use `admin-sheet__empty` and a short word ("—" or "Not provided").
 - **Column widths:** give them per table in its own CSS, not in the template.
 - **Phones (screens below 900 px):** keep a card list for small screens; the template is for the desktop table.
+
+## Toolbar above the table
+
+Use the same one-row toolbar as Projects: the page's main action (blue), then Search, Person, Filter, Sort and "…".
+
+- **Shared pieces:** the icons and the small popover come from `components/admin/ui/AdminToolbar.tsx`, and the styling uses the existing `ops-toolbar` classes.
+- **Example:** `components/admin/rfqs/RfqHeaderToolbar.tsx`.
+- **State:** keep filters and sort in the URL so links and refreshes keep the view.
+- **Status buttons:** where a list has statuses, put the status buttons under the toolbar (as on Enquiries).

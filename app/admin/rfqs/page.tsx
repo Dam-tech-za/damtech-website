@@ -10,15 +10,13 @@ import {
   canViewRfqContact,
 } from "@/lib/admin/rfqs/rfq-inbox-utils";
 import { bulkAssignRfqAction, bulkUpdateRfqStatusAction } from "./actions";
-import { RfqPageHeader } from "@/components/admin/rfqs/RfqPageHeader";
 import { RfqStatusStrip } from "@/components/admin/rfqs/RfqStatusStrip";
-import { RfqToolbar } from "@/components/admin/rfqs/RfqToolbar";
+import { RfqHeaderToolbar } from "@/components/admin/rfqs/RfqHeaderToolbar";
 import { RfqActiveFilters } from "@/components/admin/rfqs/RfqActiveFilters";
 import { RfqInboxTable } from "@/components/admin/rfqs/RfqInboxTable";
 import { RfqEmptyState } from "@/components/admin/rfqs/RfqEmptyState";
-import { RfqRefreshButton } from "@/components/admin/rfqs/RfqRefreshButton";
 import { RfqDeleteToast } from "@/components/admin/rfqs/RfqDeleteToast";
-import { AdminErrorState, AdminListMemory } from "@/components/admin/ui";
+import { AdminErrorState, AdminListMemory, AdminPageHeader } from "@/components/admin/ui";
 
 type PageProps = {
   searchParams: Promise<RfqInboxFilters>;
@@ -53,11 +51,14 @@ export default async function AdminRfqsPage({ searchParams }: PageProps) {
 
   return (
     <div className="admin-stack--page rfq-inbox-page">
-      <RfqPageHeader
-        canExport={canExport}
+      <AdminPageHeader title="Enquiries" description="Quote requests and messages from the website." />
+
+      <RfqHeaderToolbar
+        filters={filters}
+        staff={staff ?? []}
         canManage={canManage}
+        canExport={canExport}
         exportHref={exportHref}
-        refreshSlot={<RfqRefreshButton />}
       />
 
       <Suspense fallback={null}>
@@ -66,8 +67,6 @@ export default async function AdminRfqsPage({ searchParams }: PageProps) {
       </Suspense>
 
       <RfqStatusStrip counts={statusCounts} filters={filters} />
-
-      <RfqToolbar filters={filters} staff={staff ?? []} />
 
       <RfqActiveFilters filters={filters} />
 
