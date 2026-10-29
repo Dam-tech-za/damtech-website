@@ -1,19 +1,8 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
-import {
-  AdminActionForm,
-  AdminButton,
-  AdminSelect,
-  AdminSubmitButton,
-} from "@/components/admin/ui";
-import {
-  bulkArchiveProjectsAction,
-  bulkMoveProjectsAction,
-  createProjectQuickAction,
-  deleteProjectsAction,
-  duplicateProjectsAction,
-} from "@/app/admin/operations/project-actions";
+import { AdminActionForm } from "@/components/admin/ui";
+import { createProjectQuickAction } from "@/app/admin/operations/project-actions";
 import { loadBoardXeroQuotesAction } from "@/app/admin/operations/board-xero-actions";
 import type { XeroStartItem } from "@/lib/operations/xero-start";
 import {
@@ -39,6 +28,7 @@ import {
   XeroEditCell,
 } from "./BoardEditableCells";
 import { ProjectPeekDrawer } from "./ProjectPeekDrawer";
+import { SelectionBar } from "./SelectionBar";
 
 const COLLAPSE_KEY = "ops-board-collapsed-groups";
 const COLLAPSE_EVENT = "ops-board-collapsed";
@@ -125,11 +115,13 @@ function AddProjectRow({
   canEdit,
   autoFocus,
   onAddFromXero,
+  colSpan,
 }: {
   group: ProjectGroup;
   canEdit: boolean;
   autoFocus?: boolean;
   onAddFromXero: () => void;
+  colSpan: number;
 }) {
   const inputRef = useRef<HTMLInputElement>(null);
   useEffect(() => {
@@ -138,28 +130,29 @@ function AddProjectRow({
   if (!canEdit) return null;
   return (
     <tr className="ops-sheet__add-row">
-      <td className="ops-sheet__c-check ops-sheet__sticky" />
-      <td colSpan={99} className="ops-sheet__add">
-        <AdminActionForm action={createProjectQuickAction} className="ops-sheet__add-form" resetOnSuccess>
-          <input type="hidden" name="group" value={group} />
-          <input
-            ref={inputRef}
-            className="admin-input ops-sheet__add-input"
-            name="title"
-            maxLength={200}
-            placeholder="+ Add Project"
-            aria-label={`Add project to ${GROUP_LABELS[group]}`}
-            autoComplete="off"
-          />
-          <button type="submit" className="sr-only">
-            Add
-          </button>
-        </AdminActionForm>
-        {group !== "completed" ? (
-          <button type="button" className="ops-sheet__xero-link" onClick={onAddFromXero}>
-            + Add from Xero
-          </button>
-        ) : null}
+      <td colSpan={colSpan} className="ops-sheet__add">
+        <div className="ops-sheet__sticky-row">
+          <AdminActionForm action={createProjectQuickAction} className="ops-sheet__add-form" resetOnSuccess>
+            <input type="hidden" name="group" value={group} />
+            <input
+              ref={inputRef}
+              className="admin-input ops-sheet__add-input"
+              name="title"
+              maxLength={200}
+              placeholder="+ Add Project"
+              aria-label={`Add project to ${GROUP_LABELS[group]}`}
+              autoComplete="off"
+            />
+            <button type="submit" className="sr-only">
+              Add
+            </button>
+          </AdminActionForm>
+          {group !== "completed" ? (
+            <button type="button" className="ops-sheet__xero-link" onClick={onAddFromXero}>
+              + Add from Xero
+            </button>
+          ) : null}
+        </div>
       </td>
     </tr>
   );
@@ -183,6 +176,7 @@ export function ProjectsBoard({
   hiddenColumns?: Array<"lead" | "client" | "email" | "xero" | "value" | "location">;
 }) {
   const sheetRef = useRef<HTMLDivElement>(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
   const projectThRef = useRef<HTMLTableCellElement>(null);
   const [rows, setRows] = useState(projectsProp);
   const [rowsSource, setRowsSource] = useState(projectsProp);
@@ -264,23 +258,28 @@ export function ProjectsBoard({
       });
   }, [canEdit]);
 
-  // Keep Payment sticky offset equal to the live Project column width.
+  // Keep Payment sticky offset and sticky stage/add row width in sync with the scroller.
   useEffect(() => {
     const sheet = sheetRef.current;
+    const scroll = scrollRef.current;
     const th = projectThRef.current;
-    if (!sheet || !th) return;
+    if (!sheet || !scroll) return;
     const sync = () => {
-      sheet.style.setProperty("--col-project", `${Math.round(th.getBoundingClientRect().width)}px`);
+      if (th) sheet.style.setProperty("--col-project", `${Math.round(th.getBoundingClientRect().width)}px`);
+      sheet.style.setProperty("--ops-scroll-width", `${scroll.clientWidth}px`);
     };
     sync();
     const ro = new ResizeObserver(sync);
-    ro.observe(th);
+    ro.observe(scroll);
+    if (th) ro.observe(th);
     window.addEventListener("resize", sync);
     return () => {
       ro.disconnect();
       window.removeEventListener("resize", sync);
     };
   }, [hiddenColumns, rows.length, frozen]);
+
+  const colSpan = 3 + (6 - hiddenColumns.length);
 
   const visibleIds = rows.map((p) => p.id);
   const selectedProjects = rows.filter((p) => selected.has(p.id));
@@ -304,8 +303,11 @@ export function ProjectsBoard({
   const firstEditableGroup = PROJECT_GROUPS[0] ?? "awaiting";
 
   return (
-    <div ref={sheetRef} className={`ops-sheet${frozen ? " ops-sheet--frozen" : ""}`}>
-      <div className="ops-sheet__scroll">
+    <div
+      ref={sheetRef}
+      className={`ops-sheet${frozen ? " ops-sheet--frozen" : ""}${selectedProjects.length > 0 && canEdit ? " ops-sheet--has-selection" : ""}`}
+    >
+      <div ref={scrollRef} className="ops-sheet__scroll">
         <table className="admin-table ops-table ops-board-table ops-sheet__table">
           <colgroup>
             <col className="ops-sheet__col-check" />
@@ -369,19 +371,21 @@ export function ProjectsBoard({
             return (
               <tbody key={group} className={`ops-sheet__group ops-sheet__group--${group}${open ? "" : " is-collapsed"}`}>
                 <tr className="ops-sheet__group-row">
-                  <th colSpan={3 + (9 - 3 - hiddenColumns.length)} scope="colgroup">
-                    <button
-                      type="button"
-                      className={`ops-sheet__group-btn ops-sheet__group-btn--${group}`}
-                      aria-expanded={open}
-                      onClick={() => toggleGroup(group)}
-                    >
-                      <span className="ops-sheet__chevron" aria-hidden="true">
-                        {open ? "▾" : "▸"}
-                      </span>
-                      {GROUP_LABELS[group]}
-                      <span className="ops-group__count">{rows.length}</span>
-                    </button>
+                  <th colSpan={colSpan} scope="colgroup">
+                    <div className="ops-sheet__sticky-row">
+                      <button
+                        type="button"
+                        className={`ops-sheet__group-btn ops-sheet__group-btn--${group}`}
+                        aria-expanded={open}
+                        onClick={() => toggleGroup(group)}
+                      >
+                        <span className="ops-sheet__chevron" aria-hidden="true">
+                          {open ? "▾" : "▸"}
+                        </span>
+                        {GROUP_LABELS[group]}
+                        <span className="ops-group__count">{rows.length}</span>
+                      </button>
+                    </div>
                   </th>
                 </tr>
                 {open
@@ -447,6 +451,7 @@ export function ProjectsBoard({
                     canEdit={canEdit}
                     autoFocus={focusAdd && group === firstEditableGroup}
                     onAddFromXero={() => void openXeroPicker({ group })}
+                    colSpan={colSpan}
                   />
                 ) : null}
               </tbody>
@@ -456,70 +461,15 @@ export function ProjectsBoard({
       </div>
 
       {selectedProjects.length > 0 && canEdit ? (
-        <div className="ops-selection-bar" role="toolbar" aria-label="Selected projects">
-          <strong className="ops-selection-bar__count">
-            {selectedProjects.length} selected
-          </strong>
-          <AdminActionForm action={duplicateProjectsAction} className="ops-selection-bar__action">
-            <input type="hidden" name="ids" value={idsValue} />
-            <AdminSubmitButton variant="outline" pendingLabel="Duplicating…">
-              Duplicate
-            </AdminSubmitButton>
-          </AdminActionForm>
-          <AdminButton type="button" variant="ghost" onClick={() => downloadCsv(selectedProjects)}>
-            Export CSV
-          </AdminButton>
-          <AdminActionForm
-            action={bulkArchiveProjectsAction}
-            className="ops-selection-bar__action"
-            confirmMessage="Archive the selected projects? They leave the active board."
-          >
-            <input type="hidden" name="ids" value={idsValue} />
-            <AdminSubmitButton variant="outline" pendingLabel="Archiving…">
-              Archive
-            </AdminSubmitButton>
-          </AdminActionForm>
-          <AdminActionForm
-            action={deleteProjectsAction}
-            className="ops-selection-bar__action"
-            confirmMessage="Delete the selected projects? This cannot be undone."
-          >
-            <input type="hidden" name="ids" value={idsValue} />
-            <AdminSubmitButton variant="danger" pendingLabel="Deleting…">
-              Delete
-            </AdminSubmitButton>
-          </AdminActionForm>
-          <AdminActionForm action={bulkMoveProjectsAction} className="ops-selection-bar__move">
-            <input type="hidden" name="ids" value={idsValue} />
-            <AdminSelect
-              name="group"
-              aria-label="Move to stage"
-              defaultValue=""
-              onChange={(event) => {
-                const form = event.currentTarget.form;
-                if (!event.currentTarget.value || !form) return;
-                form.requestSubmit();
-              }}
-            >
-              <option value="" disabled>
-                Move to
-              </option>
-              {PROJECT_GROUPS.map((g) => (
-                <option key={g} value={g}>
-                  {GROUP_LABELS[g]}
-                </option>
-              ))}
-            </AdminSelect>
-          </AdminActionForm>
-          {singleUnlinked ? (
-            <AdminButton type="button" variant="ghost" onClick={() => void openXeroPicker({ linkId: singleUnlinked.id })}>
-              Link to Xero
-            </AdminButton>
-          ) : null}
-          <AdminButton type="button" variant="ghost" aria-label="Clear selection" onClick={() => setSelected(new Set())}>
-            ×
-          </AdminButton>
-        </div>
+        <SelectionBar
+          count={selectedProjects.length}
+          idsValue={idsValue}
+          onExport={() => downloadCsv(selectedProjects)}
+          onClear={() => setSelected(new Set())}
+          linkToXero={
+            singleUnlinked ? () => void openXeroPicker({ linkId: singleUnlinked.id }) : null
+          }
+        />
       ) : null}
 
       <AddFromXeroDialog
