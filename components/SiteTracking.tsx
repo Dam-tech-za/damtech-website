@@ -1,12 +1,18 @@
 "use client";
 
-import { useEffect } from "react";
+import { usePathname } from "next/navigation";
+import { useEffect, useRef } from "react";
 import { captureFirstTouchAttribution } from "@/lib/analytics/attribution-client";
 import {
   classifyContactHref,
   contactEventName,
   pushDataLayerEvent,
 } from "@/lib/analytics/events";
+import {
+  META_STANDARD_EVENTS,
+  trackMetaEvent,
+  trackMetaPageView,
+} from "@/lib/analytics/meta-pixel";
 
 /** Where on the page a contact link sits — helps compare header, sticky bar and in-page CTAs. */
 function linkLocation(anchor: HTMLAnchorElement): string {
@@ -24,6 +30,9 @@ function linkLocation(anchor: HTMLAnchorElement): string {
  * Mounted once in the public chrome (never on admin routes).
  */
 export function SiteTracking() {
+  const pathname = usePathname();
+  const skipInitialPageView = useRef(true);
+
   useEffect(() => {
     captureFirstTouchAttribution();
 
@@ -33,16 +42,29 @@ export function SiteTracking() {
       if (!anchor) return;
       const method = classifyContactHref(anchor.getAttribute("href"));
       if (!method) return;
+      const location = linkLocation(anchor);
       pushDataLayerEvent(contactEventName(method), {
         contact_method: method,
-        link_location: linkLocation(anchor),
+        link_location: location,
         page_path: window.location.pathname,
+      });
+      trackMetaEvent(META_STANDARD_EVENTS.contact, {
+        content_name: method,
+        content_category: location,
       });
     }
 
     document.addEventListener("click", onClick, { capture: true });
     return () => document.removeEventListener("click", onClick, { capture: true });
   }, []);
+
+  useEffect(() => {
+    if (skipInitialPageView.current) {
+      skipInitialPageView.current = false;
+      return;
+    }
+    trackMetaPageView();
+  }, [pathname]);
 
   return null;
 }

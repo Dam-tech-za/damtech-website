@@ -1,5 +1,9 @@
 import Link from "next/link";
 import {
+  formatRegisteredAddressOneLine,
+  LEGAL_ENTITY,
+} from "@/lib/legal-entity";
+import {
   FOOTER_COMPANY_LINKS,
   FOOTER_REGION_LINKS,
   FOOTER_SERVICE_LINKS,
@@ -127,7 +131,11 @@ export function Footer() {
 
         <div className="dt-footer__legal">
           <p>
-            &copy; {new Date().getFullYear()} {siteConfig.name}. All rights reserved.
+            &copy; {new Date().getFullYear()} {LEGAL_ENTITY.legalName}, trading
+            as {LEGAL_ENTITY.tradingName}. All rights reserved.
+          </p>
+          <p className="dt-footer__entity">
+            {formatRegisteredAddressOneLine()}. {LEGAL_ENTITY.walkInNote}
           </p>
           <p>Dam linings · Steel reservoirs · Waterproofing</p>
         </div>

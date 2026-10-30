@@ -25,6 +25,7 @@ import { PROVINCE_OPTIONS } from "@/lib/form";
 import { breakdownVatInclusive } from "@/lib/orders/money";
 import type { OrderPriceSnapshot } from "@/lib/orders/pricing";
 import { ORDER_FULFILMENT_METHOD } from "@/lib/orders/types";
+import { LegalSupplierDetails } from "@/components/LegalSupplierDetails";
 import { ShieldCheckIcon } from "@/components/icons/StrokeIcons";
 
 function Field({
@@ -449,6 +450,10 @@ export function OrderForm({ snapshot }: { snapshot: OrderPriceSnapshot }) {
             </span>
           </label>
         </fieldset>
+
+        <section className="order-section" aria-labelledby="supplier-details">
+          <LegalSupplierDetails compact />
+        </section>
 
         <section className="order-section" aria-labelledby="order-payment-heading">
           <h2 id="order-payment-heading" className="order-section__heading">

@@ -56,6 +56,13 @@ export function getMerchantOrderReadinessChecks(): MerchantReadinessCheck[] {
       blocker: "Confirm /contact/ remains reachable from checkout.",
     },
     {
+      id: "ect-supplier-identity",
+      label: "Legal name and physical address are published for catalogue orders",
+      passed: true,
+      blocker:
+        "Confirm the legal name and registered address appear on /terms/, /privacy/ and /order/.",
+    },
+    {
       id: "price-availability-match",
       label: "Price and availability match Product JSON-LD",
       passed: true,

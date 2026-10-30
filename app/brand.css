@@ -1727,9 +1727,8 @@ body:has(.dt-hero) .site-header-spacer {
 
 .dt-footer__legal {
   display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  gap: 1rem;
+  flex-direction: column;
+  gap: 0.45rem;
   padding-block: 1.25rem;
   border-top: 1px solid var(--dt-line-dark);
   font-size: 0.78rem;
@@ -1737,6 +1736,11 @@ body:has(.dt-hero) .site-header-spacer {
 
 .dt-footer__legal p {
   margin: 0;
+}
+
+.dt-footer__entity {
+  max-width: 42rem;
+  line-height: 1.5;
 }
 
 /* ------------------------------------------------------------------ */

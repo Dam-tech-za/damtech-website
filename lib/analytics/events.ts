@@ -5,6 +5,8 @@
  * to GA4 (see docs/seo-growth-baseline.md → "GTM configuration required").
  */
 
+import { META_STANDARD_EVENTS, trackMetaEvent } from "./meta-pixel.ts";
+
 export const CONVERSION_EVENTS = {
   /** Successful quote or contact form submission (GA4 recommended event). */
   generateLead: "generate_lead",
@@ -57,5 +59,9 @@ export function trackLeadSubmitted(params: {
     lead_service: params.service || undefined,
     rfq_number: params.rfqNumber || undefined,
     page_path: typeof window !== "undefined" ? window.location.pathname : undefined,
+  });
+  trackMetaEvent(META_STANDARD_EVENTS.lead, {
+    content_name: params.form,
+    content_category: params.service || undefined,
   });
 }

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Hero } from "@/components/Hero";
+import { LegalSupplierDetails } from "@/components/LegalSupplierDetails";
 import { PageSeo } from "@/components/PageSeo";
 import { SiteSection } from "@/components/SiteSection";
 import { createMetadata } from "@/lib/seo";
@@ -35,6 +36,7 @@ export default function TermsPage() {
             Catalogue prices are VAT-inclusive for the supply-only kit. Delivery
             and installation are excluded unless Damtech quotes them separately.
           </p>
+          <LegalSupplierDetails />
           <h2>Orders and invoices</h2>
           <p>
             Placing an order records the kit, quantity, customer details and

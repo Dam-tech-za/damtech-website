@@ -11,6 +11,7 @@ import {
 } from "./catalogue/merchant-policies.ts";
 import { DEFAULT_OG_IMAGE, DEFAULT_OG_IMAGE_ALT, IMAGE_PATHS, altForImagePath } from "./images";
 import { OG_IMAGE_DERIVATIVES } from "./og-images.generated";
+import { LEGAL_ENTITY } from "./legal-entity.ts";
 import {
   BUSINESS_HOURS,
   BLOG_AUTHOR,
@@ -364,6 +365,7 @@ export function createOrganizationSchema() {
     "@type": "Organization",
     "@id": `${siteConfig.domain}/#organization`,
     name: siteConfig.name,
+    legalName: LEGAL_ENTITY.legalName,
     alternateName: "Damtech South Africa",
     url: siteConfig.domain,
     email: siteConfig.email,

@@ -1,4 +1,9 @@
 import {
+  metaEventForDataLayer,
+  metaParamsFromCatalogueItem,
+  trackMetaEvent,
+} from "@/lib/analytics/meta-pixel";
+import {
   buildCatalogueAnalyticsPayload,
   type CatalogueAnalyticsItem,
 } from "@/lib/catalogue/analytics";
@@ -17,4 +22,11 @@ export function pushCatalogueAnalytics(
     ...buildCatalogueAnalyticsPayload(event, item),
     ...extra,
   });
+  const meta = metaEventForDataLayer(event);
+  if (meta) {
+    trackMetaEvent(
+      meta.name,
+      meta.useItemParams ? metaParamsFromCatalogueItem(item) : {},
+    );
+  }
 }

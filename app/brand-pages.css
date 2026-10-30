@@ -1076,3 +1076,13 @@
 .causes-diagram__caption-title {
   font-weight: 700;
 }
+
+.legal-supplier {
+  margin-top: 1.25rem;
+}
+
+.legal-supplier--compact .legal-supplier__heading {
+  font-size: 1.05rem;
+  font-weight: 650;
+  margin: 0 0 0.5rem;
+}

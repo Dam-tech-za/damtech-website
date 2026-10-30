@@ -88,8 +88,9 @@ export const BLOG_AUTHOR = {
 
 /**
  * Operating bases — Damtech works from these locations but clients do not visit.
- * Do not publish street addresses on the website or in LocalBusiness schema.
- * Hide street addresses on Google Business Profile (service-area business).
+ * Keep street addresses out of LocalBusiness schema and marketing NAP.
+ * The registered physical address is published on legal and order pages
+ * (`lib/legal-entity.ts`) for ECT Act s43.
  */
 export const OFFICES = [
   {
