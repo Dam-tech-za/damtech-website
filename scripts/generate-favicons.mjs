@@ -1,6 +1,6 @@
 /**
- * Regenerates Damtech favicon / PWA icon PNGs and .ico with transparent backgrounds.
- * Apple touch icon keeps brand navy (iOS paints transparent icons black).
+ * Derives Damtech favicon variants from the supplied white-square PNGs.
+ * Source of truth (do not overwrite): public/favicon-32.png, favicon-192.png, favicon-512.png
  *
  * Usage: node scripts/generate-favicons.mjs
  */
@@ -11,47 +11,18 @@ import sharp from "sharp";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.join(__dirname, "..");
+const pub = path.join(root, "public");
+const iconsDir = path.join(pub, "icons");
 
-const markSvg = `<?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 170 170" fill="none">
-  <path
-    fill="#C4CBD4"
-    d="M46 20 C29 34 27 52 29 68 C32 78 46 82 46 82 C46 82 60 78 63 68 C65 52 63 34 46 20 Z"
-  />
-  <path
-    fill="#C4CBD4"
-    d="M122 14 C98 32 94 58 96 80 C99 96 122 102 122 102 C122 102 145 96 148 80 C150 58 146 32 122 14 Z"
-  />
-  <path
-    fill="#026BC6"
-    stroke="#FFFFFF"
-    stroke-width="7"
-    stroke-linejoin="round"
-    paint-order="stroke fill"
-    d="M85 20 C62 38 55 65 57 88 C60 104 85 112 85 112 C85 112 110 104 113 88 C115 65 108 38 85 20 Z"
-  />
-</svg>`;
+const src32 = path.join(pub, "favicon-32.png");
+const src192 = path.join(pub, "favicon-192.png");
+const src512 = path.join(pub, "favicon-512.png");
 
-const appleSvg = `<?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" width="180" height="180" viewBox="0 0 170 170" fill="none">
-  <rect width="170" height="170" fill="#031926"/>
-  <path
-    fill="#C4CBD4"
-    d="M46 20 C29 34 27 52 29 68 C32 78 46 82 46 82 C46 82 60 78 63 68 C65 52 63 34 46 20 Z"
-  />
-  <path
-    fill="#C4CBD4"
-    d="M122 14 C98 32 94 58 96 80 C99 96 122 102 122 102 C122 102 145 96 148 80 C150 58 146 32 122 14 Z"
-  />
-  <path
-    fill="#026BC6"
-    stroke="#FFFFFF"
-    stroke-width="7"
-    stroke-linejoin="round"
-    paint-order="stroke fill"
-    d="M85 20 C62 38 55 65 57 88 C60 104 85 112 85 112 C85 112 110 104 113 88 C115 65 108 38 85 20 Z"
-  />
-</svg>`;
+for (const file of [src32, src192, src512]) {
+  if (!fs.existsSync(file)) {
+    throw new Error(`Missing source favicon: ${path.relative(root, file)}`);
+  }
+}
 
 /** Pack PNG buffers into a multi-size .ico (PNG-compressed images). */
 function pngsToIco(pngBuffers) {
@@ -89,37 +60,42 @@ function pngsToIco(pngBuffers) {
   return out;
 }
 
-async function writePng(svg, size, outPath) {
-  const buf = await sharp(Buffer.from(svg))
-    .resize(size, size, {
-      fit: "contain",
-      background: { r: 0, g: 0, b: 0, alpha: 0 },
-    })
+async function resizeFrom(src, size) {
+  return sharp(src)
+    .resize(size, size, { fit: "fill" })
     .png()
     .toBuffer();
+}
+
+function write(outPath, buf) {
   fs.mkdirSync(path.dirname(outPath), { recursive: true });
   fs.writeFileSync(outPath, buf);
-  return buf;
+  console.log("wrote", path.relative(root, outPath));
 }
 
-const sizes = [16, 32, 48, 180, 192, 512];
-const iconsDir = path.join(root, "public", "icons");
+const png32 = fs.readFileSync(src32);
+const png192 = fs.readFileSync(src192);
+const png512 = fs.readFileSync(src512);
 
-const pngBySize = {};
-for (const size of sizes) {
-  const out = path.join(iconsDir, `icon-${size}.png`);
-  pngBySize[size] = await writePng(markSvg, size, out);
-  console.log("wrote", path.relative(root, out));
+const png16 = await resizeFrom(src32, 16);
+const png48 = await resizeFrom(src512, 48);
+const png180 = await resizeFrom(src512, 180);
+
+fs.mkdirSync(iconsDir, { recursive: true });
+write(path.join(iconsDir, "icon-16.png"), png16);
+write(path.join(iconsDir, "icon-32.png"), png32);
+write(path.join(iconsDir, "icon-48.png"), png48);
+write(path.join(iconsDir, "icon-180.png"), png180);
+write(path.join(iconsDir, "icon-192.png"), png192);
+write(path.join(iconsDir, "icon-512.png"), png512);
+
+write(path.join(pub, "favicon-32x32.png"), png32);
+write(path.join(pub, "favicon-48x48.png"), png48);
+write(path.join(pub, "apple-touch-icon.png"), png180);
+write(path.join(pub, "favicon.ico"), pngsToIco([png16, png32, png48]));
+
+const leftoverSvg = path.join(pub, "favicon.svg");
+if (fs.existsSync(leftoverSvg)) {
+  fs.unlinkSync(leftoverSvg);
+  console.log("removed", path.relative(root, leftoverSvg));
 }
-
-const appleOut = path.join(root, "public", "apple-touch-icon.png");
-await writePng(appleSvg, 180, appleOut);
-console.log("wrote", path.relative(root, appleOut));
-
-const icoBuf = pngsToIco([pngBySize[16], pngBySize[32], pngBySize[48]]);
-const publicIco = path.join(root, "public", "favicon.ico");
-const appIco = path.join(root, "app", "favicon.ico");
-fs.writeFileSync(publicIco, icoBuf);
-fs.writeFileSync(appIco, icoBuf);
-console.log("wrote", path.relative(root, publicIco));
-console.log("wrote", path.relative(root, appIco));

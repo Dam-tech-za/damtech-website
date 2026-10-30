@@ -236,21 +236,15 @@ export function createRootMetadata(): Metadata {
       description: siteConfig.defaultTwitterDescription,
       images: [ogImage.url],
     },
+    // Favicon set: 32 tab, 48 ICO (Google), 192 app, 512 Google/single-upload, Apple touch.
     icons: {
       icon: [
+        { url: "/favicon-32.png", type: "image/png", sizes: "32x32" },
         { url: "/favicon.ico", sizes: "48x48" },
-        { url: "/icons/icon-48.png", type: "image/png", sizes: "48x48" },
-        { url: "/icons/icon-192.png", type: "image/png", sizes: "192x192" },
-        { url: "/icons/icon-512.png", type: "image/png", sizes: "512x512" },
+        { url: "/favicon-192.png", type: "image/png", sizes: "192x192" },
+        { url: "/favicon-512.png", type: "image/png", sizes: "512x512" },
       ],
-      shortcut: [{ url: "/favicon.ico" }],
-      apple: [
-        {
-          url: "/apple-touch-icon.png",
-          sizes: "180x180",
-          type: "image/png",
-        },
-      ],
+      apple: [{ url: "/apple-touch-icon.png" }],
     },
   };
 }
