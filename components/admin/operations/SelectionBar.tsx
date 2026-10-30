@@ -154,6 +154,7 @@ type Props = {
 export function SelectionBar({ count, idsValue, onExport, onClear, linkToXero, onFromXero, fromXeroEnabled }: Props) {
   const [moveOpen, setMoveOpen] = useState(false);
   const moveBtnRef = useRef<HTMLButtonElement>(null);
+  const moveGroupRef = useRef<HTMLInputElement>(null);
   const [moveStyle, setMoveStyle] = useState<CSSProperties>({});
 
   useEffect(() => {
@@ -246,15 +247,19 @@ export function SelectionBar({ count, idsValue, onExport, onClear, linkToXero, o
         </FormBarButton>
       </AdminActionForm>
 
-      <BarButton
-        label="Move to"
-        buttonRef={moveBtnRef}
-        aria-haspopup="menu"
-        aria-expanded={moveOpen}
-        onClick={() => setMoveOpen((v) => !v)}
-      >
-        <IconMove />
-      </BarButton>
+      <AdminActionForm action={bulkMoveProjectsAction} className="ops-selection-bar__action">
+        <input type="hidden" name="ids" value={idsValue} />
+        <input type="hidden" name="group" ref={moveGroupRef} defaultValue="" />
+        <BarButton
+          label="Move to"
+          buttonRef={moveBtnRef}
+          aria-haspopup="menu"
+          aria-expanded={moveOpen}
+          onClick={() => setMoveOpen((v) => !v)}
+        >
+          <IconMove />
+        </BarButton>
+      </AdminActionForm>
 
       {linkToXero ? (
         <BarButton label="Link Xero" onClick={linkToXero}>
@@ -272,13 +277,21 @@ export function SelectionBar({ count, idsValue, onExport, onClear, linkToXero, o
         ? createPortal(
             <div className="ops-selection-bar__move-pop" role="menu" style={moveStyle}>
               {PROJECT_GROUPS.map((g: ProjectGroup) => (
-                <AdminActionForm key={g} action={bulkMoveProjectsAction} className="ops-selection-bar__move-item">
-                  <input type="hidden" name="ids" value={idsValue} />
-                  <input type="hidden" name="group" value={g} />
-                  <button type="submit" role="menuitem" onClick={() => setMoveOpen(false)}>
+                <div key={g} className="ops-selection-bar__move-item">
+                  <button
+                    type="button"
+                    role="menuitem"
+                    onClick={() => {
+                      const input = moveGroupRef.current;
+                      if (!input?.form) return;
+                      input.value = g;
+                      input.form.requestSubmit();
+                      setMoveOpen(false);
+                    }}
+                  >
                     {GROUP_LABELS[g]}
                   </button>
-                </AdminActionForm>
+                </div>
               ))}
             </div>,
             document.body,
