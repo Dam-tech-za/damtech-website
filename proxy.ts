@@ -1,5 +1,6 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
+import { getAssuranceLevel } from "@/lib/auth/mfa";
 import { getSupabaseAnonKey, getSupabaseUrl } from "@/lib/supabase/env";
 
 /**
@@ -61,6 +62,20 @@ export async function proxy(request: NextRequest) {
     return NextResponse.redirect(loginUrl);
   }
 
+  // Password or Google alone is not enough: the session must have passed
+  // two-step verification (authenticator app) before any admin page loads.
+  if (
+    isProtectedAdminPath(pathname) &&
+    user &&
+    (await getAssuranceLevel(supabase)) !== "aal2"
+  ) {
+    const mfaUrl = request.nextUrl.clone();
+    mfaUrl.pathname = "/admin/mfa/";
+    mfaUrl.search = "";
+    mfaUrl.searchParams.set("next", pathname);
+    return redirectWithCookies(mfaUrl, supabaseResponse);
+  }
+
   if (
     user &&
     (pathname === "/admin/login" || pathname === "/admin/login/")
@@ -77,6 +92,7 @@ export async function proxy(request: NextRequest) {
 function isProtectedAdminPath(pathname: string): boolean {
   if (!pathname.startsWith("/admin")) return false;
   if (pathname === "/admin/login" || pathname === "/admin/login/") return false;
+  if (pathname === "/admin/mfa" || pathname === "/admin/mfa/") return false;
   if (
     pathname === "/admin/unauthorised" ||
     pathname === "/admin/unauthorised/" ||
@@ -86,6 +102,13 @@ function isProtectedAdminPath(pathname: string): boolean {
     return false;
   }
   return true;
+}
+
+/** Redirect while keeping any session cookies the refresh above just set. */
+function redirectWithCookies(url: URL, from: NextResponse): NextResponse {
+  const response = NextResponse.redirect(url);
+  from.cookies.getAll().forEach((cookie) => response.cookies.set(cookie));
+  return response;
 }
 
 export const config = {

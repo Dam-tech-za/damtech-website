@@ -1,5 +1,6 @@
 import { cache } from "react";
 import { createClient } from "@/lib/supabase/server";
+import { getAssuranceLevel, type AssuranceLevel } from "./mfa";
 import type { AdminProfile, AdminRole } from "./types";
 import { ADMIN_ROLES } from "./types";
 
@@ -39,14 +40,13 @@ export type CurrentAdmin =
   | null;
 
 /**
- * Returns the signed-in Supabase user plus active admin profile, or null.
- * Does not throw — callers decide how to redirect.
+ * Signed-in user with an active admin profile, at whatever assurance level the
+ * session has. Only the two-step verification page should use this directly;
+ * everything else goes through getCurrentAdmin().
  */
-/**
- * Cached per request: the layout, the page and every guarded action in one
- * render share a single auth + profile lookup instead of repeating it.
- */
-export const getCurrentAdmin = cache(async function getCurrentAdmin(): Promise<CurrentAdmin> {
+export const getAdminSession = cache(async function getAdminSession(): Promise<
+  (NonNullable<CurrentAdmin> & { aal: AssuranceLevel }) | null
+> {
   try {
     const supabase = await createClient();
     const {
@@ -78,10 +78,25 @@ export const getCurrentAdmin = cache(async function getCurrentAdmin(): Promise<C
     return {
       user: { id: user.id, email: user.email },
       profile,
+      aal: await getAssuranceLevel(supabase),
     };
   } catch {
     return null;
   }
+});
+
+/**
+ * Returns the signed-in user plus active admin profile, or null.
+ * Null as well until the session has passed two-step verification (aal2).
+ * Does not throw — callers decide how to redirect.
+ *
+ * Cached per request: the layout, the page and every guarded action in one
+ * render share a single auth + profile lookup instead of repeating it.
+ */
+export const getCurrentAdmin = cache(async function getCurrentAdmin(): Promise<CurrentAdmin> {
+  const session = await getAdminSession();
+  if (!session || session.aal !== "aal2") return null;
+  return { user: session.user, profile: session.profile };
 });
 
 /** Auth user only (may be unapproved). Used by login / unauthorised flows. */

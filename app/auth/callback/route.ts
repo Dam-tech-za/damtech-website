@@ -64,5 +64,8 @@ export async function GET(request: Request) {
     );
   }
 
-  return NextResponse.redirect(`${origin}${next.startsWith("/") ? next : "/admin/"}`);
+  // Every admin sign-in continues to the authenticator-code step.
+  return NextResponse.redirect(
+    `${origin}/admin/mfa/?next=${encodeURIComponent(next.startsWith("/") ? next : "/admin/")}`,
+  );
 }
