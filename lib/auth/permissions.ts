@@ -25,6 +25,7 @@ const NAV_ACCESS: Record<AdminNavItemId, readonly AdminRole[]> = {
   dashboard: ["owner", "admin", "sales", "estimator", "viewer"],
   operations: ["owner", "admin", "sales", "estimator", "viewer"],
   "ops-projects": ["owner", "admin", "sales", "estimator", "viewer"],
+  "ops-calendar": ["owner", "admin", "sales", "estimator", "viewer"],
   "xero-review": ["owner", "admin", "sales", "estimator"],
   procurement: ["owner", "admin", "sales", "estimator", "viewer"],
   financials: ["owner", "admin"],
@@ -57,6 +58,12 @@ export const ADMIN_NAV_ITEMS: AdminNavItem[] = [
     label: "Projects",
     href: "/admin/operations/projects/",
     description: "Every job, board or table; add a project",
+  },
+  {
+    id: "ops-calendar",
+    label: "Calendar",
+    href: "/admin/operations/calendar/",
+    description: "Team schedule and jobs to book",
   },
   {
     id: "xero-review",
