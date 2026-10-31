@@ -5,6 +5,9 @@
 -- (ops_projects.project_lead_name); this table is only the pick list.
 -- Same access model as the other ops_* tables (service role only).
 --
+-- Applied to production (Damtech Admin) on 31 Oct 2026 with the owner's
+-- go-ahead, as migration "ops_project_leads".
+--
 -- Rollback: drop table public.ops_project_leads.
 
 create table if not exists public.ops_project_leads (
