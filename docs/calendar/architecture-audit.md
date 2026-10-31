@@ -44,4 +44,4 @@ Teams, bookings, team/resource allocations, overlap protection, scheduling audit
 
 ## Migration and rollback
 
-Additive migration, applied only with the owner's go-ahead. Rollback = drop the new function and the 13 new tables in reverse order; no existing table is altered. Feature flags: `OPS_CALENDAR_ENABLED`, `OPS_CALENDAR_OUTLOOK_OUTBOUND`, `OPS_CALENDAR_OUTLOOK_INBOUND` (all off by default; Outlook flags stay off until the test calendar passes).
+Additive migration, applied only with the owner's go-ahead. Rollback = drop the new function and the 13 new tables in reverse order; no existing table is altered. Switches: the Calendar tab is gated by the migration itself; Outlook will use `OPS_CALENDAR_OUTLOOK_OUTBOUND` and `OPS_CALENDAR_OUTLOOK_INBOUND` (off by default) plus per-calendar `enabled` flags.

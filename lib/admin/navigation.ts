@@ -14,7 +14,7 @@ export type AdminNavGroup = {
 
 export const ADMIN_NAV_GROUPS: AdminNavGroup[] = [
   { id: "overview", label: "Overview", itemIds: ["dashboard"] },
-  { id: "operations", label: "Operations", itemIds: ["operations", "ops-projects", "procurement", "xero-review", "financials"] },
+  { id: "operations", label: "Operations", itemIds: ["operations", "ops-projects", "ops-calendar", "procurement", "xero-review", "financials"] },
   {
     id: "sales",
     label: "Sales",
@@ -174,8 +174,8 @@ export const ADMIN_SECTIONS: AdminSection[] = [
   {
     id: "projects",
     label: "Projects",
-    itemIds: ["ops-projects", "operations", "procurement"],
-    tabLabels: { "ops-projects": "All projects", operations: "To do", procurement: "Supplier orders" },
+    itemIds: ["ops-projects", "operations", "procurement", "ops-calendar"],
+    tabLabels: { "ops-projects": "All projects", operations: "To do", procurement: "Supplier orders", "ops-calendar": "Calendar" },
   },
   { id: "customers", label: "Customers", itemIds: ["customers", "suppliers"], tabLabels: { customers: "Customers", suppliers: "Suppliers" } },
   {
