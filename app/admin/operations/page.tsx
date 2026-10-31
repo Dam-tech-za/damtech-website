@@ -168,7 +168,7 @@ export default async function OperationsOverviewPage() {
             {ordersToAction.map((o) => (
               <li key={o.id} className="ops-bucket__item">
                 <div className="ops-bucket__text">
-                  <Link href={`/admin/operations/projects/${o.project_id}/#materials`} className="ops-table__title">
+                  <Link href={`/admin/operations/projects/${o.project_id}/?tab=materials`} className="ops-table__title">
                     {o.supplier_name} · {o.description}
                   </Link>
                   <span className="ops-table__meta">

@@ -179,7 +179,7 @@ export function ProcurementWorkspace({ orders, projects, canEdit, canApprove, to
                       </span>
                     </td>
                     <td data-label="Project">
-                      <Link href={`/admin/operations/projects/${o.project_id}/#materials`} onClick={(e) => e.stopPropagation()}>{o.project.title}</Link>
+                      <Link href={`/admin/operations/projects/${o.project_id}/?tab=materials`} onClick={(e) => e.stopPropagation()}>{o.project.title}</Link>
                       {o.project.lead ? <span className="proc-muted">Lead: {o.project.lead}</span> : null}
                     </td>
                     <td data-label="Status"><span className={`proc-status proc-status--${o.status}`}>{MATERIAL_STATUS_LABELS[o.status]}</span></td>
