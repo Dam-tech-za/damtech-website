@@ -4980,3 +4980,19 @@ table.admin-sheet .admin-status {
 .proc-field input, .proc-field select, .proc-field textarea { width: 100%; box-sizing: border-box; }
 .proc-drawer .proc-table { display: block; overflow-x: auto; }
 .proc-drawer .proc-table td .proc-muted { display: inline; }
+
+/* Person menu: add / remove project leads */
+.ops-toolbar__popover-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 8px; }
+.ops-toolbar__popover-head .ops-toolbar__popover-title { margin: 0; }
+.ops-toolbar__icon-btn { display: inline-grid; place-items: center; width: 24px; height: 24px; border: 0; border-radius: 6px; background: transparent; color: #627d98; cursor: pointer; }
+.ops-toolbar__icon-btn:hover { background: #eef2f7; color: #323338; }
+.ops-toolbar__icon-btn:focus-visible { outline: 2px solid var(--admin-focus-ring); outline-offset: 1px; }
+.ops-toolbar__icon-btn--danger:hover { background: #fdf0f0; color: var(--admin-danger); }
+.ops-toolbar__icon-btn:disabled { opacity: 0.5; cursor: default; }
+.ops-toolbar__lead-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.ops-toolbar__lead-row .ops-toolbar__icon-btn--danger { opacity: 0.45; }
+.ops-toolbar__lead-row:hover .ops-toolbar__icon-btn--danger, .ops-toolbar__lead-row .ops-toolbar__icon-btn--danger:focus-visible { opacity: 1; }
+@media (hover: none) { .ops-toolbar__lead-row .ops-toolbar__icon-btn--danger { opacity: 1; } }
+.ops-toolbar__lead-add { display: flex; gap: 6px; margin-bottom: 8px; }
+.ops-toolbar__lead-add .admin-input { flex: 1; min-width: 0; font-size: 13px; padding: 4px 8px; }
+.ops-toolbar__lead-msg { margin: 8px 0 0; font-size: 12px; color: var(--admin-danger); max-width: 240px; }

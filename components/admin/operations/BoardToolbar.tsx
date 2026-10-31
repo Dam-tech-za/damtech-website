@@ -10,6 +10,8 @@ import {
   type RefObject,
 } from "react";
 import { createPortal } from "react-dom";
+import { useRouter } from "next/navigation";
+import { addProjectLeadAction, deleteProjectLeadAction } from "@/app/admin/operations/lead-actions";
 import {
   DISTANCE_BAND_LABELS,
   DISTANCE_BANDS,
@@ -54,6 +56,8 @@ export type BoardToolbarState = {
 type Props = {
   state: BoardToolbarState;
   leads: string[];
+  /** Names on the saved Person list (these can be removed); null if the list is not installed. */
+  savedLeads?: string[] | null;
   canEdit: boolean;
   frozen: boolean;
   onChange: (patch: Partial<BoardToolbarState>) => void;
@@ -195,6 +199,7 @@ function ToolbarPopover({
 export function BoardToolbar({
   state,
   leads,
+  savedLeads = null,
   canEdit,
   frozen,
   onChange,
@@ -383,18 +388,16 @@ export function BoardToolbar({
       ) : null}
 
       <ToolbarPopover open={open === "person"} anchorRef={personBtn} onClose={() => setOpen(null)}>
-        <p className="ops-toolbar__popover-title">Project lead</p>
-        <ul className="ops-toolbar__check-list">
-          {leads.length === 0 ? <li className="ops-table__meta">No leads yet</li> : null}
-          {leads.map((name) => (
-            <li key={name}>
-              <label>
-                <input type="checkbox" checked={state.leads.includes(name)} onChange={() => toggleLead(name)} />
-                {name}
-              </label>
-            </li>
-          ))}
-        </ul>
+        <LeadList
+          leads={leads}
+          selected={state.leads}
+          onToggle={toggleLead}
+          editable={canEdit && savedLeads !== null}
+          savedLeads={savedLeads ?? []}
+          onRemoved={(name) => {
+            if (state.leads.includes(name)) toggleLead(name);
+          }}
+        />
       </ToolbarPopover>
 
       <ToolbarPopover open={open === "filter"} anchorRef={filterBtn} onClose={() => setOpen(null)} width={320}>
@@ -555,5 +558,112 @@ export function BoardToolbar({
         </ul>
       </ToolbarPopover>
     </div>
+  );
+}
+
+function IconPlus() {
+  return (
+    <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true">
+      <path d="M8 3v10M3 8h10" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+function IconTrash() {
+  return (
+    <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true">
+      <path d="M3 4.5h10M6.5 4.5V3h3v1.5M4.5 4.5l.6 8.5h5.8l.6-8.5M7 7v4M9 7v4" stroke="currentColor" strokeWidth="1.3" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+/** Person menu: filter by lead, and (for editors) add or remove names on the saved list. */
+function LeadList({
+  leads,
+  selected,
+  onToggle,
+  editable,
+  savedLeads,
+  onRemoved,
+}: {
+  leads: string[];
+  selected: string[];
+  onToggle: (name: string) => void;
+  editable: boolean;
+  savedLeads: string[];
+  onRemoved: (name: string) => void;
+}) {
+  const router = useRouter();
+  const [adding, setAdding] = useState(false);
+  const [draft, setDraft] = useState("");
+  const [busy, setBusy] = useState<string | null>(null);
+  const [message, setMessage] = useState<string | null>(null);
+  const saved = new Set(savedLeads.map((n) => n.toLowerCase()));
+
+  const add = async () => {
+    if (busy) return;
+    setBusy("+");
+    setMessage(null);
+    const r = await addProjectLeadAction(draft);
+    setBusy(null);
+    if ("error" in r) return setMessage(r.error);
+    setDraft("");
+    setAdding(false);
+    router.refresh();
+  };
+
+  const remove = async (name: string) => {
+    if (busy || !window.confirm(`Remove ${name} from the list? Projects are not changed.`)) return;
+    setBusy(name);
+    setMessage(null);
+    const r = await deleteProjectLeadAction(name);
+    setBusy(null);
+    if ("error" in r) return setMessage(r.error);
+    onRemoved(name);
+    router.refresh();
+  };
+
+  return (
+    <>
+      <div className="ops-toolbar__popover-head">
+        <p className="ops-toolbar__popover-title">Project lead</p>
+        {editable ? (
+          <button type="button" className="ops-toolbar__icon-btn" aria-label="Add a project lead" title="Add a project lead" onClick={() => setAdding((v) => !v)}>
+            <IconPlus />
+          </button>
+        ) : null}
+      </div>
+      {adding ? (
+        <form
+          className="ops-toolbar__lead-add"
+          onSubmit={(e) => {
+            e.preventDefault();
+            void add();
+          }}
+        >
+          <input className="admin-input" value={draft} onChange={(e) => setDraft(e.target.value)} placeholder="Name" aria-label="New project lead" maxLength={80} autoFocus />
+          <button type="submit" className="admin-btn admin-btn--primary admin-btn--sm" disabled={busy === "+" || !draft.trim()}>
+            Add
+          </button>
+        </form>
+      ) : null}
+      <ul className="ops-toolbar__check-list">
+        {leads.length === 0 ? <li className="ops-table__meta">No leads yet</li> : null}
+        {leads.map((name) => (
+          <li key={name} className="ops-toolbar__lead-row">
+            <label>
+              <input type="checkbox" checked={selected.includes(name)} onChange={() => onToggle(name)} />
+              {name}
+            </label>
+            {editable && saved.has(name.toLowerCase()) ? (
+              <button type="button" className="ops-toolbar__icon-btn ops-toolbar__icon-btn--danger" aria-label={`Remove ${name}`} title={`Remove ${name}`} disabled={busy === name} onClick={() => void remove(name)}>
+                <IconTrash />
+              </button>
+            ) : null}
+          </li>
+        ))}
+      </ul>
+      {message ? <p className="ops-toolbar__lead-msg" role="alert">{message}</p> : null}
+    </>
   );
 }

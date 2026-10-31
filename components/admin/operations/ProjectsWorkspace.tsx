@@ -30,6 +30,8 @@ type Props = {
   canEdit: boolean;
   focusAdd: boolean;
   initial: BoardFilters;
+  /** Saved Person list; null until its table exists (falls back to the built-in names). */
+  savedLeads?: string[] | null;
 };
 
 const FREEZE_KEY = "ops-board-freeze-columns";
@@ -86,7 +88,7 @@ function downloadCsv(projects: BoardProject[]) {
   URL.revokeObjectURL(url);
 }
 
-export function ProjectsWorkspace({ projects, canEdit, focusAdd, initial }: Props) {
+export function ProjectsWorkspace({ projects, canEdit, focusAdd, initial, savedLeads = null }: Props) {
   const [toolbar, setToolbar] = useState<BoardToolbarState>({
     q: initial.q ?? "",
     leads: initial.lead ? [initial.lead] : [],
@@ -106,7 +108,10 @@ export function ProjectsWorkspace({ projects, canEdit, focusAdd, initial }: Prop
   const freezeRaw = useSyncExternalStore(subscribeFreeze, getFreezeRaw, () => "1");
   const frozen = freezeRaw !== "0";
 
-  const leads = useMemo(() => mergeLeadSuggestions(projects.map((p) => p.leadName)), [projects]);
+  const leads = useMemo(
+    () => mergeLeadSuggestions(projects.map((p) => p.leadName), savedLeads ?? undefined),
+    [projects, savedLeads],
+  );
 
   const visible = useMemo(() => {
     const filtered = projects.filter((p) => {
@@ -197,6 +202,7 @@ export function ProjectsWorkspace({ projects, canEdit, focusAdd, initial }: Prop
       <BoardToolbar
         state={toolbar}
         leads={leads}
+        savedLeads={savedLeads}
         canEdit={canEdit}
         frozen={frozen}
         onChange={(patch) => setToolbar((s) => ({ ...s, ...patch }))}
