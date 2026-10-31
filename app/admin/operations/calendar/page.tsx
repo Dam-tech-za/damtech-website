@@ -89,6 +89,7 @@ async function CalendarPageInner({ searchParams }: { searchParams: Promise<Searc
           bookings={load.bookings}
           backlog={load.backlog}
           projects={load.projects}
+          outlookCalendars={load.outlookCalendars}
           canEdit={canPerform(admin.profile.role, "manageOperations")}
           prevHref={href(view, step(-1))}
           nextHref={href(view, step(1))}

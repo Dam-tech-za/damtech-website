@@ -23,3 +23,18 @@ Phases 1, 2 and 5. The tab stays on a "not switched on" notice until the migrati
 - Bookings are work sessions; a project may have many. Leave, vehicle maintenance and travel are bookings without a project.
 - Overlaps are refused by the database. A manager can override with a written reason, which is audited.
 - Outlook is a mirror of DamTech, never the source. Outlook edits are proposals.
+
+## Review round 1 (31 Oct 2026)
+
+Owner design review asked for a proper team planner, continuous multi-day bars, clearer team/status identification, a leaner backlog and an honest Outlook indicator.
+
+| Item | State |
+| --- | --- |
+| Live booking check | Verified in production: the one booking links to a real project, holds Andre's team, has an audit row; the overlap rule refuses a clashing booking (checked inside a rolled-back transaction). Version check blocks stale edits (scratch DB test). |
+| Teams view | Default view. One row per team (`ops_teams`), "Lead:" shows the team leader separately from the team; free days show "Available". |
+| Multi-day bars | `layoutBars()` lays bookings out as one bar per week row with lanes, in both the Teams and Month views. |
+| Identification | Team colour on every bar, team names in Month and phone views, "Tentative" tag plus hatched bar, warning flag when the project has a deposit/materials/hold warning. |
+| Backlog | Search, All / Ready / Check filters, compact cards, Hide (remembered per browser). |
+| Outlook indicator | Toolbar shows "Outlook not connected" until a calendar connection is enabled; the booking panel says "saved in DamTech only". A booking only reads "In Outlook" once its event link is `synced`, which only the (future) Graph worker sets after Microsoft confirms. |
+| Outlook integration | Not implemented. Tables exist; no Graph code, no credentials. Blocked on `microsoft-365-setup.md`. |
+| Not done | Drag-and-drop and resize by dragging; resizable sidebar width. |
