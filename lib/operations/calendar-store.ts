@@ -1,8 +1,11 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { isMissingTableError } from "@/lib/operations/admin-db";
+import { readinessIssue } from "@/lib/operations/procurement";
+import type { MaterialOrderStatus } from "@/lib/operations/types";
 import {
   isBacklogCandidate,
   readinessWarnings,
+  saDate,
   saToUtc,
   type BookingKind,
   type BookingStatus,
@@ -77,8 +80,8 @@ export async function loadCalendar(db: SupabaseClient, fromDate: string, toDateE
       .is("archived_at", null)
       .order("title")
       .limit(500),
-    db.from("ops_material_orders").select("project_id, status").limit(2000),
-    db.from("ops_bookings").select("project_id").neq("status", "cancelled").gte("end_at", new Date().toISOString()).not("project_id", "is", null).limit(2000),
+    db.from("ops_material_orders").select("project_id, status, expected_date, required_on_site").limit(2000),
+    db.from("ops_bookings").select("project_id, start_at").neq("status", "cancelled").gte("end_at", new Date().toISOString()).not("project_id", "is", null).limit(2000),
     db.from("ops_calendar_connections").select("id", { count: "exact", head: true }).eq("enabled", true),
   ]);
 
@@ -91,12 +94,20 @@ export async function loadCalendar(db: SupabaseClient, fromDate: string, toDateE
 
   const projectRows = (projects.data ?? []) as ProjectRow[];
   const byId = new Map(projectRows.map((p) => [p.id, p]));
-  const statusesByProject = new Map<string, string[]>();
-  for (const o of (orders.data ?? []) as { project_id: string; status: string }[]) {
-    statusesByProject.set(o.project_id, [...(statusesByProject.get(o.project_id) ?? []), o.status]);
+  type OrderRow = { project_id: string; status: MaterialOrderStatus; expected_date: string | null; required_on_site: string | null };
+  const ordersByProject = new Map<string, OrderRow[]>();
+  for (const o of (orders.data ?? []) as OrderRow[]) {
+    ordersByProject.set(o.project_id, [...(ordersByProject.get(o.project_id) ?? []), o]);
   }
-  const warningsFor = (p: ProjectRow) =>
-    readinessWarnings({
+  const statusesByProject = new Map([...ordersByProject].map(([id, list]) => [id, list.map((o) => o.status as string)]));
+  const firstBooking = new Map<string, string>();
+  for (const b of (futureBookings.data ?? []) as { project_id: string; start_at: string }[]) {
+    const day = saDate(b.start_at);
+    if (!firstBooking.has(b.project_id) || day < firstBooking.get(b.project_id)!) firstBooking.set(b.project_id, day);
+  }
+  const today = saDate(new Date());
+  const warningsFor = (p: ProjectRow) => {
+    const base = readinessWarnings({
       stage: p.stage,
       on_hold: p.on_hold,
       payment_status: p.payment_status,
@@ -104,6 +115,15 @@ export async function loadCalendar(db: SupabaseClient, fromDate: string, toDateE
       materials_by_client: Boolean(p.materials_by_client),
       material_statuses: statusesByProject.get(p.id) ?? [],
     });
+    if (p.materials_by_client) return base;
+    // Name the order that could hold up the install instead of a bare count.
+    const issues = (ordersByProject.get(p.id) ?? [])
+      .map((o) => readinessIssue(o, today, firstBooking.get(p.id) ?? p.scheduled_start))
+      .filter((x): x is string => Boolean(x));
+    if (!issues.length) return base;
+    const specific = `Materials: ${issues[0]}${issues.length > 1 ? ` (+${issues.length - 1} more)` : ""}`;
+    return [...base.filter((w) => !/supplier order/.test(w)), specific];
+  };
 
   const booked = new Set(((futureBookings.data ?? []) as { project_id: string }[]).map((b) => b.project_id));
 

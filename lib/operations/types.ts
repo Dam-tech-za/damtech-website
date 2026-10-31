@@ -41,15 +41,24 @@ export const PAYMENT_STATUSES = [
 ] as const;
 export type PaymentStatus = (typeof PAYMENT_STATUSES)[number];
 
-/** The Monday "Material Orders & Collections" statuses (procurement only; supplier payment lives in Xero). */
+/**
+ * Supplier order statuses (operational only; supplier payment lives in Xero).
+ * The first nine came from Monday. "paid" stays valid for old rows but is no
+ * longer offered (see ORDER_STATUS_CHOICES in procurement.ts).
+ */
 export const MATERIAL_ORDER_STATUSES = [
   "not_ordered",
   "quote_requested",
   "quoted",
+  "approved",
   "ordered",
+  "manufacturing",
   "paid",
   "ready_for_collection",
+  "in_transit",
+  "partially_received",
   "collected_delivered",
+  "on_hold",
   "problem",
   "cancelled",
 ] as const;
@@ -148,6 +157,19 @@ export type OpsMaterialOrder = {
   notes: string | null;
   created_at: string;
   updated_at: string;
+  // Procurement (migration 20261031180000); absent until it is applied.
+  order_reference?: string | null;
+  order_date?: string | null;
+  required_on_site?: string | null;
+  quote_valid_until?: string | null;
+  lead_time_days?: number | null;
+  delivery_instructions?: string | null;
+  xero_contact_id?: string | null;
+  xero_purchase_order_id?: string | null;
+  xero_purchase_order_number?: string | null;
+  approved_by?: string | null;
+  approved_at?: string | null;
+  version?: number;
 };
 
 export type OpsInvoiceLink = {

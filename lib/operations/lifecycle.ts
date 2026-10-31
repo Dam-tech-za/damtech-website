@@ -78,12 +78,17 @@ export const SERVICE_LABELS: Record<ProjectService, string> = {
 export const MATERIAL_STATUS_LABELS: Record<MaterialOrderStatus, string> = {
   not_ordered: "Not ordered",
   quote_requested: "Quote requested",
-  quoted: "Quoted / awaiting approval",
+  quoted: "Quote received",
+  approved: "Approved, ready to order",
   ordered: "Ordered",
-  paid: "Paid",
+  manufacturing: "Supplier making / processing",
+  paid: "Paid (old status)",
   ready_for_collection: "Ready for collection",
-  collected_delivered: "Collected / delivered",
-  problem: "Problem / on hold",
+  in_transit: "Dispatched / in transit",
+  partially_received: "Partly received",
+  collected_delivered: "Received in full",
+  on_hold: "On hold",
+  problem: "Problem",
   cancelled: "Cancelled",
 };
 

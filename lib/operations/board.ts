@@ -187,8 +187,8 @@ export const MATERIALS_ROLLUP_LABELS: Record<MaterialsRollup, string> = {
   all_in: "All in",
 };
 
-const TO_ORDER: MaterialOrderStatus[] = ["not_ordered", "quote_requested", "quoted"];
-const AWAITING: MaterialOrderStatus[] = ["ordered", "paid", "ready_for_collection"];
+const TO_ORDER: MaterialOrderStatus[] = ["not_ordered", "quote_requested", "quoted", "approved"];
+const AWAITING: MaterialOrderStatus[] = ["ordered", "manufacturing", "paid", "ready_for_collection", "in_transit", "partially_received"];
 
 export function materialsRollup(
   orders: Pick<OpsMaterialOrder, "status">[],
@@ -196,7 +196,7 @@ export function materialsRollup(
 ): MaterialsRollup {
   const active = orders.filter((o) => o.status !== "cancelled");
   if (active.length === 0) return materialsByClient ? "client_supplies" : "none";
-  if (active.some((o) => o.status === "problem")) return "problem";
+  if (active.some((o) => o.status === "problem" || o.status === "on_hold")) return "problem";
   if (active.some((o) => TO_ORDER.includes(o.status))) return "to_order";
   if (active.some((o) => AWAITING.includes(o.status))) return "awaiting_supplier";
   return "all_in";
@@ -270,7 +270,7 @@ export function orderNeedsAction(
   today: string,
 ): boolean {
   if (order.status === "cancelled" || order.status === "collected_delivered") return false;
-  if (order.status === "problem" || TO_ORDER.includes(order.status)) return true;
+  if (order.status === "problem" || order.status === "on_hold" || TO_ORDER.includes(order.status)) return true;
   return order.expected_date !== null && order.expected_date < today;
 }
 

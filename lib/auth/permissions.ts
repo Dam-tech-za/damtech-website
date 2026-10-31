@@ -173,6 +173,8 @@ export const PERMISSIONS = {
   viewPricing: ["owner", "admin", "estimator", "viewer"] as const,
   manageOperations: ["owner", "admin", "sales", "estimator"] as const,
   runXeroSync: ["owner", "admin"] as const,
+  /** Approve supplier orders and link Xero supplier bills to them. */
+  approveProcurement: ["owner", "admin"] as const,
   viewFinancials: ["owner", "admin"] as const,
 } as const;
 
