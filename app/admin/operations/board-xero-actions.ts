@@ -1,5 +1,6 @@
 "use server";
 
+import { adminOpsDb } from "@/lib/operations/admin-db";
 import { loadXeroStart } from "@/lib/operations/queries";
 import type { XeroStartItem } from "@/lib/operations/xero-start";
 
@@ -39,6 +40,14 @@ function kickBackgroundRefresh() {
 
 /** Accepted quotes from the last 30 days. Serves a 60s cache, then refreshes in the background. */
 export async function loadBoardXeroQuotesAction(): Promise<{ items: XeroStartItem[]; error: string | null }> {
+  // Check the caller before touching the cache: the cache is shared by every
+  // request on this server, so serving it first would hand cached Xero quotes
+  // to anyone who calls this action without signing in.
+  try {
+    await adminOpsDb();
+  } catch {
+    return { items: [], error: "Sign in to load Xero quotes." };
+  }
   const now = Date.now();
   if (quoteCache && now - quoteCache.at < CACHE_MS) {
     kickBackgroundRefresh();
@@ -50,5 +59,6 @@ export async function loadBoardXeroQuotesAction(): Promise<{ items: XeroStartIte
 }
 
 export async function invalidateBoardXeroQuotesCache(): Promise<void> {
+  await adminOpsDb();
   quoteCache = null;
 }
