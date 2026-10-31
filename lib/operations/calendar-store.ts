@@ -32,6 +32,7 @@ export type CalendarLoad =
       bookings: CalendarBooking[];
       backlog: BacklogProject[];
       projects: ProjectOption[];
+      outlookCalendars: number;
     };
 
 type ProjectRow = {
@@ -49,19 +50,22 @@ type ProjectRow = {
   archived_at: string | null;
 };
 
-type BookingRow = Omit<CalendarBooking, "team_ids" | "project"> & { ops_booking_teams: { team_id: string }[] | null };
+type BookingRow = Omit<CalendarBooking, "team_ids" | "project" | "sync_statuses"> & {
+  ops_booking_teams: { team_id: string }[] | null;
+  ops_calendar_event_links: { sync_status: string }[] | null;
+};
 
 /** Everything the Calendar tab shows for the visible date range. */
 export async function loadCalendar(db: SupabaseClient, fromDate: string, toDateExclusive: string): Promise<CalendarLoad> {
   const from = saToUtc(fromDate, "00:00");
   const to = saToUtc(toDateExclusive, "00:00");
 
-  const [teams, bookings, projects, orders, futureBookings] = await Promise.all([
+  const [teams, bookings, projects, orders, futureBookings, outlook] = await Promise.all([
     db.from("ops_teams").select("id, name, colour, leader_name, active").order("sort_order").order("name"),
     db
       .from("ops_bookings")
       .select(
-        "id, project_id, kind, title, status, start_at, end_at, all_day, notes, allow_overlap, overlap_reason, version, ops_booking_teams(team_id)",
+        "id, project_id, kind, title, status, start_at, end_at, all_day, notes, allow_overlap, overlap_reason, version, ops_booking_teams(team_id), ops_calendar_event_links(sync_status)",
       )
       .lt("start_at", to)
       .gt("end_at", from)
@@ -75,10 +79,11 @@ export async function loadCalendar(db: SupabaseClient, fromDate: string, toDateE
       .limit(500),
     db.from("ops_material_orders").select("project_id, status").limit(2000),
     db.from("ops_bookings").select("project_id").neq("status", "cancelled").gte("end_at", new Date().toISOString()).not("project_id", "is", null).limit(2000),
+    db.from("ops_calendar_connections").select("id", { count: "exact", head: true }).eq("enabled", true),
   ]);
 
   if (isMissingTableError(teams.error) || isMissingTableError(bookings.error)) return { state: "not_installed" };
-  const failed = [teams, bookings, projects, orders, futureBookings].find((r) => r.error);
+  const failed = [teams, bookings, projects, orders, futureBookings, outlook].find((r) => r.error);
   if (failed?.error) {
     console.error("[calendar] load:", failed.error.message);
     return { state: "error" };
@@ -105,13 +110,14 @@ export async function loadCalendar(db: SupabaseClient, fromDate: string, toDateE
   return {
     state: "ok",
     teams: (teams.data ?? []) as CalendarTeam[],
-    bookings: ((bookings.data ?? []) as BookingRow[]).map(({ ops_booking_teams, ...b }) => {
+    bookings: ((bookings.data ?? []) as BookingRow[]).map(({ ops_booking_teams, ops_calendar_event_links, ...b }) => {
       const p = b.project_id ? byId.get(b.project_id) : undefined;
       return {
         ...b,
         kind: b.kind as BookingKind,
         status: b.status as BookingStatus,
         team_ids: (ops_booking_teams ?? []).map((t) => t.team_id),
+        sync_statuses: (ops_calendar_event_links ?? []).map((l) => l.sync_status),
         project: p ? { title: p.title, customer_name: p.customer_name, site_town: p.site_town, stage: p.stage } : null,
       };
     }),
@@ -130,6 +136,7 @@ export async function loadCalendar(db: SupabaseClient, fromDate: string, toDateE
     projects: projectRows
       .filter((p) => p.stage !== "completed")
       .map((p) => ({ id: p.id, title: p.title, customer_name: p.customer_name, site_town: p.site_town, warnings: warningsFor(p) })),
+    outlookCalendars: outlook.count ?? 0,
   };
 }
 

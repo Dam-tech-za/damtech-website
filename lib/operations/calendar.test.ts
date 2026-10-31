@@ -7,6 +7,7 @@ import {
   describeBookingSaveError,
   groupByTeamAndDay,
   isBacklogCandidate,
+  layoutBars,
   monthGridStart,
   parseBookingForm,
   readinessWarnings,
@@ -153,5 +154,28 @@ describe("isBacklogCandidate", () => {
     assert.ok(isBacklogCandidate({ stage: "planning", is_supply_only: false, archived_at: null, on_hold: false }));
     assert.ok(!isBacklogCandidate({ stage: "planning", is_supply_only: true, archived_at: null, on_hold: false }));
     assert.ok(!isBacklogCandidate({ stage: "completed", is_supply_only: false, archived_at: null, on_hold: false }));
+  });
+});
+
+describe("layoutBars", () => {
+  const week = ["2026-11-02", "2026-11-03", "2026-11-04", "2026-11-05", "2026-11-06", "2026-11-07", "2026-11-08"];
+  it("draws a multi-day job as one bar", () => {
+    const b = booking({ start_at: saToUtc("2026-10-29", "00:00"), end_at: saToUtc("2026-11-03", "00:00"), all_day: true });
+    const { segments, lanes } = layoutBars([b], week);
+    assert.equal(lanes, 1);
+    assert.deepEqual([segments[0].start, segments[0].span, segments[0].continuesBefore, segments[0].continuesAfter], [0, 1, true, false]);
+  });
+  it("stacks overlapping bars and reuses free lanes", () => {
+    const a = booking({ id: "a", end_at: saToUtc("2026-11-04", "16:00") });
+    const b = booking({ id: "b", start_at: saToUtc("2026-11-03", "07:00"), end_at: saToUtc("2026-11-03", "12:00") });
+    const c = booking({ id: "c", start_at: saToUtc("2026-11-05", "07:00"), end_at: saToUtc("2026-11-05", "12:00") });
+    const { segments, lanes } = layoutBars([c, b, a], week);
+    const lane = Object.fromEntries(segments.map((s) => [s.booking.id, s.lane]));
+    assert.equal(lanes, 2);
+    assert.deepEqual(lane, { a: 0, b: 1, c: 0 });
+  });
+  it("skips bookings outside the row", () => {
+    const b = booking({ start_at: saToUtc("2026-11-10", "07:00"), end_at: saToUtc("2026-11-10", "16:00") });
+    assert.equal(layoutBars([b], week).segments.length, 0);
   });
 });

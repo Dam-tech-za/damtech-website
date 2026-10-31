@@ -49,7 +49,20 @@ export type CalendarBooking = {
   version: number;
   team_ids: string[];
   project: { title: string; customer_name: string | null; site_town: string | null; stage: string } | null;
+  /** Outlook sync state per linked calendar; empty when never sent to Outlook. */
+  sync_statuses?: string[];
 };
+
+/** What to say about Outlook for one booking. Only "synced" after Microsoft confirmed the write. */
+export function outlookLabel(outlookCalendars: number, statuses: string[] | undefined): string {
+  if (outlookCalendars === 0) return "Outlook not connected: saved in DamTech only.";
+  const s = statuses ?? [];
+  if (!s.length) return "Not sent to Outlook yet.";
+  if (s.includes("failed")) return "Outlook update failed; it will be retried.";
+  if (s.includes("conflict")) return "Changed in Outlook: needs review.";
+  if (s.every((x) => x === "synced")) return "In Outlook.";
+  return "Waiting to update Outlook.";
+}
 
 export function isBookingStatus(value: string): value is BookingStatus {
   return (BOOKING_STATUSES as readonly string[]).includes(value);
@@ -290,4 +303,50 @@ export function readinessWarnings(p: ReadinessInput): string[] {
 export function isBacklogCandidate(p: { stage: string; is_supply_only: boolean; archived_at: string | null; on_hold: boolean }): boolean {
   if (p.archived_at || p.is_supply_only) return false;
   return p.stage === "awaiting_deposit" || p.stage === "planning" || p.stage === "scheduled";
+}
+
+export type BarSegment = {
+  booking: CalendarBooking;
+  /** Index into the visible days. */
+  start: number;
+  span: number;
+  lane: number;
+  continuesBefore: boolean;
+  continuesAfter: boolean;
+};
+
+/**
+ * Lay bookings out as continuous bars across a row of days (a week). Each
+ * booking gets one bar per row, on the lowest free lane, so a five-day job is
+ * one bar instead of five separate entries.
+ */
+export function layoutBars(bookings: CalendarBooking[], days: string[]): { segments: BarSegment[]; lanes: number } {
+  const index = new Map(days.map((d, i) => [d, i]));
+  const items = bookings
+    .map((booking) => {
+      const all = bookingDays(booking);
+      const visible = all.map((d) => index.get(d)).filter((i): i is number => i !== undefined);
+      if (!visible.length) return null;
+      const start = Math.min(...visible);
+      const end = Math.max(...visible);
+      return {
+        booking,
+        start,
+        span: end - start + 1,
+        continuesBefore: all[0] < days[0],
+        continuesAfter: all[all.length - 1] > days[days.length - 1],
+      };
+    })
+    .filter((x): x is NonNullable<typeof x> => x !== null)
+    .sort((a, b) => a.start - b.start || b.span - a.span || a.booking.start_at.localeCompare(b.booking.start_at));
+
+  const laneEnds: number[] = [];
+  const segments: BarSegment[] = [];
+  for (const item of items) {
+    let lane = laneEnds.findIndex((end) => end < item.start);
+    if (lane === -1) lane = laneEnds.length;
+    laneEnds[lane] = item.start + item.span - 1;
+    segments.push({ ...item, lane });
+  }
+  return { segments, lanes: laneEnds.length };
 }
