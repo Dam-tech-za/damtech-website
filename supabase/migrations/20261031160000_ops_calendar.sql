@@ -14,6 +14,9 @@
 -- Times: timestamptz (UTC), displayed in Africa/Johannesburg. Ranges are
 -- half-open [start, end): 07:00-16:00 does not clash with 16:00-17:00.
 --
+-- Applied to production (Damtech Admin) on 31 Oct 2026 with the owner's
+-- go-ahead, as migration "ops_calendar".
+--
 -- Rollback: drop the ops_calendar_* functions and the tables below in reverse
 -- order. No other table depends on them.
 
