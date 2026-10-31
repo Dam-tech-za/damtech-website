@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AdminDrawer } from "@/components/admin/ui/AdminDrawer";
 import { AdminButton } from "@/components/admin/ui";
 import {
@@ -9,7 +9,14 @@ import {
   refreshProjectFromXeroAction,
   updateBoardFieldAction,
 } from "@/app/admin/operations/board-field-actions";
-import { STAGE_LABELS } from "@/lib/operations/lifecycle";
+import {
+  projectQuotesAction,
+  quoteDetailAction,
+  type ProjectQuoteRef,
+  type QuoteDetail,
+} from "@/app/admin/operations/quote-view-actions";
+import { MATERIALS_ROLLUP_LABELS, PAYMENT_LABEL_TEXT } from "@/lib/operations/board";
+import { SERVICE_LABELS, STAGE_LABELS } from "@/lib/operations/lifecycle";
 import { PROJECT_STAGES } from "@/lib/operations/types";
 import { stripBoardMetaFromScope } from "@/lib/operations/board-meta";
 import { formatLocationCell } from "@/lib/operations/distance";
@@ -23,7 +30,7 @@ import {
   ValueEditCell,
   XeroEditCell,
 } from "./BoardEditableCells";
-import { formatOpsMoney } from "./ops-format";
+import { formatOpsDateTime, formatOpsMoney } from "./ops-format";
 
 function PeekForm({
   project,
@@ -247,6 +254,315 @@ function PeekForm({
   );
 }
 
+type Tab = "overview" | "financials" | "operations" | "documents";
+const TABS: { id: Tab; label: string }[] = [
+  { id: "overview", label: "Overview" },
+  { id: "financials", label: "Financials" },
+  { id: "operations", label: "Operations" },
+  { id: "documents", label: "Documents" },
+];
+
+const SHORT = new Intl.DateTimeFormat("en-ZA", { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" });
+const fmtDate = (d: string | null | undefined) => (d && /^\d{4}-\d{2}-\d{2}/.test(d) ? SHORT.format(new Date(`${d.slice(0, 10)}T00:00:00Z`)) : "—");
+const fmtQty = (n: number | null) => (n === null ? "—" : Number.isInteger(n) ? String(n) : n.toFixed(2).replace(/\.?0+$/, ""));
+
+function Row({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <div className="ops-peek-row">
+      <dt>{label}</dt>
+      <dd>{children}</dd>
+    </div>
+  );
+}
+
+/** Read-only project summary with tabs; editing lives behind the Edit button. */
+function ProjectOverview({
+  project,
+  onViewQuote,
+  onEdit,
+  onLinkXero,
+  onPatched,
+}: {
+  project: BoardProject;
+  onViewQuote: (q: ProjectQuoteRef) => void;
+  onEdit: () => void;
+  onLinkXero?: () => void;
+  onPatched?: (p: BoardProject) => void;
+}) {
+  const [tab, setTab] = useState<Tab>("overview");
+  const [quotes, setQuotes] = useState<ProjectQuoteRef[] | null>(null);
+  const [quoteError, setQuoteError] = useState<string | null>(null);
+  const [busy, setBusy] = useState<string | null>(null);
+
+  useEffect(() => {
+    let live = true;
+    projectQuotesAction(project.id).then((r) => {
+      if (!live) return;
+      if ("error" in r) setQuoteError(r.error);
+      else setQuotes(r.quotes);
+    });
+    return () => {
+      live = false;
+    };
+  }, [project.id]);
+
+  const pay = project.payment;
+  const location = formatLocationCell(project) ?? "—";
+  const phone = displayPhone(project.contact_phone);
+  const notes = stripBoardMetaFromScope(project.scope);
+  // If the quote list cannot load, fall back to the numbers on the project (the viewer re-checks them).
+  const fallbackRefs: ProjectQuoteRef[] = (project.xero_quote_numbers ?? []).map((n) => ({ quoteId: null, number: n, status: null, total: null, date: null }));
+  const primaryQuote = quotes?.[0] ?? (quoteError ? fallbackRefs[0] ?? null : null);
+  const xeroTotal = quotes?.find((q) => q.total !== null)?.total ?? null;
+  const localValue = project.quoted_total_incl_vat;
+  const differs = xeroTotal !== null && localValue !== null && Math.abs(xeroTotal - localValue) >= 0.01;
+  const quoteNumbers = quotes?.map((q) => q.number).filter(Boolean) ?? project.xero_quote_numbers ?? [];
+  const linked = Boolean(quotes?.some((q) => q.quoteId)) || Boolean(project.xero_invoice_numbers?.length);
+
+  const refresh = async () => {
+    setBusy("refresh");
+    const result = await refreshProjectFromXeroAction({ id: project.id });
+    setBusy(null);
+    window.alert(result?.message || (result?.ok ? "Updated." : "Failed."));
+    if (result?.ok) onPatched?.({ ...project });
+  };
+
+  return (
+    <div className="ops-peek">
+      <header className="ops-peek__head">
+        <p className="ops-peek__sub">
+          {[SERVICE_LABELS[project.service], project.is_supply_only ? "Supply only" : null, location !== "—" ? location : null].filter(Boolean).join(" · ")}
+        </p>
+        <div className="ops-peek__chips">
+          <span className="ops-peek-chip ops-peek-chip--stage">{STAGE_LABELS[project.stage]}</span>
+          {project.on_hold ? <span className="ops-peek-chip ops-peek-chip--warn">On hold</span> : null}
+          <span className="ops-peek-chip">Lead: {project.leadName ?? "none"}</span>
+          {quoteNumbers.length ? <span className="ops-peek-chip">Quote {quoteNumbers.join(", ")}</span> : null}
+          <span className={`ops-peek-chip${linked ? " ops-peek-chip--ok" : ""}`}>{linked ? "Xero linked" : "Not linked to Xero"}</span>
+        </div>
+        <div className="ops-peek__actions">
+          <AdminButton size="sm" variant="secondary" onClick={onEdit}>Edit</AdminButton>
+          <Link href={`/admin/operations/projects/${project.id}/`} className="admin-btn admin-btn--ghost admin-btn--sm">Open full page</Link>
+        </div>
+      </header>
+
+      <section className="ops-peek-value" aria-label="Quotation value">
+        <div>
+          <p className="ops-peek-value__label">Quotation value</p>
+          <p className="ops-peek-value__amount">{formatOpsMoney(localValue)}</p>
+          <p className="ops-peek-value__note">
+            {differs ? (
+              <span className="ops-peek-warn">Xero quote total is {formatOpsMoney(xeroTotal)}; the project shows a different value.</span>
+            ) : xeroTotal !== null ? (
+              "Matches the Xero quote total (incl. VAT)."
+            ) : project.quoted_total_manual ? (
+              "Entered by hand."
+            ) : (
+              "Incl. VAT."
+            )}
+          </p>
+          <p className="ops-peek-value__pay">
+            {pay.label ? PAYMENT_LABEL_TEXT[pay.label] : "No Xero invoices yet"}
+            {pay.overdue ? <span className="ops-peek-warn"> · overdue</span> : null}
+          </p>
+        </div>
+        <div className="ops-peek-value__buttons">
+          {primaryQuote ? (
+            <AdminButton size="sm" variant="primary" onClick={() => onViewQuote(primaryQuote)}>View quote</AdminButton>
+          ) : null}
+          {quotes === null && !quoteError ? <span className="ops-peek-muted">Checking quotes…</span> : null}
+        </div>
+      </section>
+
+      <div className="ops-peek-tabs" role="tablist" aria-label="Project details">
+        {TABS.map((t) => (
+          <button key={t.id} type="button" role="tab" id={`peek-tab-${t.id}`} aria-selected={tab === t.id} aria-controls={`peek-panel-${t.id}`} className={tab === t.id ? "is-active" : undefined} onClick={() => setTab(t.id)}>
+            {t.label}
+          </button>
+        ))}
+      </div>
+
+      <div role="tabpanel" id={`peek-panel-${tab}`} aria-labelledby={`peek-tab-${tab}`} className="ops-peek-panel">
+        {tab === "overview" ? (
+          <>
+            <dl className="ops-peek-list">
+              <Row label="Customer">{project.customer_name || "—"}</Row>
+              {project.contact_person && project.contact_person !== project.customer_name ? <Row label="Contact">{project.contact_person}</Row> : null}
+              <Row label="Phone">
+                {phone ? (
+                  <a href={phone.href} className="ops-peek-link">
+                    <CountryFlag country={phone.country} /> {phone.text}
+                  </a>
+                ) : "—"}
+              </Row>
+              <Row label="Email">{project.contact_email ? <a href={`mailto:${project.contact_email}`} className="ops-peek-link">{project.contact_email}</a> : "—"}</Row>
+              <Row label="Location">{location}</Row>
+            </dl>
+            <div className="ops-peek-next">
+              <p className="ops-peek-next__label">Next action</p>
+              <p className="ops-peek-next__text">{project.next_action || "None set"}</p>
+              <p className="ops-peek-muted">{project.next_action_due ? `Due ${fmtDate(project.next_action_due)}` : "No due date"}{project.next_action_owner ? ` · ${project.next_action_owner}` : ""}</p>
+            </div>
+          </>
+        ) : null}
+
+        {tab === "financials" ? (
+          <>
+            <dl className="ops-peek-list">
+              <Row label="Payment">{pay.label ? PAYMENT_LABEL_TEXT[pay.label] : "No Xero invoices yet"}</Row>
+              <Row label="Invoiced">{formatOpsMoney(pay.invoiced)}</Row>
+              <Row label="Paid">{formatOpsMoney(pay.paid)}</Row>
+              <Row label="Owed now">{formatOpsMoney(pay.due)}{pay.overdue ? <span className="ops-peek-warn"> overdue</span> : null}</Row>
+              {pay.notYetInvoiced !== null ? <Row label="Not yet invoiced">{formatOpsMoney(pay.notYetInvoiced)}</Row> : null}
+              {pay.credited ? <Row label="Credited">{formatOpsMoney(pay.credited)}</Row> : null}
+              <Row label="Invoices">{project.xero_invoice_numbers?.length ? project.xero_invoice_numbers.join(", ") : "—"}</Row>
+              <Row label="Last Xero sync">{project.payment_synced_at ? formatOpsDateTime(project.payment_synced_at) : "Never"}</Row>
+            </dl>
+            <p className="ops-peek-muted">All amounts come from Xero and include VAT.</p>
+            <div className="ops-peek__actions">
+              <AdminButton size="sm" variant="secondary" disabled={busy === "refresh"} onClick={() => void refresh()}>{busy === "refresh" ? "Refreshing…" : "Refresh from Xero"}</AdminButton>
+              {onLinkXero ? <AdminButton size="sm" variant="ghost" onClick={onLinkXero}>Link to Xero</AdminButton> : null}
+            </div>
+          </>
+        ) : null}
+
+        {tab === "operations" ? (
+          <>
+            <dl className="ops-peek-list">
+              <Row label="Stage">{STAGE_LABELS[project.stage]}{project.on_hold && project.on_hold_reason ? ` (on hold: ${project.on_hold_reason})` : ""}</Row>
+              <Row label="Project lead">{project.leadName ?? "—"}</Row>
+              <Row label="Materials">{MATERIALS_ROLLUP_LABELS[project.materialsStatus]}{project.openOrders ? ` · ${project.openOrders} open order${project.openOrders === 1 ? "" : "s"}` : ""}</Row>
+              <Row label="Planned dates">{project.scheduled_start ? `${fmtDate(project.scheduled_start)}${project.scheduled_end ? ` – ${fmtDate(project.scheduled_end)}` : ""}` : "Not scheduled"}</Row>
+            </dl>
+            {notes ? (
+              <div className="ops-peek-next">
+                <p className="ops-peek-next__label">Site address / notes</p>
+                <p className="ops-peek-notes">{notes}</p>
+              </div>
+            ) : null}
+            <div className="ops-peek__actions">
+              <Link href={`/admin/operations/projects/${project.id}/#materials`} className="admin-btn admin-btn--secondary admin-btn--sm">Supplier orders</Link>
+              <Link href="/admin/operations/calendar/" className="admin-btn admin-btn--ghost admin-btn--sm">Calendar</Link>
+            </div>
+          </>
+        ) : null}
+
+        {tab === "documents" ? (
+          <>
+            <p className="ops-peek-next__label">Xero quotes</p>
+            {quoteError ? <p className="ops-peek-warn">{quoteError}</p> : null}
+            {quotes === null && !quoteError ? <p className="ops-peek-muted">Loading…</p> : null}
+            {quotes?.length ? (
+              <ul className="ops-peek-docs">
+                {quotes.map((q) => (
+                  <li key={q.quoteId ?? q.number}>
+                    <span>
+                      <strong>{q.number}</strong>
+                      <span className="ops-peek-muted">
+                        {[q.status, q.date ? fmtDate(q.date) : null, q.total !== null ? formatOpsMoney(q.total) : null, q.quoteId ? null : "number only"].filter(Boolean).join(" · ")}
+                      </span>
+                    </span>
+                    <button type="button" className="ops-sheet__text-btn" onClick={() => onViewQuote(q)}>View</button>
+                  </li>
+                ))}
+              </ul>
+            ) : quotes ? (
+              <p className="ops-peek-muted">No Xero quote on this project.</p>
+            ) : null}
+            <p className="ops-peek-muted">Quotes are read live from Xero when you open them; no copies are stored.</p>
+            <Link href={`/admin/operations/projects/${project.id}/#documents`} className="ops-sheet__text-btn">Project documents and links</Link>
+          </>
+        ) : null}
+      </div>
+    </div>
+  );
+}
+
+/** One Xero quote, read live. Totals are Xero's; nothing is recalculated here. */
+function QuoteView({ project, quoteRef, onBack }: { project: BoardProject; quoteRef: ProjectQuoteRef; onBack: () => void }) {
+  const [state, setState] = useState<{ quote?: QuoteDetail; error?: string } | null>(null);
+  const [tick, setTick] = useState(0);
+
+  useEffect(() => {
+    let live = true;
+    quoteDetailAction(project.id, { quoteId: quoteRef.quoteId, number: quoteRef.number }).then((r) => {
+      if (live) setState("error" in r ? { error: r.error } : { quote: r.quote });
+    });
+    return () => {
+      live = false;
+    };
+  }, [project.id, quoteRef, tick]);
+
+  const q = state?.quote;
+  const money = (n: number | null) => (n === null ? "—" : formatOpsMoney(n));
+  return (
+    <div className="ops-peek ops-quote">
+      <div className="ops-peek__actions">
+        <AdminButton size="sm" variant="ghost" onClick={onBack}>← Back to project</AdminButton>
+        <AdminButton size="sm" variant="ghost" onClick={() => { setState(null); setTick((t) => t + 1); }}>Reload from Xero</AdminButton>
+      </div>
+      {!state ? <p className="ops-peek-muted">Reading quote {quoteRef.number} from Xero…</p> : null}
+      {state?.error ? <p className="ops-peek-warn" role="alert">{state.error}</p> : null}
+      {q ? (
+        <>
+          <header className="ops-quote__head">
+            <h3>Quote {q.number}</h3>
+            <span className="ops-peek-chip">{q.status}</span>
+          </header>
+          {q.title ? <p className="ops-quote__title">{q.title}</p> : null}
+          <dl className="ops-peek-list">
+            <Row label="Customer">{q.contact ?? "—"}</Row>
+            <Row label="Date">{fmtDate(q.date)}</Row>
+            <Row label="Expires">{fmtDate(q.expiry_date)}</Row>
+            {q.reference ? <Row label="Reference">{q.reference}</Row> : null}
+          </dl>
+          {q.contactMismatch ? <p className="ops-peek-warn">This quote&rsquo;s Xero customer is not the project&rsquo;s Xero contact. Check it is the right quote.</p> : null}
+          {q.summary ? <p className="ops-peek-notes">{q.summary}</p> : null}
+          <div className="ops-quote__lines">
+            <table>
+              <thead>
+                <tr>
+                  <th scope="col">Description</th>
+                  <th scope="col">Qty</th>
+                  <th scope="col">Unit</th>
+                  <th scope="col">Amount</th>
+                </tr>
+              </thead>
+              <tbody>
+                {q.lines.map((l, i) => (
+                  <tr key={i}>
+                    <td>
+                      <span className="ops-quote__desc">{l.description ?? "—"}</span>
+                      {l.item_code ? <span className="ops-peek-muted"> {l.item_code}</span> : null}
+                    </td>
+                    <td>{fmtQty(l.quantity)}</td>
+                    <td>{money(l.unit_amount)}</td>
+                    <td>{money(l.line_amount)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <dl className="ops-quote__totals">
+            <div><dt>Subtotal</dt><dd>{money(q.subtotal)}</dd></div>
+            <div><dt>VAT</dt><dd>{money(q.tax)}</dd></div>
+            <div className="is-total"><dt>Total{q.currency ? ` (${q.currency})` : ""}</dt><dd>{money(q.total)}</dd></div>
+          </dl>
+          {q.terms ? (
+            <details className="ops-quote__terms">
+              <summary>Terms</summary>
+              <p className="ops-peek-notes">{q.terms}</p>
+            </details>
+          ) : null}
+          <p className="ops-peek-muted">
+            Read live from Xero at {formatOpsDateTime(q.fetchedAt)}{q.matchedBy === "quote_number" ? ", found by quote number" : ""}. Line amounts are as Xero shows them. The PDF button will come once the Xero bridge can send quote PDFs.
+          </p>
+        </>
+      ) : null}
+    </div>
+  );
+}
+
 export function ProjectPeekDrawer({
   project,
   onClose,
@@ -260,16 +576,38 @@ export function ProjectPeekDrawer({
   leadSuggestions: string[];
   onLinkXero?: () => void;
 }) {
+  const [mode, setMode] = useState<{ id: string; view: "overview" | "edit" | "quote"; quote?: ProjectQuoteRef } | null>(null);
+  const view = mode && project && mode.id === project.id ? mode : { id: project?.id ?? "", view: "overview" as const };
+
   return (
     <AdminDrawer open={Boolean(project)} title={project?.title || "Project"} onClose={onClose}>
       {project ? (
-        <PeekForm
-          key={project.id}
-          project={project}
-          onPatched={onPatched}
-          leadSuggestions={leadSuggestions}
-          onLinkXero={onLinkXero}
-        />
+        view.view === "edit" ? (
+          <div className="ops-peek ops-peek--edit">
+            <div className="ops-peek__actions">
+              <AdminButton size="sm" variant="primary" onClick={() => setMode({ id: project.id, view: "overview" })}>Done editing</AdminButton>
+              <span className="ops-peek-muted">Each field saves when you leave it.</span>
+            </div>
+            <PeekForm
+              key={project.id}
+              project={project}
+              onPatched={onPatched}
+              leadSuggestions={leadSuggestions}
+              onLinkXero={onLinkXero}
+            />
+          </div>
+        ) : view.view === "quote" && view.quote ? (
+          <QuoteView project={project} quoteRef={view.quote} onBack={() => setMode({ id: project.id, view: "overview" })} />
+        ) : (
+          <ProjectOverview
+            key={project.id}
+            project={project}
+            onEdit={() => setMode({ id: project.id, view: "edit" })}
+            onViewQuote={(q) => setMode({ id: project.id, view: "quote", quote: q })}
+            onLinkXero={onLinkXero}
+            onPatched={onPatched}
+          />
+        )
       ) : null}
     </AdminDrawer>
   );
