@@ -112,6 +112,8 @@ export function ProjectsWorkspace({ projects, canEdit, focusAdd, initial, savedL
     () => mergeLeadSuggestions(projects.map((p) => p.leadName), savedLeads ?? undefined),
     [projects, savedLeads],
   );
+  // The Person list is the master list: lead dropdowns offer only these names.
+  const leadOptions = useMemo(() => mergeLeadSuggestions([], savedLeads ?? undefined), [savedLeads]);
 
   const visible = useMemo(() => {
     const filtered = projects.filter((p) => {
@@ -227,7 +229,7 @@ export function ProjectsWorkspace({ projects, canEdit, focusAdd, initial, savedL
         canEdit={canEdit}
         focusAdd={(focusAdd || focusNew) && canEdit}
         hideEmptyGroups={filterActive}
-        leadSuggestions={leads}
+        leadSuggestions={leadOptions}
         hiddenColumns={toolbar.hiddenColumns as BoardColumnId[]}
       />
       </div>
