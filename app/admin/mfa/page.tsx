@@ -11,7 +11,7 @@ import {
   AdminSubmitButton,
 } from "@/components/admin/ui";
 import { getAdminSession, getCurrentUser } from "@/lib/auth/get-current-user";
-import { listTotpFactors, safeAdminNext } from "@/lib/auth/mfa";
+import { listTotpFactors, MFA_REMEMBER_DAYS, safeAdminNext } from "@/lib/auth/mfa";
 import { createClient } from "@/lib/supabase/server";
 import { verifyTotpAction } from "./actions";
 
@@ -69,6 +69,10 @@ export default async function AdminMfaPage({ searchParams }: PageProps) {
               />
             </div>
             <AdminSubmitButton pendingLabel="Checking…">Verify</AdminSubmitButton>
+            <AdminHelpText>
+              You stay signed in on this device and won&apos;t be asked for a code
+              again for {MFA_REMEMBER_DAYS} days, unless you sign out.
+            </AdminHelpText>
           </AdminActionForm>
         ) : (
           <MfaEnrolForm nextPath={nextPath} />
