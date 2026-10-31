@@ -40,7 +40,7 @@ export default async function CalendarPage(props: { searchParams: Promise<Search
 async function CalendarPageInner({ searchParams }: { searchParams: Promise<Search> }) {
   {
     const sp = await searchParams;
-    const view = one(sp.view) === "month" ? "month" : "week";
+    const view = one(sp.view) === "week" ? "week" : "month";
     const today = saDate(new Date());
     const anchor = isIsoDate(one(sp.date)) ? one(sp.date) : today;
 

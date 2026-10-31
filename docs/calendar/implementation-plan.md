@@ -31,7 +31,7 @@ Owner design review asked for a proper team planner, continuous multi-day bars, 
 | Item | State |
 | --- | --- |
 | Live booking check | Verified in production: the one booking links to a real project, holds Andre's team, has an audit row; the overlap rule refuses a clashing booking (checked inside a rolled-back transaction). Version check blocks stale edits (scratch DB test). |
-| Teams view | Default view. One row per team (`ops_teams`), "Lead:" shows the team leader separately from the team; free days show "Available". |
+| Teams view | (Owner later chose Month as the default view and Ready as the default backlog filter.) One row per team (`ops_teams`), "Lead:" shows the team leader separately from the team; free days show "Available". |
 | Multi-day bars | `layoutBars()` lays bookings out as one bar per week row with lanes, in both the Teams and Month views. |
 | Identification | Team colour on every bar, team names in Month and phone views, "Tentative" tag plus hatched bar, warning flag when the project has a deposit/materials/hold warning. |
 | Backlog | Search, All / Ready / Check filters, compact cards, Hide (remembered per browser). |

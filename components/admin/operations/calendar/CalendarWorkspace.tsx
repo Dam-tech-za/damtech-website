@@ -338,7 +338,7 @@ type BacklogFilter = "all" | "ready" | "attention";
 
 function Backlog({ backlog, canEdit, open, onToggle, onBook }: { backlog: BacklogProject[]; canEdit: boolean; open: boolean; onToggle: () => void; onBook: (projectId: string) => void }) {
   const [q, setQ] = useState("");
-  const [filter, setFilter] = useState<BacklogFilter>("all");
+  const [filter, setFilter] = useState<BacklogFilter>("ready");
   const ready = backlog.filter((p) => !p.warnings.length).length;
   const needle = q.trim().toLowerCase();
   const items = backlog.filter(
