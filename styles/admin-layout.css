@@ -4886,3 +4886,97 @@ table.admin-sheet .admin-status {
   .ops-cal-toolbar__actions { border-left: 0; padding-left: 0; margin-left: 0; }
   .ops-cal-team-form { grid-template-columns: 1fr 1fr; }
 }
+
+/* ---------------------------------------------------------------------------
+   Procurement: Supplier orders tab, project Materials, order drawer
+   --------------------------------------------------------------------------- */
+.proc { display: flex; flex-direction: column; gap: 0.75rem; }
+.proc-tiles { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 0.5rem; }
+.proc-tile { display: grid; gap: 0.1rem; text-align: left; padding: 0.6rem 0.7rem; border: 1px solid var(--admin-border); border-radius: var(--admin-radius-md); background: var(--admin-card-bg); font: inherit; cursor: pointer; color: var(--admin-text); }
+.proc-tile strong { font-size: 1.25rem; line-height: 1.1; }
+.proc-tile span { font-size: 0.75rem; color: var(--admin-text-muted); }
+.proc-tile.is-active { border-color: var(--admin-primary); box-shadow: inset 0 0 0 1px var(--admin-primary); }
+.proc-tile.is-bad strong { color: var(--admin-danger); }
+.proc-summary { margin: 0; font-size: 0.8125rem; color: var(--admin-text); }
+.proc-filters { display: flex; flex-wrap: wrap; gap: 0.4rem; align-items: center; }
+.proc-filters input[type="search"] { flex: 1 1 16rem; }
+.proc-filters input, .proc-filters select, .proc-form input:not([type="checkbox"]):not([type="file"]), .proc-form select, .proc-form textarea, .proc-bill-search input {
+  border: 1px solid var(--admin-border); border-radius: var(--admin-radius-sm); padding: 0.35rem 0.5rem; font: inherit; font-size: 0.875rem; background: #fff; color: var(--admin-text); min-width: 0;
+}
+.proc-table-wrap { border: 1px solid var(--admin-border); border-radius: var(--admin-radius-md); background: var(--admin-card-bg); overflow-x: auto; }
+.proc-table { width: 100%; border-collapse: collapse; font-size: 0.8125rem; }
+.proc-table th { text-align: left; font-weight: 600; font-size: 0.75rem; color: var(--admin-text-muted); padding: 0.45rem 0.55rem; border-bottom: 1px solid var(--admin-border); background: #f7f9fc; white-space: nowrap; }
+.proc-table td { padding: 0.45rem 0.55rem; border-bottom: 1px solid #eef2f7; vertical-align: top; }
+.proc-table tr:last-child td { border-bottom: 0; }
+.proc-table td > .proc-muted { display: block; }
+.proc-row { cursor: pointer; }
+.proc-row:hover td { background: #f7faff; }
+.proc-row__open { border: 0; background: none; padding: 0; font: inherit; font-weight: 600; color: var(--admin-text); cursor: pointer; text-align: left; }
+.proc-row__open:hover { color: var(--admin-primary); text-decoration: underline; }
+.proc-status { display: inline-block; padding: 0.05rem 0.45rem; border-radius: 999px; font-size: 0.75rem; font-weight: 600; background: #eef4fb; color: var(--admin-info); white-space: nowrap; }
+.proc-status--collected_delivered { background: #edf8f0; color: var(--admin-success); }
+.proc-status--problem, .proc-status--on_hold { background: #fdf0f0; color: var(--admin-danger); }
+.proc-status--cancelled { background: #f1f3f6; color: var(--admin-text-muted); }
+.proc-status--not_ordered, .proc-status--quote_requested, .proc-status--quoted, .proc-status--approved { background: #fff6e8; color: var(--admin-warning); }
+.proc-muted { color: var(--admin-text-muted); font-size: 0.75rem; }
+.proc-warn { color: var(--admin-warning); font-weight: 600; }
+.proc-ok { color: var(--admin-success); font-weight: 600; }
+.proc-empty { margin: 0; padding: 1rem; border: 1px dashed var(--admin-border); border-radius: var(--admin-radius-md); color: var(--admin-text-muted); font-size: 0.875rem; background: var(--admin-card-bg); }
+.proc-link { border: 0; background: none; padding: 0; font: inherit; font-size: 0.8125rem; color: var(--admin-primary); cursor: pointer; text-decoration: underline; }
+.proc-link--danger { color: var(--admin-danger); }
+
+.proc-project { display: grid; gap: 0.75rem; justify-items: start; }
+.proc-project > * { justify-self: stretch; }
+.proc-project > .admin-btn { justify-self: start; }
+.proc-costs { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0.5rem; margin: 0; }
+.proc-costs > div { border: 1px solid var(--admin-border); border-radius: var(--admin-radius-sm); padding: 0.5rem 0.6rem; background: #fbfcfe; }
+.proc-costs dt { font-size: 0.75rem; color: var(--admin-text-muted); }
+.proc-costs dd { margin: 0.1rem 0 0; font-weight: 650; font-size: 0.9375rem; }
+.proc-costs small { display: block; font-weight: 400; font-size: 0.7rem; color: var(--admin-text-muted); }
+
+.proc-drawer { display: grid; gap: 1rem; }
+.proc-drawer section { display: grid; gap: 0.5rem; padding-top: 0.75rem; border-top: 1px solid var(--admin-border); }
+.proc-drawer h3 { margin: 0; font-size: 0.9375rem; display: flex; flex-wrap: wrap; gap: 0.4rem; align-items: baseline; }
+.proc-drawer__project { margin: 0; font-size: 0.875rem; }
+.proc-fieldset { border: 0; padding: 0; margin: 0; display: contents; }
+.proc-form { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.5rem 0.6rem; align-items: end; }
+.proc-form .admin-action-message { grid-column: 1 / -1; }
+.proc-form--line { padding: 0.5rem; background: #f7f9fc; border-radius: var(--admin-radius-sm); }
+.proc-field { display: grid; gap: 0.2rem; font-size: 0.75rem; min-width: 0; }
+.proc-field > span { font-weight: 600; color: var(--admin-text); }
+.proc-field--wide, .proc-actions, .proc-note, .proc-form > table { grid-column: 1 / -1; }
+.proc-actions { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+.proc-note { margin: 0; font-size: 0.75rem; color: var(--admin-text-muted); }
+.proc-qty { width: 6rem; }
+.proc-add > summary { cursor: pointer; font-size: 0.8125rem; font-weight: 600; color: var(--admin-primary); padding: 0.2rem 0; }
+.proc-add[open] > summary { margin-bottom: 0.4rem; }
+.proc-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.3rem; font-size: 0.8125rem; }
+.proc-list li { display: flex; flex-wrap: wrap; gap: 0.25rem 0.6rem; align-items: baseline; justify-content: space-between; padding: 0.3rem 0; border-bottom: 1px solid #eef2f7; }
+.proc-list li.is-reversed { color: var(--admin-text-muted); text-decoration: line-through; }
+.proc-list form { display: inline; }
+.proc-row-actions { white-space: nowrap; }
+.proc-row-actions form { display: inline; margin-left: 0.5rem; }
+.proc-inline { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; }
+.proc-bill-search { display: grid; gap: 0.4rem; justify-items: start; }
+.proc-bill-search > .proc-list, .proc-bill-search > .proc-field { justify-self: stretch; }
+.proc-upload { align-items: end; }
+
+@media (max-width: 1100px) {
+  .proc-tiles { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
+@media (max-width: 767px) {
+  .proc-tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .proc-costs { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .proc-form { grid-template-columns: minmax(0, 1fr); }
+  .proc-table--main thead { display: none; }
+  .proc-table--main tr { display: grid; grid-template-columns: 1fr 1fr; gap: 0.2rem 0.6rem; padding: 0.5rem; border-bottom: 1px solid var(--admin-border); }
+  .proc-table--main td { border: 0; padding: 0.1rem 0; }
+  .proc-table--main td:first-child { grid-column: 1 / -1; }
+  .proc-table--main td[data-label]::before { content: attr(data-label); display: block; font-size: 0.65rem; text-transform: uppercase; color: var(--admin-text-muted); }
+  .proc-table--main td:first-child::before { display: none; }
+}
+.ops .admin-drawer__panel:has(.proc-drawer) { width: min(660px, 100%); }
+.proc-drawer, .proc-drawer section, .proc-form, .proc-field { min-width: 0; }
+.proc-field input, .proc-field select, .proc-field textarea { width: 100%; box-sizing: border-box; }
+.proc-drawer .proc-table { display: block; overflow-x: auto; }
+.proc-drawer .proc-table td .proc-muted { display: inline; }

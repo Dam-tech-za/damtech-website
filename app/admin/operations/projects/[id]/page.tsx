@@ -4,20 +4,16 @@ import { requireAdmin } from "@/lib/auth/require-admin";
 import { canPerform } from "@/lib/auth/permissions";
 import { getOpsProject } from "@/lib/operations/queries";
 import {
-  FULFILMENT_LABELS,
-  MATERIAL_STATUS_LABELS,
   SERVICE_LABELS,
   stageLabel,
   stagePath,
   todayInSouthAfrica,
 } from "@/lib/operations/lifecycle";
-import { DOCUMENT_KINDS, MATERIAL_FULFILMENT, MATERIAL_ORDER_STATUSES, PROJECT_SERVICES } from "@/lib/operations/types";
+import { DOCUMENT_KINDS, PROJECT_SERVICES } from "@/lib/operations/types";
 import { SiteLocationFields } from "@/components/admin/operations/SiteLocationFields";
 import {
-  addMaterialOrderAction,
   changeStageAction,
   setOnHoldAction,
-  updateMaterialOrderAction,
   updateNextActionAction,
   updateProjectDetailsAction,
 } from "@/app/admin/operations/actions";
@@ -27,7 +23,6 @@ import {
   addTaskAction,
   archiveProjectAction,
   deleteTaskAction,
-  editMaterialOrderAction,
   linkXeroNumbersAction,
   removeDocumentAction,
   toggleTaskAction,
@@ -55,6 +50,10 @@ import {
 import { OpsSetupBanners, StageBadge } from "@/components/admin/operations/OpsParts";
 import { MaterialsBadge, NextActionCell, PaymentPictureBadge } from "@/components/admin/operations/BoardParts";
 import { formatOpsDate, formatOpsDateTime, formatOpsMoney } from "@/components/admin/operations/ops-format";
+import { ProjectMaterials } from "@/components/admin/operations/procurement/ProjectMaterials";
+import { adminOpsDb } from "@/lib/operations/admin-db";
+import { saDate } from "@/lib/operations/calendar";
+import { loadProcurement } from "@/lib/operations/procurement-store";
 
 export const metadata: Metadata = { title: "Project" };
 
@@ -108,6 +107,13 @@ export default async function OpsProjectPage({ params, searchParams }: PageProps
   const notes = activity.filter((a) => a.kind === "note");
   const history = activity.filter((a) => a.kind !== "note");
   const openTasks = tasks.filter((t) => !t.done).length;
+  const { db } = await adminOpsDb();
+  const [procurement, firstBooking] = await Promise.all([
+    loadProcurement(db, { projectId: p.id }),
+    db.from("ops_bookings").select("start_at").eq("project_id", p.id).neq("status", "cancelled").gte("end_at", new Date().toISOString()).order("start_at").limit(1),
+  ]);
+  const bookedStart = (firstBooking.data?.[0]?.start_at as string | undefined) ?? null;
+  const installStart = bookedStart ? saDate(bookedStart) : (p.scheduled_start ?? null);
 
   return (
     <div className="admin-stack--page ops">
@@ -425,149 +431,20 @@ export default async function OpsProjectPage({ params, searchParams }: PageProps
       <AdminPanel
         id="materials"
         title="Materials and supplier orders"
-        description={`${p.materials_by_client ? "Client supplies the materials. " : ""}Costs are excl. VAT. Procurement status only: supplier payment is tracked in Xero.`}
+        description={`${p.materials_by_client ? "Client supplies the materials. " : ""}Open an order for its items, deliveries, documents and Xero bills. Supplier payment comes from Xero.`}
       >
-        {materials.length === 0 ? (
-          <AdminEmptyState compact title={p.materials_by_client ? "Client supplies the materials." : "No supplier orders yet."} />
+        {procurement.state === "ok" ? (
+          <ProjectMaterials
+            projectId={p.id}
+            orders={procurement.orders}
+            canEdit={canEdit}
+            canApprove={canPerform(admin.profile.role, "approveProcurement")}
+            today={today}
+            installStart={installStart}
+          />
         ) : (
-          <ul className="ops-orders">
-            {materials.map((m) => (
-              <li key={m.id} className="ops-orders__item">
-                <div className="ops-orders__head">
-                  <strong>{m.supplier_name}</strong> · {m.description}
-                  {m.quantity ? ` · ${m.quantity}${m.unit ? ` ${m.unit}` : ""}` : ""}
-                  <span className="ops-table__meta">
-                    <AdminStatusBadge
-                      status={m.status === "collected_delivered" ? "ops-good" : m.status === "problem" ? "ops-bad" : m.status === "cancelled" ? "ops-neutral" : "ops-info"}
-                      label={MATERIAL_STATUS_LABELS[m.status]}
-                    />{" "}
-                    {FULFILMENT_LABELS[m.fulfilment]}
-                    {m.expected_date ? ` · expected ${formatOpsDate(m.expected_date)}` : ""}
-                    {m.received_date ? ` · received ${formatOpsDate(m.received_date)}` : ""}
-                    {m.cost_excl_vat !== null ? ` · ${formatOpsMoney(m.cost_excl_vat)} excl. VAT` : ""}
-                    {m.supplier_reference ? ` · ref ${m.supplier_reference}` : ""}
-                    {m.xero_bill_number ? ` · Xero bill ${m.xero_bill_number}` : ""}
-                  </span>
-                  {m.fulfilment_notes || m.notes ? <span className="ops-table__meta">{[m.fulfilment_notes, m.notes].filter(Boolean).join(" · ")}</span> : null}
-                </div>
-                {canEdit ? (
-                  <>
-                    <AdminActionForm action={updateMaterialOrderAction} className="ops-form ops-form--inline">
-                      <input type="hidden" name="id" value={m.id} />
-                      <AdminField label="Status" htmlFor={`status-${m.id}`}>
-                        <AdminSelect id={`status-${m.id}`} name="status" defaultValue={m.status}>
-                          {MATERIAL_ORDER_STATUSES.map((s) => (
-                            <option key={s} value={s}>
-                              {MATERIAL_STATUS_LABELS[s]}
-                            </option>
-                          ))}
-                        </AdminSelect>
-                      </AdminField>
-                      <AdminField label="Expected" htmlFor={`expected-${m.id}`}>
-                        <AdminDateInput id={`expected-${m.id}`} name="expected_date" defaultValue={m.expected_date ?? ""} />
-                      </AdminField>
-                      <AdminField label="Supplier ref." htmlFor={`ref-${m.id}`}>
-                        <AdminInput id={`ref-${m.id}`} name="supplier_reference" defaultValue={m.supplier_reference ?? ""} maxLength={200} />
-                      </AdminField>
-                      <AdminSubmitButton variant="secondary">Update</AdminSubmitButton>
-                    </AdminActionForm>
-                    <details className="ops-add">
-                      <summary>Edit all details</summary>
-                      <AdminActionForm action={editMaterialOrderAction} className="ops-form ops-form--grid">
-                        <input type="hidden" name="id" value={m.id} />
-                        <AdminField label="Supplier" htmlFor={`e-sup-${m.id}`} required>
-                          <AdminInput id={`e-sup-${m.id}`} name="supplier_name" defaultValue={m.supplier_name} maxLength={200} />
-                        </AdminField>
-                        <AdminField label="Materials" htmlFor={`e-desc-${m.id}`} required>
-                          <AdminInput id={`e-desc-${m.id}`} name="description" defaultValue={m.description} maxLength={1000} />
-                        </AdminField>
-                        <AdminField label="Quantity" htmlFor={`e-qty-${m.id}`}>
-                          <AdminInput id={`e-qty-${m.id}`} name="quantity" defaultValue={m.quantity ?? ""} maxLength={200} />
-                        </AdminField>
-                        <AdminField label="Unit" htmlFor={`e-unit-${m.id}`}>
-                          <AdminInput id={`e-unit-${m.id}`} name="unit" defaultValue={m.unit ?? ""} maxLength={40} placeholder="m², rolls, sheets" />
-                        </AdminField>
-                        <AdminField label="Supplier quote / order ref." htmlFor={`e-ref-${m.id}`}>
-                          <AdminInput id={`e-ref-${m.id}`} name="supplier_reference" defaultValue={m.supplier_reference ?? ""} maxLength={200} />
-                        </AdminField>
-                        <AdminField label="Expected date" htmlFor={`e-exp-${m.id}`}>
-                          <AdminDateInput id={`e-exp-${m.id}`} name="expected_date" defaultValue={m.expected_date ?? ""} />
-                        </AdminField>
-                        <AdminField label="Actually received" htmlFor={`e-rec-${m.id}`}>
-                          <AdminDateInput id={`e-rec-${m.id}`} name="received_date" defaultValue={m.received_date ?? ""} />
-                        </AdminField>
-                        <AdminField label="Cost excl. VAT (R)" htmlFor={`e-cost-${m.id}`}>
-                          <AdminInput id={`e-cost-${m.id}`} name="cost_excl_vat" inputMode="decimal" defaultValue={m.cost_excl_vat ?? ""} />
-                        </AdminField>
-                        <AdminField label="Xero supplier bill no." htmlFor={`e-bill-${m.id}`}>
-                          <AdminInput id={`e-bill-${m.id}`} name="xero_bill_number" defaultValue={m.xero_bill_number ?? ""} maxLength={60} />
-                        </AdminField>
-                        <AdminField label="Delivery / collection arrangements" htmlFor={`e-ful-${m.id}`} className="ops-form__full">
-                          <AdminInput id={`e-ful-${m.id}`} name="fulfilment_notes" defaultValue={m.fulfilment_notes ?? ""} maxLength={1000} />
-                        </AdminField>
-                        <AdminField label="Notes" htmlFor={`e-notes-${m.id}`} className="ops-form__full">
-                          <AdminTextarea id={`e-notes-${m.id}`} name="notes" rows={2} defaultValue={m.notes ?? ""} maxLength={2000} />
-                        </AdminField>
-                        <AdminSubmitButton variant="secondary">Save order</AdminSubmitButton>
-                      </AdminActionForm>
-                    </details>
-                  </>
-                ) : null}
-              </li>
-            ))}
-          </ul>
+          <AdminErrorState title="Supplier orders could not be loaded." message="Refresh in a moment." />
         )}
-        {canEdit ? (
-          <details className="ops-add">
-            <summary>Add a supplier order</summary>
-            <AdminActionForm action={addMaterialOrderAction} className="ops-form ops-form--grid" resetOnSuccess>
-              <input type="hidden" name="project_id" value={p.id} />
-              <AdminField label="Supplier" htmlFor="new-supplier" required>
-                <AdminInput id="new-supplier" name="supplier_name" maxLength={200} placeholder="e.g. Gundle API" />
-              </AdminField>
-              <AdminField label="Materials" htmlFor="new-description" required>
-                <AdminInput id="new-description" name="description" maxLength={1000} placeholder="e.g. 1.0mm smooth HDPE" />
-              </AdminField>
-              <AdminField label="Quantity" htmlFor="new-quantity">
-                <AdminInput id="new-quantity" name="quantity" maxLength={200} placeholder="e.g. 1,480" />
-              </AdminField>
-              <AdminField label="Unit" htmlFor="new-unit">
-                <AdminInput id="new-unit" name="unit" maxLength={40} placeholder="m²" />
-              </AdminField>
-              <AdminField label="Supplier ref." htmlFor="new-ref">
-                <AdminInput id="new-ref" name="supplier_reference" maxLength={200} />
-              </AdminField>
-              <AdminField label="Status" htmlFor="new-status">
-                <AdminSelect id="new-status" name="status" defaultValue="not_ordered">
-                  {MATERIAL_ORDER_STATUSES.filter((s) => s !== "cancelled").map((s) => (
-                    <option key={s} value={s}>
-                      {MATERIAL_STATUS_LABELS[s]}
-                    </option>
-                  ))}
-                </AdminSelect>
-              </AdminField>
-              <AdminField label="Delivery or collection" htmlFor="new-fulfilment">
-                <AdminSelect id="new-fulfilment" name="fulfilment" defaultValue="tbc">
-                  {MATERIAL_FULFILMENT.map((f) => (
-                    <option key={f} value={f}>
-                      {FULFILMENT_LABELS[f]}
-                    </option>
-                  ))}
-                </AdminSelect>
-              </AdminField>
-              <AdminField label="Expected date" htmlFor="new-expected">
-                <AdminDateInput id="new-expected" name="expected_date" />
-              </AdminField>
-              <AdminField label="Cost excl. VAT (R)" htmlFor="new-cost">
-                <AdminInput id="new-cost" name="cost_excl_vat" inputMode="decimal" />
-              </AdminField>
-              <AdminField label="Notes" htmlFor="new-notes" className="ops-form__full">
-                <AdminTextarea id="new-notes" name="notes" rows={2} maxLength={2000} />
-              </AdminField>
-              <AdminSubmitButton>Add order</AdminSubmitButton>
-            </AdminActionForm>
-          </details>
-        ) : null}
       </AdminPanel>
 
       {/* ------------------------------------------------------------ Financials */}

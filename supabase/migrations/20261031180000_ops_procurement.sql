@@ -14,6 +14,9 @@
 -- server code checks the admin role). Documents live in the private
 -- "procurement-documents" bucket and are served through short signed URLs.
 --
+-- Applied to production (Damtech Admin) on 31 Oct 2026 with the owner's
+-- go-ahead, as migration "ops_procurement".
+--
 -- Rollback: drop the ops_order_* / ops_procurement_* objects created here, drop
 -- the added columns, and restore the original status check. No existing data
 -- depends on them.
