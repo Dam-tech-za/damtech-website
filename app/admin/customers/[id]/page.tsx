@@ -123,7 +123,7 @@ export default async function AdminCustomerDetailPage({ params }: PageProps) {
       date: i.invoice_date,
       kind: "Xero invoice",
       title: `${i.invoice_number ?? "Invoice"} · ${formatOpsMoney(Number(i.total_incl_vat))}`,
-      href: `/admin/operations/projects/${i.project.id}/#financials`,
+      href: `/admin/operations/projects/${i.project.id}/?tab=financials`,
       status:
         i.xero_status === "PAID"
           ? { value: "ops-good", label: "Paid" }

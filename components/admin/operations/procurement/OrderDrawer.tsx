@@ -106,7 +106,7 @@ export function OrderDrawer({ order, projectId, projects = [], canEdit, canAppro
       <div className="proc-drawer">
         {order ? (
           <p className="proc-drawer__project">
-            <Link href={`/admin/operations/projects/${order.project_id}/#materials`}>{order.project.title}</Link>
+            <Link href={`/admin/operations/projects/${order.project_id}/?tab=materials`}>{order.project.title}</Link>
             {order.project.customer_name ? ` · ${order.project.customer_name}` : ""}
           </p>
         ) : null}

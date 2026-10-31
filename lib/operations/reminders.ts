@@ -64,7 +64,7 @@ export function buildReminderEmail(
     textParts.push(`Supplier orders awaiting action (${lateOrders.length})`);
     htmlParts.push(`<h3 style="margin:16px 0 6px;font-family:Arial,sans-serif">Supplier orders awaiting action (${lateOrders.length})</h3><ul>`);
     for (const o of lateOrders) {
-      const url = link(`/admin/operations/projects/${o.project_id}/#materials`);
+      const url = link(`/admin/operations/projects/${o.project_id}/?tab=materials`);
       const detail = `${o.supplier_name} – ${o.description} (${o.project_title}${o.expected_date ? `, expected ${o.expected_date}` : ""})`;
       textParts.push(`- ${detail}\n  ${url}`);
       htmlParts.push(`<li><a href="${escapeHtml(url)}">${escapeHtml(detail)}</a></li>`);

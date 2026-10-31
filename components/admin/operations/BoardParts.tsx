@@ -134,7 +134,7 @@ export function BoardTable({
             <td data-label="Materials">
               <MaterialsBadge status={p.materialsStatus} />
               {p.openOrders ? (
-                <Link href={`/admin/operations/projects/${p.id}/#materials`} className="ops-table__meta">
+                <Link href={`/admin/operations/projects/${p.id}/?tab=materials`} className="ops-table__meta">
                   {p.openOrders} open order{p.openOrders === 1 ? "" : "s"}
                 </Link>
               ) : null}
