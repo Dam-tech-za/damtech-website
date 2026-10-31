@@ -8,6 +8,8 @@ export type RfqEmailConfig = {
   fromEmail: string;
   replyToEmail: string;
   internalNotificationEmail: string;
+  /** Also copied on the new-RFQ alert (never on the customer's auto-reply). */
+  internalNotificationCc: string[];
   configured: boolean;
   missing: string[];
 };
@@ -18,6 +20,21 @@ function firstEnv(...names: string[]): string | undefined {
     if (value) return value;
   }
   return undefined;
+}
+
+/** Copied on every new-RFQ alert unless RFQ_INTERNAL_NOTIFICATION_CC is set. */
+export const DEFAULT_RFQ_NOTIFICATION_CC = ["arno@dam-tech.co.za"];
+
+/** Comma/semicolon list → unique lowercase addresses, minus any already in `exclude`. */
+export function parseEmailList(value: string | undefined, exclude: string[] = []): string[] {
+  const skip = new Set(exclude.map((e) => e.trim().toLowerCase()));
+  const out: string[] = [];
+  for (const raw of (value ?? "").split(/[,;]/)) {
+    const email = raw.trim().toLowerCase();
+    if (!email || !email.includes("@") || skip.has(email) || out.includes(email)) continue;
+    out.push(email);
+  }
+  return out;
 }
 
 export function getRfqEmailConfig(): RfqEmailConfig {
@@ -34,6 +51,12 @@ export function getRfqEmailConfig(): RfqEmailConfig {
       "LEAD_INBOX_EMAIL",
     ) || "info@dam-tech.co.za";
 
+  const ccEnv = process.env.RFQ_INTERNAL_NOTIFICATION_CC;
+  const internalNotificationCc = parseEmailList(
+    ccEnv !== undefined ? ccEnv : DEFAULT_RFQ_NOTIFICATION_CC.join(","),
+    [internalNotificationEmail],
+  );
+
   const missing: string[] = [];
   if (!apiKey) missing.push("RESEND_API_KEY");
   if (!firstEnv("RFQ_FROM_EMAIL", "QUOTE_FROM_EMAIL")) {
@@ -45,6 +68,7 @@ export function getRfqEmailConfig(): RfqEmailConfig {
     fromEmail,
     replyToEmail,
     internalNotificationEmail,
+    internalNotificationCc,
     configured: Boolean(apiKey),
     missing,
   };
