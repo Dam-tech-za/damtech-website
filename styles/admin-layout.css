@@ -4996,3 +4996,67 @@ table.admin-sheet .admin-status {
 .ops-toolbar__lead-add { display: flex; gap: 6px; margin-bottom: 8px; }
 .ops-toolbar__lead-add .admin-input { flex: 1; min-width: 0; font-size: 13px; padding: 4px 8px; }
 .ops-toolbar__lead-msg { margin: 8px 0 0; font-size: 12px; color: var(--admin-danger); max-width: 240px; }
+
+/* ---------------------------------------------------------------------------
+   Project drawer: overview, tabs and live Xero quote
+   --------------------------------------------------------------------------- */
+.ops .admin-drawer__panel:has(.ops-peek) { width: min(580px, 100%); }
+.ops-peek { display: grid; gap: 0.9rem; min-width: 0; }
+.ops-peek__head { display: grid; gap: 0.5rem; }
+.ops-peek__sub { margin: 0; font-size: 0.8125rem; color: var(--admin-text-muted); }
+.ops-peek__chips { display: flex; flex-wrap: wrap; gap: 0.35rem; }
+.ops-peek-chip { display: inline-flex; align-items: center; padding: 0.1rem 0.55rem; border-radius: 999px; font-size: 0.75rem; font-weight: 600; background: #eef2f7; color: var(--admin-text); white-space: nowrap; }
+.ops-peek-chip--stage { background: #e7f1fb; color: var(--admin-info); }
+.ops-peek-chip--ok { background: #edf8f0; color: var(--admin-success); }
+.ops-peek-chip--warn { background: #fff6e8; color: var(--admin-warning); }
+.ops-peek__actions { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; }
+.ops-peek-value { display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; padding: 0.9rem 1rem; border: 1px solid var(--admin-border); border-radius: var(--admin-radius-md); background: #f7faff; }
+.ops-peek-value__label { margin: 0; font-size: 0.75rem; font-weight: 650; text-transform: uppercase; letter-spacing: 0.04em; color: var(--admin-text-muted); }
+.ops-peek-value__amount { margin: 0.15rem 0; font-size: 1.6rem; font-weight: 700; line-height: 1.15; color: var(--admin-text); }
+.ops-peek-value__note, .ops-peek-value__pay { margin: 0; font-size: 0.8125rem; color: var(--admin-text-muted); }
+.ops-peek-value__pay { margin-top: 0.3rem; color: var(--admin-text); font-weight: 600; }
+.ops-peek-value__buttons { display: grid; gap: 0.4rem; justify-items: end; flex: none; }
+.ops-peek-tabs { display: flex; gap: 0.25rem; box-shadow: inset 0 -1px 0 var(--admin-border); overflow-x: auto; scrollbar-width: none; }
+.ops-peek-tabs::-webkit-scrollbar { display: none; }
+.ops-peek-tabs button { border: 0; background: none; padding: 0.5rem 0.7rem; font: inherit; font-size: 0.875rem; font-weight: 550; color: var(--admin-text-muted); border-bottom: 2px solid transparent; cursor: pointer; white-space: nowrap; }
+.ops-peek-tabs button.is-active { color: var(--admin-primary); border-bottom-color: var(--admin-primary); }
+.ops-peek-tabs button:focus-visible { outline: 2px solid var(--admin-focus-ring); outline-offset: -2px; }
+.ops-peek-panel { display: grid; gap: 0.8rem; }
+.ops-peek-list { margin: 0; display: grid; gap: 0; }
+.ops-peek-row { display: grid; grid-template-columns: 8.5rem minmax(0, 1fr); gap: 0.75rem; padding: 0.45rem 0; border-bottom: 1px solid #eef2f7; font-size: 0.875rem; }
+.ops-peek-row dt { color: var(--admin-text-muted); }
+.ops-peek-row dd { margin: 0; color: var(--admin-text); overflow-wrap: anywhere; }
+.ops-peek-link { color: var(--admin-primary); text-decoration: none; display: inline-flex; gap: 0.35rem; align-items: center; }
+.ops-peek-link:hover { text-decoration: underline; }
+.ops-peek-next { padding: 0.7rem 0.8rem; border-radius: var(--admin-radius-sm); background: #f7f9fc; border: 1px solid #eef2f7; }
+.ops-peek-next__label { margin: 0 0 0.2rem; font-size: 0.75rem; font-weight: 650; text-transform: uppercase; letter-spacing: 0.04em; color: var(--admin-text-muted); }
+.ops-peek-next__text { margin: 0 0 0.2rem; font-weight: 600; }
+.ops-peek-notes { margin: 0; white-space: pre-wrap; font-size: 0.875rem; overflow-wrap: anywhere; }
+.ops-peek-muted { margin: 0; font-size: 0.75rem; color: var(--admin-text-muted); }
+.ops-peek-warn { color: var(--admin-warning); font-weight: 600; font-size: 0.8125rem; margin: 0; }
+.ops-peek-docs { list-style: none; margin: 0; padding: 0; display: grid; }
+.ops-peek-docs li { display: flex; justify-content: space-between; align-items: center; gap: 0.75rem; padding: 0.45rem 0; border-bottom: 1px solid #eef2f7; font-size: 0.875rem; }
+.ops-peek-docs li > span { display: grid; }
+.ops-quote__head { display: flex; align-items: center; gap: 0.6rem; }
+.ops-quote__head h3 { margin: 0; font-size: 1.1rem; }
+.ops-quote__title { margin: 0; font-weight: 600; }
+.ops-quote__lines { overflow-x: auto; border: 1px solid var(--admin-border); border-radius: var(--admin-radius-sm); }
+.ops-quote__lines table { width: 100%; border-collapse: collapse; font-size: 0.8125rem; }
+.ops-quote__lines th { text-align: left; padding: 0.4rem 0.5rem; background: #f7f9fc; border-bottom: 1px solid var(--admin-border); color: var(--admin-text-muted); font-weight: 600; white-space: nowrap; }
+.ops-quote__lines td { padding: 0.45rem 0.5rem; border-bottom: 1px solid #eef2f7; vertical-align: top; }
+.ops-quote__lines td:not(:first-child), .ops-quote__lines th:not(:first-child) { text-align: right; white-space: nowrap; }
+.ops-quote__desc { white-space: pre-wrap; }
+.ops-quote__totals { margin: 0; display: grid; gap: 0.2rem; justify-self: end; min-width: 15rem; font-size: 0.875rem; }
+.ops-quote__totals > div { display: flex; justify-content: space-between; gap: 1.5rem; }
+.ops-quote__totals dt { color: var(--admin-text-muted); }
+.ops-quote__totals dd { margin: 0; }
+.ops-quote__totals .is-total { padding-top: 0.3rem; border-top: 1px solid var(--admin-border); font-weight: 700; }
+.ops-quote__terms summary { cursor: pointer; font-size: 0.8125rem; font-weight: 600; color: var(--admin-primary); }
+@media (max-width: 560px) {
+  .ops-peek-value { flex-direction: column; }
+  .ops-peek-value__buttons { justify-items: start; }
+  .ops-peek-row { grid-template-columns: 6.5rem minmax(0, 1fr); }
+  .ops-quote__totals { justify-self: stretch; min-width: 0; }
+}
+.ops .ops-peek .ops-peek-tabs { display: flex; flex-direction: row; }
+.ops .ops-peek .ops-peek-tabs > button { display: inline-block; width: auto; flex: 0 0 auto; }
