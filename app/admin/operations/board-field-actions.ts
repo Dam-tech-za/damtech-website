@@ -18,6 +18,7 @@ import {
   type BoardManualField,
 } from "@/lib/operations/board-meta";
 import { distancesFromPoint, locationPatch } from "@/lib/operations/distance";
+import { loadSavedLeads } from "@/lib/operations/project-leads";
 import { findTownByName } from "@/lib/operations/sa-places";
 import { fillFromXeroContact, locationFromXeroCity } from "@/lib/operations/xero-contact";
 import { documentKindOf, getXeroDocumentWithContact, XeroDocumentError } from "@/lib/operations/xero-document";
@@ -134,6 +135,12 @@ export async function updateBoardFieldAction(payload: BoardFieldPayload): Promis
       }
       case "lead": {
         const lead = value.trim().slice(0, 120);
+        // The Person list is the master list: only its names (or no lead) may be set.
+        const saved = await loadSavedLeads(db);
+        const currentLead = String(project.project_lead_name ?? project.crew ?? "").trim().toLowerCase();
+        if (lead && saved && lead.toLowerCase() !== currentLead && !saved.some((n) => n.toLowerCase() === lead.toLowerCase())) {
+          return actionFailure(`${lead} is not on the Person list. Add them there first.`);
+        }
         patch.project_lead_name = lead || null;
         patch.crew = lead || null;
         const meta = writeBoardMetaIntoScope(project.scope as string | null, { ...scopeMeta, lead: lead || null });

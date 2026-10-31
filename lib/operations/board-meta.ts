@@ -88,9 +88,13 @@ export function normalisePhoneInput(raw: string, defaultCountry = "ZA"): string 
   return trimmed.slice(0, 40);
 }
 
-export function mergeLeadSuggestions(existing: (string | null | undefined)[]): string[] {
+/** Saved names (or the old built-in three) plus any name already on a project. */
+export function mergeLeadSuggestions(
+  existing: (string | null | undefined)[],
+  base: readonly string[] = DEFAULT_LEAD_SUGGESTIONS,
+): string[] {
   const set = new Set<string>();
-  for (const name of DEFAULT_LEAD_SUGGESTIONS) set.add(name);
+  for (const name of base) set.add(name);
   for (const name of existing) {
     const t = (name ?? "").trim();
     if (t) set.add(t);

@@ -4,6 +4,8 @@ import { unstable_rethrow } from "next/navigation";
 import { requireAdmin } from "@/lib/auth/require-admin";
 import { canPerform } from "@/lib/auth/permissions";
 import { listBoardProjects } from "@/lib/operations/queries";
+import { adminOpsDb } from "@/lib/operations/admin-db";
+import { loadSavedLeads } from "@/lib/operations/project-leads";
 import {
   AdminErrorState,
   AdminListMemory,
@@ -43,7 +45,10 @@ async function ProjectsPageInner({ searchParams }: PageProps) {
   const canEdit = canPerform(admin.profile.role, "manageOperations");
   const canSync = canPerform(admin.profile.role, "runXeroSync");
   const sp = await searchParams;
-  const load = await listBoardProjects("active");
+  const [load, savedLeads] = await Promise.all([
+    listBoardProjects("active"),
+    adminOpsDb().then(({ db }) => loadSavedLeads(db)),
+  ]);
   const initial: BoardFilters & { add?: boolean } = {
     q: one(sp.q).slice(0, 100),
     lead: one(sp.lead),
@@ -77,7 +82,7 @@ async function ProjectsPageInner({ searchParams }: PageProps) {
         load.error === "load_failed" ? <AdminErrorState title="Projects could not be loaded." message="Refresh in a moment." /> : null
       ) : (
         <AdminPanel className="admin-panel--board">
-          <ProjectsWorkspace projects={load.data} canEdit={canEdit} focusAdd={Boolean(initial.add) && canEdit} initial={initial} />
+          <ProjectsWorkspace projects={load.data} canEdit={canEdit} focusAdd={Boolean(initial.add) && canEdit} initial={initial} savedLeads={savedLeads} />
         </AdminPanel>
       )}
     </div>

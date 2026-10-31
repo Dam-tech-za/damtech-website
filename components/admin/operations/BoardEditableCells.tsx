@@ -202,31 +202,35 @@ export function LeadCell({
   canEdit: boolean;
   onPatched?: (p: BoardProject) => void;
 }) {
-  const listId = useId();
   const save = useCellSave(project.id);
+  const [saving, setSaving] = useState(false);
   if (!canEdit) return <span>{project.leadName || "—"}</span>;
+  // Only names on the Person list can be picked. An older lead typed by hand
+  // stays visible (marked) until someone chooses from the list.
+  const current = project.leadName ?? "";
+  const offList = Boolean(current) && !suggestions.some((s) => s.toLowerCase() === current.toLowerCase());
   return (
-    <>
-      <InlineText
-        value={project.leadName ?? ""}
-        placeholder="+ Lead"
-        title={project.leadName ?? undefined}
-        maxLength={120}
-        listId={listId}
-        ariaLabel={`Lead for ${project.title}`}
-        onCancelValue={project.leadName ?? ""}
-        onCommit={async (next) => {
-          const ok = await save("lead", next);
-          if (ok) onPatched?.({ ...project, leadName: next.trim() || null, project_lead_name: next.trim() || null });
-          return ok;
-        }}
-      />
-      <datalist id={listId}>
-        {suggestions.map((s) => (
-          <option key={s} value={s} />
-        ))}
-      </datalist>
-    </>
+    <select
+      className="ops-cell__select"
+      data-ops-cell
+      value={current}
+      disabled={saving}
+      aria-label={`Lead for ${project.title}`}
+      title={offList ? `${current} is not on the Person list` : current || undefined}
+      onChange={async (e) => {
+        const next = e.target.value;
+        setSaving(true);
+        const ok = await save("lead", next);
+        setSaving(false);
+        if (ok) onPatched?.({ ...project, leadName: next || null, project_lead_name: next || null });
+      }}
+    >
+      <option value="">{current ? "No lead" : "+ Lead"}</option>
+      {offList ? <option value={current}>{current} (not on list)</option> : null}
+      {suggestions.map((s) => (
+        <option key={s} value={s}>{s}</option>
+      ))}
+    </select>
   );
 }
 

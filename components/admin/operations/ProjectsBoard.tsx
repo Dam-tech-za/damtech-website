@@ -207,9 +207,11 @@ export function ProjectsBoard({
   const [reviewProjectId, setReviewProjectId] = useState<string | null>(null);
   const [flash, setFlash] = useState<{ message: string; undo: (() => Promise<void>) | null } | null>(null);
 
+  // Lead cells offer only the Person list (the global list); a project's old
+  // free-text lead still shows on that row until someone picks from the list.
   const leads = useMemo(
-    () => mergeLeadSuggestions([...leadSuggestions, ...rows.map((p) => p.leadName)]),
-    [leadSuggestions, rows],
+    () => (leadSuggestions.length ? leadSuggestions : mergeLeadSuggestions([])),
+    [leadSuggestions],
   );
 
   const patchRow = (next: BoardProject) => {
