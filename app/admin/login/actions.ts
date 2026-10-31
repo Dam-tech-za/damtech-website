@@ -128,5 +128,6 @@ export async function signInWithEmailPassword(
     return { ok: false, error: provision.message };
   }
 
-  redirect(next.startsWith("/") ? next : "/admin/");
+  // Straight to the authenticator-code step; it forwards to `next` afterwards.
+  redirect(`/admin/mfa/?next=${encodeURIComponent(next.startsWith("/") ? next : "/admin/")}`);
 }

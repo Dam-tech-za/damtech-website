@@ -6,7 +6,11 @@ import { AdminShell } from "@/components/admin/layout";
 import { canPerform, getNavItemsForRole } from "@/lib/auth/permissions";
 import { getAttentionItems } from "@/lib/admin/dashboard/get-attention";
 import { getNavBadges } from "@/lib/admin/nav-badges";
-import { getCurrentAdmin, getCurrentUser } from "@/lib/auth/get-current-user";
+import {
+  getAdminSession,
+  getCurrentAdmin,
+  getCurrentUser,
+} from "@/lib/auth/get-current-user";
 
 export const dynamic = "force-dynamic";
 
@@ -26,6 +30,7 @@ export const metadata: Metadata = {
 // created by the emailed link (checked in proxy.ts and the page).
 const PUBLIC_ADMIN_PREFIXES = [
   "/admin/login",
+  "/admin/mfa",
   "/admin/unauthorised",
   "/admin/forgot-password",
   "/admin/reset-password",
@@ -55,6 +60,9 @@ export default async function AdminLayout({
 
   const admin = await getCurrentAdmin();
   if (!admin) {
+    if (await getAdminSession()) {
+      redirect("/admin/mfa/");
+    }
     const user = await getCurrentUser();
     if (!user) {
       redirect("/admin/login/");

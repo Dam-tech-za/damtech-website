@@ -145,6 +145,7 @@ export async function sendRfqAdminNotification(input: {
       client.emails.send({
         from: `Damtech Quotes <${config.fromEmail}>`,
         to: [config.internalNotificationEmail],
+        cc: config.internalNotificationCc.length ? config.internalNotificationCc : undefined,
         replyTo: email || undefined,
         subject,
         text,

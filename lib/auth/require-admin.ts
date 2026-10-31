@@ -1,5 +1,9 @@
 import { redirect } from "next/navigation";
-import { getCurrentAdmin, type CurrentAdmin } from "./get-current-user";
+import {
+  getAdminSession,
+  getCurrentAdmin,
+  type CurrentAdmin,
+} from "./get-current-user";
 import { canPerform, hasAnyRole, type PERMISSIONS } from "./permissions";
 import type { AdminRole } from "./types";
 
@@ -22,6 +26,10 @@ export async function requireAdmin(
   const admin = await getCurrentAdmin();
 
   if (!admin) {
+    // An approved admin who has not entered their authenticator code yet.
+    if (await getAdminSession()) {
+      redirect("/admin/mfa/");
+    }
     const userPresent = await import("./get-current-user").then((m) =>
       m.getCurrentUser(),
     );
@@ -67,6 +75,12 @@ export async function assertAdmin(
   const admin = await getCurrentAdmin();
 
   if (!admin) {
+    if (await getAdminSession()) {
+      throw new AdminAuthError(
+        "unauthenticated",
+        "Two-step verification required. Reload the page and enter your authenticator code.",
+      );
+    }
     const user = await import("./get-current-user").then((m) =>
       m.getCurrentUser(),
     );
