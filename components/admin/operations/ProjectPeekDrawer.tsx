@@ -27,7 +27,7 @@ import {
 } from "./BoardEditableCells";
 import { formatOpsDateTime, formatOpsMoney } from "./ops-format";
 import { QuoteView } from "./QuoteViewer";
-import { QuoteFinder } from "./project/ProjectClientParts";
+import { InvoiceCandidates, QuoteFinder } from "./project/ProjectClientParts";
 
 function PeekForm({
   project,
@@ -422,6 +422,10 @@ function ProjectOverview({
             <div className="ops-peek__actions">
               <AdminButton size="sm" variant="secondary" disabled={busy === "refresh"} onClick={() => void refresh()}>{busy === "refresh" ? "Refreshing…" : "Refresh from Xero"}</AdminButton>
               {onLinkXero ? <AdminButton size="sm" variant="ghost" onClick={onLinkXero}>Link to Xero</AdminButton> : null}
+            </div>
+            <div className="ops-peek-links">
+              <QuoteFinder projectId={project.id} onLinked={() => setReload((n) => n + 1)} />
+              <InvoiceCandidates projectId={project.id} />
             </div>
           </>
         ) : null}

@@ -57,6 +57,7 @@ export function ProjectQuotes({ projectId, quotes }: { projectId: string; quotes
     );
   }
   return (
+    <>
     <ul className="pj-list">
       {quotes.map((q) => (
         <li key={q.quoteId ?? q.number}>
@@ -72,6 +73,8 @@ export function ProjectQuotes({ projectId, quotes }: { projectId: string; quotes
         </li>
       ))}
     </ul>
+    <QuoteFinder projectId={projectId} />
+    </>
   );
 }
 
@@ -135,7 +138,7 @@ export function InvoiceCandidates({ projectId }: { projectId: string }) {
   return (
     <div className="pj-cands">
       <button type="button" className="admin-btn admin-btn--secondary admin-btn--sm" onClick={find} disabled={loading}>
-        {loading ? "Looking in Xero…" : "Find invoices for this client"}
+        {loading ? "Looking in Xero…" : "Link invoice"}
       </button>
       {state?.error ? <p className="pj-error" role="alert">{state.error}</p> : null}
       {state?.list ? (
@@ -196,7 +199,7 @@ export function QuoteFinder({ projectId, onLinked }: { projectId: string; onLink
   return (
     <div className="pj-cands">
       <button type="button" className="admin-btn admin-btn--secondary admin-btn--sm" onClick={find} disabled={loading}>
-        {loading ? "Looking in Xero…" : "Find this client's quote"}
+        {loading ? "Looking in Xero…" : "Link quote"}
       </button>
       {message ? <p className="pj-muted" role="status">{message}</p> : null}
       {state?.error ? <p className="pj-error" role="alert">{state.error}</p> : null}
