@@ -147,7 +147,9 @@ function buildRowsFromContact(
   pushRow(rows, "contact_phone", "Phone", project.contact_phone ?? "", extras.phone ?? "", { hideIfEmptyProposed: true, missing, same: samePhone });
   pushRow(rows, "contact_email", "Email", project.contact_email ?? "", extras.email ?? "", { hideIfEmptyProposed: true, missing });
   pushRow(rows, "xero_number", "Xero number", ourXero, documentNumber);
-  pushRow(rows, "quoted_total_incl_vat", "Total project value", moneyText(project.quoted_total_incl_vat), moneyText(documentTotal));
+  if (documentTotal !== null) {
+    pushRow(rows, "quoted_total_incl_vat", "Total project value (from the quote)", moneyText(project.quoted_total_incl_vat), moneyText(documentTotal));
+  }
   pushRow(rows, "location", "Location", locationText(project.site_province, project.site_town), xeroLocation, {
     hideIfEmptyProposed: true,
     missing,
@@ -209,7 +211,8 @@ export async function buildProjectXeroReview(
       },
       found.contact,
       found.document.number,
-      found.document.total,
+      // The project value comes from a quote only, never from an invoice.
+      kind === "quote" ? found.document.total : null,
       kind === "quote" ? found.document.title : null,
     );
     // A project still carrying a known wrong contact gets the contact rows

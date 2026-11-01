@@ -167,7 +167,7 @@ function PeekForm({
             })();
           }}
         >
-          Use Xero total
+          Use quote total
         </button>
       </div>
       <div className="ops-peek-form__field">
@@ -406,14 +406,16 @@ function ProjectOverview({
             <dl className="ops-peek-list">
               <Row label="Payment">{pay.label ? PAYMENT_LABEL_TEXT[pay.label] : "No Xero invoices yet"}</Row>
               <Row label="Invoiced">{formatOpsMoney(pay.invoiced)}</Row>
-              <Row label="Paid">{formatOpsMoney(pay.paid)}</Row>
+              <Row label="Paid">{formatOpsMoney(pay.paid)}{pay.pctPaid !== null && pay.label ? <span className="ops-peek-muted"> {pay.pctPaid}% paid</span> : null}</Row>
               <Row label="Owed now">{formatOpsMoney(pay.due)}{pay.overdue ? <span className="ops-peek-warn"> overdue</span> : null}</Row>
               {pay.notYetInvoiced !== null ? <Row label="Not yet invoiced">{formatOpsMoney(pay.notYetInvoiced)}</Row> : null}
+              {pay.remainingOnQuote !== null ? <Row label="Remaining on quote">{formatOpsMoney(pay.remainingOnQuote)}</Row> : null}
               {pay.credited ? <Row label="Credited">{formatOpsMoney(pay.credited)}</Row> : null}
               <Row label="Invoices">{project.xero_invoice_numbers?.length ? project.xero_invoice_numbers.join(", ") : "—"}</Row>
               <Row label="Last Xero sync">{project.payment_synced_at ? formatOpsDateTime(project.payment_synced_at) : "Never"}</Row>
             </dl>
-            <p className="ops-peek-muted">All amounts come from Xero and include VAT.</p>
+            <p className="ops-peek-muted">All amounts come from Xero and include VAT. Invoices never change the project value.</p>
+            {!project.xero_quote_numbers?.length && project.xero_invoice_numbers?.length ? <p className="ops-peek-warn">Link the accepted quote to track what&apos;s still to invoice.</p> : null}
             <div className="ops-peek__actions">
               <AdminButton size="sm" variant="secondary" disabled={busy === "refresh"} onClick={() => void refresh()}>{busy === "refresh" ? "Refreshing…" : "Refresh from Xero"}</AdminButton>
               {onLinkXero ? <AdminButton size="sm" variant="ghost" onClick={onLinkXero}>Link to Xero</AdminButton> : null}

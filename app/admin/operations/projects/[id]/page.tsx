@@ -42,7 +42,8 @@ import {
 import { OpsSetupBanners } from "@/components/admin/operations/OpsParts";
 import { formatOpsDate, formatOpsDateTime, formatOpsMoney } from "@/components/admin/operations/ops-format";
 import { ProjectMaterials } from "@/components/admin/operations/procurement/ProjectMaterials";
-import { LeadSelect, ProjectQuotes } from "@/components/admin/operations/project/ProjectClientParts";
+import { InvoiceCandidates, InvoiceKindSelect, LeadSelect, ProjectQuotes } from "@/components/admin/operations/project/ProjectClientParts";
+import { KIND_LABELS } from "@/lib/operations/project-money";
 import { adminOpsDb } from "@/lib/operations/admin-db";
 import { saDate, saTime } from "@/lib/operations/calendar";
 import { CHECKLIST_SET_LABELS, FAMILY_LABELS, checklistFamily, isReadinessTask, type ChecklistSet } from "@/lib/operations/checklists";
@@ -627,16 +628,18 @@ export default async function OpsProjectPage({ params, searchParams }: PageProps
             <section className="pj-card" aria-labelledby="pj-money">
               <h2 id="pj-money" className="pj-card__title">Customer money (Xero, read-only)</h2>
               <dl className="pj-facts">
-                <div><dt>Contract value</dt><dd>{formatOpsMoney(p.quoted_total_incl_vat)} incl. VAT</dd></div>
+                <div><dt>Project value</dt><dd>{p.quoted_total_incl_vat === null ? "Not set" : `${formatOpsMoney(p.quoted_total_incl_vat)} incl. VAT`}{p.quoted_total_manual ? " (entered by hand)" : quoteRefs.length ? ` (quote ${quoteRefs[0].number})` : ""}</dd></div>
                 <div><dt>Payment</dt><dd>{payment.label ? PAYMENT_LABEL_TEXT[payment.label] : "No invoices issued"}</dd></div>
                 <div><dt>Invoiced</dt><dd>{noInvoices ? "Nothing yet" : formatOpsMoney(payment.invoiced)}</dd></div>
-                <div><dt>Received</dt><dd>{noInvoices ? "—" : formatOpsMoney(payment.paid)}</dd></div>
-                <div><dt>Owed on invoices</dt><dd className={payment.overdue ? "pj-bad" : undefined}>{noInvoices ? "—" : formatOpsMoney(payment.due)}{payment.overdue ? " (overdue)" : ""}</dd></div>
+                <div><dt>Paid</dt><dd>{noInvoices ? "—" : formatOpsMoney(payment.paid)}{payment.pctPaid !== null && !noInvoices ? <span className="pj-muted"> · {payment.pctPaid}% paid</span> : null}</dd></div>
+                <div><dt>Owed now</dt><dd className={payment.overdue ? "pj-bad" : undefined}>{noInvoices ? "—" : formatOpsMoney(payment.due)}{payment.overdue ? " (overdue)" : ""}</dd></div>
                 {payment.credited ? <div><dt>Credited</dt><dd>{formatOpsMoney(payment.credited)}</dd></div> : null}
-                <div><dt>Not yet invoiced</dt><dd>{payment.notYetInvoiced === null ? "Quote unknown" : formatOpsMoney(payment.notYetInvoiced)}</dd></div>
+                <div><dt>Not yet invoiced</dt><dd>{payment.notYetInvoiced === null ? "Value unknown" : formatOpsMoney(payment.notYetInvoiced)}</dd></div>
+                <div><dt>Remaining on quote</dt><dd>{payment.remainingOnQuote === null ? "Value unknown" : formatOpsMoney(payment.remainingOnQuote)}</dd></div>
                 <div><dt>Last Xero sync</dt><dd>{formatOpsDateTime(p.payment_synced_at)}</dd></div>
               </dl>
-              <p className="pj-muted">Not yet invoiced is contract value still to bill, not money owed.</p>
+              <p className="pj-muted">Not yet invoiced is project value still to bill, not money owed. Invoices never change the project value.</p>
+              {!quoteRefs.length && invoices.length ? <p className="pj-warn-line">Link the accepted quote to track what&apos;s still to invoice.</p> : null}
               {invoices.length ? (
                 <AdminTable caption="Linked Xero invoices" className="ops-table ops-table--compact">
                   <thead>
@@ -655,7 +658,13 @@ export default async function OpsProjectPage({ params, searchParams }: PageProps
                           {i.invoice_number ?? "—"}
                           <span className="ops-table__meta">{i.xero_status.toLowerCase()} · {formatOpsDate(i.invoice_date)}{i.match_method === "manual" ? " · linked by hand" : ""}</span>
                         </td>
-                        <td data-label="Type">{i.kind === "unclassified" ? "—" : i.kind}</td>
+                        <td data-label="Type">
+                          {canEdit ? (
+                            <InvoiceKindSelect linkId={i.id} stored={i.kind} shown={KIND_LABELS[payment.kinds.find((k) => k.invoice_number === i.invoice_number)?.kind ?? "unclassified"]} />
+                          ) : (
+                            KIND_LABELS[payment.kinds.find((k) => k.invoice_number === i.invoice_number)?.kind ?? i.kind]
+                          )}
+                        </td>
                         <td data-label="Total">{formatOpsMoney(i.total_incl_vat)}</td>
                         <td data-label="Paid">{formatOpsMoney(i.amount_paid)}</td>
                         <td data-label="Due">
@@ -669,6 +678,7 @@ export default async function OpsProjectPage({ params, searchParams }: PageProps
               ) : (
                 <p className="pj-muted">No invoices issued in Xero yet.</p>
               )}
+              {canEdit ? <InvoiceCandidates projectId={p.id} /> : null}
             </section>
             <section className="pj-card" aria-labelledby="pj-costs">
               <h2 id="pj-costs" className="pj-card__title">Supplier costs</h2>

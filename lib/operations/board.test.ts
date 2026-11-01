@@ -132,8 +132,8 @@ describe("payment labels from Xero", () => {
     assert.equal(p.due, 30000);
   });
 
-  it("paid in full when the quote is unknown and nothing is owed", () => {
-    assert.equal(paymentPicture([inv({ xero_status: "PAID", total_incl_vat: 10, amount_paid: 10 })], null, TODAY).label, "paid_in_full");
+  it("never paid in full when the quote value is unknown (link the quote first)", () => {
+    assert.equal(paymentPicture([inv({ xero_status: "PAID", total_incl_vat: 10, amount_paid: 10 })], null, TODAY).label, "deposit_paid");
   });
 });
 

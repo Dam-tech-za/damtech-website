@@ -23,6 +23,8 @@ import { findTownByName } from "@/lib/operations/sa-places";
 import { fillFromXeroContact, locationFromXeroCity } from "@/lib/operations/xero-contact";
 import { documentKindOf, getXeroDocumentWithContact, XeroDocumentError } from "@/lib/operations/xero-document";
 import { createXeroBridgeClient, xeroBridgeConfigFromEnv } from "@/lib/operations/xero-bridge";
+import { refreshProjectXeroCache } from "@/lib/operations/xero-money-refresh";
+import { todayInSouthAfrica } from "@/lib/operations/lifecycle";
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
@@ -366,13 +368,19 @@ export async function refreshProjectFromXeroAction(payload: { id: string }): Pro
       patch.quoted_total_incl_vat = found.document.total;
     }
 
+    // Re-read the linked invoices and quotes so paid / owed are current.
+    const cache = await refreshProjectXeroCache(db, bridge, id, todayInSouthAfrica());
+    const money = cache.invoices || cache.quotes
+      ? ` Invoices and quotes refreshed (${cache.invoices + cache.quotes}).${cache.errors.length ? ` Not refreshed: ${cache.errors.join("; ")}.` : ""}`
+      : "";
     if (!Object.keys(patch).length) {
-      return actionSuccess("Nothing empty to fill from Xero.");
+      refresh(id);
+      return actionSuccess(`Nothing empty to fill from Xero.${money}`);
     }
     const result = await applyPatch(db, id, patch);
     if (!result.ok) return actionFailure(result.message);
     refresh(id);
-    return actionSuccess("Empty fields filled from Xero.");
+    return actionSuccess(`Empty fields filled from Xero.${money}`);
   } catch (error) {
     return actionFailure(describeActionError(error));
   }
@@ -383,22 +391,30 @@ export async function applyXeroTotalAction(payload: { id: string }): Promise<Adm
   if (!UUID.test(id)) return actionFailure("This project could not be found.");
   try {
     const { db } = await adminOpsDb({ permission: "manageOperations" });
-    const { data: links } = await db
-      .from("ops_xero_invoice_links")
-      .select("total_incl_vat, xero_status")
-      .eq("project_id", id);
-    const live = (links ?? []).filter((l) => {
-      const s = String(l.xero_status ?? "").toUpperCase();
-      return s === "AUTHORISED" || s === "PAID";
-    });
-    const total = live.reduce((sum, l) => sum + Number(l.total_incl_vat ?? 0), 0);
-    if (total <= 0) return actionFailure("No live Xero invoice total to use.");
+    // The project value is the primary (first) linked quote's total. Invoices never set it.
+    const { data: project } = await db.from("ops_projects").select("xero_quote_numbers").eq("id", id).maybeSingle();
+    const primary = ((project?.xero_quote_numbers as string[] | null) ?? [])[0];
+    if (!primary) return actionFailure("Link the accepted quote first; the value comes from the quote, not from invoices.");
+    const { data: link } = await db
+      .from("ops_xero_quote_links")
+      .select("total_incl_vat")
+      .eq("project_id", id)
+      .eq("quote_number", primary)
+      .maybeSingle();
+    let total = link?.total_incl_vat == null ? null : Number(link.total_incl_vat);
+    if (total === null) {
+      const config = xeroBridgeConfigFromEnv();
+      if (!config) return actionFailure("The Xero connection is not set up on this site.");
+      const q = await createXeroBridgeClient(config).call<{ total: number | null }>("get_quote", { quote_number: primary });
+      total = q?.total ?? null;
+    }
+    if (total === null || total <= 0) return actionFailure(`Xero has no total for ${primary}.`);
     await applyPatch(db, id, {
       quoted_total_incl_vat: Math.round(total * 100) / 100,
       quoted_total_manual: false,
     });
     refresh(id);
-    return actionSuccess("Value set from Xero invoices.");
+    return actionSuccess(`Value set from quote ${primary}.`);
   } catch (error) {
     return actionFailure(describeActionError(error));
   }

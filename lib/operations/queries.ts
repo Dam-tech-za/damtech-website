@@ -242,7 +242,7 @@ export async function listBoardProjects(show: "active" | "completed" | "archived
     const setup = { tablesReady: true, bridgeConfigured: bridgeConfigured() };
     if (!ids.length) return { ok: true, setup, data: [] };
     const [links, orders, staff] = await Promise.all([
-      db.from("ops_xero_invoice_links").select("project_id, kind, xero_status, total_incl_vat, amount_paid, amount_due, due_date").in("project_id", ids),
+      db.from("ops_xero_invoice_links").select("project_id, invoice_number, reference, invoice_date, kind, xero_status, total_incl_vat, amount_paid, amount_due, due_date").in("project_id", ids),
       db.from("ops_material_orders").select("project_id, status").in("project_id", ids),
       db.from("admin_profiles").select("id, email, full_name"),
     ]);
