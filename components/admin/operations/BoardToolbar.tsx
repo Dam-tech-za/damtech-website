@@ -39,6 +39,13 @@ export const BOARD_COLUMNS: { id: BoardColumnId; label: string }[] = [
   { id: "email", label: "Email" },
 ];
 
+/** Columns hidden until someone turns them on (Email is rarely needed for project work). */
+export const DEFAULT_HIDDEN_COLUMNS: BoardColumnId[] = ["email"];
+
+function columnsChanged(hidden: BoardColumnId[]): boolean {
+  return hidden.length !== DEFAULT_HIDDEN_COLUMNS.length || hidden.some((c) => !DEFAULT_HIDDEN_COLUMNS.includes(c));
+}
+
 export type BoardToolbarState = {
   q: string;
   leads: string[];
@@ -239,7 +246,7 @@ export function BoardToolbar({
     personCount > 0 ||
     filterCount > 0 ||
     state.sort !== "created" ||
-    state.hiddenColumns.length > 0;
+    columnsChanged(state.hiddenColumns);
 
   const toggleLead = (name: string) => {
     const next = state.leads.includes(name) ? state.leads.filter((n) => n !== name) : [...state.leads, name];
@@ -355,7 +362,7 @@ export function BoardToolbar({
         <button
           ref={hideBtn}
           type="button"
-          className={`ops-toolbar__btn${state.hiddenColumns.length ? " is-active" : ""}`}
+          className={`ops-toolbar__btn${columnsChanged(state.hiddenColumns) ? " is-active" : ""}`}
           aria-expanded={open === "hide"}
           onClick={() => setOpen((v) => (v === "hide" ? null : "hide"))}
         >

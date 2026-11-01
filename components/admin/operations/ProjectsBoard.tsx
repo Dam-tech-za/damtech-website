@@ -315,7 +315,7 @@ export function ProjectsBoard({
   return (
     <div
       ref={sheetRef}
-      className={`ops-sheet${frozen ? " ops-sheet--frozen" : ""}${selectedProjects.length > 0 && canEdit ? " ops-sheet--has-selection" : ""}`}
+      className={`ops-sheet${frozen ? " ops-sheet--frozen" : ""}${hide("email") ? " ops-sheet--no-email" : ""}${selectedProjects.length > 0 && canEdit ? " ops-sheet--has-selection" : ""}`}
     >
       <div ref={scrollRef} className="ops-sheet__scroll">
         <table className="admin-table ops-table ops-board-table ops-sheet__table">

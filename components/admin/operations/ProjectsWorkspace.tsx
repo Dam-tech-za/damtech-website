@@ -19,6 +19,7 @@ import { formatLocationCell } from "@/lib/operations/distance";
 import type { BoardProject } from "@/lib/operations/queries";
 import {
   BoardToolbar,
+  DEFAULT_HIDDEN_COLUMNS,
   type BoardColumnId,
   type BoardToolbarState,
 } from "./BoardToolbar";
@@ -101,7 +102,7 @@ export function ProjectsWorkspace({ projects, canEdit, focusAdd, initial, savedL
     stageGroup: initial.stage ?? "",
     sort: initial.sort ?? "created",
     sortDir: "asc",
-    hiddenColumns: [],
+    hiddenColumns: DEFAULT_HIDDEN_COLUMNS,
   });
   const [focusNew, setFocusNew] = useState(false);
 
