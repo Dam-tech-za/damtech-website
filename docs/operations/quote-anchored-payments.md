@@ -14,14 +14,6 @@
 - "Refresh from Xero" now also re-reads each linked invoice and quote by its Xero id.
 - From Xero review: value is only proposed from a quote; accepting a number adds it (a quote becomes primary) instead of replacing.
 
-## Live data found 1 Nov (Xero read-only vs the site's cache)
+## Live data check (1 Nov)
 
-The invoice cache was last refreshed 29 Oct; the automatic sync is off (`OPS_XERO_SYNC_ENABLED` not set, so the daily cron does nothing).
-
-| Project | Cache | Xero now |
-| --- | --- | --- |
-| Hire Engineering INV0144 | R71,311.73, R16,311.73 due, AUTHORISED | R55,000.00 PAID, "… - DEPOSIT INVOICE" |
-| Clinton INV0143 | R213,625.27, R100,000 due | R113,625.27 PAID, deposit; project value R213,625.27 came from the old invoice and no quote is linked |
-| Andre Bothma | no invoice | INV0165 R10,580 PAID, ref QU0237 |
-| TMS Redec | INV0145 number only, not linked | INV0145 R114,014.40 PAID, ref QU0288 |
-| Francois Joubert | project contact f878…, invoice contact 3ad9… | contact differs; check which Xero contact is right |
+A read-only comparison with Xero showed the invoice cache was last refreshed on 29 Oct, because the automatic sync is off (`OPS_XERO_SYNC_ENABLED` not set, so the daily cron does nothing). Several invoices had since been edited or paid in Xero. Customer-level details were reported to the owner directly, not stored here.
