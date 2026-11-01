@@ -154,3 +154,115 @@ export async function setInvoiceKindAction(_prev: AdminActionState, formData: Fo
     return actionFailure(describeActionError(error));
   }
 }
+
+// ---------------------------------------------------------------------------
+// Quotes for older projects that were created from an invoice
+// ---------------------------------------------------------------------------
+
+export type QuoteCandidate = {
+  id: string;
+  number: string;
+  status: string;
+  date: string | null;
+  title: string | null;
+  total: number | null;
+  /** The quote number appears in one of this project's invoice references. */
+  namedOnInvoice: boolean;
+  linked: boolean;
+};
+
+/** The Xero clients this project may draw quotes from: its own contact and its linked invoices' contacts. */
+async function projectContacts(projectId: string) {
+  const { db } = await adminOpsDb({ permission: "manageOperations" });
+  const config = xeroBridgeConfigFromEnv();
+  if (!config) return { error: "The Xero connection is not set up on this site." } as const;
+  const bridge = createXeroBridgeClient(config);
+  const [{ data: project }, { data: links }] = await Promise.all([
+    db.from("ops_projects").select("xero_contact_id, xero_quote_numbers").eq("id", projectId).maybeSingle(),
+    db.from("ops_xero_invoice_links").select("xero_invoice_id, reference").eq("project_id", projectId),
+  ]);
+  if (!project) return { error: "This project could not be found." } as const;
+  const contacts = new Set<string>();
+  if (project.xero_contact_id) contacts.add(project.xero_contact_id as string);
+  for (const l of ((links ?? []) as { xero_invoice_id: string }[]).slice(0, 5)) {
+    try {
+      const x = await bridge.call<XeroInvoiceSummary>("get_invoice", { invoice_id: l.xero_invoice_id });
+      if (x?.contact_id) contacts.add(x.contact_id);
+    } catch {
+      /* one unreadable invoice does not stop the search */
+    }
+  }
+  if (!contacts.size) return { error: "This project has no Xero client yet. Link its Xero contact or an invoice first." } as const;
+  const refs = ((links ?? []) as { reference: string | null }[]).map((l) => norm(l.reference)).join(" ");
+  return { db, bridge, contacts, refs, linked: ((project.xero_quote_numbers as string[] | null) ?? []).map(norm) } as const;
+}
+
+/** Quotes of this project's Xero client(s), newest first; ones named on its invoices first. */
+export async function findClientQuotesAction(projectId: string): Promise<{ quotes: QuoteCandidate[] } | { error: string }> {
+  if (!UUID.test(projectId)) return { error: "This project could not be found." };
+  try {
+    const c = await projectContacts(projectId);
+    if ("error" in c) return { error: c.error as string };
+    const all: QuoteCandidate[] = [];
+    for (const contactId of c.contacts) {
+      const rows = await c.bridge.call<{ id: string; number: string; status: string; date: string | null; title: string | null; total: number | null }[]>("get_quotes", { contact_id: contactId });
+      for (const q of rows ?? []) {
+        if (["DELETED", "DECLINED"].includes(String(q.status).toUpperCase())) continue;
+        all.push({
+          id: q.id,
+          number: q.number,
+          status: q.status,
+          date: q.date,
+          title: q.title,
+          total: q.total ?? null,
+          namedOnInvoice: Boolean(q.number) && c.refs.includes(norm(q.number)),
+          linked: c.linked.includes(norm(q.number)),
+        });
+      }
+    }
+    all.sort((a, b) => Number(b.namedOnInvoice) - Number(a.namedOnInvoice) || (b.date ?? "").localeCompare(a.date ?? ""));
+    return { quotes: all.slice(0, 30) };
+  } catch (error) {
+    unstable_rethrow(error);
+    console.error("[operations] find quotes:", error instanceof Error ? error.message : error);
+    return { error: "Xero could not be reached. Try again in a moment." };
+  }
+}
+
+/** Link a quote the user picked as the project's primary quote. The value is not changed here. */
+export async function linkQuoteAction(_prev: AdminActionState, formData: FormData): Promise<AdminActionState> {
+  const projectId = String(formData.get("project_id") ?? "");
+  const quoteId = String(formData.get("xero_quote_id") ?? "");
+  if (!UUID.test(projectId) || !UUID.test(quoteId)) return actionFailure("Pick a quote from the list.");
+  try {
+    const c = await projectContacts(projectId);
+    if ("error" in c) return actionFailure(c.error as string);
+    const q = await c.bridge.call<{ id: string; number: string; status: string; date: string | null; total: number | null; contact_id?: string | null }>("get_quote", { quote_id: quoteId });
+    if (!q?.id || !q.number) return actionFailure("Xero did not return that quote.");
+    if (!q.contact_id || !c.contacts.has(q.contact_id)) return actionFailure("That quote belongs to a different Xero client, so it was not linked.");
+    const { data: other } = await c.db.from("ops_xero_quote_links").select("project_id").eq("xero_quote_id", q.id).maybeSingle();
+    if (other && other.project_id !== projectId) return actionFailure(`${q.number} is already on another project.`);
+    if (!other) {
+      const { error } = await c.db.from("ops_xero_quote_links").insert({
+        project_id: projectId,
+        xero_quote_id: q.id,
+        quote_number: q.number.toUpperCase(),
+        xero_status: q.status,
+        total_incl_vat: q.total,
+        quote_date: q.date,
+      });
+      if (error) throw error;
+    }
+    const { data: project } = await c.db.from("ops_projects").select("xero_quote_numbers").eq("id", projectId).maybeSingle();
+    const number = q.number.toUpperCase();
+    const numbers = [number, ...(((project?.xero_quote_numbers as string[] | null) ?? []).filter((n) => norm(n) !== norm(number)))];
+    await c.db.from("ops_projects").update({ xero_quote_numbers: numbers }).eq("id", projectId);
+    revalidatePath(`/admin/operations/projects/${projectId}/`);
+    revalidatePath("/admin/operations/projects/");
+    return actionSuccess(`${number} linked. Use "Use quote total" if the project value should follow it.`);
+  } catch (error) {
+    unstable_rethrow(error);
+    console.error("[operations] link quote:", error);
+    return actionFailure(describeActionError(error));
+  }
+}

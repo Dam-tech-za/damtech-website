@@ -27,6 +27,7 @@ import {
 } from "./BoardEditableCells";
 import { formatOpsDateTime, formatOpsMoney } from "./ops-format";
 import { QuoteView } from "./QuoteViewer";
+import { QuoteFinder } from "./project/ProjectClientParts";
 
 function PeekForm({
   project,
@@ -288,6 +289,7 @@ function ProjectOverview({
   const [quotes, setQuotes] = useState<ProjectQuoteRef[] | null>(null);
   const [quoteError, setQuoteError] = useState<string | null>(null);
   const [busy, setBusy] = useState<string | null>(null);
+  const [reload, setReload] = useState(0);
 
   useEffect(() => {
     let live = true;
@@ -299,7 +301,7 @@ function ProjectOverview({
     return () => {
       live = false;
     };
-  }, [project.id]);
+  }, [project.id, reload]);
 
   const pay = project.payment;
   const location = formatLocationCell(project) ?? "—";
@@ -366,6 +368,7 @@ function ProjectOverview({
             <AdminButton size="sm" variant="primary" onClick={() => onViewQuote(primaryQuote)}>View quote</AdminButton>
           ) : null}
           {quotes === null && !quoteError ? <span className="ops-peek-muted">Checking quotes…</span> : null}
+          {quotes !== null && !quotes.length ? <QuoteFinder projectId={project.id} onLinked={() => setReload((n) => n + 1)} /> : null}
         </div>
       </section>
 
