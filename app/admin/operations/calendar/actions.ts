@@ -15,9 +15,12 @@ import {
   parseBookingForm,
   saDate,
   saTime,
+  type QuoteSnapshot,
   type RawBookingForm,
 } from "@/lib/operations/calendar";
 import { bookingHistory, type BookingHistoryItem } from "@/lib/operations/calendar-store";
+import { createXeroBridgeClient, xeroBridgeConfigFromEnv } from "@/lib/operations/xero-bridge";
+import { getXeroDocumentWithContact, XeroDocumentError } from "@/lib/operations/xero-document";
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const HEX_RE = /^#[0-9a-f]{6}$/i;
@@ -115,5 +118,97 @@ export async function bookingHistoryAction(bookingId: string): Promise<BookingHi
   } catch (error) {
     unstable_rethrow(error);
     return [];
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Site inspections: unaccepted Xero quotes (read only; nothing changes in Xero)
+// ---------------------------------------------------------------------------
+
+export type OpenQuote = { id: string; number: string; contact: string | null; total: number | null; date: string | null; status: string; title: string | null };
+
+/** DRAFT and SENT quotes from the last 90 days, newest first. */
+export async function openQuotesAction(): Promise<{ quotes: OpenQuote[] } | { error: string }> {
+  const config = xeroBridgeConfigFromEnv();
+  if (!config) return { error: "Xero is not connected on this site. Type the client's details instead." };
+  try {
+    await adminOpsDb({ permission: "manageOperations" });
+    const bridge = createXeroBridgeClient(config);
+    const from = new Date(Date.now() - 90 * 86_400_000).toISOString().slice(0, 10);
+    const lists = await Promise.all(
+      (["DRAFT", "SENT"] as const).map((status) =>
+        bridge.call<{ id: string; number: string; contact: string | null; total: number | null; date: string | null; status: string; title: string | null }[]>("get_quotes", { status, date_from: from }),
+      ),
+    );
+    const quotes = lists
+      .flat()
+      .filter((q) => q && ["DRAFT", "SENT"].includes(String(q.status).toUpperCase()))
+      .map((q) => ({ id: q.id, number: q.number, contact: q.contact ?? null, total: q.total ?? null, date: q.date ?? null, status: q.status, title: q.title ?? null }))
+      .sort((a, b) => (b.date ?? "").localeCompare(a.date ?? "") || b.number.localeCompare(a.number));
+    return { quotes };
+  } catch (error) {
+    unstable_rethrow(error);
+    console.error("[calendar] open quotes:", error instanceof Error ? error.message : error);
+    return { error: "Xero did not answer. You can still save the booking with the client's details typed in." };
+  }
+}
+
+/**
+ * The picked quote's client details for the inspector. The contact comes only
+ * from the quote's own ContactID (document → ContactID → that contact).
+ */
+export async function quoteSnapshotAction(number: string): Promise<{ snapshot: QuoteSnapshot; contactId: string } | { error: string }> {
+  const config = xeroBridgeConfigFromEnv();
+  if (!config) return { error: "Xero is not connected on this site." };
+  if (!/^QU-?\d{1,8}$/i.test(number.trim())) return { error: "That quote number does not look right." };
+  try {
+    await adminOpsDb({ permission: "manageOperations" });
+    const found = await getXeroDocumentWithContact(createXeroBridgeClient(config), "quote", number.trim());
+    const c = found.contact;
+    const address = [c.addressLine, c.city, c.region].filter(Boolean).join(", ") || null;
+    return {
+      contactId: found.contactId,
+      snapshot: {
+        quote_id: found.document.id ?? null,
+        number: found.document.number,
+        status: found.document.status,
+        client: c.name,
+        person: c.person,
+        phone: c.phone,
+        email: c.email,
+        reference: found.document.reference,
+        title: found.document.title,
+        total: found.document.total,
+        address,
+        fetched_at: new Date().toISOString(),
+      },
+    };
+  } catch (error) {
+    unstable_rethrow(error);
+    if (error instanceof XeroDocumentError) return { error: error.message };
+    console.error("[calendar] quote snapshot:", error instanceof Error ? error.message : error);
+    return { error: "Xero did not answer. Try again in a moment." };
+  }
+}
+
+/** Re-read an inspection's quote from Xero and update its stored details (only when asked). */
+export async function refreshInspectionAction(bookingId: string): Promise<AdminActionState> {
+  if (!UUID_RE.test(bookingId)) return actionFailure("That booking could not be found.");
+  try {
+    const { db, admin } = await adminOpsDb({ permission: "manageOperations" });
+    const { data: booking } = await db.from("ops_bookings").select("id, version, quote_number, project_id").eq("id", bookingId).maybeSingle();
+    if (!booking?.quote_number) return actionFailure("This booking has no Xero quote.");
+    const r = await quoteSnapshotAction(String(booking.quote_number));
+    if ("error" in r) return actionFailure(r.error);
+    const { error } = await db.rpc("ops_calendar_save_booking", {
+      p: { id: booking.id, expected_version: booking.version, quote_snapshot: r.snapshot, quote_contact_id: r.contactId },
+      p_actor: admin.user.id,
+      p_actor_label: admin.profile.full_name || admin.profile.email,
+    });
+    if (error) return actionFailure(describeBookingSaveError(error));
+    refresh((booking.project_id as string | null) ?? null);
+    return actionSuccess("Client details refreshed from Xero.");
+  } catch (error) {
+    return fail("refresh inspection", error);
   }
 }

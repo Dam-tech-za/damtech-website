@@ -2,6 +2,7 @@ import { describe, it } from "node:test";
 import assert from "node:assert/strict";
 import {
   addDays,
+  bookingLabel,
   bookingDays,
   bookingTimeLabel,
   describeBookingSaveError,
@@ -177,5 +178,43 @@ describe("layoutBars", () => {
   it("skips bookings outside the row", () => {
     const b = booking({ start_at: saToUtc("2026-11-10", "07:00"), end_at: saToUtc("2026-11-10", "16:00") });
     assert.equal(layoutBars([b], week).segments.length, 0);
+  });
+});
+
+describe("site inspections", () => {
+  const base = { kind: "site_inspection", status: "tentative", start_date: "2026-11-05", start_time: "07:00", end_time: "16:00" };
+  it("needs a quote or a client typed by hand, never a project", () => {
+    assert.equal(parseBookingForm(base).ok, false);
+    const manual = parseBookingForm({ ...base, client_name_manual: "Sample Farm", site_manual: "Hermanus", project_id: P1 });
+    assert.ok(manual.ok);
+    if (manual.ok) {
+      assert.equal(manual.value.project_id, null);
+      assert.equal(manual.value.title, "Site inspection – Sample Farm");
+      assert.equal(manual.value.quote_number, null);
+    }
+  });
+  it("keeps an inspection's existing project link while its quote is unchanged", () => {
+    const r = parseBookingForm({ ...base, quote_number: "QU0372", project_id: P1 });
+    assert.ok(r.ok);
+    if (r.ok) assert.equal(r.value.project_id, P1);
+  });
+  it("keeps the quote snapshot only when it matches the quote", () => {
+    const snap = { quote_id: null, number: "QU0372", status: "SENT", client: "Sample Client", person: null, phone: null, email: null, reference: null, title: null, total: 1000, address: null, fetched_at: "2026-11-01T00:00:00Z" };
+    const ok = parseBookingForm({ ...base, quote_number: "qu0372", quote_snapshot: JSON.stringify(snap) });
+    assert.ok(ok.ok);
+    if (ok.ok) {
+      assert.equal(ok.value.quote_number, "QU0372");
+      assert.equal(ok.value.quote_snapshot?.client, "Sample Client");
+      assert.equal(ok.value.title, "Site inspection – Sample Client");
+    }
+    const wrong = parseBookingForm({ ...base, quote_number: "QU0999", quote_snapshot: JSON.stringify(snap) });
+    assert.ok(wrong.ok && wrong.value.quote_snapshot === undefined);
+  });
+  it("labels bars with the client", () => {
+    assert.equal(bookingLabel({ kind: "site_inspection", title: "x", project: null, quote_snapshot: null, client_name_manual: "Sample Farm" }), "Site inspection · Sample Farm");
+  });
+  it("other kinds are unchanged", () => {
+    const leave = parseBookingForm({ kind: "leave", status: "confirmed", start_date: "2026-11-05", all_day: "on" });
+    assert.ok(leave.ok && leave.value.quote_number === undefined);
   });
 });

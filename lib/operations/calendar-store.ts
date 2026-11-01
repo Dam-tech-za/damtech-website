@@ -68,7 +68,7 @@ export async function loadCalendar(db: SupabaseClient, fromDate: string, toDateE
     db
       .from("ops_bookings")
       .select(
-        "id, project_id, kind, title, status, start_at, end_at, all_day, notes, allow_overlap, overlap_reason, version, ops_booking_teams(team_id), ops_calendar_event_links(sync_status)",
+        "id, project_id, kind, title, status, start_at, end_at, all_day, notes, allow_overlap, overlap_reason, version, quote_number, quote_contact_id, quote_snapshot, client_name_manual, site_manual, ops_booking_teams(team_id), ops_calendar_event_links(sync_status)",
       )
       .lt("start_at", to)
       .gt("end_at", from)
