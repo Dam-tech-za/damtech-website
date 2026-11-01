@@ -2344,9 +2344,9 @@ form[aria-busy="true"] {
   --col-email: 200px;
   --col-xero: 104px;
   --col-value: 124px;
-  --col-location: 168px;
-  /* fixed cols (1324) + project min 280 */
-  --ops-sheet-min: 1604px;
+  --col-location: 128px;
+  /* fixed cols (1284) + project min 280 */
+  --ops-sheet-min: 1564px;
   padding-bottom: 0;
   width: 100%;
 }
@@ -2542,7 +2542,7 @@ form[aria-busy="true"] {
 
 @media (max-width: 1100px) {
   .ops-sheet {
-    --ops-sheet-min: 1404px; /* without email */
+    --ops-sheet-min: 1364px; /* without email */
   }
 
   .ops-sheet__c-email,
@@ -5234,7 +5234,7 @@ table.admin-sheet .admin-status {
 
 /* Every project row is the same height (room for customer, contact and phone). */
 .ops-sheet__group > tr:not(.ops-sheet__group-row):not(.ops-sheet__add-row) > td { height: 56px; max-height: 56px; }
-.ops-sheet--no-email { --ops-sheet-min: 1404px; }
+.ops-sheet--no-email { --ops-sheet-min: 1364px; }
 @media (max-width: 899px) { .ops-sheet--no-email { --ops-sheet-min: 1100px; } }
 .ops-client--with-company .ops-inline,
 .ops-client--with-company .ops-inline-phone { height: 16px; line-height: 16px; display: flex; align-items: center; justify-content: center; }
@@ -5258,3 +5258,9 @@ table.admin-sheet .admin-status {
 .ops-sheet__table tr:focus-within .ops-title-cell__peek,
 .ops-sheet__table tr.is-selected .ops-title-cell__peek { opacity: 1; }
 @media (hover: none) { .ops-sheet__table .ops-title-cell__peek { opacity: 1; } }
+
+/* Location: town on top, distance to the nearer office underneath. */
+.ops-location { display: flex; flex-direction: column; align-items: center; justify-content: center; min-width: 0; width: 100%; line-height: 1.25; }
+.ops-location > span:first-child, .ops-location .ops-inline { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ops-location .ops-inline-input { height: 18px; min-height: 0; padding-top: 0; padding-bottom: 0; line-height: 18px; }
+.ops-location__km { font-size: 11px; color: #7b8794; font-variant-numeric: tabular-nums; }

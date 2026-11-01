@@ -121,11 +121,11 @@ describe("Xero contact mapping", () => {
 describe("formatLocationShort (board)", () => {
   const base = { site_province: "Western Cape", site_town: "Hermanus", site_location: null, km_from_pretoria: 1400, km_from_western_cape: 118.4 };
   it("shows the town with the nearer office distance", () => {
-    assert.equal(formatLocationShort(base), "Hermanus · 118 km");
+    assert.deepEqual(formatLocationShort(base), { place: "Hermanus", km: "118 km" });
   });
   it("falls back to the province or the last part of typed text", () => {
-    assert.equal(formatLocationShort({ ...base, site_town: null, km_from_pretoria: null, km_from_western_cape: null }), "Western Cape");
-    assert.equal(formatLocationShort({ ...base, site_town: null, site_province: null, site_location: "Farm 12, Bot River", km_from_pretoria: null, km_from_western_cape: null }), "Bot River");
+    assert.equal(formatLocationShort({ ...base, site_town: null, km_from_pretoria: null, km_from_western_cape: null })?.place, "Western Cape");
+    assert.equal(formatLocationShort({ ...base, site_town: null, site_province: null, site_location: "Farm 12, Bot River", km_from_pretoria: null, km_from_western_cape: null })?.place, "Bot River");
     assert.equal(formatLocationShort({ ...base, site_town: null, site_province: null, km_from_pretoria: null, km_from_western_cape: null }), null);
   });
 });

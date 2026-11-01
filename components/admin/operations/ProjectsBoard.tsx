@@ -455,7 +455,8 @@ export function ProjectsBoard({
                             <LocationEditCell
                               project={p}
                               canEdit={canEdit}
-                              display={formatLocationShort(p)}
+                              display={formatLocationShort(p)?.place ?? null}
+                              km={formatLocationShort(p)?.km ?? null}
                               full={formatLocationCell(p)}
                               onPatched={patchRow}
                             />

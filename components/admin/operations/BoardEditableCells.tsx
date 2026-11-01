@@ -465,12 +465,15 @@ export function LocationEditCell({
   project,
   canEdit,
   display,
+  km,
   full,
   onPatched,
 }: {
   project: BoardProject;
   canEdit: boolean;
   display: string | null;
+  /** Distance to the nearer office, shown on a second line. */
+  km?: string | null;
   /** Longer text for the tooltip (province, office). */
   full?: string | null;
   onPatched?: (p: BoardProject) => void;
@@ -483,10 +486,17 @@ export function LocationEditCell({
       : project.site_location || "";
   const suggestions = SA_TOWNS.map((t) => `${t.province}, ${t.name}`);
 
-  if (!canEdit) return <span title={full ?? display ?? undefined}>{display || "—"}</span>;
+  const distance = km ? <span className="ops-location__km">{km}</span> : null;
+  if (!canEdit)
+    return (
+      <span className="ops-location" title={full ?? display ?? undefined}>
+        <span>{display || "—"}</span>
+        {distance}
+      </span>
+    );
 
   return (
-    <>
+    <span className="ops-location">
       <InlineText
         value={editValue}
         displayValue={display ?? ""}
@@ -508,7 +518,8 @@ export function LocationEditCell({
           <option key={s} value={s} />
         ))}
       </datalist>
-    </>
+      {distance}
+    </span>
   );
 }
 
