@@ -62,6 +62,7 @@ function InlineText({
   className,
   ariaLabel,
   inputMode,
+  wrap = false,
   onCommit,
   onCancelValue,
 }: {
@@ -75,6 +76,8 @@ function InlineText({
   className?: string;
   ariaLabel: string;
   inputMode?: "text" | "decimal" | "email" | "tel";
+  /** Show long text on up to two lines while not editing (inputs cannot wrap). */
+  wrap?: boolean;
   onCommit: (next: string) => Promise<boolean>;
   onCancelValue: string;
 }) {
@@ -123,7 +126,12 @@ function InlineText({
   };
 
   return (
-    <span className={`ops-inline ${className ?? ""}`}>
+    <span className={`ops-inline ${className ?? ""}${wrap ? " ops-inline--wrap" : ""}`}>
+      {wrap && !focused ? (
+        <span className={`ops-inline__wrapped${shown ? "" : " is-empty"}`} aria-hidden="true">
+          {shown || placeholder}
+        </span>
+      ) : null}
       <input
         data-ops-cell
         className={`ops-inline-input${focused ? " is-focused" : ""}`}
@@ -237,6 +245,15 @@ export function LeadCell({
 
 export { PaymentEditCell } from "./PaymentEditCell";
 
+/** Small building mark for the customer line. */
+function OrgIcon() {
+  return (
+    <svg className="ops-client__org-icon" viewBox="0 0 16 16" width="11" height="11" aria-hidden="true">
+      <path d="M3 14V3.5L9 2v12M9 6h4v8M2 14h12M5 5.5h2M5 8h2M5 10.5h2M11 8.5h0.01M11 11h0.01" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+    </svg>
+  );
+}
+
 export function ClientEditCell({
   project,
   canEdit,
@@ -248,7 +265,7 @@ export function ClientEditCell({
 }) {
   const save = useCellSave(project.id);
   const shown = displayPhone(project.contact_phone);
-  // The customer (company or farm) sits above the contact person, unless it is the same name.
+  // The customer (company or farm) sits under the contact person and phone, unless it is the same name.
   const company = project.customer_name?.trim() ?? "";
   const showCompany = Boolean(company) && company.toLowerCase() !== (project.contact_person ?? "").trim().toLowerCase();
   const gridClass = `ops-client--grid${showCompany ? " ops-client--with-company" : ""}`;
@@ -259,11 +276,6 @@ export function ClientEditCell({
         <span className="ops-client__flagcol">
           <CountryFlag country={shown?.country} />
         </span>
-        {showCompany ? (
-          <span className="ops-client__company" title={company}>
-            {company}
-          </span>
-        ) : null}
         <span className="ops-client__name">{project.contact_person || "—"}</span>
         {shown ? (
           <a className="ops-client__phone" href={shown.href}>
@@ -272,6 +284,12 @@ export function ClientEditCell({
         ) : (
           <span className="ops-table__meta ops-client__phone">—</span>
         )}
+        {showCompany ? (
+          <span className="ops-client__org" title={company}>
+            <OrgIcon />
+            <span className="ops-client__org-name">{company}</span>
+          </span>
+        ) : null}
       </span>
     );
   }
@@ -281,21 +299,6 @@ export function ClientEditCell({
       <span className="ops-client__flagcol">
         <CountryFlag country={shown?.country} />
       </span>
-      {showCompany ? (
-        <InlineText
-          value={company}
-          placeholder="+ Company"
-          maxLength={200}
-          ariaLabel={`Customer for ${project.title}`}
-          className="ops-inline--company"
-          onCancelValue={company}
-          onCommit={async (next) => {
-            const ok = await save("company", next);
-            if (ok) onPatched?.({ ...project, customer_name: next.trim() });
-            return ok;
-          }}
-        />
-      ) : null}
       <InlineText
         value={project.contact_person ?? ""}
         placeholder="+ Client"
@@ -326,6 +329,24 @@ export function ClientEditCell({
           }}
         />
       </span>
+      {showCompany ? (
+        <span className="ops-client__org" title={company}>
+          <OrgIcon />
+          <InlineText
+            value={company}
+            placeholder="+ Company"
+            maxLength={200}
+            ariaLabel={`Customer for ${project.title}`}
+            className="ops-inline--company"
+            onCancelValue={company}
+            onCommit={async (next) => {
+              const ok = await save("company", next);
+              if (ok) onPatched?.({ ...project, customer_name: next.trim() });
+              return ok;
+            }}
+          />
+        </span>
+      ) : null}
     </span>
   );
 }
@@ -501,6 +522,7 @@ export function LocationEditCell({
         value={editValue}
         displayValue={display ?? ""}
         placeholder="+ Location"
+        wrap
         title={full ?? display ?? undefined}
         listId={listId}
         ariaLabel={`Location for ${project.title}`}
