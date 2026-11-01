@@ -27,9 +27,10 @@ import {
   type ProjectGroup,
 } from "@/lib/operations/board";
 
-export type BoardColumnId = "lead" | "client" | "email" | "xero" | "value" | "location";
+export type BoardColumnId = "type" | "lead" | "client" | "email" | "xero" | "value" | "location";
 
 export const BOARD_COLUMNS: { id: BoardColumnId; label: string }[] = [
+  { id: "type", label: "Type" },
   { id: "lead", label: "Lead" },
   { id: "client", label: "Client" },
   { id: "location", label: "Location" },

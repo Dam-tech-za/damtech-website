@@ -2335,16 +2335,17 @@ form[aria-busy="true"] {
   min-height: 0;
   gap: 0;
   --col-check: 36px;
-  --col-project: 360px; /* measured live; sticky Payment uses this */
-  --col-pay: 150px;
-  --col-lead: 120px;
-  --col-client: 190px;
-  --col-email: 210px;
-  --col-xero: 110px;
-  --col-value: 120px;
-  --col-location: 230px;
-  /* fixed cols (~1166) + project min 360 */
-  --ops-sheet-min: 1526px;
+  --col-project: 320px; /* measured live; sticky Payment uses this */
+  --col-pay: 156px;
+  --col-type: 120px;
+  --col-lead: 112px;
+  --col-client: 200px;
+  --col-email: 200px;
+  --col-xero: 104px;
+  --col-value: 112px;
+  --col-location: 220px;
+  /* fixed cols (1260) + project min 320 */
+  --ops-sheet-min: 1580px;
   padding-bottom: 0;
   width: 100%;
 }
@@ -2417,8 +2418,9 @@ form[aria-busy="true"] {
 }
 
 .ops-sheet__col-check { width: var(--col-check); }
-.ops-sheet__col-project { width: auto; min-width: 360px; }
+.ops-sheet__col-project { width: auto; min-width: var(--col-project-min, 320px); }
 .ops-sheet__col-pay { width: var(--col-pay); }
+.ops-sheet__col-type { width: var(--col-type); }
 .ops-sheet__col-lead { width: var(--col-lead); }
 .ops-sheet__col-client { width: var(--col-client); }
 .ops-sheet__col-email { width: var(--col-email); }
@@ -2476,7 +2478,7 @@ form[aria-busy="true"] {
 }
 
 .ops-sheet__c-project {
-  min-width: 360px;
+  min-width: var(--col-project-min, 320px);
   text-align: left !important;
   font-weight: 650;
 }
@@ -2487,6 +2489,13 @@ form[aria-busy="true"] {
   max-width: var(--col-pay);
   padding: 6px 10px !important;
   background: #fff !important;
+}
+
+.ops-sheet__c-type {
+  width: var(--col-type);
+  min-width: var(--col-type);
+  max-width: var(--col-type);
+  padding: 6px 8px !important;
 }
 
 .ops-sheet__c-lead {
@@ -2532,7 +2541,7 @@ form[aria-busy="true"] {
 
 @media (max-width: 1100px) {
   .ops-sheet {
-    --ops-sheet-min: 1316px; /* without email */
+    --ops-sheet-min: 1380px; /* without email */
   }
 
   .ops-sheet__c-email,
@@ -5190,3 +5199,27 @@ table.admin-sheet .admin-status {
 .ops-insp-card__ref { font-weight: 600; }
 .ops-insp-card__meta { color: var(--admin-text-muted); font-size: 0.75rem; }
 .ops-cal-warn { margin: 0; padding: 0.5rem 0.75rem; background: #fff8eb; border: 1px solid #f3d9a4; border-radius: var(--admin-radius-sm); color: var(--admin-warning); font-size: 0.8125rem; }
+
+/* Projects board: Type pill (same shape as Payment, cool colours so the two never read alike) */
+.ops-type--hdpe_dam_lining { background: #dbe8fb; color: #1f4f9a; }
+.ops-type--pvc_lining { background: #e3e4fb; color: #3e3fa8; }
+.ops-type--reservoir_lining { background: #d4f1f4; color: #0d6a78; }
+.ops-type--steel_reservoir { background: #e2e8ef; color: #34465a; }
+.ops-type--torch_on_bitumen { background: #ebe4fb; color: #5a35a8; }
+.ops-type--roof_waterproofing { background: #f6e3f8; color: #86308f; }
+.ops-type--foundation_waterproofing { background: #efe6dc; color: #6f4a26; }
+.ops-type--material_supply { background: #e5f2d9; color: #426b1d; }
+.ops-type--repairs { background: #f9e3ee; color: #9b2c5e; }
+.ops-type--other { background: #eceff2; color: #4c5866; }
+.ops-type--unclassified { background: #f1f3f5; color: #9aa5b1; }
+
+/* Client cell: customer (company or farm) above the contact person and phone. */
+.ops-client--grid.ops-client--with-company { grid-template-rows: auto auto auto; row-gap: 0; }
+.ops-client--with-company > .ops-client__flagcol { grid-row: 2 / span 2; }
+.ops-client__company,
+.ops-client--with-company .ops-inline--company { font-size: 11.5px; font-weight: 700; color: #1f2d3d; line-height: 1.25; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ops-client--with-company .ops-client__name,
+.ops-client--with-company .ops-inline--name { font-weight: 500; line-height: 1.25; }
+.ops-client--with-company .ops-client__phone,
+.ops-client--with-company .ops-inline--phone { font-size: 11px; line-height: 1.25; }
+.ops-sheet__table td.ops-sheet__c-client:has(.ops-client--with-company) { height: 56px; max-height: 56px; padding-top: 3px; padding-bottom: 3px; }

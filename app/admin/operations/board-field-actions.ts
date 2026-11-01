@@ -25,6 +25,7 @@ import { documentKindOf, getXeroDocumentWithContact, XeroDocumentError } from "@
 import { createXeroBridgeClient, xeroBridgeConfigFromEnv } from "@/lib/operations/xero-bridge";
 import { refreshProjectXeroCache } from "@/lib/operations/xero-money-refresh";
 import { todayInSouthAfrica } from "@/lib/operations/lifecycle";
+import { PROJECT_SERVICES } from "@/lib/operations/types";
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
@@ -177,6 +178,12 @@ export async function updateBoardFieldAction(payload: BoardFieldPayload): Promis
       case "company": {
         patch.customer_name = value.trim().slice(0, 200);
         manualFields = ["company"];
+        break;
+      }
+      case "service": {
+        if (!(PROJECT_SERVICES as readonly string[]).includes(value)) return actionFailure("Choose a project type.");
+        patch.service = value;
+        manualFields = ["service"];
         break;
       }
       case "value": {

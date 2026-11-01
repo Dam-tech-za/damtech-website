@@ -14,6 +14,7 @@ import {
   type ProjectGroup,
 } from "@/lib/operations/board";
 import { formatLocationCell } from "@/lib/operations/distance";
+import { SERVICE_LABELS } from "@/lib/operations/lifecycle";
 import type { BoardProject } from "@/lib/operations/queries";
 import { mergeLeadSuggestions } from "@/lib/operations/board-meta";
 import { AddFromXeroDialog } from "./AddFromXeroDialog";
@@ -30,6 +31,7 @@ import {
 import { FromXeroReviewCard } from "./FromXeroReviewCard";
 import { ProjectPeekDrawer } from "./ProjectPeekDrawer";
 import { SelectionBar } from "./SelectionBar";
+import { ServiceEditCell } from "./ServiceEditCell";
 
 const COLLAPSE_KEY = "ops-board-collapsed-groups";
 const COLLAPSE_EVENT = "ops-board-collapsed";
@@ -84,12 +86,13 @@ function csvCell(value: string): string {
 }
 
 function downloadCsv(projects: BoardProject[]) {
-  const header = ["Project", "Lead", "Payment", "Client", "Email", "Xero", "Value", "Location"];
+  const header = ["Project", "Type", "Lead", "Payment", "Client", "Email", "Xero", "Value", "Location"];
   const lines = [
     header.join(","),
     ...projects.map((p) =>
       [
         p.title,
+        SERVICE_LABELS[p.service],
         p.leadName ?? "",
         p.payment.label ? PAYMENT_LABEL_TEXT[p.payment.label] : "",
         p.contact_person ?? "",
@@ -174,14 +177,14 @@ export function ProjectsBoard({
   /** When a stage/payment filter is active, hide empty stage headers. */
   hideEmptyGroups?: boolean;
   leadSuggestions?: string[];
-  hiddenColumns?: Array<"lead" | "client" | "email" | "xero" | "value" | "location">;
+  hiddenColumns?: Array<"type" | "lead" | "client" | "email" | "xero" | "value" | "location">;
 }) {
   const sheetRef = useRef<HTMLDivElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const projectThRef = useRef<HTMLTableCellElement>(null);
   const [rows, setRows] = useState(projectsProp);
   const [rowsSource, setRowsSource] = useState(projectsProp);
-  const hide = (id: "lead" | "client" | "email" | "xero" | "value" | "location") =>
+  const hide = (id: "type" | "lead" | "client" | "email" | "xero" | "value" | "location") =>
     hiddenColumns.includes(id);
   // Reset optimistic rows when the filtered server list changes (React-recommended render sync).
   if (projectsProp !== rowsSource) {
@@ -284,7 +287,7 @@ export function ProjectsBoard({
     };
   }, [hiddenColumns, rows.length, frozen]);
 
-  const colSpan = 3 + (6 - hiddenColumns.length);
+  const colSpan = 3 + (7 - hiddenColumns.length);
 
   const visibleIds = rows.map((p) => p.id);
   const selectedProjects = rows.filter((p) => selected.has(p.id));
@@ -320,6 +323,7 @@ export function ProjectsBoard({
             <col className="ops-sheet__col-check" />
             <col className="ops-sheet__col-project" />
             <col className="ops-sheet__col-pay" />
+            {!hide("type") ? <col className="ops-sheet__col-type" /> : null}
             {!hide("lead") ? <col className="ops-sheet__col-lead" /> : null}
             {!hide("client") ? <col className="ops-sheet__col-client" /> : null}
             {!hide("location") ? <col className="ops-sheet__col-location" /> : null}
@@ -341,6 +345,11 @@ export function ProjectsBoard({
               <th className="ops-sheet__c-pay ops-sheet__sticky" scope="col">
                 Payment
               </th>
+              {!hide("type") ? (
+                <th className="ops-sheet__c-type" scope="col">
+                  Type
+                </th>
+              ) : null}
               {!hide("lead") ? (
                 <th className="ops-sheet__c-lead" scope="col">
                   Lead
@@ -414,6 +423,11 @@ export function ProjectsBoard({
                         <td className="ops-sheet__c-pay ops-sheet__sticky" data-label="Payment">
                           <PaymentEditCell project={p} canEdit={canEdit} onPatched={patchRow} />
                         </td>
+                        {!hide("type") ? (
+                          <td className="ops-sheet__c-type" data-label="Type">
+                            <ServiceEditCell project={p} canEdit={canEdit} onPatched={patchRow} />
+                          </td>
+                        ) : null}
                         {!hide("lead") ? (
                           <td className="ops-sheet__c-lead" data-label="Lead">
                             <LeadCell project={p} canEdit={canEdit} suggestions={leads} onPatched={patchRow} />

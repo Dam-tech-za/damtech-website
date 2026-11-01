@@ -75,6 +75,21 @@ export const SERVICE_LABELS: Record<ProjectService, string> = {
   unclassified: "Not classified yet",
 };
 
+/** Short names for the board's Type pill; the full name is in its tooltip. */
+export const SERVICE_SHORT_LABELS: Record<ProjectService, string> = {
+  hdpe_dam_lining: "HDPE",
+  pvc_lining: "PVC",
+  reservoir_lining: "Reservoir",
+  steel_reservoir: "Steel tank",
+  torch_on_bitumen: "Torch-on",
+  roof_waterproofing: "Roof",
+  foundation_waterproofing: "Foundation",
+  material_supply: "Supply only",
+  repairs: "Repairs",
+  other: "Other",
+  unclassified: "Set type",
+};
+
 export const MATERIAL_STATUS_LABELS: Record<MaterialOrderStatus, string> = {
   not_ordered: "Not ordered",
   quote_requested: "Quote requested",

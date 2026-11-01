@@ -15,6 +15,7 @@ export type BoardManualField =
   | "phone"
   | "email"
   | "company"
+  | "service"
   | "value"
   | "location"
   | "xero"
