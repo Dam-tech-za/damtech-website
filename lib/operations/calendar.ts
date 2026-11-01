@@ -21,16 +21,47 @@ export const BOOKING_STATUS_LABELS: Record<BookingStatus, string> = {
   cancelled: "Cancelled",
 };
 
-export const BOOKING_KINDS = ["project", "leave", "maintenance", "travel", "other"] as const;
+export const BOOKING_KINDS = ["project", "site_inspection", "leave", "maintenance", "travel", "other"] as const;
 export type BookingKind = (typeof BOOKING_KINDS)[number];
 
 export const BOOKING_KIND_LABELS: Record<BookingKind, string> = {
   project: "Project work",
+  site_inspection: "Site inspection",
   leave: "Leave",
   maintenance: "Vehicle / equipment maintenance",
   travel: "Travel / preparation",
   other: "Other",
 };
+
+/** What a site inspector needs on the day, copied from the Xero quote when booked. */
+export type QuoteSnapshot = {
+  quote_id: string | null;
+  number: string;
+  status: string | null;
+  client: string | null;
+  person: string | null;
+  phone: string | null;
+  email: string | null;
+  reference: string | null;
+  title: string | null;
+  total: number | null;
+  address: string | null;
+  fetched_at: string;
+};
+
+/** The client name a booking stands for (project, quote snapshot or typed by hand). */
+export function bookingClient(b: Pick<CalendarBooking, "project" | "quote_snapshot" | "client_name_manual">): string | null {
+  return b.project?.customer_name || b.quote_snapshot?.client || b.client_name_manual || null;
+}
+
+/** Bar text: inspections read "Site inspection · client". */
+export function bookingLabel(b: Pick<CalendarBooking, "kind" | "title" | "project" | "quote_snapshot" | "client_name_manual">): string {
+  if (b.kind === "site_inspection") {
+    const client = bookingClient(b);
+    return client ? `Site inspection · ${client}` : b.title;
+  }
+  return b.project?.title ?? b.title;
+}
 
 export type CalendarTeam = { id: string; name: string; colour: string; leader_name: string | null; active: boolean };
 
@@ -49,6 +80,12 @@ export type CalendarBooking = {
   version: number;
   team_ids: string[];
   project: { title: string; customer_name: string | null; site_town: string | null; stage: string } | null;
+  /** Site inspections: the (not yet accepted) Xero quote and its client details. */
+  quote_number?: string | null;
+  quote_contact_id?: string | null;
+  quote_snapshot?: QuoteSnapshot | null;
+  client_name_manual?: string | null;
+  site_manual?: string | null;
   /** Outlook sync state per linked calendar; empty when never sent to Outlook. */
   sync_statuses?: string[];
 };
@@ -176,6 +213,11 @@ export type BookingInput = {
   allow_overlap: boolean;
   overlap_reason: string | null;
   team_ids: string[];
+  quote_number?: string | null;
+  quote_contact_id?: string | null;
+  quote_snapshot?: QuoteSnapshot | null;
+  client_name_manual?: string | null;
+  site_manual?: string | null;
 };
 
 export type RawBookingForm = Record<string, string | string[] | undefined>;
@@ -197,6 +239,25 @@ export function parseBookingForm(form: RawBookingForm): { ok: true; value: Booki
   const projectId = str(form.project_id) || null;
   if (projectId && !UUID_RE.test(projectId)) return { ok: false, error: "That project could not be found." };
   if (kind === "project" && !projectId) return { ok: false, error: "Pick the project this work is for." };
+
+  // Site inspections come before a project exists: a Xero quote or a client typed by hand.
+  const quoteNumber = str(form.quote_number).toUpperCase() || null;
+  if (quoteNumber && !/^QU-?\d{1,8}$/.test(quoteNumber)) return { ok: false, error: "That quote number does not look right." };
+  const clientManual = str(form.client_name_manual).slice(0, 200) || null;
+  const siteManual = str(form.site_manual).slice(0, 200) || null;
+  let snapshot: QuoteSnapshot | null = null;
+  if (kind === "site_inspection") {
+    if (!quoteNumber && !clientManual) return { ok: false, error: "Pick the quote, or type the client's name." };
+    const raw = str(form.quote_snapshot);
+    if (raw && quoteNumber) {
+      try {
+        const parsed = JSON.parse(raw) as QuoteSnapshot;
+        if (parsed && String(parsed.number).toUpperCase() === quoteNumber) snapshot = parsed;
+      } catch {
+        return { ok: false, error: "The quote details could not be read. Pick the quote again." };
+      }
+    }
+  }
 
   const startDate = str(form.start_date);
   const endDate = str(form.end_date) || startDate;
@@ -230,7 +291,9 @@ export function parseBookingForm(form: RawBookingForm): { ok: true; value: Booki
   const overlapReason = str(form.overlap_reason) || null;
   if (allowOverlap && !overlapReason) return { ok: false, error: "Say why this team may be double-booked." };
 
-  const fallbackTitle = kind === "project" ? "Installation" : BOOKING_KIND_LABELS[kind];
+  const inspectionClient = snapshot?.client || clientManual;
+  const fallbackTitle =
+    kind === "project" ? "Installation" : kind === "site_inspection" && inspectionClient ? `Site inspection – ${inspectionClient}` : BOOKING_KIND_LABELS[kind];
   const title = (str(form.title) || fallbackTitle).slice(0, 200);
   const notes = str(form.notes).slice(0, 2000) || null;
 
@@ -242,7 +305,8 @@ export function parseBookingForm(form: RawBookingForm): { ok: true; value: Booki
     ok: true,
     value: {
       ...(id ? { id, expected_version: Number.isInteger(expected) && expected > 0 ? expected : undefined } : {}),
-      project_id: kind === "project" ? projectId : projectId,
+      // An inspection's project link comes from its quote (set by the database); the form only passes an existing link back.
+      project_id: kind === "site_inspection" && !quoteNumber ? null : projectId,
       kind,
       title,
       status,
@@ -253,6 +317,15 @@ export function parseBookingForm(form: RawBookingForm): { ok: true; value: Booki
       allow_overlap: allowOverlap,
       overlap_reason: allowOverlap ? overlapReason : null,
       team_ids: teamIds,
+      ...(kind === "site_inspection"
+        ? {
+            quote_number: quoteNumber,
+            quote_contact_id: quoteNumber ? str(form.quote_contact_id) || null : null,
+            ...(snapshot || !quoteNumber ? { quote_snapshot: snapshot } : {}),
+            client_name_manual: quoteNumber ? null : clientManual,
+            site_manual: siteManual,
+          }
+        : {}),
     },
   };
 }

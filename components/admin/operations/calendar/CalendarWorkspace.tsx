@@ -11,6 +11,7 @@ import {
   BOOKING_STATUSES,
   addDays,
   bookingDays,
+  bookingLabel,
   bookingTimeLabel,
   layoutBars,
   outlookLabel,
@@ -22,6 +23,7 @@ import {
 } from "@/lib/operations/calendar";
 import type { BacklogProject, ProjectOption } from "@/lib/operations/calendar-store";
 import { bookingHistoryAction, saveBookingAction, saveTeamAction } from "@/app/admin/operations/calendar/actions";
+import { InspectionPicker } from "./InspectionPicker";
 
 type View = "week" | "month";
 
@@ -116,7 +118,7 @@ export function CalendarWorkspace(props: Props) {
   const open = (d: Draft) => {
     if (canEdit) setDraft(d);
   };
-  const colourOf = (b: CalendarBooking) => (b.kind === "project" ? teamById.get(b.team_ids[0] ?? "")?.colour ?? "#64748b" : "#64748b");
+  const colourOf = (b: CalendarBooking) => (b.kind === "project" || b.kind === "site_inspection" ? teamById.get(b.team_ids[0] ?? "")?.colour ?? "#64748b" : "#64748b");
   const teamNames = (b: CalendarBooking) => b.team_ids.map((id) => teamById.get(id)?.name).filter(Boolean).join(", ") || "No team";
   const flagOf = (b: CalendarBooking) => (b.project_id ? warningsByProject.get(b.project_id)?.[0] : undefined);
 
@@ -133,12 +135,12 @@ export function CalendarWorkspace(props: Props) {
         style={{ ["--chip" as string]: colourOf(b), gridColumn: `${seg.start + 1} / span ${seg.span}`, gridRow: seg.lane + 1 + opts.rowOffset }}
         onClick={() => open({ booking: b })}
         disabled={!canEdit}
-        title={`${b.project?.title ?? b.title} · ${teamNames(b)} · ${BOOKING_STATUS_LABELS[b.status]}${flag ? ` · ${flag}` : ""}`}
+        title={`${bookingLabel(b)} · ${teamNames(b)} · ${BOOKING_STATUS_LABELS[b.status]}${b.quote_number ? ` · ${b.quote_number}` : ""}${flag ? ` · ${flag}` : ""}`}
       >
         <span className="ops-cal-bar__title">
           {b.status === "tentative" ? <span className="ops-cal-tag">Tentative</span> : null}
           {flag ? <span className="ops-cal-flag" aria-label={flag}>!</span> : null}
-          {b.project?.title ?? b.title}
+          {bookingLabel(b)}
         </span>
         <span className="ops-cal-bar__meta">
           {opts.showTeam ? `${teamNames(b)} · ` : ""}
@@ -261,7 +263,7 @@ export function CalendarWorkspace(props: Props) {
                                 <span className="ops-cal-bar__title">
                                   {b.status === "tentative" ? <span className="ops-cal-tag">Tentative</span> : null}
                                   {flagOf(b) ? <span className="ops-cal-flag" aria-label={flagOf(b)}>!</span> : null}
-                                  {b.project?.title ?? b.title}
+                                  {bookingLabel(b)}
                                 </span>
                                 <span className="ops-cal-bar__meta">{teamNames(b)} · {bookingTimeLabel(b, d)}</span>
                               </button>
@@ -451,6 +453,9 @@ function BookingDrawer({ draft, teams, projects, outlookCalendars, onClose }: { 
           </select>
         </label>
 
+        {kind === "site_inspection" ? (
+          <InspectionPicker booking={b?.kind === "site_inspection" ? b : undefined} linkedProject={b?.project?.title ?? null} />
+        ) : (
         <label className="ops-cal-field">
           <span>Project{kind === "project" ? "" : " (optional)"}</span>
           <select name="project_id" value={projectId} onChange={(e) => setProjectId(e.target.value)} required={kind === "project"}>
@@ -460,7 +465,8 @@ function BookingDrawer({ draft, teams, projects, outlookCalendars, onClose }: { 
             ))}
           </select>
         </label>
-        {project?.warnings.length ? (
+        )}
+        {kind !== "site_inspection" && project?.warnings.length ? (
           <ul className="ops-cal-warnings" role="note">
             {project.warnings.map((w) => <li key={w}>{w}</li>)}
           </ul>
@@ -468,7 +474,7 @@ function BookingDrawer({ draft, teams, projects, outlookCalendars, onClose }: { 
 
         <label className="ops-cal-field">
           <span>Title</span>
-          <input name="title" defaultValue={b?.title ?? ""} placeholder={kind === "project" ? "Installation" : BOOKING_KIND_LABELS[kind as keyof typeof BOOKING_KIND_LABELS]} maxLength={200} />
+          <input name="title" defaultValue={b?.title ?? ""} placeholder={kind === "project" ? "Installation" : kind === "site_inspection" ? "Site inspection – client (filled in for you)" : BOOKING_KIND_LABELS[kind as keyof typeof BOOKING_KIND_LABELS]} maxLength={200} />
         </label>
 
         <div className="ops-cal-row">
