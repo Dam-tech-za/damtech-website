@@ -13,7 +13,7 @@ import {
   isLinkedToXero,
   type ProjectGroup,
 } from "@/lib/operations/board";
-import { formatLocationCell } from "@/lib/operations/distance";
+import { formatLocationCell, formatLocationShort } from "@/lib/operations/distance";
 import { SERVICE_LABELS } from "@/lib/operations/lifecycle";
 import type { BoardProject } from "@/lib/operations/queries";
 import { mergeLeadSuggestions } from "@/lib/operations/board-meta";
@@ -455,7 +455,8 @@ export function ProjectsBoard({
                             <LocationEditCell
                               project={p}
                               canEdit={canEdit}
-                              display={formatLocationCell(p)}
+                              display={formatLocationShort(p)}
+                              full={formatLocationCell(p)}
                               onPatched={patchRow}
                             />
                           </td>

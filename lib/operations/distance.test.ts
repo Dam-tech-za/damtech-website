@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import { distancesForTown, formatLocationCell, haversineKm, locationPatch } from "./distance.ts";
+import { distancesForTown, formatLocationCell, formatLocationShort, haversineKm, locationPatch } from "./distance.ts";
 import { findTownByName } from "./sa-places.ts";
 import { displayPhone } from "./phone-display.ts";
 import { fillFromXeroContact, locationFromXeroCity, mapXeroContact } from "./xero-contact.ts";
@@ -115,5 +115,17 @@ describe("Xero contact mapping", () => {
     assert.equal(patch.customer_name, undefined);
     assert.equal(patch.contact_person, undefined);
     assert.equal(patch.contact_phone, "+2783");
+  });
+});
+
+describe("formatLocationShort (board)", () => {
+  const base = { site_province: "Western Cape", site_town: "Hermanus", site_location: null, km_from_pretoria: 1400, km_from_western_cape: 118.4 };
+  it("shows the town with the nearer office distance", () => {
+    assert.equal(formatLocationShort(base), "Hermanus · 118 km");
+  });
+  it("falls back to the province or the last part of typed text", () => {
+    assert.equal(formatLocationShort({ ...base, site_town: null, km_from_pretoria: null, km_from_western_cape: null }), "Western Cape");
+    assert.equal(formatLocationShort({ ...base, site_town: null, site_province: null, site_location: "Farm 12, Bot River", km_from_pretoria: null, km_from_western_cape: null }), "Bot River");
+    assert.equal(formatLocationShort({ ...base, site_town: null, site_province: null, km_from_pretoria: null, km_from_western_cape: null }), null);
   });
 });

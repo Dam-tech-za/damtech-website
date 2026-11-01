@@ -2344,9 +2344,9 @@ form[aria-busy="true"] {
   --col-email: 200px;
   --col-xero: 104px;
   --col-value: 124px;
-  --col-location: 220px;
-  /* fixed cols (1376) + project min 320 */
-  --ops-sheet-min: 1696px;
+  --col-location: 168px;
+  /* fixed cols (1324) + project min 280 */
+  --ops-sheet-min: 1604px;
   padding-bottom: 0;
   width: 100%;
 }
@@ -2419,7 +2419,7 @@ form[aria-busy="true"] {
 }
 
 .ops-sheet__col-check { width: var(--col-check); }
-.ops-sheet__col-project { width: auto; min-width: var(--col-project-min, 320px); }
+.ops-sheet__col-project { width: auto; min-width: var(--col-project-min, 280px); }
 .ops-sheet__col-pay { width: var(--col-pay); }
 .ops-sheet__col-type { width: var(--col-type); }
 .ops-sheet__col-lead { width: var(--col-lead); }
@@ -2479,7 +2479,7 @@ form[aria-busy="true"] {
 }
 
 .ops-sheet__c-project {
-  min-width: var(--col-project-min, 320px);
+  min-width: var(--col-project-min, 280px);
   text-align: left !important;
   font-weight: 650;
 }
@@ -2542,7 +2542,7 @@ form[aria-busy="true"] {
 
 @media (max-width: 1100px) {
   .ops-sheet {
-    --ops-sheet-min: 1484px; /* without email */
+    --ops-sheet-min: 1404px; /* without email */
   }
 
   .ops-sheet__c-email,
@@ -5234,7 +5234,7 @@ table.admin-sheet .admin-status {
 
 /* Every project row is the same height (room for customer, contact and phone). */
 .ops-sheet__group > tr:not(.ops-sheet__group-row):not(.ops-sheet__add-row) > td { height: 56px; max-height: 56px; }
-.ops-sheet--no-email { --ops-sheet-min: 1496px; }
+.ops-sheet--no-email { --ops-sheet-min: 1404px; }
 @media (max-width: 899px) { .ops-sheet--no-email { --ops-sheet-min: 1100px; } }
 .ops-client--with-company .ops-inline,
 .ops-client--with-company .ops-inline-phone { height: 16px; line-height: 16px; display: flex; align-items: center; justify-content: center; }

@@ -82,6 +82,14 @@ export function formatLocationCell(p: {
   return `${place} (${formatKm(km)} · ${officeLabel(nearer)})`;
 }
 
+/** Board cell: town only (falls back to province or typed text) with the nearer office distance. */
+export function formatLocationShort(p: Parameters<typeof formatLocationCell>[0]): string | null {
+  const place = p.site_town?.trim() || p.site_province || p.site_location?.trim().split(",").pop()?.trim() || "";
+  if (!place) return null;
+  const kms = [p.km_from_pretoria, p.km_from_western_cape].filter((k): k is number => k !== null);
+  return kms.length ? `${place} · ${formatKm(Math.min(...kms))}` : place;
+}
+
 function formatKm(km: number | null): string {
   if (km === null) return "—";
   const rounded = km >= 100 ? Math.round(km) : Math.round(km * 10) / 10;

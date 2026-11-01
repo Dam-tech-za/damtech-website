@@ -465,11 +465,14 @@ export function LocationEditCell({
   project,
   canEdit,
   display,
+  full,
   onPatched,
 }: {
   project: BoardProject;
   canEdit: boolean;
   display: string | null;
+  /** Longer text for the tooltip (province, office). */
+  full?: string | null;
   onPatched?: (p: BoardProject) => void;
 }) {
   const listId = useId();
@@ -480,7 +483,7 @@ export function LocationEditCell({
       : project.site_location || "";
   const suggestions = SA_TOWNS.map((t) => `${t.province}, ${t.name}`);
 
-  if (!canEdit) return <span title={display ?? undefined}>{display || "—"}</span>;
+  if (!canEdit) return <span title={full ?? display ?? undefined}>{display || "—"}</span>;
 
   return (
     <>
@@ -488,7 +491,7 @@ export function LocationEditCell({
         value={editValue}
         displayValue={display ?? ""}
         placeholder="+ Location"
-        title={display ?? undefined}
+        title={full ?? display ?? undefined}
         listId={listId}
         ariaLabel={`Location for ${project.title}`}
         onCancelValue={editValue}
