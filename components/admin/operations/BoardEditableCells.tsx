@@ -248,13 +248,22 @@ export function ClientEditCell({
 }) {
   const save = useCellSave(project.id);
   const shown = displayPhone(project.contact_phone);
+  // The customer (company or farm) sits above the contact person, unless it is the same name.
+  const company = project.customer_name?.trim() ?? "";
+  const showCompany = Boolean(company) && company.toLowerCase() !== (project.contact_person ?? "").trim().toLowerCase();
+  const gridClass = `ops-client--grid${showCompany ? " ops-client--with-company" : ""}`;
 
   if (!canEdit) {
     return (
-      <span className="ops-client ops-client--grid">
+      <span className={`ops-client ${gridClass}`}>
         <span className="ops-client__flagcol">
           <CountryFlag country={shown?.country} />
         </span>
+        {showCompany ? (
+          <span className="ops-client__company" title={company}>
+            {company}
+          </span>
+        ) : null}
         <span className="ops-client__name">{project.contact_person || "—"}</span>
         {shown ? (
           <a className="ops-client__phone" href={shown.href}>
@@ -268,10 +277,25 @@ export function ClientEditCell({
   }
 
   return (
-    <span className="ops-client ops-client--edit ops-client--grid">
+    <span className={`ops-client ops-client--edit ${gridClass}`}>
       <span className="ops-client__flagcol">
         <CountryFlag country={shown?.country} />
       </span>
+      {showCompany ? (
+        <InlineText
+          value={company}
+          placeholder="+ Company"
+          maxLength={200}
+          ariaLabel={`Customer for ${project.title}`}
+          className="ops-inline--company"
+          onCancelValue={company}
+          onCommit={async (next) => {
+            const ok = await save("company", next);
+            if (ok) onPatched?.({ ...project, customer_name: next.trim() });
+            return ok;
+          }}
+        />
+      ) : null}
       <InlineText
         value={project.contact_person ?? ""}
         placeholder="+ Client"
@@ -441,11 +465,17 @@ export function LocationEditCell({
   project,
   canEdit,
   display,
+  km,
+  full,
   onPatched,
 }: {
   project: BoardProject;
   canEdit: boolean;
   display: string | null;
+  /** Distance to the nearer office, shown on a second line. */
+  km?: string | null;
+  /** Longer text for the tooltip (province, office). */
+  full?: string | null;
   onPatched?: (p: BoardProject) => void;
 }) {
   const listId = useId();
@@ -456,15 +486,22 @@ export function LocationEditCell({
       : project.site_location || "";
   const suggestions = SA_TOWNS.map((t) => `${t.province}, ${t.name}`);
 
-  if (!canEdit) return <span title={display ?? undefined}>{display || "—"}</span>;
+  const distance = km ? <span className="ops-location__km">{km}</span> : null;
+  if (!canEdit)
+    return (
+      <span className="ops-location" title={full ?? display ?? undefined}>
+        <span>{display || "—"}</span>
+        {distance}
+      </span>
+    );
 
   return (
-    <>
+    <span className="ops-location">
       <InlineText
         value={editValue}
         displayValue={display ?? ""}
         placeholder="+ Location"
-        title={display ?? undefined}
+        title={full ?? display ?? undefined}
         listId={listId}
         ariaLabel={`Location for ${project.title}`}
         onCancelValue={editValue}
@@ -481,7 +518,8 @@ export function LocationEditCell({
           <option key={s} value={s} />
         ))}
       </datalist>
-    </>
+      {distance}
+    </span>
   );
 }
 

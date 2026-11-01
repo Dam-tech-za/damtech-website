@@ -24,6 +24,14 @@ type Props = {
 };
 
 /** "R151 038.13" → "R151k". */
+/** Customer then contact person, as on the desktop board (once when they are the same). */
+function clientLine(p: BoardProject): string {
+  const company = p.customer_name?.trim() ?? "";
+  const person = p.contact_person?.trim() ?? "";
+  if (!company || company.toLowerCase() === person.toLowerCase()) return person || company;
+  return person ? `${company} · ${person}` : company;
+}
+
 function shortValue(v: number | null | undefined): string {
   if (v == null || !Number.isFinite(v)) return "—";
   if (Math.abs(v) >= 1_000_000) return `R${(v / 1_000_000).toFixed(1).replace(/\.0$/, "")}m`;
@@ -177,7 +185,7 @@ export function ProjectsMobileList({ projects, leads, state, filterActive, onCha
                     <Link href={`/admin/operations/projects/${p.id}/`} className="ops-mlist__row">
                       <span className="ops-mlist__name">
                         <span className="ops-mlist__title">{p.title}</span>
-                        <span className="ops-mlist__client">{p.contact_person || p.customer_name}</span>
+                        <span className="ops-mlist__client">{clientLine(p)}</span>
                       </span>
                       <span className="ops-mlist__value">{shortValue(p.quoted_total_incl_vat)}</span>
                       <span className="ops-mlist__pay">

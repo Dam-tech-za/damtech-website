@@ -2335,16 +2335,18 @@ form[aria-busy="true"] {
   min-height: 0;
   gap: 0;
   --col-check: 36px;
-  --col-project: 360px; /* measured live; sticky Payment uses this */
-  --col-pay: 150px;
-  --col-lead: 120px;
-  --col-client: 190px;
-  --col-email: 210px;
-  --col-xero: 110px;
-  --col-value: 120px;
-  --col-location: 230px;
-  /* fixed cols (~1166) + project min 360 */
-  --ops-sheet-min: 1526px;
+  --col-project: 320px; /* measured live; sticky Payment uses this */
+  --col-pay: 156px;
+  --col-type: 120px;
+  --col-next: 104px;
+  --col-lead: 112px;
+  --col-client: 200px;
+  --col-email: 200px;
+  --col-xero: 104px;
+  --col-value: 124px;
+  --col-location: 128px;
+  /* fixed cols (1284) + project min 280 */
+  --ops-sheet-min: 1564px;
   padding-bottom: 0;
   width: 100%;
 }
@@ -2417,8 +2419,9 @@ form[aria-busy="true"] {
 }
 
 .ops-sheet__col-check { width: var(--col-check); }
-.ops-sheet__col-project { width: auto; min-width: 360px; }
+.ops-sheet__col-project { width: auto; min-width: var(--col-project-min, 280px); }
 .ops-sheet__col-pay { width: var(--col-pay); }
+.ops-sheet__col-type { width: var(--col-type); }
 .ops-sheet__col-lead { width: var(--col-lead); }
 .ops-sheet__col-client { width: var(--col-client); }
 .ops-sheet__col-email { width: var(--col-email); }
@@ -2476,7 +2479,7 @@ form[aria-busy="true"] {
 }
 
 .ops-sheet__c-project {
-  min-width: 360px;
+  min-width: var(--col-project-min, 280px);
   text-align: left !important;
   font-weight: 650;
 }
@@ -2487,6 +2490,13 @@ form[aria-busy="true"] {
   max-width: var(--col-pay);
   padding: 6px 10px !important;
   background: #fff !important;
+}
+
+.ops-sheet__c-type {
+  width: var(--col-type);
+  min-width: var(--col-type);
+  max-width: var(--col-type);
+  padding: 6px 8px !important;
 }
 
 .ops-sheet__c-lead {
@@ -2532,7 +2542,7 @@ form[aria-busy="true"] {
 
 @media (max-width: 1100px) {
   .ops-sheet {
-    --ops-sheet-min: 1316px; /* without email */
+    --ops-sheet-min: 1364px; /* without email */
   }
 
   .ops-sheet__c-email,
@@ -5190,3 +5200,67 @@ table.admin-sheet .admin-status {
 .ops-insp-card__ref { font-weight: 600; }
 .ops-insp-card__meta { color: var(--admin-text-muted); font-size: 0.75rem; }
 .ops-cal-warn { margin: 0; padding: 0.5rem 0.75rem; background: #fff8eb; border: 1px solid #f3d9a4; border-radius: var(--admin-radius-sm); color: var(--admin-warning); font-size: 0.8125rem; }
+
+/* Projects board: Type pill (same shape as Payment, cool colours so the two never read alike) */
+.ops-type--hdpe_dam_lining { background: #dbe8fb; color: #1f4f9a; }
+.ops-type--pvc_lining { background: #e3e4fb; color: #3e3fa8; }
+.ops-type--reservoir_lining { background: #d4f1f4; color: #0d6a78; }
+.ops-type--steel_reservoir { background: #e2e8ef; color: #34465a; }
+.ops-type--torch_on_bitumen { background: #ebe4fb; color: #5a35a8; }
+.ops-type--roof_waterproofing { background: #f6e3f8; color: #86308f; }
+.ops-type--foundation_waterproofing { background: #efe6dc; color: #6f4a26; }
+.ops-type--material_supply { background: #e5f2d9; color: #426b1d; }
+.ops-type--repairs { background: #f9e3ee; color: #9b2c5e; }
+.ops-type--other { background: #eceff2; color: #4c5866; }
+.ops-type--unclassified { background: #f1f3f5; color: #9aa5b1; }
+
+/* Client cell: customer (company or farm) above the contact person and phone. */
+.ops-client--grid.ops-client--with-company { grid-template-rows: auto auto auto; row-gap: 0; }
+.ops-client--with-company > .ops-client__flagcol { grid-row: 2 / span 2; }
+.ops-client__company,
+.ops-client--with-company .ops-inline--company { font-size: 11.5px; font-weight: 700; color: #1f2d3d; line-height: 1.25; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ops-client--with-company .ops-client__name,
+.ops-client--with-company .ops-inline--name { font-weight: 500; line-height: 1.25; }
+.ops-client--with-company .ops-client__phone,
+.ops-client--with-company .ops-inline--phone { font-size: 11px; line-height: 1.25; }
+.ops-sheet__table td.ops-sheet__c-client:has(.ops-client--with-company) { height: 56px; max-height: 56px; padding-top: 3px; padding-bottom: 3px; }
+
+/* Money reads right-aligned in tabular figures, so amounts line up down the column. */
+.ops-sheet__table td.ops-sheet__c-value,
+.ops-sheet__table th.ops-sheet__c-value { text-align: right; padding-right: 14px; }
+.ops-sheet__c-value .ops-inline-input { text-align: right; }
+.ops-sheet__c-value button,
+.ops-sheet__c-value .ops-inline { justify-content: flex-end; text-align: right; }
+
+/* Every project row is the same height (room for customer, contact and phone). */
+.ops-sheet__group > tr:not(.ops-sheet__group-row):not(.ops-sheet__add-row) > td { height: 56px; max-height: 56px; }
+.ops-sheet--no-email { --ops-sheet-min: 1364px; }
+@media (max-width: 899px) { .ops-sheet--no-email { --ops-sheet-min: 1100px; } }
+.ops-client--with-company .ops-inline,
+.ops-client--with-company .ops-inline-phone { height: 16px; line-height: 16px; display: flex; align-items: center; justify-content: center; }
+.ops-client--with-company .ops-inline-input { height: 16px; min-height: 0; line-height: 16px; padding-top: 0; padding-bottom: 0; }
+.ops-client--with-company .ops-inline--company .ops-inline-input { font-size: 11.5px; font-weight: 700; color: #1f2d3d; }
+.ops-sheet__table td.ops-sheet__c-value,
+.ops-sheet__table th.ops-sheet__c-value { padding-right: 10px; }
+
+/* Next on site: read-only date that links to the calendar. */
+.ops-sheet__col-next { width: var(--col-next); }
+.ops-sheet__c-next { width: var(--col-next); min-width: var(--col-next); max-width: var(--col-next); font-variant-numeric: tabular-nums; }
+.ops-next { color: var(--admin-text); text-decoration: none; font-weight: 500; }
+.ops-next:hover { color: var(--admin-primary); text-decoration: underline; }
+.ops-next--tentative { color: #52606d; font-style: italic; }
+.ops-next--late { color: #c42b40; font-weight: 600; font-style: normal; }
+.ops-next--none { color: #b6c0ca; }
+
+/* Quick-view button shows on row hover or keyboard focus; always on touch screens. */
+.ops-sheet__table .ops-title-cell__peek { opacity: 0; transition: opacity 120ms ease; }
+.ops-sheet__table tr:hover .ops-title-cell__peek,
+.ops-sheet__table tr:focus-within .ops-title-cell__peek,
+.ops-sheet__table tr.is-selected .ops-title-cell__peek { opacity: 1; }
+@media (hover: none) { .ops-sheet__table .ops-title-cell__peek { opacity: 1; } }
+
+/* Location: town on top, distance to the nearer office underneath. */
+.ops-location { display: flex; flex-direction: column; align-items: center; justify-content: center; min-width: 0; width: 100%; line-height: 1.25; }
+.ops-location > span:first-child, .ops-location .ops-inline { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ops-location .ops-inline-input { height: 18px; min-height: 0; padding-top: 0; padding-bottom: 0; line-height: 18px; }
+.ops-location__km { font-size: 11px; color: #7b8794; font-variant-numeric: tabular-nums; }
