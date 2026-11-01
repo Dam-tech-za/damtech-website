@@ -5,6 +5,7 @@ import type {
   OpsProject,
   ProjectStage,
 } from "./types.ts";
+import { projectMoney, type ProjectMoney } from "./project-money.ts";
 
 /**
  * Board rules for the Projects screen: automatic groups, the payment label
@@ -88,6 +89,9 @@ export const PAYMENT_CELL_TONE: Record<PaymentLabel, string> = {
 };
 
 export type InvoiceForLabel = {
+  invoice_number?: string | null;
+  reference?: string | null;
+  invoice_date?: string | null;
   kind: InvoiceKind;
   xero_status: string;
   total_incl_vat: number;
@@ -96,22 +100,10 @@ export type InvoiceForLabel = {
   due_date: string | null;
 };
 
-const live = (status: string | null | undefined) => {
-  const s = (status ?? "").toUpperCase();
-  return s === "AUTHORISED" || s === "PAID";
-};
-
-const round2 = (n: number) => Math.round(n * 100) / 100;
-
-function looksLikeDeposit(invoice: InvoiceForLabel, quotedTotalInclVat: number | null): boolean {
-  if (invoice.kind === "deposit") return true;
-  if (invoice.kind !== "unclassified") return false;
-  return quotedTotalInclVat !== null && invoice.total_incl_vat < quotedTotalInclVat - 1;
-}
-
 export type PaymentPicture = {
   /** Null when Xero has not issued any live invoices yet. */
   label: PaymentLabel | null;
+  /** Something is due on an issued invoice and its due date has passed. */
   overdue: boolean;
   /** Sum of live invoice totals (gross; credit notes reduce what is due, not this). */
   invoiced: number;
@@ -120,50 +112,43 @@ export type PaymentPicture = {
   due: number;
   /** Credit notes and write-offs applied to the invoices. */
   credited: number;
-  /** Contract value not yet invoiced (quote total minus invoiced), when the quote is known. */
+  /** Contract value not yet invoiced (value minus invoiced), when the value is known. Never debt. */
   notYetInvoiced: number | null;
+  /** Value not yet paid, invoiced or not. */
+  remainingOnQuote: number | null;
+  /** Paid as a whole percentage of the value. */
+  pctPaid: number | null;
+  /** Deposit / progress / balance / full per invoice, as shown in Financials. */
+  kinds: ProjectMoney["kinds"];
 };
 
 /**
- * The money picture shown on a project. Settled invoices with a credit note
- * (Kingdom Pumps) count as settled: amount due is what Xero says is due.
- * Payment never changes the operational stage.
+ * The money picture shown on a project, anchored to the quote value.
+ * See project-money.ts: invoices only feed invoiced / paid / owed, and a paid
+ * deposit never reads as paid in full. Payment never changes the stage.
  */
 export function paymentPicture(
   invoices: InvoiceForLabel[],
   quotedTotalInclVat: number | null,
   today: string,
 ): PaymentPicture {
-  const issued = invoices.filter((i) => live(i.xero_status));
-  const invoiced = round2(issued.reduce((s, i) => s + Number(i.total_incl_vat || 0), 0));
-  const paid = round2(issued.reduce((s, i) => s + Number(i.amount_paid || 0), 0));
-  const due = round2(issued.reduce((s, i) => s + Number(i.amount_due || 0), 0));
-  const credited = round2(Math.max(0, invoiced - paid - due));
-  const overdue = issued.some((i) => i.amount_due > 0 && i.due_date !== null && i.due_date < today);
-  const notYetInvoiced =
-    quotedTotalInclVat === null ? null : round2(Math.max(0, quotedTotalInclVat - invoiced));
-
-  const depositOnly =
-    issued.length > 0 &&
-    issued.every((i) => looksLikeDeposit(i, quotedTotalInclVat)) &&
-    (notYetInvoiced === null || notYetInvoiced > 1);
-
-  let label: PaymentLabel | null;
-  if (issued.length === 0) {
-    label = null;
-  } else if (due <= 0 && (notYetInvoiced === null || notYetInvoiced <= 1)) {
-    label = "paid_in_full";
-  } else if (due <= 0) {
-    // Everything issued so far is settled; the rest of the contract is still to be invoiced.
-    label = "deposit_paid";
-  } else if (depositOnly && paid <= 0) {
-    label = "deposit_invoiced";
-  } else if (depositOnly && paid > 0) {
-    label = "portion_of_deposit_paid";
-  } else {
-    label = "balance_due";
-  }
-  return { label, overdue, invoiced, paid, due, credited, notYetInvoiced };
+  const m = projectMoney(
+    invoices.map((i) => ({ ...i, total_incl_vat: Number(i.total_incl_vat || 0), amount_paid: Number(i.amount_paid || 0), amount_due: Number(i.amount_due || 0) })),
+    quotedTotalInclVat,
+    today,
+  );
+  return {
+    label: m.label,
+    overdue: m.overdue,
+    invoiced: m.invoiced,
+    paid: m.paid,
+    due: m.due,
+    credited: m.credited,
+    notYetInvoiced: m.notYetInvoiced,
+    remainingOnQuote: m.remainingOnQuote,
+    pctPaid: m.pctPaid,
+    kinds: m.kinds,
+  };
 }
 
 // ---------------------------------------------------------------------------

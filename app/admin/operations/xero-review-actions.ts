@@ -160,12 +160,13 @@ export async function applyFromXeroAction(payload: {
           break;
         case "xero_number": {
           const n = value.replace(/[-\s]/g, "").toUpperCase();
+          // A quote becomes the primary (first) quote; other quotes and all invoices are kept.
           if (n.startsWith("QU")) {
-            const next = [n];
+            const next = [n, ...(project.xero_quote_numbers ?? []).filter((q: string) => q !== n)];
             record("xero_quote_numbers", (project.xero_quote_numbers ?? []).join(","), next.join(","));
             patch.xero_quote_numbers = next;
           } else if (n.startsWith("INV")) {
-            const next = [n];
+            const next = [...new Set([...(project.xero_invoice_numbers ?? []), n])];
             record("xero_invoice_numbers", (project.xero_invoice_numbers ?? []).join(","), next.join(","));
             patch.xero_invoice_numbers = next;
           }

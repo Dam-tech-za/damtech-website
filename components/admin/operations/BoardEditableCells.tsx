@@ -7,6 +7,7 @@ import { displayPhone } from "@/lib/operations/phone-display";
 import { CountryFlag } from "./CountryFlag";
 import type { BoardProject } from "@/lib/operations/queries";
 import { formatOpsMoney } from "./ops-format";
+import { KIND_LABELS } from "@/lib/operations/project-money";
 
 
 type SaveFn = (field: string, value: string, extra?: string) => Promise<boolean>;
@@ -357,18 +358,27 @@ export function XeroEditCell({
 }) {
   const numbers = [...(project.xero_quote_numbers ?? []), ...(project.xero_invoice_numbers ?? [])].filter(Boolean);
   const joined = numbers.join(", ");
+  // Tooltip: the quote first, then each invoice with its kind, status and total.
+  const kindOf = new Map((project.payment?.kinds ?? []).map((k) => [k.invoice_number, k]));
+  const detail = [
+    ...(project.xero_quote_numbers ?? []).map((q, i) => `${q} quote${i === 0 ? " (primary)" : ""}${i === 0 && project.quoted_total_incl_vat !== null ? ` ${formatOpsMoney(project.quoted_total_incl_vat)}` : ""}`),
+    ...(project.xero_invoice_numbers ?? []).map((n) => {
+      const k = kindOf.get(n);
+      return k ? `${n} ${KIND_LABELS[k.kind]} · ${k.xero_status.toLowerCase()} ${formatOpsMoney(k.total)}` : n;
+    }),
+  ].join("\n");
   const display =
     numbers.length <= 1 ? joined : `${numbers[0]} +${numbers.length - 1}`;
   const save = useCellSave(project.id);
 
-  if (!canEdit) return <span title={joined}>{display || "—"}</span>;
+  if (!canEdit) return <span title={detail || joined}>{display || "—"}</span>;
 
   return (
     <InlineText
       value={joined}
       displayValue={display}
       placeholder="+ Xero"
-      title={joined || undefined}
+      title={detail || joined || undefined}
       ariaLabel={`Xero numbers for ${project.title}`}
       onCancelValue={joined}
       onCommit={async (next) => {
