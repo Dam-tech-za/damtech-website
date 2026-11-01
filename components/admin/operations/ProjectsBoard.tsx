@@ -32,6 +32,7 @@ import { FromXeroReviewCard } from "./FromXeroReviewCard";
 import { ProjectPeekDrawer } from "./ProjectPeekDrawer";
 import { SelectionBar } from "./SelectionBar";
 import { ServiceEditCell } from "./ServiceEditCell";
+import { NextOnSiteCell } from "./NextOnSiteCell";
 
 const COLLAPSE_KEY = "ops-board-collapsed-groups";
 const COLLAPSE_EVENT = "ops-board-collapsed";
@@ -177,14 +178,14 @@ export function ProjectsBoard({
   /** When a stage/payment filter is active, hide empty stage headers. */
   hideEmptyGroups?: boolean;
   leadSuggestions?: string[];
-  hiddenColumns?: Array<"type" | "lead" | "client" | "email" | "xero" | "value" | "location">;
+  hiddenColumns?: Array<"type" | "next" | "lead" | "client" | "email" | "xero" | "value" | "location">;
 }) {
   const sheetRef = useRef<HTMLDivElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const projectThRef = useRef<HTMLTableCellElement>(null);
   const [rows, setRows] = useState(projectsProp);
   const [rowsSource, setRowsSource] = useState(projectsProp);
-  const hide = (id: "type" | "lead" | "client" | "email" | "xero" | "value" | "location") =>
+  const hide = (id: "type" | "next" | "lead" | "client" | "email" | "xero" | "value" | "location") =>
     hiddenColumns.includes(id);
   // Reset optimistic rows when the filtered server list changes (React-recommended render sync).
   if (projectsProp !== rowsSource) {
@@ -287,7 +288,7 @@ export function ProjectsBoard({
     };
   }, [hiddenColumns, rows.length, frozen]);
 
-  const colSpan = 3 + (7 - hiddenColumns.length);
+  const colSpan = 3 + (8 - hiddenColumns.length);
 
   const visibleIds = rows.map((p) => p.id);
   const selectedProjects = rows.filter((p) => selected.has(p.id));
@@ -324,6 +325,7 @@ export function ProjectsBoard({
             <col className="ops-sheet__col-project" />
             <col className="ops-sheet__col-pay" />
             {!hide("type") ? <col className="ops-sheet__col-type" /> : null}
+            {!hide("next") ? <col className="ops-sheet__col-next" /> : null}
             {!hide("lead") ? <col className="ops-sheet__col-lead" /> : null}
             {!hide("client") ? <col className="ops-sheet__col-client" /> : null}
             {!hide("location") ? <col className="ops-sheet__col-location" /> : null}
@@ -348,6 +350,11 @@ export function ProjectsBoard({
               {!hide("type") ? (
                 <th className="ops-sheet__c-type" scope="col">
                   Type
+                </th>
+              ) : null}
+              {!hide("next") ? (
+                <th className="ops-sheet__c-next" scope="col">
+                  Next on site
                 </th>
               ) : null}
               {!hide("lead") ? (
@@ -426,6 +433,11 @@ export function ProjectsBoard({
                         {!hide("type") ? (
                           <td className="ops-sheet__c-type" data-label="Type">
                             <ServiceEditCell project={p} canEdit={canEdit} onPatched={patchRow} />
+                          </td>
+                        ) : null}
+                        {!hide("next") ? (
+                          <td className="ops-sheet__c-next" data-label="Next on site">
+                            <NextOnSiteCell next={p.nextOnSite} />
                           </td>
                         ) : null}
                         {!hide("lead") ? (

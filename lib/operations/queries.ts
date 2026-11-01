@@ -3,6 +3,7 @@ import { paymentPicture, materialsRollup, type MaterialsRollup, type PaymentLabe
 import { parseBoardMetaFromScope, isPaymentLabel } from "./board-meta";
 import { locationPatch } from "./distance";
 import { todayInSouthAfrica } from "./lifecycle";
+import { nextOnSite, type NextOnSite } from "./calendar";
 import { findTownByName } from "./sa-places";
 import type {
   OpsDocument,
@@ -222,6 +223,8 @@ export type BoardProject = OpsProject & {
   materialsStatus: MaterialsRollup;
   openOrders: number;
   leadName: string | null;
+  /** Next calendar booking (read only here; bookings are edited in the calendar). */
+  nextOnSite: NextOnSite | null;
 };
 
 /** Projects with their Xero payment picture and materials status, for the board and table. */
@@ -241,12 +244,16 @@ export async function listBoardProjects(show: "active" | "completed" | "archived
     const ids = projects.map((p) => p.id);
     const setup = { tablesReady: true, bridgeConfigured: bridgeConfigured() };
     if (!ids.length) return { ok: true, setup, data: [] };
-    const [links, orders, staff] = await Promise.all([
+    const [links, orders, staff, bookings] = await Promise.all([
       db.from("ops_xero_invoice_links").select("project_id, invoice_number, reference, invoice_date, kind, xero_status, total_incl_vat, amount_paid, amount_due, due_date").in("project_id", ids),
       db.from("ops_material_orders").select("project_id, status").in("project_id", ids),
       db.from("admin_profiles").select("id, email, full_name"),
+      db.from("ops_bookings").select("project_id, start_at, end_at, status").in("project_id", ids).not("status", "in", "(cancelled,completed)"),
     ]);
     const err = links.error ?? orders.error ?? staff.error;
+    // The board still loads if bookings cannot be read; the column then stays empty.
+    if (bookings.error) console.error("[board] bookings:", bookings.error.message);
+    const now = new Date();
     if (err) return failure(err, "board details");
     const today = todayInSouthAfrica();
     const names = new Map((staff.data ?? []).map((s) => [s.id as string, (s.full_name as string | null) || (s.email as string)]));
@@ -281,6 +288,7 @@ export async function listBoardProjects(show: "active" | "completed" | "archived
           materialsStatus: materialsRollup(projectOrders, p.materials_by_client),
           openOrders: projectOrders.filter((o) => o.status !== "collected_delivered" && o.status !== "cancelled").length,
           leadName,
+          nextOnSite: nextOnSite((bookings.data ?? []).filter((b) => b.project_id === p.id) as { start_at: string; end_at: string; status: string }[], now),
         };
       }),
     };

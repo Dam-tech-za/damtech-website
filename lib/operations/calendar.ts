@@ -423,3 +423,31 @@ export function layoutBars(bookings: CalendarBooking[], days: string[]): { segme
   }
   return { segments, lanes: laneEnds.length };
 }
+
+// ---------------------------------------------------------------------------
+// Projects board: the project's next booking (read only; edited in the calendar)
+// ---------------------------------------------------------------------------
+
+export type NextOnSite = { start_at: string; end_at: string; status: BookingStatus; late: boolean };
+
+/**
+ * A booking that has ended but was never marked completed comes first (late),
+ * otherwise the earliest booking that is still running or ahead.
+ */
+export function nextOnSite(
+  bookings: { start_at: string; end_at: string; status: string }[],
+  now: Date = new Date(),
+): NextOnSite | null {
+  const t = now.getTime();
+  const live = bookings
+    .filter((b) => isBookingStatus(b.status) && b.status !== "cancelled" && b.status !== "completed")
+    .sort((a, b) => a.start_at.localeCompare(b.start_at));
+  const late = live.find((b) => new Date(b.end_at).getTime() < t);
+  const pick = late ?? live.find((b) => new Date(b.end_at).getTime() >= t);
+  return pick ? { start_at: pick.start_at, end_at: pick.end_at, status: pick.status as BookingStatus, late: Boolean(late) } : null;
+}
+
+/** "Tue 4 Nov" in South Africa. */
+export function shortSaDay(iso: string): string {
+  return new Intl.DateTimeFormat("en-GB", { timeZone: CALENDAR_TZ, weekday: "short", day: "numeric", month: "short" }).format(new Date(iso));
+}

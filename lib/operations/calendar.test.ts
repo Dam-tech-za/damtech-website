@@ -3,6 +3,8 @@ import assert from "node:assert/strict";
 import {
   addDays,
   bookingLabel,
+  nextOnSite,
+  shortSaDay,
   bookingDays,
   bookingTimeLabel,
   describeBookingSaveError,
@@ -216,5 +218,26 @@ describe("site inspections", () => {
   it("other kinds are unchanged", () => {
     const leave = parseBookingForm({ kind: "leave", status: "confirmed", start_date: "2026-11-05", all_day: "on" });
     assert.ok(leave.ok && leave.value.quote_number === undefined);
+  });
+});
+
+describe("next on site (board)", () => {
+  const now = new Date("2026-11-05T10:00:00Z");
+  const b = (start: string, end: string, status: string) => ({ start_at: start, end_at: end, status });
+  it("is the earliest booking still running or ahead", () => {
+    const r = nextOnSite([b("2026-11-10T05:00:00Z", "2026-11-10T14:00:00Z", "confirmed"), b("2026-11-05T05:00:00Z", "2026-11-05T14:00:00Z", "in_progress")], now);
+    assert.equal(r?.start_at, "2026-11-05T05:00:00Z");
+    assert.equal(r?.late, false);
+  });
+  it("puts a past booking that was never marked done first, as late", () => {
+    const r = nextOnSite([b("2026-11-10T05:00:00Z", "2026-11-10T14:00:00Z", "confirmed"), b("2026-11-02T05:00:00Z", "2026-11-02T14:00:00Z", "confirmed")], now);
+    assert.equal(r?.start_at, "2026-11-02T05:00:00Z");
+    assert.equal(r?.late, true);
+  });
+  it("ignores cancelled and completed bookings", () => {
+    assert.equal(nextOnSite([b("2026-11-02T05:00:00Z", "2026-11-02T14:00:00Z", "completed"), b("2026-11-12T05:00:00Z", "2026-11-12T14:00:00Z", "cancelled")], now), null);
+  });
+  it("reads as a short South African day", () => {
+    assert.equal(shortSaDay("2026-11-03T23:30:00Z"), "Wed 4 Nov");
   });
 });

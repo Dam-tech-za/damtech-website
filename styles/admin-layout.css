@@ -2338,14 +2338,15 @@ form[aria-busy="true"] {
   --col-project: 320px; /* measured live; sticky Payment uses this */
   --col-pay: 156px;
   --col-type: 120px;
+  --col-next: 104px;
   --col-lead: 112px;
   --col-client: 200px;
   --col-email: 200px;
   --col-xero: 104px;
   --col-value: 124px;
   --col-location: 220px;
-  /* fixed cols (1272) + project min 320 */
-  --ops-sheet-min: 1592px;
+  /* fixed cols (1376) + project min 320 */
+  --ops-sheet-min: 1696px;
   padding-bottom: 0;
   width: 100%;
 }
@@ -2541,7 +2542,7 @@ form[aria-busy="true"] {
 
 @media (max-width: 1100px) {
   .ops-sheet {
-    --ops-sheet-min: 1380px; /* without email */
+    --ops-sheet-min: 1484px; /* without email */
   }
 
   .ops-sheet__c-email,
@@ -5233,7 +5234,7 @@ table.admin-sheet .admin-status {
 
 /* Every project row is the same height (room for customer, contact and phone). */
 .ops-sheet__group > tr:not(.ops-sheet__group-row):not(.ops-sheet__add-row) > td { height: 56px; max-height: 56px; }
-.ops-sheet--no-email { --ops-sheet-min: 1392px; }
+.ops-sheet--no-email { --ops-sheet-min: 1496px; }
 @media (max-width: 899px) { .ops-sheet--no-email { --ops-sheet-min: 1100px; } }
 .ops-client--with-company .ops-inline,
 .ops-client--with-company .ops-inline-phone { height: 16px; line-height: 16px; display: flex; align-items: center; justify-content: center; }
@@ -5241,3 +5242,19 @@ table.admin-sheet .admin-status {
 .ops-client--with-company .ops-inline--company .ops-inline-input { font-size: 11.5px; font-weight: 700; color: #1f2d3d; }
 .ops-sheet__table td.ops-sheet__c-value,
 .ops-sheet__table th.ops-sheet__c-value { padding-right: 10px; }
+
+/* Next on site: read-only date that links to the calendar. */
+.ops-sheet__col-next { width: var(--col-next); }
+.ops-sheet__c-next { width: var(--col-next); min-width: var(--col-next); max-width: var(--col-next); font-variant-numeric: tabular-nums; }
+.ops-next { color: var(--admin-text); text-decoration: none; font-weight: 500; }
+.ops-next:hover { color: var(--admin-primary); text-decoration: underline; }
+.ops-next--tentative { color: #52606d; font-style: italic; }
+.ops-next--late { color: #c42b40; font-weight: 600; font-style: normal; }
+.ops-next--none { color: #b6c0ca; }
+
+/* Quick-view button shows on row hover or keyboard focus; always on touch screens. */
+.ops-sheet__table .ops-title-cell__peek { opacity: 0; transition: opacity 120ms ease; }
+.ops-sheet__table tr:hover .ops-title-cell__peek,
+.ops-sheet__table tr:focus-within .ops-title-cell__peek,
+.ops-sheet__table tr.is-selected .ops-title-cell__peek { opacity: 1; }
+@media (hover: none) { .ops-sheet__table .ops-title-cell__peek { opacity: 1; } }
