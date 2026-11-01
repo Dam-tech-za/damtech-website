@@ -6,7 +6,7 @@ import { updateBoardFieldAction } from "@/app/admin/operations/board-field-actio
 import type { ProjectQuoteRef } from "@/app/admin/operations/quote-view-actions";
 import { formatOpsMoney } from "@/components/admin/operations/ops-format";
 import { QuoteView } from "@/components/admin/operations/QuoteViewer";
-import { attachInvoiceAction, findClientInvoicesAction, setInvoiceKindAction, type InvoiceCandidate } from "@/app/admin/operations/invoice-link-actions";
+import { attachInvoiceAction, findClientInvoicesAction, findClientQuotesAction, linkQuoteAction, setInvoiceKindAction, type InvoiceCandidate, type QuoteCandidate } from "@/app/admin/operations/invoice-link-actions";
 
 /** Project lead picked from the Person list (the board's master list). */
 export function LeadSelect({ projectId, current, options }: { projectId: string; current: string | null; options: string[] }) {
@@ -48,8 +48,16 @@ export function ProjectQuotes({ projectId, quotes }: { projectId: string; quotes
   if (open) {
     return <QuoteView projectId={projectId} quoteRef={open} onBack={() => setOpen(null)} backLabel="← All quotes" />;
   }
-  if (!quotes.length) return <p className="pj-muted">No Xero quote linked. Link one below with its number.</p>;
+  if (!quotes.length) {
+    return (
+      <>
+        <p className="pj-muted">No Xero quote linked yet.</p>
+        <QuoteFinder projectId={projectId} />
+      </>
+    );
+  }
   return (
+    <>
     <ul className="pj-list">
       {quotes.map((q) => (
         <li key={q.quoteId ?? q.number}>
@@ -65,6 +73,8 @@ export function ProjectQuotes({ projectId, quotes }: { projectId: string; quotes
         </li>
       ))}
     </ul>
+    <QuoteFinder projectId={projectId} />
+    </>
   );
 }
 
@@ -128,7 +138,7 @@ export function InvoiceCandidates({ projectId }: { projectId: string }) {
   return (
     <div className="pj-cands">
       <button type="button" className="admin-btn admin-btn--secondary admin-btn--sm" onClick={find} disabled={loading}>
-        {loading ? "Looking in Xero…" : "Find invoices for this client"}
+        {loading ? "Looking in Xero…" : "Link invoice"}
       </button>
       {state?.error ? <p className="pj-error" role="alert">{state.error}</p> : null}
       {state?.list ? (
@@ -151,6 +161,71 @@ export function InvoiceCandidates({ projectId }: { projectId: string }) {
           </ul>
         ) : (
           <p className="pj-muted">No unattached invoices for the {state.anchor}.</p>
+        )
+      ) : null}
+    </div>
+  );
+}
+
+/** For projects created from an invoice: find the client's quote in Xero and link it, so View quote works. */
+export function QuoteFinder({ projectId, onLinked }: { projectId: string; onLinked?: () => void }) {
+  const router = useRouter();
+  const [state, setState] = useState<{ list?: QuoteCandidate[]; error?: string } | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [busy, setBusy] = useState<string | null>(null);
+  const [message, setMessage] = useState<string | null>(null);
+
+  const find = async () => {
+    setLoading(true);
+    setMessage(null);
+    const r = await findClientQuotesAction(projectId);
+    setLoading(false);
+    setState("error" in r ? { error: r.error } : { list: r.quotes });
+  };
+  const link = async (id: string) => {
+    setBusy(id);
+    const fd = new FormData();
+    fd.set("project_id", projectId);
+    fd.set("xero_quote_id", id);
+    const r = await linkQuoteAction(null, fd);
+    setBusy(null);
+    if (!r?.ok) return setMessage(r?.message || "Could not link.");
+    setMessage(r.message);
+    setState(null);
+    onLinked?.();
+    router.refresh();
+  };
+
+  return (
+    <div className="pj-cands">
+      <button type="button" className="admin-btn admin-btn--secondary admin-btn--sm" onClick={find} disabled={loading}>
+        {loading ? "Looking in Xero…" : "Link quote"}
+      </button>
+      {message ? <p className="pj-muted" role="status">{message}</p> : null}
+      {state?.error ? <p className="pj-error" role="alert">{state.error}</p> : null}
+      {state?.list ? (
+        state.list.length ? (
+          <ul className="pj-list">
+            {state.list.map((q) => (
+              <li key={q.id}>
+                <span>
+                  <strong>{q.number}</strong>
+                  <span className="pj-muted">{[q.status.toLowerCase(), q.date, q.total !== null ? formatOpsMoney(q.total) : null].filter(Boolean).join(" · ")}</span>
+                  {q.title ? <span className="pj-muted">{q.title}</span> : null}
+                  {q.namedOnInvoice ? <span className="pj-muted">✓ named on this project&rsquo;s invoice</span> : null}
+                </span>
+                {q.linked ? (
+                  <span className="pj-muted">Linked</span>
+                ) : (
+                  <button type="button" className="admin-btn admin-btn--outline admin-btn--sm" disabled={busy === q.id} onClick={() => void link(q.id)}>
+                    {busy === q.id ? "Linking…" : "Link"}
+                  </button>
+                )}
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p className="pj-muted">No quotes found in Xero for this client.</p>
         )
       ) : null}
     </div>
