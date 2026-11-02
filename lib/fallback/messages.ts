@@ -2,7 +2,8 @@ import { shortIncidentRef } from "../rfq/submission-result.ts";
 
 const FALLBACK_PHONE = "+27 82 853 1026";
 const FALLBACK_EMAIL = "info@dam-tech.co.za";
-const FALLBACK_WHATSAPP_URL = "https://wa.me/27828531026";
+// WhatsApp Business number: a link only, never printed in a message (see lib/site.ts).
+const FALLBACK_WHATSAPP_URL = "https://wa.me/27673587425";
 
 export function fallbackSuccessCustomerMessage(incidentId: string): string {
   const ref = shortIncidentRef(incidentId);
@@ -13,7 +14,7 @@ export function totalFailureCustomerMessage(incidentId?: string): string {
   const ref = incidentId
     ? ` Reference: ${shortIncidentRef(incidentId)}.`
     : "";
-  return `We could not save or deliver your request through our online systems.${ref} Please contact DamTech directly by phone at ${FALLBACK_PHONE}, email ${FALLBACK_EMAIL}, or WhatsApp (${FALLBACK_WHATSAPP_URL}).`;
+  return `We could not save or deliver your request through our online systems.${ref} Please contact DamTech directly by phone at ${FALLBACK_PHONE}, email ${FALLBACK_EMAIL}, or WhatsApp using the button on this page.`;
 }
 
 export const FALLBACK_CONTACT_CHANNELS = {
