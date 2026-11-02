@@ -30,8 +30,11 @@ export const siteConfig = {
 /** E.164 tel link for the business phone. */
 export const phoneTel = siteConfig.phone.replace(/\s/g, "");
 
-/** WhatsApp click-to-chat (no + prefix in wa.me path). */
-export const whatsAppUrl = "https://wa.me/27828531026";
+/**
+ * WhatsApp click-to-chat (no + prefix in wa.me path). This is the WhatsApp Business
+ * number: use it only as a link, never print it on the page. Calls go to siteConfig.phone.
+ */
+export const whatsAppUrl = "https://wa.me/27673587425";
 
 /** Social profiles for Organization JSON-LD `sameAs` — matches the live site. */
 export const SOCIAL_LINKS = [

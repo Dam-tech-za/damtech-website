@@ -308,6 +308,8 @@ describe("attemptDatabaseFallbackAfterPersistenceFailure", () => {
     if (!("ok" in result) || result.ok) throw new Error("expected failure");
     assert.match(result.customerMessage, /\+27 82 853 1026/);
     assert.match(result.customerMessage, /info@dam-tech.co.za/);
+    // The WhatsApp Business number is a link only; it must never be printed for customers.
+    assert.doesNotMatch(result.customerMessage, /673587425|wa\.me/);
   });
 });
 
