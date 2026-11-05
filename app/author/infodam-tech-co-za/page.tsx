@@ -4,13 +4,16 @@ import { Hero } from "@/components/Hero";
 import { PageSeo } from "@/components/PageSeo";
 import { createPageMetadata, PAGE_SEO } from "@/lib/pages";
 import { POSTS_PER_PAGE, paginatePosts, posts } from "@/lib/posts";
+
+/** Posts with a named author are not listed under the default blog author. */
+const authorPosts = posts.filter((post) => !post.author);
 import { BLOG_AUTHOR } from "@/lib/site";
 import {
   LazyCTA as CTA,
 } from "@/components/lazy";
 
 const seo = PAGE_SEO.author;
-const pagination = paginatePosts(posts, 1, POSTS_PER_PAGE);
+const pagination = paginatePosts(authorPosts, 1, POSTS_PER_PAGE);
 
 export const metadata = createPageMetadata(seo, { noIndex: true });
 

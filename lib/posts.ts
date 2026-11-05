@@ -13,6 +13,8 @@ export type BlogPost = {
   metaTitle: string;
   metaDescription: string;
   category?: string;
+  /** Optional named author; falls back to BLOG_AUTHOR when absent. */
+  author?: string;
 };
 
 export const POSTS_PER_PAGE = 10;

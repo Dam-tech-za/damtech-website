@@ -5,6 +5,9 @@ import { Hero } from "@/components/Hero";
 import { PageSeo } from "@/components/PageSeo";
 import { createPageMetadata, PAGE_SEO } from "@/lib/pages";
 import { POSTS_PER_PAGE, paginatePosts, posts } from "@/lib/posts";
+
+/** Posts with a named author are not listed under the default blog author. */
+const authorPosts = posts.filter((post) => !post.author);
 import {
   LazyCTA as CTA,
 } from "@/components/lazy";
@@ -16,7 +19,7 @@ type Props = {
 const authorSeo = PAGE_SEO.author;
 
 export async function generateStaticParams() {
-  const { totalPages } = paginatePosts(posts, 1, POSTS_PER_PAGE);
+  const { totalPages } = paginatePosts(authorPosts, 1, POSTS_PER_PAGE);
   return Array.from({ length: totalPages - 1 }, (_, i) => ({
     page: String(i + 2),
   }));
@@ -42,7 +45,7 @@ export default async function AuthorPaginatedPage({ params }: Props) {
   }
 
   const { items, currentPage, totalPages } = paginatePosts(
-    posts,
+    authorPosts,
     pageNumber,
     POSTS_PER_PAGE,
   );

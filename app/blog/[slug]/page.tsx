@@ -79,6 +79,7 @@ export default async function BlogPostPage({ params }: Props) {
           datePublished: post.date,
           dateModified: post.modified,
           image: DEFAULT_OG_IMAGE,
+          authorName: post.author,
         })}
       />
 
@@ -92,9 +93,13 @@ export default async function BlogPostPage({ params }: Props) {
             </h1>
             <p className="dt-article-hero__meta">
               By{" "}
-              <Link href={BLOG_AUTHOR.path} className="dt-article-hero__author">
-                {BLOG_AUTHOR.name}
-              </Link>
+              {post.author ? (
+                <span className="dt-article-hero__author">{post.author}</span>
+              ) : (
+                <Link href={BLOG_AUTHOR.path} className="dt-article-hero__author">
+                  {BLOG_AUTHOR.name}
+                </Link>
+              )}
               <span className="mx-2" aria-hidden>
                 ·
               </span>
