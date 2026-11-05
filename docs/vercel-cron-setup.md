@@ -6,6 +6,7 @@
 |------|----------------|---------|
 | `/api/cron/expire-quotes/` | `0 4 * * *` | Mark overdue sent/viewed quotes expired |
 | `/api/cron/quote-reminders/` | `30 4 * * *` | Expiry / not-viewed / not-answered reminders |
+| `/api/cron/publish-scheduled-posts/` | `0 3 * * *` | Redeploys (via `VERCEL_DEPLOY_HOOK_URL`) on days a scheduled blog post goes live, 05:00 SAST |
 | `/api/cron/supabase-keepalive/` | `15 4 * * *` | Supabase Postgres keepalive (morning) |
 | `/api/cron/supabase-keepalive/` | `15 12 * * *` | Supabase Postgres keepalive (midday) |
 | `/api/cron/supabase-keepalive/` | `15 20 * * *` | Supabase Postgres keepalive (evening) |
@@ -49,3 +50,9 @@ Quote expiry/reminder crons alone are **not** reliable keepalives: they only run
 ## Reminder deduplication
 
 `quote_notification_log` unique `(quote_id, notification_key)` prevents duplicate reminder emails for the same day/key.
+
+## Scheduled blog posts
+
+Blog posts live in `lib/posts-data.json`. A post whose `date` is later than today (South Africa time) is left out of the blog, category pages, sitemap and related links. The `publish-scheduled-posts` cron runs at 03:00 UTC (05:00 SAST) and, when a post is dated today, POSTs to the Vercel deploy hook so the site rebuilds and the post appears.
+
+Required env vars: `CRON_SECRET` and `VERCEL_DEPLOY_HOOK_URL` (Vercel project, Settings, Git, Deploy Hooks, production branch).

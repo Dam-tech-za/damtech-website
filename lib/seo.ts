@@ -573,6 +573,7 @@ export function createArticleSchema({
   datePublished,
   dateModified,
   image,
+  authorName,
 }: {
   title: string;
   description: string;
@@ -580,6 +581,7 @@ export function createArticleSchema({
   datePublished: string;
   dateModified: string;
   image?: string;
+  authorName?: string;
 }) {
   const imageUrl = absoluteAssetUrl(image ?? DEFAULT_OG_IMAGE);
 
@@ -591,12 +593,14 @@ export function createArticleSchema({
     image: imageUrl,
     datePublished,
     dateModified,
-    author: {
-      "@type": "Person",
-      name: BLOG_AUTHOR.name,
-      jobTitle: BLOG_AUTHOR.role,
-      url: absoluteUrl(BLOG_AUTHOR.path),
-    },
+    author: authorName
+      ? { "@type": "Person", name: authorName }
+      : {
+          "@type": "Person",
+          name: BLOG_AUTHOR.name,
+          jobTitle: BLOG_AUTHOR.role,
+          url: absoluteUrl(BLOG_AUTHOR.path),
+        },
     publisher: {
       "@type": "Organization",
       "@id": `${siteConfig.domain}/#organization`,
