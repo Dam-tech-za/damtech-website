@@ -6,11 +6,12 @@ import { PageSeo } from "@/components/PageSeo";
 import { createPageMetadata, PAGE_SEO } from "@/lib/pages";
 import { POSTS_PER_PAGE, paginatePosts, posts } from "@/lib/posts";
 
-/** Posts with a named author are not listed under the default blog author. */
-const authorPosts = posts.filter((post) => !post.author);
 import {
   LazyCTA as CTA,
 } from "@/components/lazy";
+
+/** Posts with a named author are not listed under the default blog author. */
+const authorPosts = posts.filter((post) => !post.author);
 
 type Props = {
   params: Promise<{ page: string }>;
