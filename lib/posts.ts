@@ -82,11 +82,24 @@ export function rewriteBlogHtml(html: string): string {
   return output;
 }
 
-export const posts: BlogPost[] = (postsData as BlogPost[]).map((post) => ({
-  ...post,
-  category: post.category ?? inferPostCategory(post.slug, post.title),
-  content: rewriteBlogHtml(post.content),
-}));
+/**
+ * Today's date in South Africa (YYYY-MM-DD). Posts whose `date` is later than this are
+ * scheduled: they are left out of every page, feed and sitemap until that day arrives
+ * (a redeploy on or after the date publishes them).
+ */
+export function todayInSouthAfrica(now: Date = new Date()): string {
+  return new Intl.DateTimeFormat("en-CA", {
+    timeZone: "Africa/Johannesburg",
+  }).format(now);
+}
+
+export const posts: BlogPost[] = (postsData as BlogPost[])
+  .filter((post) => post.date.slice(0, 10) <= todayInSouthAfrica())
+  .map((post) => ({
+    ...post,
+    category: post.category ?? inferPostCategory(post.slug, post.title),
+    content: rewriteBlogHtml(post.content),
+  }));
 
 export function getPostBySlug(slug: string): BlogPost | undefined {
   return posts.find((post) => post.slug === slug);

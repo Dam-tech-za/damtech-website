@@ -44,6 +44,10 @@
       "schedule": "15 5 * * *"
     },
     {
+      "path": "/api/cron/publish-scheduled-posts/",
+      "schedule": "0 3 * * *"
+    },
+    {
       "path": "/api/cron/supabase-keepalive/",
       "schedule": "15 4 * * *"
     },
