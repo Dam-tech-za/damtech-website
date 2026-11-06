@@ -28,4 +28,5 @@ Any heading/metadata/link/schema difference must be explained or reversed. Optio
 ## Repo notes
 - Files use CRLF line endings; multi-line scripted edits must normalise line endings.
 - The owner may run `next dev` on port 3000 in this folder; don't kill it. Use a production build on another port for checks.
+- Supabase: from 2026-10-30, new tables in `public` get no Data API access by default. Every migration that creates a `public` table or view must grant access in the same file (e.g. `grant select on public.x to anon;` and `grant select, insert, update, delete on public.x to authenticated, service_role;`, or only `service_role` for server-only tables), keep RLS on, and add policies.
 - Admin is calmer and utilitarian (`styles/admin-*.css`); don't apply the public brand there.
