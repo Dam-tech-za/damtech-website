@@ -179,7 +179,7 @@ export const STEEL_TANKS_CONTENT = {
     {
       question: "What sizes of steel water tanks do you supply?",
       answer:
-        "Fixed-price supply-only kits are listed on this page for 10 000 L, 20 000 L, 50 000 L and 100 000 L, plus fish-pond and livestock-trough kits. We also supply corrugated Z275 galvanised and Aluzinc tanks from approximately 11 kL up to 500 kL and larger on request, in diameters from 3 m to 17 m and a range of ring heights. See the capacity tables below or contact us for a full schedule.",
+        "Fixed-price supply-only kits are listed on this page for 10 000 L, 20 000 L, 50 000 L and 100 000 L, plus fish-pond and livestock-trough kits. We also supply corrugated Z275 galvanised and AZ150 Aluzinc tanks from approximately 11 kL up to 500 kL and larger on request, in diameters from 3 m to 17 m and a range of ring heights. See the capacity tables below or contact us for a full schedule.",
     },
     {
       question: "How long does installation take?",
@@ -194,7 +194,7 @@ export const STEEL_TANKS_CONTENT = {
     {
       question: "Should I choose a Z275 galvanised or an Aluzinc tank?",
       answer:
-        "Choose the liner first, then the coating for the site. With a PVC liner holding the water, the coating mainly protects the outside of the tank. Inland, Z275 galvanised steel is adequate for many farm sites. Near the coast or heavy industry, Aluzinc lasts about three times longer on the outside, but it must be isolated from concrete bases. Tell us your location and water source and we will recommend one.",
+        "Choose the liner first, then the coating for the site. Both come with a PVC liner that holds the water, so the coating mainly protects the outside of the tank. Inland, Z275 galvanised steel is adequate for many farm sites. Near the coast or heavy industry, Aluzinc lasts about three times longer on the outside, but it must be isolated from concrete bases. Tell us your location and water source and we will recommend one.",
     },
     {
       question: "How long does a steel water tank last?",

@@ -192,7 +192,7 @@ export const SEO_FAQ_ITEMS = [
   {
     question: "Do you offer steel water tanks?",
     answer:
-      "Yes. Damtech publishes fixed-price, supply-only corrugated steel water tank kits on the steel water tanks page, and also supplies and installs larger reservoirs from about 11 kL to 500 kL+ in Z275 galvanised steel or Aluzinc, with PVC lining, columns, inlet/outlet fittings and optional roofs. Transport and installation are excluded from kit prices unless quoted separately.",
+      "Yes. Damtech publishes fixed-price, supply-only corrugated steel water tank kits on the steel water tanks page, and also supplies and installs larger reservoirs from about 11 kL to 500 kL+ in Z275 galvanised steel or AZ150 Aluzinc, with PVC lining, columns, inlet/outlet fittings and optional roofs. Transport and installation are excluded from kit prices unless quoted separately.",
   },
   {
     question: "Do you offer waterproofing for farms and mines?",

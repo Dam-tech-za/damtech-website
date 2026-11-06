@@ -95,7 +95,7 @@ export const FAQ_CATEGORIES: readonly FaqCategory[] = [
       {
         question: "Do you supply steel water tanks?",
         answer:
-          "Yes. Damtech supplies and installs corrugated steel water tanks and reservoirs from 11 kL to 500 kL+, in Z275 galvanised steel or Aluzinc, with PVC lining, columns, inlet/outlet fittings and optional roofs for farms, mines, estates and commercial yards.",
+          "Yes. Damtech supplies and installs corrugated steel water tanks and reservoirs from 11 kL to 500 kL+, in Z275 galvanised steel or AZ150 Aluzinc, with PVC lining, columns, inlet/outlet fittings and optional roofs for farms, mines, estates and commercial yards.",
       },
       {
         question: "What does Z275 galvanised steel mean?",
@@ -105,12 +105,12 @@ export const FAQ_CATEGORIES: readonly FaqCategory[] = [
       {
         question: "Is Aluzinc better than galvanised steel for a water tank?",
         answer:
-          "On the outside of the tank, yes. In the same air, Aluzinc (a 55% aluminium-zinc coating) lasts about three times longer than Z275 galvanised steel, which makes it the stronger choice near the coast or heavy industry. Under water the evidence is different: no published fresh-water corrosion rate for Aluzinc was found, and it should not touch concrete or strongly alkaline water. Either way, the liner should carry the water. Damtech supplies both and recommends one after reviewing your site and water source.",
+          "On the outside of the tank, yes. In the same air, Aluzinc (a 55% aluminium-zinc coating; Damtech uses AZ150) lasts about three times longer than Z275 galvanised steel, which makes it the stronger choice near the coast or heavy industry. Under water the evidence is different: no published fresh-water corrosion rate for Aluzinc was found, and it should not touch concrete or strongly alkaline water. Either way, the liner should carry the water. Damtech supplies both and recommends one after reviewing your site and water source.",
       },
       {
         question: "Does a steel water tank need a liner?",
         answer:
-          "For a long-life tank, yes. Thin galvanised or Aluzinc sheet should not be relied on as the long-term water barrier, and soft water such as rainwater or Cape Town municipal supply attacks zinc fastest. Damtech tanks are supplied with a 550 gsm PVC liner and bidem floor sheet as standard, with 850 gsm on request.",
+          "For a long-life tank, yes. Thin galvanised or Aluzinc sheet should not be relied on as the long-term water barrier, and soft water such as rainwater or Cape Town municipal supply attacks zinc fastest. Damtech’s Z275 galvanised and AZ150 Aluzinc tanks are both supplied with a 550 gsm PVC liner and bidem floor sheet as standard, with 850 gsm on request.",
       },
       {
         question: "How long does it take to install a zinc reservoir?",
