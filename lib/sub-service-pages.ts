@@ -552,7 +552,7 @@ export const RESERVOIR_LINING_PAGE: SubServicePageConfig = {
     {
       question: "What liner goes inside a new corrugated steel tank?",
       answer:
-        "Damtech steel reservoirs are supplied with 550 gsm PVC lining as standard, with 850 gsm available on request. Capacity ranges from 11 kL to 500 kL+ with optional roofs to reduce evaporation.",
+        "Damtech steel reservoirs, in Z275 galvanised steel or AZ150 Aluzinc, are supplied with 550 gsm PVC lining as standard, with 850 gsm available on request. The liner, not the metal coating, is the water barrier. Capacity ranges from 11 kL to 500 kL+ with optional roofs to reduce evaporation.",
     },
     {
       question: "Do you line concrete irrigation reservoirs?",

@@ -153,7 +153,7 @@ export const FAQ_ITEMS = [
   {
     question: "What is the lifespan of a zinc reservoir?",
     answer:
-      "A well-constructed reservoir, when maintained properly, can last 20 to 30 years or more. The lifespan depends on environmental conditions, usage, lining and maintenance.",
+      "There is no single figure, and no lifespan is a guarantee. The PVC liner holds the water and usually sets the main maintenance interval. Published durability data for Z275 galvanised sheet give the outer zinc coating roughly 12–42 years at most inland (C3) sites and 2–5 years in severe (C5) conditions near the sea; Aluzinc lasts about three times longer on the outside. Water chemistry, site, base and maintenance all affect the result.",
   },
   {
     question: "What is included in your preventative maintenance services?",
@@ -192,7 +192,7 @@ export const SEO_FAQ_ITEMS = [
   {
     question: "Do you offer steel water tanks?",
     answer:
-      "Yes. Damtech publishes fixed-price, supply-only corrugated steel water tank kits on the steel water tanks page, and also supplies and installs larger reservoirs from about 11 kL to 500 kL+ with PVC lining, columns, inlet/outlet fittings and optional roofs. Transport and installation are excluded from kit prices unless quoted separately.",
+      "Yes. Damtech publishes fixed-price, supply-only corrugated steel water tank kits on the steel water tanks page, and also supplies and installs larger reservoirs from about 11 kL to 500 kL+ in Z275 galvanised steel or AZ150 Aluzinc, with PVC lining, columns, inlet/outlet fittings and optional roofs. Transport and installation are excluded from kit prices unless quoted separately.",
   },
   {
     question: "Do you offer waterproofing for farms and mines?",
