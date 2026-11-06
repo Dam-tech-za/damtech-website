@@ -168,7 +168,7 @@ export const CATALOGUE_PRODUCTS: readonly CatalogueProduct[] = [
       {
         question: "What is included in the supply-only kit?",
         answer:
-          "The kit includes a corrugated galvanised steel shell, 550 gsm PVC liner, bidem floor sheet, upright columns, and 50 mm inlet, outlet and overflow fittings. Optional roofs, the base, transport and installation are not included.",
+          "The kit includes a corrugated Z275 galvanised steel shell, 550 gsm PVC liner, bidem floor sheet, upright columns, and 50 mm inlet, outlet and overflow fittings. Optional roofs, the base, transport and installation are not included.",
       },
       {
         question: "Can Damtech quote for delivery and installation separately?",

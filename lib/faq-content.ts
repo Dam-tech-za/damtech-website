@@ -95,7 +95,22 @@ export const FAQ_CATEGORIES: readonly FaqCategory[] = [
       {
         question: "Do you supply steel water tanks?",
         answer:
-          "Yes. Damtech supplies and installs corrugated galvanised steel water tanks and reservoirs from 11 kL to 500 kL+, with PVC lining, columns, inlet/outlet fittings and optional roofs for farms, mines, estates and commercial yards.",
+          "Yes. Damtech supplies and installs corrugated steel water tanks and reservoirs from 11 kL to 500 kL+, in Z275 galvanised steel or Aluzinc, with PVC lining, columns, inlet/outlet fittings and optional roofs for farms, mines, estates and commercial yards.",
+      },
+      {
+        question: "What does Z275 galvanised steel mean?",
+        answer:
+          "Z275 means 275 g/m² of zinc in total across both faces of the steel sheet: about 137.5 g/m², or roughly 19 µm, on each face. It is continuously hot-dip galvanised sheet, which is a different product from batch galvanising of fabricated items under SANS 121. Damtech’s galvanised tanks use Z275 sheet.",
+      },
+      {
+        question: "Is Aluzinc better than galvanised steel for a water tank?",
+        answer:
+          "On the outside of the tank, yes. In the same air, Aluzinc (a 55% aluminium-zinc coating) lasts about three times longer than Z275 galvanised steel, which makes it the stronger choice near the coast or heavy industry. Under water the evidence is different: no published fresh-water corrosion rate for Aluzinc was found, and it should not touch concrete or strongly alkaline water. Either way, the liner should carry the water. Damtech supplies both and recommends one after reviewing your site and water source.",
+      },
+      {
+        question: "Does a steel water tank need a liner?",
+        answer:
+          "For a long-life tank, yes. Thin galvanised or Aluzinc sheet should not be relied on as the long-term water barrier, and soft water such as rainwater or Cape Town municipal supply attacks zinc fastest. Damtech tanks are supplied with a 550 gsm PVC liner and bidem floor sheet as standard, with 850 gsm on request.",
       },
       {
         question: "How long does it take to install a zinc reservoir?",
@@ -105,7 +120,7 @@ export const FAQ_CATEGORIES: readonly FaqCategory[] = [
       {
         question: "What is the lifespan of a zinc reservoir?",
         answer:
-          "A well-built galvanised steel reservoir with proper PVC lining and maintenance can typically last 20–30 years, although this is not a guarantee. Lifespan depends on water chemistry, roof protection, base stability and scheduled inspections.",
+          "There is no single figure, and no lifespan is a guarantee. In a lined Damtech tank the PVC liner holds the water and usually sets the main maintenance interval, while the steel coating protects the shell from the weather. Published durability data for Z275 galvanised sheet give the outer zinc coating roughly 12–42 years in a moderate (C3) atmosphere, typical of most inland sites, 5–12 years in C4 and 2–5 years in severe (C5) conditions near the sea. Aluzinc lasts about three times longer on the outside in the same air. Water chemistry, distance from the coast, the base and regular inspections all affect the result.",
       },
     ],
   },
