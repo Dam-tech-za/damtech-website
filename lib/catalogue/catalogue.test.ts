@@ -222,7 +222,7 @@ describe("niche fish pond and trough pages", () => {
     assert.equal(pond15.slug, "15000-litre-fish-pond");
     assert.equal(trough.slug, "livestock-water-trough");
     assert.equal(pond10.priceInclVatZar, 13999);
-    assert.equal(pond15.priceInclVatZar, 13999);
+    assert.equal(pond15.priceInclVatZar, 17999);
     assert.equal(trough.priceInclVatZar, 4999);
     assert.equal(
       pond10.ctaLabel,
@@ -254,14 +254,17 @@ describe("niche fish pond and trough pages", () => {
     );
   });
 
-  it("does not invent pond dimensions or claim filtration, fish or duck ponds", () => {
+  it("publishes owner-confirmed pond sizes and does not claim filtration, fish or duck ponds", () => {
     const ponds = CATALOGUE_PRODUCTS.filter(
       (product) => product.categoryId === "fish-ponds-and-aquaculture-tanks",
     );
     assert.equal(ponds.length, 2);
+    const sizes: Record<string, [number, number]> = {
+      "DMT-FP-10000": [4, 0.762],
+      "DMT-FP-15000": [5, 0.762],
+    };
     for (const pond of ponds) {
-      assert.equal(isUnresolvedFact(pond.diameterM), true);
-      assert.equal(isUnresolvedFact(pond.heightM), true);
+      assert.deepEqual([pond.diameterM, pond.heightM], sizes[pond.sku]);
       assert.doesNotMatch(pond.h1, /\d+(\.\d+)?\s*m/);
       const published = [
         pond.heroCopy,
@@ -304,12 +307,10 @@ describe("niche fish pond and trough pages", () => {
 });
 
 describe("unresolved facts stay typed", () => {
-  it("does not publish fish-pond dimensions or trough inclusions", () => {
+  it("does not publish trough inclusions", () => {
     const pond = getBySku("DMT-FP-10000");
     const trough = getBySku("DMT-LT-1500");
     assert.ok(pond && trough);
-    assert.equal(isUnresolvedFact(pond.diameterM), true);
-    assert.equal(isUnresolvedFact(pond.heightM), true);
     assert.equal(isUnresolvedFact(pond.images.main), false);
     assert.equal(isUnresolvedFact(trough.inclusions), true);
     assert.equal(trough.grossTheoreticalCapacityLitres, 670);
