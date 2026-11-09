@@ -293,7 +293,7 @@ describe("12 product-price snapshot", () => {
       "DMT-WT-50000": 31999,
       "DMT-WT-100000": 43999,
       "DMT-FP-10000": 13999,
-      "DMT-FP-15000": 13999,
+      "DMT-FP-15000": 17999,
       "DMT-LT-1500": 4999,
     };
     for (const sku of CATALOGUE_SKUS) {

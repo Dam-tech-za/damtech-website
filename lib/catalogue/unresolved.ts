@@ -5,12 +5,6 @@ import type { UnresolvedBusinessFact } from "./types.ts";
  * confirms them. Do not invent values for these fields in UI, schema or feeds.
  */
 export const UNRESOLVED_BUSINESS_FACTS = {
-  fishPondDimensions: {
-    status: "unresolved",
-    field: "dimensions",
-    reason:
-      "Fish-pond diameter, height and ring count are not in the supplied commercial data or the verified tank catalogue.",
-  },
   fishPondInclusions: {
     status: "unresolved",
     field: "inclusions",

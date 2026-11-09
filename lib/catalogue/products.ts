@@ -549,7 +549,7 @@ export const CATALOGUE_PRODUCTS: readonly CatalogueProduct[] = [
       "The 10 000L fish pond provides significantly more water volume than a small moulded garden pond while avoiding permanent concrete construction. It can be used as the containment component of a correctly designed fish-farming, aquaculture or ornamental pond system.",
     bodyHeading: "Large Fish Pond for South African Properties and Aquaculture Projects",
     bodyCopy:
-      "At 10 000 litres this supply-only kit is sized for small aquaculture projects, fish-farming trials and large ornamental fish ponds on farms and estates. Diameter and height are confirmed on the invoice; they are not published here because they are not in the verified commercial data. The price is R13 999 incl. VAT. Delivery, installation, filtration, pumps and aeration are excluded.",
+      "At 10 000 litres this supply-only kit is sized for small aquaculture projects, fish-farming trials and large ornamental fish ponds on farms and estates. The kit is 4 m in diameter and 0.762 m high (one corrugated sheet high). The price is R13 999 incl. VAT. Delivery, installation, filtration, pumps and aeration are excluded.",
     supportingSections: [
       {
         heading: "Containment Is Only One Part of a Healthy Fish-Pond System",
@@ -569,11 +569,13 @@ export const CATALOGUE_PRODUCTS: readonly CatalogueProduct[] = [
     transportExcluded: true,
     installationExcluded: true,
     capacityLitres: 10000,
-    diameterM: UNRESOLVED_BUSINESS_FACTS.fishPondDimensions,
-    heightM: UNRESOLVED_BUSINESS_FACTS.fishPondDimensions,
-    coreSpecSummary: "10 000L containment · supply only",
+    diameterM: 4,
+    heightM: 0.762,
+    coreSpecSummary: "4 m diameter · 0.762 m high · supply only",
     specifications: [
       { label: "Nominal marketed capacity", value: "10 000 litres" },
+      { label: "Diameter", value: "4 m" },
+      { label: "Height", value: "0.762 m (one corrugated sheet)" },
       { label: "Product type", value: "Corrugated steel fish pond kit" },
       { label: "Supply format", value: "Supply only" },
       { label: "Delivery", value: "Excluded" },
@@ -589,7 +591,7 @@ export const CATALOGUE_PRODUCTS: readonly CatalogueProduct[] = [
     deliveryExplanation:
       `This is a supply-only pond kit. Delivery only throughout South Africa. Delivery and installation are excluded from the listed price. ${MERCHANT_SHIPPING_POLICY_COPY.deliveryCharge} Installation, filtration, pumps and aeration are not included unless quoted separately.`,
     sitePreparation:
-      "A level, compacted pad is required before assembling the corrugated steel shell so the liner is not stressed by settlement. Damtech typically specifies sand or crusher dust on geotextile for steel kits. Pond diameter is confirmed on the invoice. Base work, assembly, filtration and aeration are excluded from the R13 999 incl. VAT price.",
+      "A level, compacted pad is required before assembling the corrugated steel shell so the liner is not stressed by settlement. Damtech typically specifies sand or crusher dust on geotextile for steel kits. The pad must suit the 4 m pond diameter. Base work, assembly, filtration and aeration are excluded from the R13 999 incl. VAT price.",
     applications: [
       "Small aquaculture projects",
       "Fish-farming trials",
@@ -627,7 +629,7 @@ export const CATALOGUE_PRODUCTS: readonly CatalogueProduct[] = [
       {
         question: "What preparation is required before assembling the pond?",
         answer:
-          "Prepare a level, compacted base — typically sand or crusher dust on geotextile — before assembling the shell. The base is not included in the kit price. Exact footprint is confirmed on the invoice because pond diameter is not published as a verified figure.",
+          "Prepare a level, compacted base — typically sand or crusher dust on geotextile — before assembling the shell. The base is not included in the kit price. The pond is 4 m in diameter, so allow a level pad slightly larger than that.",
       },
       {
         question: "Can Damtech quote for larger fish ponds?",
@@ -664,7 +666,7 @@ export const CATALOGUE_PRODUCTS: readonly CatalogueProduct[] = [
     h1: "15 000L Fish Farming Pond and Aquaculture Tank",
     seoTitle: "15 000L Fish Farming Pond South Africa | Damtech",
     seoDescription:
-      "15 000L fish-farming pond and aquaculture tank kit for R13 999 incl. VAT. Corrugated steel supply-only kit. Transport and installation excluded.",
+      "15 000L fish-farming pond and aquaculture tank kit for R17 999 incl. VAT. Corrugated steel supply-only kit. Transport and installation excluded.",
     feedTitle: "15 000L Corrugated Steel Fish Pond Kit",
     merchantEligible: true,
     heroCopy:
@@ -673,7 +675,7 @@ export const CATALOGUE_PRODUCTS: readonly CatalogueProduct[] = [
       "This larger pond is intended for customers who require more containment volume than the 10 000L model. The final aquaculture system must still be designed around the species, stocking density, water exchange, filtration, aeration and operational requirements.",
     bodyHeading: "15 000 Litre Fish-Farming and Aquaculture Containment",
     bodyCopy:
-      "The 15 000L kit is a containment vessel, not a commercially productive fish farm on its own. It does not include aeration, filtration or livestock. Diameter and height remain unpublished until Damtech confirms them on the invoice. The price is R13 999 incl. VAT. Delivery and installation are excluded.",
+      "The 15 000L kit is a containment vessel, not a commercially productive fish farm on its own. It does not include aeration, filtration or livestock. The kit is 5 m in diameter and 0.762 m high (one corrugated sheet high). The price is R17 999 incl. VAT. Delivery and installation are excluded.",
     supportingSections: [
       {
         heading: "Containment Is Only One Part of a Healthy Fish-Pond System",
@@ -685,7 +687,7 @@ export const CATALOGUE_PRODUCTS: readonly CatalogueProduct[] = [
     categoryId: "fish-ponds-and-aquaculture-tanks",
     categoryLabel: PRODUCT_CATEGORY_LABELS["fish-ponds-and-aquaculture-tanks"],
     rfqService: "Fish pond / aquaculture tank",
-    priceInclVatZar: 13999,
+    priceInclVatZar: 17999,
     currency: "ZAR",
     vatIncluded: true,
     vatRatePercent: VAT_RATE_PERCENT,
@@ -693,18 +695,20 @@ export const CATALOGUE_PRODUCTS: readonly CatalogueProduct[] = [
     transportExcluded: true,
     installationExcluded: true,
     capacityLitres: 15000,
-    diameterM: UNRESOLVED_BUSINESS_FACTS.fishPondDimensions,
-    heightM: UNRESOLVED_BUSINESS_FACTS.fishPondDimensions,
-    coreSpecSummary: "15 000L containment · supply only",
+    diameterM: 5,
+    heightM: 0.762,
+    coreSpecSummary: "5 m diameter · 0.762 m high · supply only",
     specifications: [
       { label: "Nominal marketed capacity", value: "15 000 litres" },
+      { label: "Diameter", value: "5 m" },
+      { label: "Height", value: "0.762 m (one corrugated sheet)" },
       { label: "Product type", value: "Corrugated steel fish-farming pond kit" },
       { label: "Supply format", value: "Supply only" },
       { label: "Delivery", value: "Excluded" },
       { label: "Installation", value: "Excluded" },
       { label: "Filtration and aeration", value: "Excluded" },
       { label: "SKU", value: "DMT-FP-15000" },
-      { label: "Price", value: formatZarWholeInclVat(13999) },
+      { label: "Price", value: formatZarWholeInclVat(17999) },
     ],
     inclusions: FISH_POND_INCLUSIONS,
     exclusions: FISH_POND_EXCLUSIONS,
@@ -713,7 +717,7 @@ export const CATALOGUE_PRODUCTS: readonly CatalogueProduct[] = [
     deliveryExplanation:
       `This is a supply-only pond kit. Delivery only throughout South Africa. Delivery and installation are excluded from the listed price. ${MERCHANT_SHIPPING_POLICY_COPY.deliveryCharge} Assembly, filtration and aeration are quoted separately if required.`,
     sitePreparation:
-      "Prepare a level, compacted sand or crusher-dust base on geotextile before assembling the 15 000L shell. The larger volume still needs an even pad so the liner is not strained. Exact footprint is confirmed on the invoice. The base, transport and installation are excluded from the R13 999 incl. VAT price.",
+      "Prepare a level, compacted sand or crusher-dust base on geotextile before assembling the 15 000L shell. The larger volume still needs an even pad so the liner is not strained. The pond is 5 m in diameter, so allow a level pad slightly larger than that. The base, transport and installation are excluded from the R17 999 incl. VAT price.",
     applications: [
       "Fish-farming and aquaculture containment",
       "Breeding or grow-out projects",
@@ -724,14 +728,14 @@ export const CATALOGUE_PRODUCTS: readonly CatalogueProduct[] = [
     images: fishPondImageManifest("DMT-FP-15000"),
     faqs: [
       {
-        question: "What is included in the R13 999 price?",
+        question: "What is included in the R17 999 price?",
         answer:
-          "R13 999 incl. VAT covers the supply-only corrugated steel shell, 550 gsm PVC liner and bidem floor sheet. Filtration, pumps, aeration, fish, transport and installation are not included.",
+          "R17 999 incl. VAT covers the supply-only corrugated steel shell, 550 gsm PVC liner and bidem floor sheet. Filtration, pumps, aeration, fish, transport and installation are not included.",
       },
       {
         question: "Is VAT included?",
         answer:
-          "Yes. R13 999 includes 15% VAT. Damtech does not advertise an ex-VAT consumer price for this kit.",
+          "Yes. R17 999 includes 15% VAT. Damtech does not advertise an ex-VAT consumer price for this kit.",
       },
       {
         question: "What is excluded from the fish-pond kit?",
@@ -751,7 +755,7 @@ export const CATALOGUE_PRODUCTS: readonly CatalogueProduct[] = [
       {
         question: "How does it differ from the 10 000L fish pond?",
         answer:
-          "It offers 5 000 litres more marketed containment volume at R17 999 incl. VAT rather than R13 999. Both are supply-only liner kits. Neither publishes verified diameter or height on this website.",
+          "It offers 5 000 litres more marketed containment volume at R17 999 incl. VAT rather than R13 999. Both are supply-only liner kits, 0.762 m high. The 15 000L pond is 5 m in diameter and the 10 000L pond is 4 m.",
       },
       {
         question: "Can transport and assembly be quoted separately?",

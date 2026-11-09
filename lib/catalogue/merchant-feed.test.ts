@@ -102,7 +102,7 @@ describe("enabled Merchant TSV content", () => {
       "DMT-WT-50000": "31999.00 ZAR",
       "DMT-WT-100000": "43999.00 ZAR",
       "DMT-FP-10000": "13999.00 ZAR",
-      "DMT-FP-15000": "13999.00 ZAR",
+      "DMT-FP-15000": "17999.00 ZAR",
       "DMT-LT-1500": "4999.00 ZAR",
     };
     for (const row of parsed.rows) {
