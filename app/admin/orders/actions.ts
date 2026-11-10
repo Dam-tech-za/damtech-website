@@ -61,6 +61,7 @@ export async function updateOrderStatusAction(
     revalidatePath("/admin/");
     revalidatePath(`/admin/orders/${id}/`);
     revalidatePath("/admin/orders/");
+    revalidatePath("/admin/operations/online-purchases/");
     return actionSuccess(`Status changed to ${orderStatusLabel(status)}.`);
   } catch (error) {
     unstable_rethrow(error);
@@ -131,4 +132,73 @@ export async function resendOrderConfirmationAction(orderId: string) {
     return { ok: false as const, error: "Confirmation could not be sent." };
   }
   return { ok: true as const };
+}
+
+const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
+
+function text(formData: FormData, name: string, max: number): string | null {
+  const value = String(formData.get(name) ?? "").trim().slice(0, max);
+  return value || null;
+}
+
+/** Save courier and tracking details for a shop order. */
+export async function updateOrderTrackingAction(
+  _prev: AdminActionState,
+  formData: FormData,
+): Promise<AdminActionState> {
+  const id = String(formData.get("id") ?? "");
+  if (!id) return actionFailure("This order no longer exists.");
+
+  const dates: Record<string, string | null> = {};
+  for (const name of ["dispatched_on", "expected_delivery_on", "delivered_on"]) {
+    const value = text(formData, name, 10);
+    if (value && !DATE_RE.test(value)) return actionFailure("Enter dates as YYYY-MM-DD.");
+    dates[name] = value;
+  }
+  const trackingUrl = text(formData, "tracking_url", 500);
+  if (trackingUrl && !/^https:\/\/\S+$/.test(trackingUrl)) {
+    return actionFailure("The tracking link must start with https://");
+  }
+  const tracking = {
+    courier_name: text(formData, "courier_name", 80),
+    tracking_number: text(formData, "tracking_number", 80),
+    tracking_url: trackingUrl,
+    ...dates,
+    fulfilment_notes: text(formData, "fulfilment_notes", 2000),
+  };
+
+  try {
+    const admin = await assertAdmin({ permission: "manageOrders" });
+    const existing = await getCatalogueOrder(id);
+    if (!existing) return actionFailure("This order no longer exists.");
+
+    const supabase = await adminOrdersDb({ manage: true });
+    const { error } = await supabase
+      .from("catalogue_orders")
+      .update({ ...tracking, updated_at: new Date().toISOString() })
+      .eq("id", id);
+    if (error) {
+      console.error("[orders] tracking update failed:", error.message);
+      if (error.code === "42703" || error.code === "PGRST204") {
+        return actionFailure("Tracking cannot be saved yet: the tracking database update has not been applied.");
+      }
+      return actionFailure(describeActionError(error));
+    }
+
+    await writeAuditLog({
+      actorUserId: admin.user.id,
+      actorEmail: admin.profile.email,
+      action: "order.tracking_updated",
+      entityType: "catalogue_order",
+      entityId: id,
+      afterData: { ...tracking, order_reference: existing.order_reference },
+    });
+    revalidatePath(`/admin/orders/${id}/`);
+    revalidatePath("/admin/orders/");
+    revalidatePath("/admin/operations/online-purchases/");
+    return actionSuccess("Delivery and tracking saved.");
+  } catch (error) {
+    unstable_rethrow(error);
+    return actionFailure(describeActionError(error));
+  }
 }

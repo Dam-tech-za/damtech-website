@@ -5,9 +5,8 @@ import { getCatalogueOrder } from "@/lib/orders/list";
 import { ORDER_STATUSES } from "@/lib/orders/types";
 import { formatZar } from "@/lib/estimating/money";
 import { DELIVERY_FULFILMENT } from "@/lib/orders/delivery";
-import {
-  updateOrderStatusAction,
-} from "../actions";
+import { updateOrderStatusAction, updateOrderTrackingAction } from "../actions";
+import { PURCHASE_STAGE_LABELS, makeByDate, purchaseStage } from "@/lib/orders/purchase-stage";
 import { ResendOrderConfirmationButton } from "@/components/admin/ResendOrderConfirmationButton";
 import { createClient } from "@/lib/supabase/server";
 import {
@@ -17,6 +16,9 @@ import {
 import {
   AdminActionForm,
   AdminBackLink,
+  AdminDateInput,
+  AdminInput,
+  AdminTextarea,
   AdminEmptyState,
   AdminPageHeader,
   AdminPanel,
@@ -45,6 +47,8 @@ export default async function AdminOrderDetailPage({ params }: PageProps) {
   const order = await getCatalogueOrder(id);
   if (!order) notFound();
 
+  const makeBy = makeByDate(order);
+
   const supabase = await createClient();
   const { data: history } = await supabase
     .from("audit_log")
@@ -56,7 +60,7 @@ export default async function AdminOrderDetailPage({ params }: PageProps) {
 
   return (
     <div className="admin-stack--page">
-      <AdminBackLink listPath="/admin/orders/" label="Back to orders" />
+      <AdminBackLink listPath="/admin/operations/online-purchases/" label="Back to online purchases" />
       <AdminPageHeader
         title={order.order_reference}
         description={`${order.product_name_snapshot} · ${order.sku} · placed ${formatDateTime(order.created_at)}`}
@@ -69,7 +73,11 @@ export default async function AdminOrderDetailPage({ params }: PageProps) {
       />
       <AdminPanel
         title="Status"
-        description="Orders are invoice-only: nothing is charged online. Move the order through invoicing, payment and delivery here."
+        description={
+          order.payment_method === "payfast"
+            ? "Paid online through PayFast. Move the order through manufacture and delivery here."
+            : "Invoice order: nothing is charged online. Move the order through invoicing, payment and delivery here."
+        }
       >
         {canPerform(admin.profile.role, "manageOrders") ? (
           <>
@@ -110,6 +118,89 @@ export default async function AdminOrderDetailPage({ params }: PageProps) {
           {communicationStatusLabel(order.confirmation_email_status)}. Email to
           Damtech: {communicationStatusLabel(order.internal_email_status)}.
         </p>
+      </AdminPanel>
+      <AdminPanel
+        title="Payment"
+        description={`Stage: ${PURCHASE_STAGE_LABELS[purchaseStage(order)]}${makeBy && !order.dispatched_on ? `. Make by ${formatDateTime(makeBy.toISOString())}` : ""}`}
+      >
+        <dl className="admin-kv">
+          <div>
+            <dt>Method</dt>
+            <dd>{order.payment_method === "payfast" ? "PayFast" : "Invoice"}</dd>
+          </div>
+          <div>
+            <dt>Payment status</dt>
+            <dd>{order.payment_method === "payfast" ? (order.payment_status ?? "—") : "On invoice"}</dd>
+          </div>
+          <div>
+            <dt>Goods incl. VAT</dt>
+            <dd>{formatZar(Number(order.total_price_snapshot))}</dd>
+          </div>
+          <div>
+            <dt>Delivery incl. VAT</dt>
+            <dd>{order.delivery_fee_snapshot == null ? "On invoice" : formatZar(Number(order.delivery_fee_snapshot))}</dd>
+          </div>
+          <div>
+            <dt>Amount paid</dt>
+            <dd>{order.amount_paid == null ? "—" : formatZar(Number(order.amount_paid))}</dd>
+          </div>
+          <div>
+            <dt>Paid at</dt>
+            <dd>{formatDateTime(order.paid_at)}</dd>
+          </div>
+          <div>
+            <dt>PayFast payment ID</dt>
+            <dd>{order.payfast_payment_id || "—"}</dd>
+          </div>
+        </dl>
+      </AdminPanel>
+      <AdminPanel
+        title="Delivery and tracking"
+        description="Record the courier booking here. The customer is not emailed automatically."
+      >
+        {canPerform(admin.profile.role, "manageOrders") ? (
+          <AdminActionForm action={updateOrderTrackingAction} className="ops-track-form">
+            <input type="hidden" name="id" value={order.id} />
+            <label>
+              <span>Courier</span>
+              <AdminInput name="courier_name" defaultValue={order.courier_name ?? ""} maxLength={80} list="order-couriers" />
+              <datalist id="order-couriers">
+                <option value="The Courier Guy" />
+                <option value="Damtech delivery" />
+              </datalist>
+            </label>
+            <label>
+              <span>Tracking number</span>
+              <AdminInput name="tracking_number" defaultValue={order.tracking_number ?? ""} maxLength={80} />
+            </label>
+            <label className="ops-track-form__wide">
+              <span>Tracking link</span>
+              <AdminInput name="tracking_url" type="url" defaultValue={order.tracking_url ?? ""} maxLength={500} placeholder="https://" />
+            </label>
+            <label>
+              <span>Dispatched on</span>
+              <AdminDateInput name="dispatched_on" defaultValue={order.dispatched_on ?? ""} />
+            </label>
+            <label>
+              <span>Expected delivery</span>
+              <AdminDateInput name="expected_delivery_on" defaultValue={order.expected_delivery_on ?? ""} />
+            </label>
+            <label>
+              <span>Delivered on</span>
+              <AdminDateInput name="delivered_on" defaultValue={order.delivered_on ?? ""} />
+            </label>
+            <label className="ops-track-form__wide">
+              <span>Internal notes</span>
+              <AdminTextarea name="fulfilment_notes" defaultValue={order.fulfilment_notes ?? ""} rows={3} maxLength={2000} />
+            </label>
+            <AdminSubmitButton>Save delivery and tracking</AdminSubmitButton>
+          </AdminActionForm>
+        ) : (
+          <p>
+            {order.courier_name || "No courier yet"}
+            {order.tracking_number ? ` · ${order.tracking_number}` : ""}
+          </p>
+        )}
       </AdminPanel>
       <AdminPanel title="Customer">
         <dl className="admin-kv">

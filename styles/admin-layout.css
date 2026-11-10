@@ -5272,3 +5272,32 @@ table.admin-sheet .admin-status {
 .ops-inline--wrap .ops-inline-input:not(.is-focused)::placeholder { color: transparent; }
 .ops-location .ops-inline.ops-inline--wrap { white-space: normal; overflow: visible; }
 .ops-client__org .ops-inline-input { field-sizing: content; width: auto; max-width: 100%; min-width: 2ch; }
+
+/* Online Purchases: toolbar and the order tracking form */
+.ops-purchases__toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem 1.5rem;
+  margin-bottom: 1rem;
+}
+.ops-purchases__search {
+  flex: 1 1 16rem;
+  max-width: 24rem;
+}
+.ops-track-form {
+  display: grid;
+  gap: 0.875rem 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+  align-items: end;
+}
+.ops-track-form label {
+  display: grid;
+  gap: 0.3rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+.ops-track-form__wide {
+  grid-column: 1 / -1;
+}

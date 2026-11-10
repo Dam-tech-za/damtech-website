@@ -14,7 +14,7 @@ export type AdminNavGroup = {
 
 export const ADMIN_NAV_GROUPS: AdminNavGroup[] = [
   { id: "overview", label: "Overview", itemIds: ["dashboard"] },
-  { id: "operations", label: "Operations", itemIds: ["operations", "ops-projects", "ops-calendar", "procurement", "reservoir-boq", "xero-review", "financials"] },
+  { id: "operations", label: "Operations", itemIds: ["operations", "ops-projects", "online-purchases", "ops-calendar", "procurement", "reservoir-boq", "xero-review", "financials"] },
   {
     id: "sales",
     label: "Sales",

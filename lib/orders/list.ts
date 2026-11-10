@@ -40,6 +40,27 @@ export type CatalogueOrderDetail = CatalogueOrderListRow & {
   updated_at: string;
 };
 
+/**
+ * Payment and delivery-tracking columns. Optional because they come from later
+ * migrations (PayFast, tracking) that may not be applied yet.
+ */
+export type CatalogueOrderShipping = {
+  payment_method?: string | null;
+  payment_status?: string | null;
+  delivery_fee_snapshot?: number | string | null;
+  amount_due_snapshot?: number | string | null;
+  amount_paid?: number | string | null;
+  paid_at?: string | null;
+  payfast_payment_id?: string | null;
+  courier_name?: string | null;
+  tracking_number?: string | null;
+  tracking_url?: string | null;
+  dispatched_on?: string | null;
+  expected_delivery_on?: string | null;
+  delivered_on?: string | null;
+  fulfilment_notes?: string | null;
+};
+
 export async function listCatalogueOrders(filters: {
   q?: string;
   status?: string;
@@ -95,9 +116,31 @@ export async function listCatalogueOrders(filters: {
   };
 }
 
+export type OnlinePurchaseRow = CatalogueOrderDetail & CatalogueOrderShipping;
+
+/** Every shop order, newest first, for the admin Online Purchases board. */
+export async function listOnlinePurchases(): Promise<{ rows: OnlinePurchaseRow[]; error: boolean }> {
+  try {
+    const supabase = await adminOrdersDb();
+    const { data, error } = await supabase
+      .from("catalogue_orders")
+      .select("*")
+      .order("created_at", { ascending: false })
+      .limit(500);
+    if (error) {
+      console.error("[orders] purchases list failed:", error.message);
+      return { rows: [], error: true };
+    }
+    return { rows: (data ?? []) as OnlinePurchaseRow[], error: false };
+  } catch (error) {
+    console.error("[orders] purchases access failed:", error instanceof Error ? error.message : error);
+    return { rows: [], error: true };
+  }
+}
+
 export async function getCatalogueOrder(
   id: string,
-): Promise<CatalogueOrderDetail | null> {
+): Promise<OnlinePurchaseRow | null> {
   let supabase;
   try {
     supabase = await adminOrdersDb();
@@ -112,5 +155,5 @@ export async function getCatalogueOrder(
     .maybeSingle();
   if (error) console.error("[orders] detail failed:", error.message);
   if (error || !data) return null;
-  return data as CatalogueOrderDetail;
+  return data as OnlinePurchaseRow;
 }

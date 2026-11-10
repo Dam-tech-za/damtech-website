@@ -103,3 +103,25 @@ describe("Google visibility", () => {
     assert.equal(row?.link, pvcLinerVariantUrl(PVC_LINERS.find((l) => l.sku === "DMT-PVC-800-05M-3R")!));
   });
 });
+
+import { addBusinessDays, makeByDate, purchaseStage } from "../orders/purchase-stage.ts";
+
+describe("online purchase stages", () => {
+  it("derives the fulfilment stage from status, payment and tracking", () => {
+    assert.equal(purchaseStage({ status: "awaiting_payment", payment_method: "payfast", payment_status: "pending" }), "awaiting_payment");
+    assert.equal(purchaseStage({ status: "paid", payment_method: "payfast", payment_status: "paid" }), "to_make");
+    assert.equal(purchaseStage({ status: "pending_invoice", payment_method: "invoice" }), "awaiting_payment");
+    assert.equal(purchaseStage({ status: "ready_for_delivery" }), "ready");
+    assert.equal(purchaseStage({ status: "processing", dispatched_on: "2026-11-12" }), "dispatched");
+    assert.equal(purchaseStage({ status: "processing", dispatched_on: "2026-11-12", delivered_on: "2026-11-14" }), "delivered");
+    assert.equal(purchaseStage({ status: "cancelled", dispatched_on: "2026-11-12" }), "cancelled");
+  });
+
+  it("counts five business days for made-to-order liners only", () => {
+    // Tuesday 10 Nov 2026 + 5 business days = Tuesday 17 Nov 2026.
+    assert.equal(addBusinessDays(new Date("2026-11-10T10:00:00Z"), 5).toISOString().slice(0, 10), "2026-11-17");
+    assert.equal(makeByDate({ sku: "DMT-PVC-550-05M-3R", paid_at: "2026-11-13T10:00:00Z" })?.toISOString().slice(0, 10), "2026-11-20");
+    assert.equal(makeByDate({ sku: "DMT-WT-10000", paid_at: "2026-11-13T10:00:00Z" }), null);
+    assert.equal(makeByDate({ sku: "DMT-PVC-550-05M-3R", paid_at: null }), null);
+  });
+});
