@@ -1235,6 +1235,7 @@
 .shop-grid {
   display: grid;
   gap: 1.25rem;
+  margin-top: 1.5rem;
 }
 @media (min-width: 768px) {
   .shop-grid {
@@ -1253,7 +1254,8 @@
 }
 .shop-card__media {
   aspect-ratio: 4 / 3;
-  background: var(--dt-cream);
+  background: #fff;
+  border-bottom: 1px solid var(--dt-line);
   position: relative;
 }
 .shop-card__media img {
