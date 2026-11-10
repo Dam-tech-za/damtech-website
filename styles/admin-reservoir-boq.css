@@ -160,6 +160,74 @@
   max-width: 58rem;
 }
 
+.rboq-truss {
+  margin: 0;
+  display: grid;
+  gap: 0.25rem;
+}
+
+.rboq-truss__title {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--admin-text);
+}
+
+.rboq-info {
+  position: relative;
+  display: inline-flex;
+  color: var(--admin-primary);
+  cursor: help;
+}
+
+.rboq-info__pop {
+  display: none;
+  position: absolute;
+  z-index: 20;
+  left: 1.4rem;
+  top: -0.4rem;
+  width: max-content;
+  max-width: min(30rem, 80vw);
+  padding: 0.6rem 0.75rem;
+  background: var(--admin-card-bg);
+  border: 1px solid var(--admin-border);
+  border-radius: var(--admin-radius-sm);
+  box-shadow: var(--admin-shadow-md);
+  font-weight: 400;
+  color: var(--admin-text);
+  cursor: default;
+}
+
+.rboq-info:hover .rboq-info__pop,
+.rboq-info:focus .rboq-info__pop,
+.rboq-info:focus-within .rboq-info__pop {
+  display: block;
+}
+
+.rboq-truss__details {
+  border-collapse: collapse;
+  font-size: 0.75rem;
+}
+
+.rboq-truss__details th,
+.rboq-truss__details td {
+  padding: 0.15rem 0.5rem 0.15rem 0;
+  text-align: left;
+  vertical-align: top;
+}
+
+.rboq-truss__details th {
+  font-weight: 600;
+  color: var(--admin-text-muted);
+  white-space: nowrap;
+}
+
+.rboq-truss__print {
+  display: none;
+}
+
 .rboq-sketch__note {
   margin: 0;
   font-size: 0.75rem;
@@ -280,8 +348,32 @@
     background: #ffffff !important;
   }
 
+  .rboq-truss {
+    grid-template-columns: 1fr 78mm;
+    align-items: center;
+    column-gap: 6mm;
+    break-inside: avoid;
+    margin-top: 3mm;
+  }
+
+  .rboq-truss__title {
+    grid-column: 1 / -1;
+  }
+
+  .rboq-info {
+    display: none;
+  }
+
+  .rboq-truss__print {
+    display: block;
+  }
+
+  .rboq-truss__details {
+    font-size: 8pt;
+  }
+
   .rboq-sketch__elevation {
-    max-height: 52mm;
+    max-height: 45mm;
   }
 
   .rboq-sketch__plan {

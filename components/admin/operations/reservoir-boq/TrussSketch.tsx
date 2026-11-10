@@ -54,7 +54,7 @@ function PlanView({ roof, diameterM }: Props) {
 function Elevation({ truss, names, roof }: { truss: TrussDetail; names: string[]; roof: RoofDesign }) {
   const width = 640;
   const padX = 34;
-  const top = 30;
+  const top = 8;
   const drawH = 92;
   const rho = truss.span_m / 2;
   const sx = (width - 2 * padX) / truss.span_m;
@@ -75,64 +75,87 @@ function Elevation({ truss, names, roof }: { truss: TrussDetail; names: string[]
   truss.ribs.forEach((r, i) => ribCounts.set(short(r), (ribCounts.get(short(r)) ?? 0) + (i === 0 ? 1 : 2)));
   const list = (m: Map<string, number>) => [...m.entries()].map(([k, v]) => `${v} x ${k}`).join(", ");
 
+  const tiesHere = roof.tie_lines_m.filter((x) => Math.abs(x) < rho - 0.05);
+  const details: [string, string][] = [
+    ["Number off", `${names.length} (${names.join(", ")})`],
+    ["Span (bottom chord)", `${truss.span_m.toFixed(3)} m, ${short(roof.bottom_chord)}`],
+    ["Top chord", `2 x ${(truss.top_chord_m / 2).toFixed(3)} m, ${short(roof.top_chord)}`],
+    ["Depth", `${centre} mm at the centre, ${depths[last]} mm at the rim`],
+    ["Ribs", list(ribCounts)],
+    ["Diagonals", list(counts) || "none"],
+    ["Truss ends", "solid 4 mm plate over the last panel at each end"],
+    ["Tie lines", tiesHere.length ? `${tiesHere.length} (dots on the bottom chord)` : "none"],
+  ];
+
   return (
-    <svg viewBox={`0 0 ${width} ${baseY + 44}`} className="rboq-sketch__elevation" role="img" aria-label={`Truss ${names.join(", ")} elevation`}>
-      <text x={padX} y={16} className="rboq-svg-caption">
-        {names.join(" and ")} ({names.length} off): span {truss.span_m.toFixed(3)} m, {centre} mm deep at the centre, {depths[last]} mm at the rim
-      </text>
-      {roof.rim_drop_mm > 0 ? (
-        <g>
-          <line x1={padX - 20} y1={Y(roof.rim_drop_mm)} x2={width - padX + 20} y2={Y(roof.rim_drop_mm)} className="rboq-svg-wall" />
-          <text x={padX - 20} y={Y(roof.rim_drop_mm) - 4} className="rboq-svg-label">
-            wall
-          </text>
-        </g>
-      ) : null}
-      {/* bottom chord */}
-      <line x1={X(-rho)} y1={baseY} x2={X(rho)} y2={baseY} className="rboq-svg-chord" />
-      {/* top chord */}
-      <polyline points={`${X(-rho)},${Y(depths[last])} ${X(0)},${Y(centre)} ${X(rho)},${Y(depths[last])}`} className="rboq-svg-chord" />
-      {sides.map((side) => (
-        <g key={side}>
-          {nodes.map((x, i) =>
-            side === -1 && i === 0 ? null : (
-              <line key={`rib-${i}`} x1={X(side * x)} y1={baseY} x2={X(side * x)} y2={Y(depths[i])} className="rboq-svg-web" />
-            ),
-          )}
-          {truss.panels.map((panel, j) => {
-            const xa = side * nodes[j];
-            const xb = side * nodes[j + 1];
-            if (panel.web === "solid") {
-              return (
-                <polygon
-                  key={`end-${j}`}
-                  points={`${X(xa)},${baseY} ${X(xa)},${Y(depths[j])} ${X(xb)},${Y(depths[j + 1])} ${X(xb)},${baseY}`}
-                  className="rboq-svg-plate"
-                />
+    <figure className="rboq-truss">
+      <figcaption className="rboq-truss__title">
+        {names.join(" and ")}: span {truss.span_m.toFixed(3)} m
+        <span className="rboq-info" tabIndex={0} role="button" aria-label={`Details of truss ${names.join(" and ")}`}>
+          <svg viewBox="0 0 20 20" width="16" height="16" aria-hidden className="rboq-info__icon">
+            <circle cx="10" cy="10" r="8.5" fill="none" stroke="currentColor" strokeWidth="1.5" />
+            <path d="M10 9v5M10 6.2v.1" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+          </svg>
+          <span className="rboq-info__pop" role="tooltip">
+            <TrussDetails rows={details} />
+          </span>
+        </span>
+      </figcaption>
+      <svg viewBox={`0 0 ${width} ${baseY + 14}`} className="rboq-sketch__elevation" role="img" aria-label={`Truss ${names.join(", ")} elevation`}>
+        {roof.rim_drop_mm > 0 ? <line x1={padX - 20} y1={Y(roof.rim_drop_mm)} x2={width - padX + 20} y2={Y(roof.rim_drop_mm)} className="rboq-svg-wall" /> : null}
+        <line x1={X(-rho)} y1={baseY} x2={X(rho)} y2={baseY} className="rboq-svg-chord" />
+        <polyline points={`${X(-rho)},${Y(depths[last])} ${X(0)},${Y(centre)} ${X(rho)},${Y(depths[last])}`} className="rboq-svg-chord" />
+        {sides.map((side) => (
+          <g key={side}>
+            {nodes.map((x, i) =>
+              side === -1 && i === 0 ? null : (
+                <line key={`rib-${i}`} x1={X(side * x)} y1={baseY} x2={X(side * x)} y2={Y(depths[i])} className="rboq-svg-web" />
+              ),
+            )}
+            {truss.panels.map((panel, j) => {
+              const xa = side * nodes[j];
+              const xb = side * nodes[j + 1];
+              if (panel.web === "solid") {
+                return (
+                  <polygon
+                    key={`end-${j}`}
+                    points={`${X(xa)},${baseY} ${X(xa)},${Y(depths[j])} ${X(xb)},${Y(depths[j + 1])} ${X(xb)},${baseY}`}
+                    className="rboq-svg-plate"
+                  />
+                );
+              }
+              return panel.dir === "down to centre" ? (
+                <line key={`dg-${j}`} x1={X(xb)} y1={Y(depths[j + 1])} x2={X(xa)} y2={baseY} className="rboq-svg-web" />
+              ) : (
+                <line key={`dg-${j}`} x1={X(xa)} y1={Y(depths[j])} x2={X(xb)} y2={baseY} className="rboq-svg-web" />
               );
-            }
-            const toCentre = panel.dir === "down to centre";
-            return toCentre ? (
-              <line key={`dg-${j}`} x1={X(xb)} y1={Y(depths[j + 1])} x2={X(xa)} y2={baseY} className="rboq-svg-web" />
-            ) : (
-              <line key={`dg-${j}`} x1={X(xa)} y1={Y(depths[j])} x2={X(xb)} y2={baseY} className="rboq-svg-web" />
-            );
-          })}
-        </g>
-      ))}
-      {/* tie positions on the bottom chord */}
-      {roof.tie_lines_m
-        .filter((x) => Math.abs(x) < rho - 0.05)
-        .map((x) => (
+            })}
+          </g>
+        ))}
+        {tiesHere.map((x) => (
           <circle key={`tie-${x}`} cx={X(x)} cy={baseY} r={2.6} className="rboq-svg-tie-dot" />
         ))}
-      <text x={padX} y={baseY + 16} className="rboq-svg-label">
-        Top chord 2 x {(truss.top_chord_m / 2).toFixed(3)} m {short(roof.top_chord)} · bottom chord {truss.span_m.toFixed(3)} m {short(roof.bottom_chord)}
-      </text>
-      <text x={padX} y={baseY + 30} className="rboq-svg-label">
-        Ribs: {list(ribCounts)} · diagonals: {list(counts) || "none"} · solid 4 mm plate over the last panel at each end · dots = tie lines · dashed = top of the wall
-      </text>
-    </svg>
+      </svg>
+      {/* Print only: the same details as a table beside the truss. */}
+      <div className="rboq-truss__print">
+        <TrussDetails rows={details} />
+      </div>
+    </figure>
+  );
+}
+
+function TrussDetails({ rows }: { rows: [string, string][] }) {
+  return (
+    <table className="rboq-truss__details">
+      <tbody>
+        {rows.map(([label, value]) => (
+          <tr key={label}>
+            <th scope="row">{label}</th>
+            <td>{value}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
   );
 }
 
@@ -188,8 +211,7 @@ export function TrussSketch({ roof, diameterM }: Props) {
         <Elevation key={group.names.join("-")} truss={group.truss} names={group.names} roof={roof} />
       ))}
       <p className="rboq-sketch__note">
-        Elevations are not to scale: the depth is drawn larger than the span so the members can be seen. Ribs stand every {Math.round(roof.panel_m * 1000)} mm from the centre.
-        Diagonals are drawn the way they run, so gravity puts them in tension.
+        Not to scale: depth is drawn larger than span. Dashed line = top of the wall. Hover over the i beside a truss for its members; they print as a table beside each truss.
       </p>
       <table className="admin-table rboq-table rboq-table--trusses">
         <thead>

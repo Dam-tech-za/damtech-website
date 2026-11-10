@@ -4,7 +4,7 @@ Page: `/admin/operations/reservoir-boq/` (Projects section, tab "Reservoir BOQ")
 
 1. the bill of quantities (wall sheets per ring with cut lengths, bolts, fittings, liner, roof sheet and screws, and with a roof the raw steel as 6 m lengths),
 2. the roof steel cutting list and a roof-sheet cutting guide,
-3. a line sketch of the trusses (plan, one elevation per different truss, rib-height table),
+3. a line sketch of the trusses (plan, one elevation per different truss, rib-height table); the members of each truss sit behind an info icon on screen and print as a table beside the truss,
 4. **Print Design**, which opens the browser print window; "Save as PDF" gives the PDF (A4 landscape print layout in `styles/admin-reservoir-boq.css`).
 
 ## Where the numbers come from
