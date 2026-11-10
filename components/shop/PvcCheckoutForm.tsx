@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useMemo, useRef, useState, useTransition, type FormEvent, type ReactNode } from "react";
 import { startPvcCheckout } from "@/app/actions/start-pvc-checkout";
@@ -10,6 +11,7 @@ import { checkRequiredFields } from "@/lib/form-required";
 import type { PayfastForm } from "@/lib/payfast/payment";
 import { DELIVERY_PROVINCES, deliveryQuoteForProvince } from "@/lib/shop/delivery";
 import {
+  PVC_LINER_COLOUR_IMAGES,
   PVC_LINER_MANUFACTURE_LABEL,
   PVC_LINER_MAX_QUANTITY,
   PVC_LINER_PAGE_PATH,
@@ -300,15 +302,24 @@ export function PvcCheckoutForm({
           Order summary
         </h2>
         <div className="order-summary__product">
+          <div className="order-summary__thumb">
+            <Image
+              src={PVC_LINER_COLOUR_IMAGES[colour].src}
+              alt={PVC_LINER_COLOUR_IMAGES[colour].alt}
+              width={144}
+              height={144}
+              sizes="72px"
+            />
+          </div>
           <div className="order-summary__product-copy">
             <p className="order-summary__name">
               {liner.name}, {colour}
             </p>
             <p className="order-summary__sku">SKU {liner.sku}</p>
-            <p className="order-summary__spec">{liner.summary}</p>
             <p className="order-summary__qty">Quantity {quantity}</p>
           </div>
         </div>
+        <p className="order-summary__spec pvc-summary__spec">{liner.summary}</p>
         <section className="order-summary__block order-summary__block--last" aria-label="Price">
           <dl className="order-summary__rows">
             <div>

@@ -1346,3 +1346,7 @@
 .pvc-size-tables .site-data-table {
   overflow-x: auto;
 }
+
+.pvc-summary__spec {
+  margin: 1rem 0 0;
+}
