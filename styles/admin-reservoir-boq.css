@@ -134,6 +134,11 @@
   font-size: 0.75rem;
 }
 
+.rboq-table__alt {
+  font-weight: 400;
+  color: var(--admin-text-muted);
+}
+
 .rboq-pieces {
   display: block;
 }

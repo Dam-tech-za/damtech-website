@@ -127,7 +127,10 @@ export function ReservoirBoqResult({ settings, wall, roof, selection, reference 
                 <tbody>
                   {boq.stock.map((line) => (
                     <tr key={line.section}>
-                      <td className="rboq-table__item">{line.section}</td>
+                      <td className="rboq-table__item">
+                        {line.section}
+                        {line.alternative ? <span className="rboq-table__alt"> ({line.alternative} where it is not available)</span> : null}
+                      </td>
                       <td className="rboq-num">
                         {line.bars} x {line.barM} m
                       </td>

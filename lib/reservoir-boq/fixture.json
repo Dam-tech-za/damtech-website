@@ -1,6 +1,6 @@
 {
  "settings": {
-  "parameter_version": "reservoir-2026-11-10-r13",
+  "parameter_version": "reservoir-2026-11-10-r14",
   "generated_on": "2026-11-10",
   "ring_height_m": 0.762,
   "roof_sheet_cover_m": 0.762,
@@ -265,14 +265,14 @@
   "bolts_tie": 52,
   "end_plates": 10,
   "rim_angle_m": 28.3,
-  "steel_kg": "248",
+  "steel_kg": "251",
   "defl_actual_mm": 14.6,
   "defl_limit_mm": 28.3,
   "max_util": 0.99,
   "utilisation": {
    "chord": 0.77,
    "bottom_tension": 0.4,
-   "web": 0.31,
+   "web": 0.2,
    "actual_deflection": 0.54,
    "end_shear": 0.03,
    "uplift_chord": 0.99
@@ -308,61 +308,61 @@
      150
     ],
     "ribs": [
-     "RB 12",
-     "RB 12",
-     "RB 12",
-     "RB 12",
-     "RB 12",
-     "RB 12",
-     "RB 12",
-     "RB 12",
-     "RB 12"
+     "L 25x25x2.5",
+     "L 25x25x2.5",
+     "L 25x25x2.5",
+     "L 25x25x2.5",
+     "L 25x25x2.5",
+     "L 25x25x2.5",
+     "L 25x25x2.5",
+     "L 25x25x2.5",
+     "L 25x25x2.5"
     ],
     "panels": [
      {
-      "web": "RB 12",
+      "web": "L 25x25x2.5",
       "len_mm": 491,
       "force_kn": 1.0,
       "dir": "down to rim"
      },
      {
-      "web": "RB 12",
+      "web": "L 25x25x2.5",
       "len_mm": 479,
       "force_kn": 0.6,
       "dir": "down to rim"
      },
      {
-      "web": "RB 12",
+      "web": "L 25x25x2.5",
       "len_mm": 468,
       "force_kn": 0.6,
       "dir": "down to rim"
      },
      {
-      "web": "RB 12",
+      "web": "L 25x25x2.5",
       "len_mm": 446,
       "force_kn": 0.9,
       "dir": "down to centre"
      },
      {
-      "web": "RB 12",
+      "web": "L 25x25x2.5",
       "len_mm": 437,
       "force_kn": 1.3,
       "dir": "down to centre"
      },
      {
-      "web": "RB 12",
+      "web": "L 25x25x2.5",
       "len_mm": 427,
       "force_kn": 1.9,
       "dir": "down to centre"
      },
      {
-      "web": "RB 12",
+      "web": "L 25x25x2.5",
       "len_mm": 419,
       "force_kn": 2.9,
       "dir": "down to centre"
      },
      {
-      "web": "RB 12",
+      "web": "L 25x25x2.5",
       "len_mm": 411,
       "force_kn": 4.4,
       "dir": "down to centre"
@@ -410,82 +410,82 @@
      150
     ],
     "ribs": [
-     "RB 12",
-     "RB 12",
-     "RB 12",
-     "RB 12",
-     "RB 12",
-     "RB 12",
-     "RB 12",
-     "RB 12",
-     "RB 12",
-     "RB 12",
-     "RB 12",
-     "RB 12"
+     "L 25x25x2.5",
+     "L 25x25x2.5",
+     "L 25x25x2.5",
+     "L 25x25x2.5",
+     "L 25x25x2.5",
+     "L 25x25x2.5",
+     "L 25x25x2.5",
+     "L 25x25x2.5",
+     "L 25x25x2.5",
+     "L 25x25x2.5",
+     "L 25x25x2.5",
+     "L 25x25x2.5"
     ],
     "panels": [
      {
-      "web": "RB 12",
+      "web": "L 25x25x2.5",
       "len_mm": 612,
       "force_kn": 1.4,
       "dir": "down to rim"
      },
      {
-      "web": "RB 12",
+      "web": "L 25x25x2.5",
       "len_mm": 589,
       "force_kn": 1.1,
       "dir": "down to rim"
      },
      {
-      "web": "RB 12",
+      "web": "L 25x25x2.5",
       "len_mm": 566,
       "force_kn": 0.8,
       "dir": "down to rim"
      },
      {
-      "web": "RB 12",
+      "web": "L 25x25x2.5",
       "len_mm": 545,
       "force_kn": 0.5,
       "dir": "down to rim"
      },
      {
-      "web": "RB 12",
+      "web": "L 25x25x2.5",
       "len_mm": 524,
       "force_kn": 0.4,
       "dir": "down to rim"
      },
      {
-      "web": "RB 12",
+      "web": "L 25x25x2.5",
       "len_mm": 484,
       "force_kn": 0.6,
       "dir": "down to centre"
      },
      {
-      "web": "RB 12",
+      "web": "L 25x25x2.5",
       "len_mm": 466,
       "force_kn": 0.9,
       "dir": "down to centre"
      },
      {
-      "web": "RB 12",
+      "web": "L 25x25x2.5",
       "len_mm": 449,
       "force_kn": 1.6,
       "dir": "down to centre"
      },
      {
-      "web": "RB 12",
+      "web": "L 25x25x2.5",
       "len_mm": 434,
       "force_kn": 2.6,
       "dir": "down to centre"
      },
      {
-      "web": "RB 12",
+      "web": "L 25x25x2.5",
       "len_mm": 420,
       "force_kn": 4.1,
       "dir": "down to centre"
      },
      {
-      "web": "RB 12",
+      "web": "L 25x25x2.5",
       "len_mm": 407,
       "force_kn": 6.5,
       "dir": "down to centre"
@@ -533,82 +533,82 @@
      150
     ],
     "ribs": [
-     "L 25x25x3",
-     "RB 12",
-     "RB 12",
-     "RB 12",
-     "RB 12",
-     "RB 12",
-     "RB 12",
-     "RB 12",
-     "RB 12",
-     "RB 12",
-     "RB 12",
-     "RB 12"
+     "L 25x25x2.5",
+     "L 25x25x2.5",
+     "L 25x25x2.5",
+     "L 25x25x2.5",
+     "L 25x25x2.5",
+     "L 25x25x2.5",
+     "L 25x25x2.5",
+     "L 25x25x2.5",
+     "L 25x25x2.5",
+     "L 25x25x2.5",
+     "L 25x25x2.5",
+     "L 25x25x2.5"
     ],
     "panels": [
      {
-      "web": "L 25x25x3",
+      "web": "L 25x25x2.5",
       "len_mm": 750,
       "force_kn": 1.5,
       "dir": "down to rim"
      },
      {
-      "web": "L 25x25x3",
+      "web": "L 25x25x2.5",
       "len_mm": 715,
       "force_kn": 1.3,
       "dir": "down to rim"
      },
      {
-      "web": "L 25x25x3",
+      "web": "L 25x25x2.5",
       "len_mm": 680,
       "force_kn": 1.0,
       "dir": "down to rim"
      },
      {
-      "web": "L 25x25x3",
+      "web": "L 25x25x2.5",
       "len_mm": 645,
       "force_kn": 0.8,
       "dir": "down to rim"
      },
      {
-      "web": "RB 12",
+      "web": "L 25x25x2.5",
       "len_mm": 612,
       "force_kn": 0.5,
       "dir": "down to rim"
      },
      {
-      "web": "RB 12",
+      "web": "L 25x25x2.5",
       "len_mm": 579,
       "force_kn": 0.3,
       "dir": "down to rim"
      },
      {
-      "web": "RB 12",
+      "web": "L 25x25x2.5",
       "len_mm": 519,
       "force_kn": 0.4,
       "dir": "down to centre"
      },
      {
-      "web": "RB 12",
+      "web": "L 25x25x2.5",
       "len_mm": 491,
       "force_kn": 0.7,
       "dir": "down to centre"
      },
      {
-      "web": "RB 12",
+      "web": "L 25x25x2.5",
       "len_mm": 465,
       "force_kn": 1.4,
       "dir": "down to centre"
      },
      {
-      "web": "RB 12",
+      "web": "L 25x25x2.5",
       "len_mm": 442,
       "force_kn": 2.4,
       "dir": "down to centre"
      },
      {
-      "web": "RB 12",
+      "web": "L 25x25x2.5",
       "len_mm": 421,
       "force_kn": 4.1,
       "dir": "down to centre"
@@ -656,82 +656,82 @@
      150
     ],
     "ribs": [
-     "RB 12",
-     "RB 12",
-     "RB 12",
-     "RB 12",
-     "RB 12",
-     "RB 12",
-     "RB 12",
-     "RB 12",
-     "RB 12",
-     "RB 12",
-     "RB 12",
-     "RB 12"
+     "L 25x25x2.5",
+     "L 25x25x2.5",
+     "L 25x25x2.5",
+     "L 25x25x2.5",
+     "L 25x25x2.5",
+     "L 25x25x2.5",
+     "L 25x25x2.5",
+     "L 25x25x2.5",
+     "L 25x25x2.5",
+     "L 25x25x2.5",
+     "L 25x25x2.5",
+     "L 25x25x2.5"
     ],
     "panels": [
      {
-      "web": "RB 12",
+      "web": "L 25x25x2.5",
       "len_mm": 612,
       "force_kn": 1.4,
       "dir": "down to rim"
      },
      {
-      "web": "RB 12",
+      "web": "L 25x25x2.5",
       "len_mm": 589,
       "force_kn": 1.1,
       "dir": "down to rim"
      },
      {
-      "web": "RB 12",
+      "web": "L 25x25x2.5",
       "len_mm": 566,
       "force_kn": 0.8,
       "dir": "down to rim"
      },
      {
-      "web": "RB 12",
+      "web": "L 25x25x2.5",
       "len_mm": 545,
       "force_kn": 0.5,
       "dir": "down to rim"
      },
      {
-      "web": "RB 12",
+      "web": "L 25x25x2.5",
       "len_mm": 524,
       "force_kn": 0.4,
       "dir": "down to rim"
      },
      {
-      "web": "RB 12",
+      "web": "L 25x25x2.5",
       "len_mm": 484,
       "force_kn": 0.6,
       "dir": "down to centre"
      },
      {
-      "web": "RB 12",
+      "web": "L 25x25x2.5",
       "len_mm": 466,
       "force_kn": 0.9,
       "dir": "down to centre"
      },
      {
-      "web": "RB 12",
+      "web": "L 25x25x2.5",
       "len_mm": 449,
       "force_kn": 1.6,
       "dir": "down to centre"
      },
      {
-      "web": "RB 12",
+      "web": "L 25x25x2.5",
       "len_mm": 434,
       "force_kn": 2.6,
       "dir": "down to centre"
      },
      {
-      "web": "RB 12",
+      "web": "L 25x25x2.5",
       "len_mm": 420,
       "force_kn": 4.1,
       "dir": "down to centre"
      },
      {
-      "web": "RB 12",
+      "web": "L 25x25x2.5",
       "len_mm": 407,
       "force_kn": 6.5,
       "dir": "down to centre"
@@ -773,61 +773,61 @@
      150
     ],
     "ribs": [
-     "RB 12",
-     "RB 12",
-     "RB 12",
-     "RB 12",
-     "RB 12",
-     "RB 12",
-     "RB 12",
-     "RB 12",
-     "RB 12"
+     "L 25x25x2.5",
+     "L 25x25x2.5",
+     "L 25x25x2.5",
+     "L 25x25x2.5",
+     "L 25x25x2.5",
+     "L 25x25x2.5",
+     "L 25x25x2.5",
+     "L 25x25x2.5",
+     "L 25x25x2.5"
     ],
     "panels": [
      {
-      "web": "RB 12",
+      "web": "L 25x25x2.5",
       "len_mm": 491,
       "force_kn": 1.0,
       "dir": "down to rim"
      },
      {
-      "web": "RB 12",
+      "web": "L 25x25x2.5",
       "len_mm": 479,
       "force_kn": 0.6,
       "dir": "down to rim"
      },
      {
-      "web": "RB 12",
+      "web": "L 25x25x2.5",
       "len_mm": 468,
       "force_kn": 0.6,
       "dir": "down to rim"
      },
      {
-      "web": "RB 12",
+      "web": "L 25x25x2.5",
       "len_mm": 446,
       "force_kn": 0.9,
       "dir": "down to centre"
      },
      {
-      "web": "RB 12",
+      "web": "L 25x25x2.5",
       "len_mm": 437,
       "force_kn": 1.3,
       "dir": "down to centre"
      },
      {
-      "web": "RB 12",
+      "web": "L 25x25x2.5",
       "len_mm": 427,
       "force_kn": 1.9,
       "dir": "down to centre"
      },
      {
-      "web": "RB 12",
+      "web": "L 25x25x2.5",
       "len_mm": 419,
       "force_kn": 2.9,
       "dir": "down to centre"
      },
      {
-      "web": "RB 12",
+      "web": "L 25x25x2.5",
       "len_mm": 411,
       "force_kn": 4.4,
       "dir": "down to centre"
@@ -842,8 +842,10 @@
    }
   ],
   "web_m": {
-   "L 25x25x3": 6.2,
-   "RB 12": 74.7
+   "L 25x25x2.5": 80.9
+  },
+  "web_alternative": {
+   "L 25x25x2.5": "L 25x25x2"
   },
   "top_chord_m": 39.5,
   "bottom_chord_m": 39.4,
@@ -874,14 +876,14 @@
   "bolts_tie": 12,
   "end_plates": 2,
   "rim_angle_m": 12.6,
-  "steel_kg": "39",
+  "steel_kg": "40",
   "defl_actual_mm": 2.2,
   "defl_limit_mm": 25.0,
   "max_util": 0.39,
   "utilisation": {
    "chord": 0.36,
    "bottom_tension": 0.16,
-   "web": 0.1,
+   "web": 0.07,
    "actual_deflection": 0.09,
    "end_shear": 0.01,
    "uplift_chord": 0.39
@@ -909,33 +911,33 @@
      150
     ],
     "ribs": [
-     "RB 12",
-     "RB 12",
-     "RB 12",
-     "RB 12",
-     "RB 12"
+     "L 25x25x2.5",
+     "L 25x25x2.5",
+     "L 25x25x2.5",
+     "L 25x25x2.5",
+     "L 25x25x2.5"
     ],
     "panels": [
      {
-      "web": "RB 12",
+      "web": "L 25x25x2.5",
       "len_mm": 532,
       "force_kn": 0.7,
       "dir": "down to rim"
      },
      {
-      "web": "RB 12",
+      "web": "L 25x25x2.5",
       "len_mm": 506,
       "force_kn": 0.6,
       "dir": "down to rim"
      },
      {
-      "web": "RB 12",
+      "web": "L 25x25x2.5",
       "len_mm": 461,
       "force_kn": 1.0,
       "dir": "down to centre"
      },
      {
-      "web": "RB 12",
+      "web": "L 25x25x2.5",
       "len_mm": 443,
       "force_kn": 2.0,
       "dir": "down to centre"
@@ -950,7 +952,10 @@
    }
   ],
   "web_m": {
-   "RB 12": 6.2
+   "L 25x25x2.5": 6.2
+  },
+  "web_alternative": {
+   "L 25x25x2.5": "L 25x25x2"
   },
   "top_chord_m": 4.0,
   "bottom_chord_m": 4.0,

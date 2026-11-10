@@ -14,7 +14,7 @@ import {
   type WallDesign,
 } from "./boq.ts";
 
-// Rows exported by the DamTech calculator (parameter file r13): 9 m x 3 rings roofed wall, 12 m x 4 rings open wall, 9 m and 4 m roofs.
+// Rows exported by the DamTech calculator (parameter file r14): 9 m x 3 rings roofed wall, 12 m x 4 rings open wall, 9 m and 4 m roofs.
 const fixture = JSON.parse(readFileSync(new URL("./fixture.json", import.meta.url), "utf8")) as {
   settings: BoqSettings;
   wall: WallDesign;
@@ -57,7 +57,7 @@ describe("reservoir BOQ", () => {
     assert.equal(line(boq, "PVC liner 550 gsm").qty, 143.6);
     assert.equal(line(boq, "Roof screws").qty, 388);
     assert.equal(line(boq, "Roof bolts M12").qty, 72);
-    assert.equal(line(boq, "Hot-dip galvanising").qty, 248);
+    assert.equal(line(boq, "Hot-dip galvanising").qty, 251);
     assert.equal(line(boq, "End plates 4 mm").qty, 10);
     assert.ok(!boq.lines.some((l) => l.item === "Top stiffener ring"));
     assert.ok(!boq.lines.some((l) => l.item === "Intermediate wind ring"));
@@ -71,8 +71,11 @@ describe("reservoir BOQ", () => {
     assert.ok(Math.abs(angle.neededM - (39.5 + 39.4 + 28.3)) < 0.3, String(angle.neededM));
     assert.ok(angle.bars * 6 >= angle.neededM);
     assert.ok(angle.bars <= Math.ceil(angle.neededM / 6) + 3);
-    const rb12 = stock.find((s) => s.section === "RB 12");
-    assert.ok(rb12 && Math.abs(rb12.neededM - fixture.roof.web_m["RB 12"]) < 0.5, String(rb12?.neededM));
+    // r14: ribs and diagonals are angle L 25x25x2.5 (no round bar), with L 25x25x2 as the stand-in
+    assert.ok(!stock.some((s) => s.section.startsWith("RB")));
+    const web = stock.find((s) => s.section === "L 25x25x2.5");
+    assert.ok(web && Math.abs(web.neededM - fixture.roof.web_m["L 25x25x2.5"]) < 0.5, String(web?.neededM));
+    assert.equal(web.alternative, "L 25x25x2");
     const tie = stock.find((s) => s.section === "FB 25x3");
     assert.ok(tie && Math.abs(tie.neededM - fixture.roof.bottom_tie_m) < 0.2);
     for (const s of stock) assert.ok(s.bars * s.barM + 1e-9 >= s.neededM, s.section);

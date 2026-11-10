@@ -73,7 +73,8 @@ function Elevation({ truss, names, roof }: { truss: TrussDetail; names: string[]
   for (const p of diagonals) counts.set(short(p.web), (counts.get(short(p.web)) ?? 0) + 2);
   const ribCounts = new Map<string, number>();
   truss.ribs.forEach((r, i) => ribCounts.set(short(r), (ribCounts.get(short(r)) ?? 0) + (i === 0 ? 1 : 2)));
-  const list = (m: Map<string, number>) => [...m.entries()].map(([k, v]) => `${v} x ${k}`).join(", ");
+  const alt = new Map(Object.entries(roof.web_alternative ?? {}).map(([k, v]) => [short(k), short(v)]));
+  const list = (m: Map<string, number>) => [...m.entries()].map(([k, v]) => `${v} x ${k}${alt.has(k) ? ` (${alt.get(k)} where not available)` : ""}`).join(", ");
 
   const tiesHere = roof.tie_lines_m.filter((x) => Math.abs(x) < rho - 0.05);
   const details: [string, string][] = [

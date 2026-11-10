@@ -93,6 +93,8 @@ export type RoofDesign = {
   sheet_label: string;
   truss_detail: TrussDetail[];
   web_m: Record<string, number>;
+  /** Thinner section that may stand in when the standard one is not in stock, e.g. L 25x25x2 for L 25x25x2.5. */
+  web_alternative?: Record<string, string>;
   top_chord_m: number;
   bottom_chord_m: number;
   panel_m: number;
@@ -130,6 +132,8 @@ export type StockLine = {
   barM: number;
   neededM: number;
   pieces: CutPiece[];
+  /** Stand-in section where this one is not available. */
+  alternative?: string;
 };
 
 export type RoofSheetCut = { lengthM: number; count: number };
@@ -241,6 +245,7 @@ export function roofStock(roof: RoofDesign, diameterM: number, barM: number): St
       barM,
       neededM: round(pieces.reduce((sum, p) => sum + p.lengthM, 0), 1),
       pieces: groupPieces(pieces),
+      alternative: roof.web_alternative?.[section],
     }))
     .sort((a, b) => a.section.localeCompare(b.section));
 }
@@ -401,7 +406,7 @@ export function buildReservoirBoq(
       lines.push({
         section: "Roof steel (raw stock)",
         item: `${sectionKind(line.section)} ${line.section}`,
-        spec: `${line.section}, ${line.barM} m lengths`,
+        spec: `${line.section}${line.alternative ? ` (${line.alternative} where it is not available)` : ""}, ${line.barM} m lengths`,
         unit: "lengths",
         qty: line.bars,
         lengthEachM: line.barM,

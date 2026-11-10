@@ -9,7 +9,7 @@ Page: `/admin/operations/reservoir-boq/` (Projects section, tab "Reservoir BOQ")
 
 ## Where the numbers come from
 
-The website does **not** calculate the design. It reads rows from the Supabase table `public.reservoir_designs`, written by the DamTech pricing calculator in the `damtech-ai-operations` repository (`docs/website-boq-tool/export_designs.py`, parameter file r13). Row keys:
+The website does **not** calculate the design. It reads rows from the Supabase table `public.reservoir_designs`, written by the DamTech pricing calculator in the `damtech-ai-operations` repository (`docs/website-boq-tool/export_designs.py`, parameter file r14: truss ribs and diagonals in angle L 25x25x2.5, with L 25x25x2 shown in brackets as the stand-in). Row keys:
 
 | Key | Content |
 |---|---|
@@ -24,7 +24,8 @@ Diameters run from 3 m to 17 m in 0.5 m steps, rings 1 to 5. A diameter between 
 | File | Purpose |
 |---|---|
 | `supabase/migrations/20261110090000_reservoir_designs.sql` | table (RLS on, service role only) |
-| `supabase/migrations/20261110090100_reservoir_designs_seed.sql` | the 320 design rows (upserts, safe to re-run) |
+| `supabase/migrations/20261110090100_reservoir_designs_seed.sql` | the 320 design rows, r13 (upserts, safe to re-run) |
+| `supabase/migrations/20261110120000_reservoir_designs_r14.sql` | the same 320 rows on r14; **run this one to update a database already loaded with r13** |
 | `lib/reservoir-boq/boq.ts` | pure BOQ logic: order lines, 6 m bar packing, sheet cutting guide |
 | `lib/reservoir-boq/boq.test.ts`, `fixture.json` | unit tests against calculator output |
 | `lib/reservoir-boq/store.ts` | reads the rows |
@@ -45,7 +46,7 @@ Work on branch `feat/admin-reservoir-boq`.
    With the Supabase CLI: `supabase db push`. Or paste each file into the SQL editor.
 4. Check the rows: `select kind, count(*) from public.reservoir_designs group by kind;` must give settings 1, wall 290, roof 29.
 5. Checks: `npx tsc --noEmit && npm run lint && npm test && npm run build`.
-6. Run the site, sign in to the admin, open `/admin/operations/reservoir-boq/`, choose 9 m, 2.286 m, Roof, Calculate. Expect 10 sheets per ring (ring 1 at 2.978 m, rings 2 and 3 at 2.928 m), 1 078 seam bolts, liner 143.6 m2, 5 trusses, 248 kg to galvanise. Press Print Design and save the PDF.
+6. Run the site, sign in to the admin, open `/admin/operations/reservoir-boq/`, choose 9 m, 2.286 m, Roof, Calculate. Expect 10 sheets per ring (ring 1 at 2.978 m, rings 2 and 3 at 2.928 m), 1 078 seam bolts, liner 143.6 m2, 5 trusses, 251 kg to galvanise, ribs and diagonals "L 25x25x2.5 (L 25x25x2 where it is not available)". Press Print Design and save the PDF.
 7. Open a pull request into `main`; deploy only on the owner's go-ahead.
 
 Until step 3 is done the page shows "The reservoir designs are not loaded yet" and nothing else is affected.
