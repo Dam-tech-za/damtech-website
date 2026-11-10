@@ -152,6 +152,31 @@ export type ReservoirBoq = {
 const roundUp = (value: number, step: number) => Math.ceil(value / step - 1e-9) * step;
 const round = (value: number, places: number) => Math.round(value * 10 ** places) / 10 ** places;
 
+/** Spare bolts ordered on top of the design count. */
+export const BOLT_SPARE = 0.02;
+const withSpare = (bolts: number) => Math.ceil(bolts * (1 + BOLT_SPARE) - 1e-9);
+
+export type TrussMember = { section: string; lengthM: number; count: number };
+
+/** Ribs and diagonals of one truss, grouped by section and cut length, longest first. */
+export function trussMembers(truss: TrussDetail): { ribs: TrussMember[]; diagonals: TrussMember[] } {
+  const group = (pieces: { section: string; lengthM: number; count: number }[]) => {
+    const map = new Map<string, TrussMember>();
+    for (const piece of pieces) {
+      const lengthM = round(piece.lengthM, 3);
+      const key = `${piece.section}|${lengthM}`;
+      const existing = map.get(key);
+      if (existing) existing.count += piece.count;
+      else map.set(key, { section: piece.section, lengthM, count: piece.count });
+    }
+    return [...map.values()].sort((a, b) => a.section.localeCompare(b.section) || b.lengthM - a.lengthM);
+  };
+  return {
+    ribs: group(truss.ribs.map((section, i) => ({ section, lengthM: truss.depths_mm[i] / 1000, count: i === 0 ? 1 : 2 }))),
+    diagonals: group(truss.panels.filter((p) => p.web !== "solid").map((p) => ({ section: p.web, lengthM: p.len_mm / 1000, count: 2 }))),
+  };
+}
+
 /** The 0.5 m design size at or above the diameter asked for. */
 export function designDiameter(diameterM: number): number {
   return roundUp(diameterM, 0.5);
@@ -313,14 +338,25 @@ export function buildReservoirBoq(
     qty: round(curvedM, 1),
   });
   const rowBolts = (selection.rings - 1) * settings.row_seam_bolt_rows * Math.ceil(circumference / settings.row_bolt_pitch_m - 1e-9);
+  const spare = `incl. ${Math.round(BOLT_SPARE * 100)}% spare`;
   lines.push({
     section: "Wall",
-    item: "Seam bolts M10",
+    item: "Seam bolts M10, vertical seams",
     spec: settings.seam_bolt,
     unit: "sets",
-    qty: wall.seam_bolts + rowBolts,
-    note: `Vertical seams ${wall.seam_bolts} (one bolt in every valley per line); row seams ${rowBolts} (one row at ${Math.round(settings.row_bolt_pitch_m * 1000)} mm)`,
+    qty: withSpare(wall.seam_bolts),
+    note: `${wall.seam_bolts} in the design (one bolt in every valley per line), ${spare}`,
   });
+  if (rowBolts > 0) {
+    lines.push({
+      section: "Wall",
+      item: "Seam bolts M10, row seams (Optional)",
+      spec: settings.seam_bolt,
+      unit: "sets",
+      qty: withSpare(rowBolts),
+      note: `${rowBolts} in the design (one row at ${Math.round(settings.row_bolt_pitch_m * 1000)} mm along each joint between rings), ${spare}`,
+    });
+  }
   lines.push({
     section: "Wall",
     item: "50 mm outlet connection",
@@ -427,8 +463,8 @@ export function buildReservoirBoq(
       item: "Roof bolts M12",
       spec: settings.roof_bolt,
       unit: "sets",
-      qty: roof.bolts_rim + roof.bolts_tie,
-      note: `Truss ends to rim ${roof.bolts_rim}, tie lines ${roof.bolts_tie}`,
+      qty: withSpare(roof.bolts_rim + roof.bolts_tie),
+      note: `Truss ends to rim ${roof.bolts_rim}, tie lines ${roof.bolts_tie}, ${spare}`,
     });
     lines.push({
       section: "Roof steel (raw stock)",

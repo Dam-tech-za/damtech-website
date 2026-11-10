@@ -1,4 +1,5 @@
-import type { RoofDesign, TrussDetail } from "@/lib/reservoir-boq/boq";
+import { trussMembers, type RoofDesign, type TrussDetail, type TrussMember } from "@/lib/reservoir-boq/boq";
+import { InfoHover } from "@/components/admin/operations/reservoir-boq/InfoHover";
 
 type Props = { roof: RoofDesign; diameterM: number };
 
@@ -62,9 +63,23 @@ function PlanView({ roof, diameterM }: Props) {
   );
 }
 
+/** Vertical dimension line with end ticks; the label sits to the left or right of it. */
+function DimV({ x, y1, y2, label, side }: { x: number; y1: number; y2: number; label: string; side: "left" | "right" }) {
+  return (
+    <g>
+      <line x1={x} y1={y1} x2={x} y2={y2} className="rboq-svg-dim" />
+      <line x1={x - 3} y1={y1} x2={x + 3} y2={y1} className="rboq-svg-dim" />
+      <line x1={x - 3} y1={y2} x2={x + 3} y2={y2} className="rboq-svg-dim" />
+      <text x={side === "left" ? x - 5 : x + 5} y={(y1 + y2) / 2 + 3} textAnchor={side === "left" ? "end" : "start"} className="rboq-svg-dim-label">
+        {label}
+      </text>
+    </g>
+  );
+}
+
 function Elevation({ truss, names, roof }: { truss: TrussDetail; names: string[]; roof: RoofDesign }) {
-  const width = 640;
-  const padX = 34;
+  const width = 760;
+  const padX = 100;
   const top = 8;
   const drawH = 92;
   const rho = truss.span_m / 2;
@@ -98,8 +113,18 @@ function Elevation({ truss, names, roof }: { truss: TrussDetail; names: string[]
       <figcaption className="rboq-truss__title">
         {names.join(" and ")}: span {truss.span_m.toFixed(3)} m
       </figcaption>
-      <svg viewBox={`0 0 ${width} ${baseY + 14}`} className="rboq-sketch__elevation" role="img" aria-label={`Truss ${names.join(", ")} elevation`}>
-        {roof.rim_drop_mm > 0 ? <line x1={padX - 20} y1={Y(roof.rim_drop_mm)} x2={width - padX + 20} y2={Y(roof.rim_drop_mm)} className="rboq-svg-wall" /> : null}
+      <svg viewBox={`0 0 ${width} ${baseY + 34}`} className="rboq-sketch__elevation" role="img" aria-label={`Truss ${names.join(", ")} elevation`}>
+        {roof.rim_drop_mm > 0 ? <line x1={X(-rho) - 18} y1={Y(roof.rim_drop_mm)} x2={X(rho) + 18} y2={Y(roof.rim_drop_mm)} className="rboq-svg-wall" /> : null}
+        <DimV x={X(-rho) - 24} y1={baseY} y2={Y(depths[last])} label={`${depths[last]} end`} side="left" />
+        {roof.rim_drop_mm > 0 ? <DimV x={X(rho) + 24} y1={baseY} y2={Y(roof.rim_drop_mm)} label={`${roof.rim_drop_mm} in tank`} side="right" /> : null}
+        <g>
+          <line x1={X(-rho)} y1={baseY + 16} x2={X(rho)} y2={baseY + 16} className="rboq-svg-dim" />
+          <line x1={X(-rho)} y1={baseY + 4} x2={X(-rho)} y2={baseY + 20} className="rboq-svg-dim" />
+          <line x1={X(rho)} y1={baseY + 4} x2={X(rho)} y2={baseY + 20} className="rboq-svg-dim" />
+          <text x={X(0)} y={baseY + 30} textAnchor="middle" className="rboq-svg-dim-label">
+            {Math.round(truss.span_m * 1000)} (bottom chord)
+          </text>
+        </g>
         <line x1={X(-rho)} y1={baseY} x2={X(rho)} y2={baseY} className="rboq-svg-chord" />
         <polyline points={`${X(-rho)},${Y(depths[last])} ${X(0)},${Y(centre)} ${X(rho)},${Y(depths[last])}`} className="rboq-svg-chord" />
         {sides.map((side) => (
@@ -138,6 +163,28 @@ function Elevation({ truss, names, roof }: { truss: TrussDetail; names: string[]
         <TrussDetails rows={details} />
       </div>
     </figure>
+  );
+}
+
+function MemberCuts({ title, members, roof }: { title: string; members: TrussMember[]; roof: RoofDesign }) {
+  if (!members.length) return null;
+  const sections = [...new Set(members.map((m) => m.section))];
+  return (
+    <>
+      {sections.map((section) => {
+        const alt = roof.web_alternative?.[section];
+        const list = members.filter((m) => m.section === section);
+        return (
+          <span key={`${title}-${section}`} className="rboq-pieces">
+            <strong>
+              {title}, {short(section)}
+              {alt ? ` (${short(alt)} where not available)` : ""}, {list.reduce((n, m) => n + m.count, 0)} pieces:
+            </strong>{" "}
+            {list.map((m) => `${m.count} x ${m.lengthM.toFixed(3)}`).join(", ")}
+          </span>
+        );
+      })}
+    </>
   );
 }
 
@@ -208,7 +255,7 @@ export function TrussSketch({ roof, diameterM }: Props) {
         <Elevation key={group.names.join("-")} truss={group.truss} names={group.names} roof={roof} />
       ))}
       <p className="rboq-sketch__note">
-        Not to scale: depth is drawn larger than span. Dashed line = top of the wall. The members of each truss print as a table beside it.
+        Not to scale: depth is drawn larger than span. Dimensions in mm. Dashed line = top of the wall. The members of each truss print as a table beside it.
       </p>
       <table className="admin-table rboq-table rboq-table--trusses">
         <thead>
@@ -217,23 +264,33 @@ export function TrussSketch({ roof, diameterM }: Props) {
             <th>From centre</th>
             <th>Span (bottom chord)</th>
             <th>Top chord</th>
-            <th>Ribs</th>
-            <th>Diagonals</th>
             <th>Rib heights, centre to rim (mm)</th>
+            <th>Ribs and diagonals (per truss)</th>
           </tr>
         </thead>
         <tbody>
           {groups.map((group) => {
-            const members = memberLists(group.truss, roof);
+            const { ribs, diagonals } = trussMembers(group.truss);
+            const total = (list: TrussMember[]) => list.reduce((n, m) => n + m.count, 0);
             return (
               <tr key={group.names.join("-")}>
                 <td>{group.names.join(", ")}</td>
                 <td>{Math.abs(group.truss.y_m).toFixed(2)} m</td>
                 <td>{group.truss.span_m.toFixed(3)} m</td>
                 <td>2 x {(group.truss.top_chord_m / 2).toFixed(3)} m</td>
-                <td>{members.ribs}</td>
-                <td>{members.diagonals}</td>
                 <td>{group.truss.depths_mm.join(", ")}</td>
+                <td>
+                  <span className="rboq-pieces__uses">
+                    {total(ribs)} ribs, {total(diagonals)} diagonals
+                  </span>
+                  <InfoHover label={`Ribs and diagonals of truss ${group.names.join(", ")}`}>
+                    <MemberCuts title="Ribs" members={ribs} roof={roof} />
+                    <MemberCuts title="Diagonals" members={diagonals} roof={roof} />
+                    <span className="rboq-pieces rboq-table__note">
+                      Number x cut length in m, for one truss; make {group.names.length} ({group.names.join(", ")}).
+                    </span>
+                  </InfoHover>
+                </td>
               </tr>
             );
           })}

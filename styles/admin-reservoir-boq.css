@@ -109,6 +109,10 @@
   min-width: 16rem;
 }
 
+.rboq-table--trusses td:nth-child(3) {
+  min-width: 0;
+}
+
 .rboq-num {
   text-align: right;
   white-space: nowrap;
@@ -307,6 +311,16 @@
   stroke-width: 1;
 }
 
+.rboq-svg-dim {
+  stroke: #5b6b7c;
+  stroke-width: 0.7;
+}
+
+.rboq-svg-dim-label {
+  font-size: 9px;
+  fill: #031926;
+}
+
 .rboq-svg-label {
   font-size: 9px;
   fill: #5b6b7c;
@@ -444,10 +458,6 @@
 
   .rboq-table--trusses {
     break-inside: avoid;
-  }
-
-  .rboq-table--trusses td:nth-child(3) {
-    min-width: 0;
   }
 
   .rboq-foot {

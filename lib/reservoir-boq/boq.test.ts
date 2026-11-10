@@ -9,6 +9,7 @@ import {
   packBars,
   roofSheetCuts,
   roofStock,
+  trussMembers,
   type BoqSettings,
   type RoofDesign,
   type WallDesign,
@@ -53,10 +54,12 @@ describe("reservoir BOQ", () => {
     assert.equal(ring1.lengthEachM, 2.978);
     assert.match(ring1.note ?? "", /3 bolt lines/);
     assert.equal(line(boq, "Wall sheet, ring 2").lengthEachM, 2.928);
-    assert.equal(line(boq, "Seam bolts M10").qty, 700 + 2 * 189);
+    // design counts plus 2% spare, rounded up: 700 vertical, 2 x 189 row seams, 72 roof bolts
+    assert.equal(line(boq, "Seam bolts M10, vertical seams").qty, 714);
+    assert.equal(line(boq, "Seam bolts M10, row seams (Optional)").qty, 386);
     assert.equal(line(boq, "PVC liner 550 gsm").qty, 143.6);
     assert.equal(line(boq, "Roof screws").qty, 388);
-    assert.equal(line(boq, "Roof bolts M12").qty, 72);
+    assert.equal(line(boq, "Roof bolts M12").qty, 74);
     assert.equal(line(boq, "Hot-dip galvanising").qty, 251);
     assert.equal(line(boq, "End plates 4 mm").qty, 10);
     assert.ok(!boq.lines.some((l) => l.item === "Top stiffener ring"));
@@ -105,6 +108,17 @@ describe("reservoir BOQ", () => {
     assert.ok(line(boq, "PVC liner 800 gsm").qty > 0);
     assert.ok(!boq.lines.some((l) => l.section.startsWith("Roof")));
     assert.deepEqual(boq.stock, []);
+  });
+
+  it("lists the ribs and diagonals of one truss with their cut lengths", () => {
+    const centre = fixture.roof.truss_detail.find((t) => t.y_m === 0);
+    assert.ok(centre);
+    const { ribs, diagonals } = trussMembers(centre);
+    assert.equal(ribs.reduce((n, m) => n + m.count, 0), 23);
+    assert.equal(diagonals.reduce((n, m) => n + m.count, 0), 22);
+    assert.equal(ribs[0].lengthM, 0.65);
+    assert.equal(ribs[0].count, 1);
+    assert.ok(diagonals.every((m) => m.section === "L 25x25x2.5" && m.count % 2 === 0));
   });
 
   it("handles a single ridge truss on a small tank", () => {

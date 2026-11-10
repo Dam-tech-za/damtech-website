@@ -4,7 +4,7 @@ Page: `/admin/operations/reservoir-boq/` (Projects section, tab "Reservoir BOQ")
 
 1. the bill of quantities (wall sheets per ring with cut lengths, bolts, fittings, liner, roof sheet and screws, and with a roof the raw steel as 6 m lengths),
 2. the roof steel cutting list and a roof-sheet cutting guide; on screen only the lengths to buy show, and hovering over the info icon shows the pieces to cut (they print in full),
-3. a line sketch of the trusses (plan, one elevation per different truss, a truss table with ribs, diagonals and rib heights); the members of each truss also print as a table beside the truss,
+3. a line sketch of the trusses (plan, one dimensioned elevation per different truss: span, end depth and depth inside the tank; a truss table with rib heights, and an info icon with the rib and diagonal cut lengths per truss); the members of each truss also print as a table beside the truss,
 4. **Print Design**, which opens the browser print window; "Save as PDF" gives the PDF (A4 landscape print layout in `styles/admin-reservoir-boq.css`).
 
 ## Where the numbers come from
@@ -46,7 +46,7 @@ Work on branch `feat/admin-reservoir-boq`.
    With the Supabase CLI: `supabase db push`. Or paste each file into the SQL editor.
 4. Check the rows: `select kind, count(*) from public.reservoir_designs group by kind;` must give settings 1, wall 290, roof 29.
 5. Checks: `npx tsc --noEmit && npm run lint && npm test && npm run build`.
-6. Run the site, sign in to the admin, open `/admin/operations/reservoir-boq/`, choose 9 m, 2.286 m, Roof, Calculate. Expect 10 sheets per ring (ring 1 at 2.978 m, rings 2 and 3 at 2.928 m), 1 078 seam bolts, liner 143.6 m2, 5 trusses, 251 kg to galvanise, ribs and diagonals "L 25x25x2.5 (L 25x25x2 where it is not available)". Press Print Design and save the PDF.
+6. Run the site, sign in to the admin, open `/admin/operations/reservoir-boq/`, choose 9 m, 2.286 m, Roof, Calculate. Expect 10 sheets per ring (ring 1 at 2.978 m, rings 2 and 3 at 2.928 m), 714 vertical seam bolts and 386 row seam bolts (optional), both with 2% spare, liner 143.6 m2, 5 trusses, 251 kg to galvanise, ribs and diagonals "L 25x25x2.5 (L 25x25x2 where it is not available)". Press Print Design and save the PDF.
 7. Open a pull request into `main`; deploy only on the owner's go-ahead.
 
 Until step 3 is done the page shows "The reservoir designs are not loaded yet" and nothing else is affected.

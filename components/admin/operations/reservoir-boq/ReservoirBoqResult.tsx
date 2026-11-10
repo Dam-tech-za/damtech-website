@@ -66,7 +66,7 @@ export function ReservoirBoqResult({ settings, wall, roof, selection, reference 
         </AdminInfoBanner>
       ) : null}
 
-      <AdminPanel title="Bill of quantities" description="Net quantities to buy. Liner and roof sheet include their waste allowance; add a few spare bolts per box.">
+      <AdminPanel title="Bill of quantities" description="Net quantities to buy. Liner and roof sheet include their waste allowance; bolts include 2% spare.">
         <div className="admin-table-shell">
           <table className="admin-table rboq-table">
             <thead>
