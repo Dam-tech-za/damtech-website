@@ -180,42 +180,43 @@
   color: var(--admin-text);
 }
 
+.admin-table.rboq-table td:has(.rboq-info) {
+  overflow: visible;
+}
+
+.rboq-pieces__uses {
+  margin-right: 0.35rem;
+}
+
 .rboq-info {
   position: relative;
   display: inline-flex;
-  color: var(--admin-primary);
-}
-
-.rboq-info > summary {
-  display: inline-flex;
-  padding: 0.15rem;
+  vertical-align: middle;
+  padding: 0.1rem;
   border-radius: 999px;
-  list-style: none;
-  cursor: pointer;
+  color: var(--admin-primary);
+  cursor: help;
 }
 
-.rboq-info > summary::-webkit-details-marker {
-  display: none;
-}
-
-.rboq-info > summary:hover,
-.rboq-info[open] > summary {
+.rboq-info:hover,
+.rboq-info:focus-visible {
   background: #e9eff5;
 }
 
-.rboq-info > summary:focus-visible {
+.rboq-info:focus-visible {
   outline: 2px solid var(--admin-focus-ring);
   outline-offset: 1px;
 }
 
+/* Opens below and to the left: the pieces column is at the right edge and the admin shell clips overflow. */
 .rboq-info__pop {
   display: none;
   position: absolute;
   z-index: 20;
-  left: calc(100% + 0.25rem);
-  top: -0.4rem;
+  right: 0;
+  top: 100%;
   width: max-content;
-  max-width: min(30rem, 80vw);
+  max-width: min(36rem, 80vw);
   padding: 0.6rem 0.75rem;
   background: var(--admin-card-bg);
   border: 1px solid var(--admin-border);
@@ -226,14 +227,13 @@
   cursor: default;
 }
 
-.rboq-info[open] .rboq-info__pop {
+.rboq-info:hover .rboq-info__pop,
+.rboq-info:focus-visible .rboq-info__pop {
   display: block;
 }
 
-@media (hover: hover) {
-  .rboq-info:hover .rboq-info__pop {
-    display: block;
-  }
+.rboq-info__print {
+  display: none;
 }
 
 .rboq-truss__details {
@@ -417,8 +417,13 @@
     min-width: 0;
   }
 
-  .rboq-info {
+  .rboq-info,
+  .rboq-pieces__uses {
     display: none;
+  }
+
+  .rboq-info__print {
+    display: block;
   }
 
   .rboq-truss__print {

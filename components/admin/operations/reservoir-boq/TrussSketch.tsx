@@ -97,17 +97,6 @@ function Elevation({ truss, names, roof }: { truss: TrussDetail; names: string[]
     <figure className="rboq-truss">
       <figcaption className="rboq-truss__title">
         {names.join(" and ")}: span {truss.span_m.toFixed(3)} m
-        <details className="rboq-info">
-          <summary aria-label={`Details of truss ${names.join(" and ")}`}>
-            <svg viewBox="0 0 20 20" width="18" height="18" aria-hidden className="rboq-info__icon">
-              <circle cx="10" cy="10" r="8.5" fill="none" stroke="currentColor" strokeWidth="1.5" />
-              <path d="M10 9v5M10 6.2v.1" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
-            </svg>
-          </summary>
-          <div className="rboq-info__pop">
-            <TrussDetails rows={details} />
-          </div>
-        </details>
       </figcaption>
       <svg viewBox={`0 0 ${width} ${baseY + 14}`} className="rboq-sketch__elevation" role="img" aria-label={`Truss ${names.join(", ")} elevation`}>
         {roof.rim_drop_mm > 0 ? <line x1={padX - 20} y1={Y(roof.rim_drop_mm)} x2={width - padX + 20} y2={Y(roof.rim_drop_mm)} className="rboq-svg-wall" /> : null}
@@ -219,7 +208,7 @@ export function TrussSketch({ roof, diameterM }: Props) {
         <Elevation key={group.names.join("-")} truss={group.truss} names={group.names} roof={roof} />
       ))}
       <p className="rboq-sketch__note">
-        Not to scale: depth is drawn larger than span. Dashed line = top of the wall. Click the i beside a truss for its members; they print as a table beside each truss.
+        Not to scale: depth is drawn larger than span. Dashed line = top of the wall. The members of each truss print as a table beside it.
       </p>
       <table className="admin-table rboq-table rboq-table--trusses">
         <thead>

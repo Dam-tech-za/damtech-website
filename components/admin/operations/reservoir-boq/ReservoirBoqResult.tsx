@@ -1,6 +1,7 @@
 import { buildReservoirBoq, designDiameter, isStandardSize, type BoqLine, type BoqSection, type BoqSelection, type BoqSettings, type RoofDesign, type WallDesign } from "@/lib/reservoir-boq/boq";
 import { AdminInfoBanner, AdminPanel } from "@/components/admin/ui";
 import { TrussSketch } from "@/components/admin/operations/reservoir-boq/TrussSketch";
+import { InfoHover } from "@/components/admin/operations/reservoir-boq/InfoHover";
 
 type Props = {
   settings: BoqSettings;
@@ -125,37 +126,46 @@ export function ReservoirBoqResult({ settings, wall, roof, selection, reference 
                   </tr>
                 </thead>
                 <tbody>
-                  {boq.stock.map((line) => (
-                    <tr key={line.section}>
-                      <td className="rboq-table__item">
-                        {line.section}
-                        {line.alternative ? <span className="rboq-table__alt"> ({line.alternative} where it is not available)</span> : null}
-                      </td>
-                      <td className="rboq-num">
-                        {line.bars} x {line.barM} m
-                      </td>
-                      <td className="rboq-num">{line.neededM.toFixed(1)}</td>
-                      <td className="rboq-table__note">
-                        {[...new Set(line.pieces.map((p) => p.use))].map((use) => (
-                          <span key={use} className="rboq-pieces">
-                            <strong>{use}:</strong>{" "}
-                            {line.pieces
-                              .filter((p) => p.use === use)
-                              .map((p) => `${p.count} x ${p.lengthM.toFixed(3)}`)
-                              .join(", ")}
-                          </span>
-                        ))}
-                      </td>
-                    </tr>
-                  ))}
+                  {boq.stock.map((line) => {
+                    const uses = [...new Set(line.pieces.map((p) => p.use))];
+                    return (
+                      <tr key={line.section}>
+                        <td className="rboq-table__item">
+                          {line.section}
+                          {line.alternative ? <span className="rboq-table__alt"> ({line.alternative} where it is not available)</span> : null}
+                        </td>
+                        <td className="rboq-num">
+                          {line.bars} x {line.barM} m
+                        </td>
+                        <td className="rboq-num">{line.neededM.toFixed(1)}</td>
+                        <td className="rboq-table__note">
+                          <span className="rboq-pieces__uses">{uses.join(", ")}</span>
+                          <InfoHover label={`Pieces to cut from ${line.section}`}>
+                            {uses.map((use) => (
+                              <span key={use} className="rboq-pieces">
+                                <strong>{use}:</strong>{" "}
+                                {line.pieces
+                                  .filter((p) => p.use === use)
+                                  .map((p) => `${p.count} x ${p.lengthM.toFixed(3)}`)
+                                  .join(", ")}
+                              </span>
+                            ))}
+                          </InfoHover>
+                        </td>
+                      </tr>
+                    );
+                  })}
                   <tr>
                     <td className="rboq-table__item">{settings.roof_sheet}</td>
                     <td className="rboq-num">{boq.roofSheetCuts.reduce((sum, c) => sum + c.count, 0)} sheets</td>
                     <td className="rboq-num">{boq.roofSheetCuts.reduce((sum, c) => sum + c.count * c.lengthM, 0).toFixed(1)}</td>
                     <td className="rboq-table__note">
-                      <span className="rboq-pieces">
-                        <strong>cutting guide, ridge to rim on both sides:</strong> {boq.roofSheetCuts.map((c) => `${c.count} x ${c.lengthM.toFixed(2)}`).join(", ")}
-                      </span>
+                      <span className="rboq-pieces__uses">cutting guide</span>
+                      <InfoHover label="Roof sheet cutting guide">
+                        <span className="rboq-pieces">
+                          <strong>cutting guide, ridge to rim on both sides:</strong> {boq.roofSheetCuts.map((c) => `${c.count} x ${c.lengthM.toFixed(2)}`).join(", ")}
+                        </span>
+                      </InfoHover>
                     </td>
                   </tr>
                 </tbody>
