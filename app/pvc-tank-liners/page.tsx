@@ -5,6 +5,7 @@ import { PageSeo } from "@/components/PageSeo";
 import { RelatedPageLinks, ServiceFaqSection, ServiceProseSections } from "@/components/ServicePageSections";
 import { SiteSection } from "@/components/SiteSection";
 import { PvcLinerSizeTable } from "@/components/shop/PvcLinerSizeTable";
+import { PvcLinerDiagram } from "@/components/shop/PvcLinerDiagram";
 import { PvcLinerPicker } from "@/components/shop/PvcLinerPicker";
 import { createFaqPageSchema, createMetadata } from "@/lib/seo";
 import { PVC_LINER_FAQS, PVC_LINER_SECTIONS } from "@/lib/shop/pvc-liner-content";
@@ -62,6 +63,7 @@ export default async function PvcTankLinersPage({ searchParams }: PageProps) {
           title="Choose your tank size"
           intro="Measure the inside diameter of the tank and count the rows of corrugated sheet. Each row is 762 mm high."
         />
+        <PvcLinerDiagram />
         <PvcLinerPicker initialSku={initialLiner?.sku ?? null} syncUrl />
       </SiteSection>
 

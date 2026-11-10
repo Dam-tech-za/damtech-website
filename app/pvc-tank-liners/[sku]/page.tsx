@@ -5,6 +5,7 @@ import { PageSectionHeader } from "@/components/PageSectionHeader";
 import { PageSeo } from "@/components/PageSeo";
 import { RelatedPageLinks } from "@/components/ServicePageSections";
 import { SiteSection } from "@/components/SiteSection";
+import { PvcLinerDiagram } from "@/components/shop/PvcLinerDiagram";
 import { PvcLinerBuyBox } from "@/components/shop/PvcLinerBuyBox";
 import { formatZarExactAmount } from "@/lib/catalogue/format";
 import { createMetadata } from "@/lib/seo";
@@ -92,6 +93,11 @@ export default async function PvcLinerProductPage({ params }: Props) {
 
       <SiteSection tone="muted">
         <PageSectionHeader id="specifications" eyebrow="SPECIFICATIONS" title="Liner specifications" />
+        <PvcLinerDiagram
+          diameterLabel={`${liner.diameterM} m diameter`}
+          heightLabel={`${liner.heightM.toFixed(2)} m high`}
+          caption={`This liner is round, made for a round corrugated steel tank or pond ${liner.diameterM} m across and ${liner.heightM.toFixed(2)} m high: a circular floor, the wall, and a 300 mm fold-over that clips over the rim.`}
+        />
         <dl className="catalogue-spec-list">
           {[
             ["SKU", liner.sku],

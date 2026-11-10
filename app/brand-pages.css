@@ -1163,12 +1163,32 @@
   cursor: pointer;
 }
 .pvc-picker__result {
-  background: var(--dt-cream);
-  border-radius: var(--dt-radius);
-  padding: 1.25rem;
   display: grid;
-  gap: 0.75rem;
+  gap: 1rem;
   align-content: start;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--dt-line);
+}
+@media (min-width: 900px) {
+  .pvc-picker__result {
+    padding-top: 0;
+    border-top: 0;
+    padding-left: 2rem;
+    border-left: 1px solid var(--dt-line);
+  }
+}
+.pvc-picker__head {
+  display: grid;
+  grid-template-columns: clamp(4.5rem, 28%, 9rem) minmax(0, 1fr);
+  gap: 1.25rem;
+  align-items: center;
+}
+.pvc-picker__head-copy {
+  display: grid;
+  gap: 0.5rem;
+}
+.pvc-picker__buy {
+  justify-self: start;
 }
 .pvc-picker__name {
   font-weight: 600;
@@ -1176,13 +1196,15 @@
   margin: 0;
 }
 .pvc-picker__price {
-  font-size: var(--dt-size-xl);
+  font-size: clamp(1.6rem, 6vw, 2.5rem);
   font-weight: 700;
   color: var(--dt-blue-deep);
   margin: 0;
   line-height: 1.1;
 }
 .pvc-picker__price span {
+  display: block;
+  margin-top: 0.25rem;
   font-size: var(--dt-size-sm);
   font-weight: 500;
   color: var(--dt-ink-3);
@@ -1215,10 +1237,7 @@
 }
 .pvc-picker__image {
   width: 100%;
-  max-width: 14rem;
   height: auto;
-  border-radius: var(--dt-radius);
-  background: var(--dt-white);
 }
 .pvc-picker__swatch {
   width: 1rem;
@@ -1315,8 +1334,7 @@
   text-underline-offset: 0.2em;
 }
 .pvc-picker__details {
-  display: inline-block;
-  margin-top: 0.75rem;
+  justify-self: start;
   font-weight: 600;
   color: var(--dt-blue);
   text-decoration: underline;
@@ -1351,4 +1369,68 @@
 
 .pvc-summary__spec {
   margin: 1rem 0 0;
+}
+
+/* PVC liner line drawing: round tank with liner */
+.pvc-diagram {
+  display: grid;
+  gap: 0.75rem 2rem;
+  align-items: center;
+  margin: 0 0 2rem;
+}
+@media (min-width: 768px) {
+  .pvc-diagram {
+    grid-template-columns: minmax(0, 24rem) minmax(0, 1fr);
+  }
+}
+.pvc-diagram__svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+.pvc-diagram__steel,
+.pvc-diagram__rib,
+.pvc-diagram__dim,
+.pvc-diagram__lead {
+  fill: none;
+  stroke: var(--dt-ink);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.pvc-diagram__rib {
+  stroke-width: 1;
+  opacity: 0.45;
+}
+.pvc-diagram__dim {
+  stroke-width: 1.25;
+}
+.pvc-diagram__lead {
+  stroke-width: 1;
+  stroke-dasharray: 4 4;
+}
+.pvc-diagram__liner,
+.pvc-diagram__fold {
+  fill: color-mix(in srgb, var(--dt-blue) 14%, #fff);
+  stroke: var(--dt-blue);
+  stroke-width: 2.5;
+  stroke-linejoin: round;
+}
+.pvc-diagram__fold {
+  fill: color-mix(in srgb, var(--dt-blue) 30%, #fff);
+}
+.pvc-diagram__floor {
+  fill: none;
+  stroke: var(--dt-blue);
+  stroke-width: 1.5;
+  stroke-dasharray: 6 5;
+}
+.pvc-diagram__label {
+  font-size: 13px;
+  font-weight: 600;
+  fill: var(--dt-ink);
+}
+.pvc-diagram__caption {
+  color: var(--dt-ink-2);
+  max-width: 34rem;
 }

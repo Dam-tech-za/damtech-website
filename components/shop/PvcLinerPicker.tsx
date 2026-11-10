@@ -144,20 +144,24 @@ export function PvcLinerPicker({
 
       {liner ? (
         <div className="pvc-picker__result" aria-live="polite">
-          <Image
-            src={image.src}
-            alt={image.alt}
-            width={image.width}
-            height={image.height}
-            sizes="(min-width: 900px) 14rem, 60vw"
-            className="pvc-picker__image"
-          />
-          <p className="pvc-picker__name">
-            {liner.name}, {colour}
-          </p>
-          <p className="pvc-picker__price">
-            {formatZarExactAmount(liner.priceInclVatZar)} <span>incl. VAT</span>
-          </p>
+          <div className="pvc-picker__head">
+            <Image
+              src={image.src}
+              alt={image.alt}
+              width={image.width}
+              height={image.height}
+              sizes="(min-width: 480px) 9rem, 40vw"
+              className="pvc-picker__image"
+            />
+            <div className="pvc-picker__head-copy">
+              <p className="pvc-picker__name">
+                {liner.name}, {colour}
+              </p>
+              <p className="pvc-picker__price">
+                {formatZarExactAmount(liner.priceInclVatZar)} <span>incl. VAT</span>
+              </p>
+            </div>
+          </div>
           <dl className="pvc-picker__facts">
             <div>
               <dt>Fits</dt>

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { PageSectionHeader } from "@/components/PageSectionHeader";
 import { SiteSection } from "@/components/SiteSection";
+import { PvcLinerDiagram } from "@/components/shop/PvcLinerDiagram";
 import { PvcLinerPicker } from "@/components/shop/PvcLinerPicker";
 import { PVC_LINER_PAGE_PATH } from "@/lib/shop/pvc-liners";
 
@@ -22,6 +23,7 @@ export function PvcLinerShopSection({
         title={title}
         intro="Made-to-order blue or black PVC liners for corrugated steel water tanks. Choose your tank size to see the price including VAT."
       />
+      <PvcLinerDiagram />
       <PvcLinerPicker />
       <p className="pvc-shop__more">
         <Link href={PVC_LINER_PAGE_PATH} className="text-water hover:underline">
