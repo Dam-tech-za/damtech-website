@@ -4,12 +4,12 @@ import { SEOJsonLd } from "@/components/SEOJsonLd";
 import { SiteSection } from "@/components/SiteSection";
 import { PvcLinerPicker } from "@/components/shop/PvcLinerPicker";
 import { createMetadata } from "@/lib/seo";
+import { buildPvcLinerProductGroupSchema } from "@/lib/shop/pvc-merchant";
 import {
-  PVC_LINERS,
+  getPvcLinerBySku,
   PVC_LINER_MANUFACTURE_LABEL,
   PVC_LINER_PAGE_PATH,
 } from "@/lib/shop/pvc-liners";
-import { SITE_URL } from "@/lib/site-url";
 
 export const metadata = createMetadata({
   title: "PVC Tank Liners for Steel Water Tanks | Buy Online",
@@ -18,30 +18,18 @@ export const metadata = createMetadata({
   path: PVC_LINER_PAGE_PATH,
 });
 
-const prices = PVC_LINERS.map((l) => l.priceInclVatZar);
-
-const productSchema = {
-  "@context": "https://schema.org",
-  "@type": "Product",
-  name: "PVC tank liner for corrugated steel water tanks",
-  description:
-    "Made-to-order PVC liner (550 gsm or 800 gsm) for corrugated steel water tanks from 3 m to 17 m diameter. Floor, walls and a 300 mm fold-over.",
-  brand: { "@type": "Brand", name: "Damtech" },
-  url: `${SITE_URL}${PVC_LINER_PAGE_PATH}`,
-  offers: {
-    "@type": "AggregateOffer",
-    priceCurrency: "ZAR",
-    lowPrice: Math.min(...prices).toFixed(2),
-    highPrice: Math.max(...prices).toFixed(2),
-    offerCount: PVC_LINERS.length,
-    availability: "https://schema.org/MadeToOrder",
-  },
+type PageProps = {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
 };
 
-export default function PvcTankLinersPage() {
+export default async function PvcTankLinersPage({ searchParams }: PageProps) {
+  const params = await searchParams;
+  const requested = Array.isArray(params.sku) ? params.sku[0] : params.sku;
+  const initialLiner = requested ? getPvcLinerBySku(requested) : null;
+
   return (
     <>
-      <SEOJsonLd data={productSchema} />
+      <SEOJsonLd data={buildPvcLinerProductGroupSchema()} />
       <Hero
         compact
         eyebrow="Buy online"
@@ -57,7 +45,7 @@ export default function PvcTankLinersPage() {
         <p className="pvc-shop__lead">
           Measure the inside diameter of the tank and count the rows of corrugated sheet. Each row is 762 mm high.
         </p>
-        <PvcLinerPicker />
+        <PvcLinerPicker initialSku={initialLiner?.sku ?? null} />
       </SiteSection>
 
       <SiteSection tone="muted" aria-labelledby="pvc-included-heading">

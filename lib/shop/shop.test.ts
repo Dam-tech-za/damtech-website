@@ -45,3 +45,32 @@ describe("shopOrigin", () => {
     assert.equal(shopOrigin({ VERCEL_ENV: "production", NEXT_PUBLIC_SITE_URL: "https://www.dam-tech.co.za/" }), "https://www.dam-tech.co.za");
   });
 });
+
+import { buildPvcLinerFeedRows, buildPvcLinerProductGroupSchema, pvcLinerVariantUrl } from "./pvc-merchant.ts";
+import { createMerchantFeedHttpResult, parseMerchantFeedTsv } from "../catalogue/merchant-feed.ts";
+
+describe("Google visibility", () => {
+  it("describes all 76 liners as variants with exact prices and per-size URLs", () => {
+    const schema = buildPvcLinerProductGroupSchema() as { hasVariant: Array<{ sku: string; offers: { price: string; url: string } }> };
+    assert.equal(schema.hasVariant.length, 76);
+    const v = schema.hasVariant.find((x) => x.sku === "DMT-PVC-550-05M-3R");
+    assert.equal(v?.offers.price, "8728.50");
+    assert.equal(v?.offers.url, "https://www.dam-tech.co.za/pvc-tank-liners/?sku=DMT-PVC-550-05M-3R");
+  });
+
+  it("keeps liners out of the Merchant feed until an approved image exists", () => {
+    assert.deepEqual(buildPvcLinerFeedRows(null), []);
+    const { rows } = parseMerchantFeedTsv(createMerchantFeedHttpResult().body);
+    assert.ok(!rows.some((r) => r.id.startsWith("DMT-PVC")));
+  });
+
+  it("builds valid feed rows once an image is set", () => {
+    const rows = buildPvcLinerFeedRows({ src: "/images/example.webp" });
+    assert.equal(rows.length, 76);
+    const row = rows.find((r) => r.id === "DMT-PVC-800-05M-3R");
+    assert.equal(row?.price, "11994.50 ZAR");
+    assert.equal(row?.mpn, row?.id);
+    assert.equal(row?.item_group_id, "DMT-PVC");
+    assert.equal(row?.link, pvcLinerVariantUrl(PVC_LINERS.find((l) => l.sku === "DMT-PVC-800-05M-3R")!));
+  });
+});

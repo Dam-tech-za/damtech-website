@@ -48,3 +48,12 @@ With no credentials in sandbox mode the public PayFast sandbox merchant is used.
 ## Database
 Migration `20261110190000_catalogue_orders_payfast.sql` (additive). Must be applied before
 the checkout is used.
+
+## Google visibility
+- Each liner has its own URL, `/pvc-tank-liners/?sku=<SKU>`; the picker is server-rendered with that
+  size selected so the visible price matches the structured data.
+- The page carries `ProductGroup` JSON-LD with all 76 variants (`lib/shop/pvc-merchant.ts`).
+- Merchant feed rows for the liners are built but **gated on `PVC_LINER_MERCHANT_IMAGE`**. Set it to
+  an approved real photo of a PVC liner (static `.webp` under `public/images/`) to publish the 76
+  rows in `/feeds/google-merchant.tsv`. In Merchant Center, add per-province delivery rates for the
+  shipping label `pvc-tank-liner`.

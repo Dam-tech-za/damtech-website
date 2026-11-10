@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { formatZarExactAmount } from "@/lib/catalogue/format";
 import {
   getPvcLinerBySku,
@@ -26,14 +26,26 @@ const GSM_LABELS: Record<PvcLinerGsm, string> = {
   800: "800 gsm (heavy duty)",
 };
 
-export function PvcLinerPicker() {
-  const [rows, setRows] = useState<PvcLinerRows>(3);
-  const [diameter, setDiameter] = useState(5);
-  const [gsm, setGsm] = useState<PvcLinerGsm>(550);
+export function PvcLinerPicker({ initialSku = null }: { initialSku?: string | null }) {
+  const initial = initialSku ? getPvcLinerBySku(initialSku) : null;
+  const [rows, setRows] = useState<PvcLinerRows>(initial?.rows ?? 3);
+  const [diameter, setDiameter] = useState(initial?.diameterM ?? 5);
+  const [gsm, setGsm] = useState<PvcLinerGsm>(initial?.gsm ?? 550);
+  const touched = useRef(false);
 
   const diameters = useMemo(() => pvcLinerDiametersForRows(rows), [rows]);
   const safeDiameter = diameters.includes(diameter) ? diameter : diameters[diameters.length - 1];
   const liner = getPvcLinerBySku(pvcLinerSku(gsm, safeDiameter, rows));
+
+  // Keep the address in step with the selection so each size can be shared
+  // and matches the per-size link Google indexes.
+  useEffect(() => {
+    if (!liner || (!touched.current && !initialSku)) return;
+    const url = new URL(window.location.href);
+    if (url.searchParams.get("sku") === liner.sku) return;
+    url.searchParams.set("sku", liner.sku);
+    window.history.replaceState(window.history.state, "", url);
+  }, [liner, initialSku]);
 
   return (
     <div className="pvc-picker">
@@ -46,7 +58,10 @@ export function PvcLinerPicker() {
             id="pvc-rows"
             className="form-input"
             value={rows}
-            onChange={(e) => setRows(Number(e.target.value) as PvcLinerRows)}
+            onChange={(e) => {
+              touched.current = true;
+              setRows(Number(e.target.value) as PvcLinerRows);
+            }}
           >
             {PVC_LINER_ROWS_OPTIONS.map((r) => (
               <option key={r} value={r}>
@@ -63,7 +78,10 @@ export function PvcLinerPicker() {
             id="pvc-diameter"
             className="form-input"
             value={safeDiameter}
-            onChange={(e) => setDiameter(Number(e.target.value))}
+            onChange={(e) => {
+              touched.current = true;
+              setDiameter(Number(e.target.value));
+            }}
           >
             {diameters.map((d) => (
               <option key={d} value={d}>
@@ -81,7 +99,10 @@ export function PvcLinerPicker() {
                 name="pvc-gsm"
                 value={option}
                 checked={gsm === option}
-                onChange={() => setGsm(option)}
+                onChange={() => {
+                  touched.current = true;
+                  setGsm(option);
+                }}
               />
               <span>{GSM_LABELS[option]}</span>
             </label>

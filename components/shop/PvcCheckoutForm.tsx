@@ -330,7 +330,7 @@ export function PvcCheckoutForm({
           </dl>
           <p className="order-summary__price-note">
             {PVC_LINER_MANUFACTURE_LABEL}, then delivered. Installation is not included.{" "}
-            <Link href={PVC_LINER_PAGE_PATH} className="text-water hover:underline">
+            <Link href={`${PVC_LINER_PAGE_PATH}?sku=${liner.sku}`} className="text-water hover:underline">
               Change size
             </Link>
           </p>

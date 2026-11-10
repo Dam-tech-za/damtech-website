@@ -21,6 +21,7 @@ import {
 import { MERCHANT_CENTER_RELEASE_GATE } from "./merchant.ts";
 import { merchantFeedHandlingTransitFields } from "./merchant-policies.ts";
 import { CATALOGUE_PRODUCTS } from "./products.ts";
+import { buildPvcLinerFeedRows } from "../shop/pvc-merchant.ts";
 import { isDeliveryFulfilmentConfigured } from "../orders/delivery.ts";
 import { CANONICAL_ORIGIN } from "../site-url.ts";
 import {
@@ -70,6 +71,10 @@ export const MERCHANT_FEED_COLUMNS = [
   "min_transit_time",
   "max_transit_time",
   "ships_from_country",
+  "item_group_id",
+  "size",
+  "material",
+  "shipping_label",
 ] as const;
 
 export type MerchantFeedColumn = (typeof MERCHANT_FEED_COLUMNS)[number];
@@ -560,6 +565,10 @@ function buildMerchantFeedRow(
     google_product_category: googleProductCategoryId(product),
     product_type: PRODUCT_TYPE[product.categoryId],
     ...merchantFeedHandlingTransitFields(),
+    item_group_id: "",
+    size: "",
+    material: "",
+    shipping_label: "",
   };
 }
 
@@ -592,9 +601,11 @@ export function createMerchantFeedHttpResult(options?: {
   }
 
   const eligible = getMerchantFeedProducts(context, products);
-  const rows = eligible
+  const rows: MerchantFeedRow[] = eligible
     .map((product) => buildMerchantFeedRow(product, context))
     .filter((row): row is MerchantFeedRow => row !== null);
+  // Made-to-order PVC liners (gated on an approved product image).
+  if (!options?.products) rows.push(...buildPvcLinerFeedRows());
 
   if (rows.length === 0) {
     console.error(
