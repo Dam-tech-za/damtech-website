@@ -179,7 +179,7 @@ export const CATALOGUE_PRODUCTS: readonly CatalogueProduct[] = [
     relatedSkus: ["DMT-WT-20000", "DMT-WT-50000"],
     relatedPageLinks: [
       {
-        href: "/steel-water-storage-tanks/#popular-tank-sizes",
+        href: "/shop/#popular-tank-sizes",
         label: "Compare steel water tank sizes and prices",
       },
       {
@@ -288,7 +288,7 @@ export const CATALOGUE_PRODUCTS: readonly CatalogueProduct[] = [
     relatedSkus: ["DMT-WT-10000", "DMT-WT-50000"],
     relatedPageLinks: [
       {
-        href: "/steel-water-storage-tanks/#popular-tank-sizes",
+        href: "/shop/#popular-tank-sizes",
         label: "All corrugated steel water tank prices",
       },
       {
@@ -400,7 +400,7 @@ export const CATALOGUE_PRODUCTS: readonly CatalogueProduct[] = [
     relatedSkus: ["DMT-WT-20000", "DMT-WT-100000"],
     relatedPageLinks: [
       {
-        href: "/steel-water-storage-tanks/#popular-tank-sizes",
+        href: "/shop/#popular-tank-sizes",
         label: "Steel water tanks for sale — all sizes",
       },
       {
@@ -512,7 +512,7 @@ export const CATALOGUE_PRODUCTS: readonly CatalogueProduct[] = [
     relatedSkus: ["DMT-WT-50000", "DMT-WT-20000"],
     relatedPageLinks: [
       {
-        href: "/steel-water-storage-tanks/#popular-tank-sizes",
+        href: "/shop/#popular-tank-sizes",
         label: "Browse fixed-price steel tank kits",
       },
       {
@@ -645,7 +645,7 @@ export const CATALOGUE_PRODUCTS: readonly CatalogueProduct[] = [
     },
     relatedPageLinks: [
       {
-        href: "/steel-water-storage-tanks/#fish-ponds-aquaculture",
+        href: "/shop/#fish-ponds-aquaculture",
         label: "Fish ponds and aquaculture tanks",
       },
       {
@@ -771,7 +771,7 @@ export const CATALOGUE_PRODUCTS: readonly CatalogueProduct[] = [
     },
     relatedPageLinks: [
       {
-        href: "/steel-water-storage-tanks/#fish-ponds-aquaculture",
+        href: "/shop/#fish-ponds-aquaculture",
         label: "All fish pond and aquaculture kits",
       },
       {
@@ -897,7 +897,7 @@ export const CATALOGUE_PRODUCTS: readonly CatalogueProduct[] = [
     },
     relatedPageLinks: [
       {
-        href: "/steel-water-storage-tanks/#livestock-watering",
+        href: "/shop/#livestock-watering",
         label: "Livestock watering kits",
       },
       {

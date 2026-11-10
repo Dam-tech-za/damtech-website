@@ -74,6 +74,28 @@ export function getPvcLinerBySku(sku: string): PvcLiner | null {
   return BY_SKU.get(sku.trim().toUpperCase()) ?? null;
 }
 
+/** Each liner has its own product page, e.g. /pvc-tank-liners/dmt-pvc-550-05m-3r/. */
+export function pvcLinerSlug(liner: PvcLiner): string {
+  return liner.sku.toLowerCase();
+}
+
+export function pvcLinerProductPath(liner: PvcLiner): string {
+  return `${PVC_LINER_PAGE_PATH}${pvcLinerSlug(liner)}/`;
+}
+
+export function getPvcLinerBySlug(slug: string): PvcLiner | null {
+  const liner = getPvcLinerBySku(slug);
+  return liner && pvcLinerSlug(liner) === slug ? liner : null;
+}
+
+export function pvcLinerSizeLabel(liner: PvcLiner): string {
+  return `${liner.diameterM} m × ${liner.heightM.toFixed(2)} m`;
+}
+
+export function pvcLinerProductTitle(liner: PvcLiner): string {
+  return `${liner.gsm} gsm PVC Tank Liner for ${pvcLinerSizeLabel(liner)} Corrugated Steel Tank (${Math.round(liner.volumeKl)} kL)`;
+}
+
 export function pvcLinerDiametersForRows(rows: number): number[] {
   return PVC_LINER_PRICE_ROWS.filter((r) => r.rows === rows).map((r) => r.diameterM);
 }

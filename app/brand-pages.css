@@ -1292,3 +1292,60 @@
 .pvc-shop__more {
   margin: 1rem 0 0;
 }
+
+/* Shop: kit card buy/view actions, liner product page, liner size tables */
+.catalogue-card__actions {
+  display: grid;
+  gap: 0.5rem;
+  margin: auto 1.25rem 1.25rem;
+}
+.catalogue-card__actions .catalogue-card__cta {
+  margin: 0;
+}
+.catalogue-card__details {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  font-weight: 600;
+  color: var(--dt-ink);
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+.pvc-picker__details {
+  display: inline-block;
+  margin-top: 0.75rem;
+  font-weight: 600;
+  color: var(--dt-blue);
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+.pvc-product__gallery {
+  background: #fff;
+  border: 1px solid var(--dt-line);
+}
+.pvc-product__image {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+.pvc-product__image[hidden] {
+  display: none;
+}
+.pvc-product__vat {
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+.pvc-size-tables {
+  display: grid;
+  gap: 2rem;
+}
+@media (min-width: 1100px) {
+  .pvc-size-tables {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    align-items: start;
+  }
+}
+.pvc-size-tables .site-data-table {
+  overflow-x: auto;
+}

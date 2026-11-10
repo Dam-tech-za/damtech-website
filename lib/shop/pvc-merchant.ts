@@ -2,17 +2,21 @@ import { CANONICAL_ORIGIN } from "../site-url.ts";
 import {
   PVC_LINERS,
   PVC_LINER_COLOUR_IMAGES,
+  PVC_LINER_COLOURS,
   PVC_LINER_DEFAULT_COLOUR,
   PVC_LINER_PAGE_PATH,
+  pvcLinerProductPath,
+  pvcLinerProductTitle,
+  pvcLinerSizeLabel,
   type PvcLiner,
 } from "./pvc-liners.ts";
 
 /**
  * Google visibility for the PVC liner variants.
  *
- * Every liner has its own URL (`/pvc-tank-liners/?sku=…`) whose server-rendered
- * picker shows that liner's exact VAT-inclusive price, so the price Google
- * reads always matches the page. Colour (blue/black) does not change the
+ * Every liner has its own product page (`/pvc-tank-liners/{sku}/`) showing that
+ * liner's exact VAT-inclusive price, so the price Google reads always matches
+ * the page. Colour (blue/black) does not change the
  * price, so it is not a separate Merchant variant; the blue illustration is
  * the listing image. Set to null to withdraw the liners from the feed.
  */
@@ -29,19 +33,53 @@ export const PVC_LINER_TRANSIT_DAYS = { min: 3, max: 5 } as const;
 const GOOGLE_CATEGORY_STORAGE_TANKS = "1910";
 
 export function pvcLinerVariantPath(liner: PvcLiner): string {
-  return `${PVC_LINER_PAGE_PATH}?sku=${liner.sku}`;
+  return pvcLinerProductPath(liner);
 }
 
 export function pvcLinerVariantUrl(liner: PvcLiner): string {
   return `${CANONICAL_ORIGIN}${pvcLinerVariantPath(liner)}`;
 }
 
-function sizeLabel(liner: PvcLiner): string {
-  return `${liner.diameterM} m × ${liner.heightM.toFixed(2)} m`;
+const sizeLabel = pvcLinerSizeLabel;
+
+export const pvcLinerFeedTitle = pvcLinerProductTitle;
+
+function schemaImages(): string[] {
+  return PVC_LINER_COLOURS.map((colour) => `${CANONICAL_ORIGIN}${PVC_LINER_COLOUR_IMAGES[colour].src}`);
 }
 
-export function pvcLinerFeedTitle(liner: PvcLiner): string {
-  return `${liner.gsm} gsm PVC Tank Liner for ${sizeLabel(liner)} Corrugated Steel Tank (${Math.round(liner.volumeKl)} kL)`;
+function productNode(liner: PvcLiner): Record<string, unknown> {
+  return {
+    "@type": "Product",
+    sku: liner.sku,
+    mpn: liner.sku,
+    name: pvcLinerFeedTitle(liner),
+    description: liner.summary,
+    size: sizeLabel(liner),
+    material: `${liner.gsm} gsm PVC`,
+    color: "Blue or black",
+    brand: { "@type": "Brand", name: "DamTech" },
+    image: schemaImages(),
+    offers: {
+      "@type": "Offer",
+      url: pvcLinerVariantUrl(liner),
+      priceCurrency: "ZAR",
+      price: liner.priceInclVatZar.toFixed(2),
+      availability: "https://schema.org/InStock",
+      itemCondition: "https://schema.org/NewCondition",
+    },
+  };
+}
+
+/** schema.org Product for one liner's own product page. */
+export function buildPvcLinerProductSchema(liner: PvcLiner): Record<string, unknown> {
+  return {
+    "@context": "https://schema.org",
+    ...productNode(liner),
+    "@id": `${pvcLinerVariantUrl(liner)}#product`,
+    url: pvcLinerVariantUrl(liner),
+    inProductGroupWithID: "DMT-PVC",
+  };
 }
 
 /** schema.org ProductGroup with one Product per liner. */
@@ -59,25 +97,7 @@ export function buildPvcLinerProductGroupSchema(): Record<string, unknown> {
     url: `${CANONICAL_ORIGIN}${PVC_LINER_PAGE_PATH}`,
     ...(image ? { image } : {}),
     variesBy: ["https://schema.org/size", "https://schema.org/material"],
-    hasVariant: PVC_LINERS.map((liner) => ({
-      "@type": "Product",
-      sku: liner.sku,
-      mpn: liner.sku,
-      name: pvcLinerFeedTitle(liner),
-      description: liner.summary,
-      size: sizeLabel(liner),
-      material: `${liner.gsm} gsm PVC`,
-      color: "Blue or black",
-      ...(image ? { image } : {}),
-      offers: {
-        "@type": "Offer",
-        url: pvcLinerVariantUrl(liner),
-        priceCurrency: "ZAR",
-        price: liner.priceInclVatZar.toFixed(2),
-        availability: "https://schema.org/InStock",
-        itemCondition: "https://schema.org/NewCondition",
-      },
-    })),
+    hasVariant: PVC_LINERS.map(productNode),
   };
 }
 
@@ -119,7 +139,7 @@ export function buildPvcLinerFeedRows(
     description: `${liner.summary} Made to order in 3 to 5 business days, then delivered in South Africa. Installation not included.`,
     link: pvcLinerVariantUrl(liner),
     image_link: `${CANONICAL_ORIGIN}${image.src}`,
-    additional_image_link: "",
+    additional_image_link: `${CANONICAL_ORIGIN}${PVC_LINER_COLOUR_IMAGES.black.src}`,
     availability: "in_stock",
     availability_date: "",
     price: `${liner.priceInclVatZar.toFixed(2)} ZAR`,

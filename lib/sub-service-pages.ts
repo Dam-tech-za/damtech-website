@@ -566,7 +566,7 @@ export const RESERVOIR_LINING_PAGE: SubServicePageConfig = {
       label: "Steel Water Tank Size Calculator",
     },
     {
-      href: "/steel-water-storage-tanks/#popular-tank-sizes",
+      href: "/shop/#popular-tank-sizes",
       label: "Steel water tank sizes and prices",
     },
     { href: "/dam-liners", label: "Dam Linings" },

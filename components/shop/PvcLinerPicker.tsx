@@ -15,6 +15,7 @@ import {
   PVC_LINER_MANUFACTURE_LABEL,
   PVC_LINER_ROWS_OPTIONS,
   pvcLinerDiametersForRows,
+  pvcLinerProductPath,
   pvcLinerSku,
   type PvcLinerColour,
   type PvcLinerGsm,
@@ -182,6 +183,9 @@ export function PvcLinerPicker({
             className="btn-primary pvc-picker__buy"
           >
             Buy now
+          </Link>
+          <Link href={pvcLinerProductPath(liner)} className="pvc-picker__details">
+            View product details
           </Link>
           <p className="pvc-picker__note">Secure payment by card or Instant EFT through PayFast.</p>
         </div>

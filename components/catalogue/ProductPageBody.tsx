@@ -25,7 +25,7 @@ const COMMERCIAL_LINKS = [
 
 const FALLBACK_RELATED_LINKS = [
   {
-    href: "/steel-water-storage-tanks/#popular-tank-sizes",
+    href: "/shop/#popular-tank-sizes",
     label: "Compare all tank sizes and prices",
   },
   {

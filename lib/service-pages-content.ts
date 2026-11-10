@@ -179,7 +179,7 @@ export const STEEL_TANKS_CONTENT = {
     {
       question: "What sizes of steel water tanks do you supply?",
       answer:
-        "Fixed-price supply-only kits are listed on this page for 10 000 L, 20 000 L, 50 000 L and 100 000 L, plus fish-pond and livestock-trough kits. We also supply corrugated Z275 galvanised and AZ150 Aluzinc tanks from approximately 11 kL up to 500 kL and larger on request, in diameters from 3 m to 17 m and a range of ring heights. See the capacity tables below or contact us for a full schedule.",
+        "Fixed-price supply-only kits are listed in the Damtech shop for 10 000 L, 20 000 L, 50 000 L and 100 000 L, plus fish-pond and livestock-trough kits. We also supply corrugated Z275 galvanised and AZ150 Aluzinc tanks from approximately 11 kL up to 500 kL and larger on request, in diameters from 3 m to 17 m and a range of ring heights. See the capacity tables below or contact us for a full schedule.",
     },
     {
       question: "How long does installation take?",
@@ -209,7 +209,7 @@ export const STEEL_TANKS_CONTENT = {
   ] satisfies ServiceFaqItem[],
   relatedLinks: [
     {
-      href: "/steel-water-storage-tanks/#popular-tank-sizes",
+      href: "/shop/#popular-tank-sizes",
       label: "Compare all tank sizes and prices",
     },
     {

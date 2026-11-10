@@ -9,6 +9,7 @@ import { POSTS_PER_PAGE, paginatePosts, posts } from "@/lib/posts";
 import { blogPostPath } from "@/lib/blog-url-moves";
 import { absoluteUrl } from "@/lib/seo";
 import { INDEXABLE_STATIC_PATHS } from "@/lib/site";
+import { PVC_LINERS, pvcLinerProductPath } from "@/lib/shop/pvc-liners";
 import { SITEMAP_LASTMOD } from "@/lib/sitemap-lastmod.generated";
 
 function isDisallowedSitemapPath(path: string): boolean {
@@ -101,9 +102,15 @@ export function buildSitemap(): MetadataRoute.Sitemap {
     }),
   );
 
+  const linerEntries: MetadataRoute.Sitemap = PVC_LINERS.map((liner) => {
+    const path = pvcLinerProductPath(liner).replace(/\/$/, "");
+    return { url: absoluteUrl(path), lastModified: pageLastModified(path) };
+  });
+
   return dedupeSitemap([
     ...staticEntries,
     ...catalogueEntries,
+    ...linerEntries,
     ...projectEntries,
     ...postEntries,
     ...blogPages,

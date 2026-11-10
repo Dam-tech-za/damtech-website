@@ -125,7 +125,7 @@ describe("JSON-LD wiring", () => {
 
   it("gives listing-page ItemList products the same Merchant listing fields", () => {
     const listing = readFileSync(
-      join(root, "app/steel-water-storage-tanks/page.tsx"),
+      join(root, "app/shop/page.tsx"),
       "utf8",
     );
     assert.match(listing, /description: product\.seoDescription/);

@@ -10,6 +10,7 @@ import {
   catalogueProductUrlPath,
   formatZarWholeInclVat,
   getPageGalleryImages,
+  orderPath,
   PRODUCT_GALLERY_ASPECT,
   type CatalogueProduct,
 } from "@/lib/catalogue";
@@ -22,6 +23,13 @@ export function CatalogueProductCard({ product }: { product: CatalogueProduct })
   function handleSelect() {
     pushCatalogueAnalytics(
       CATALOGUE_ANALYTICS_EVENTS.selectItem,
+      buildCatalogueAnalyticsItem(product, 1),
+    );
+  }
+
+  function handleBuy() {
+    pushCatalogueAnalytics(
+      CATALOGUE_ANALYTICS_EVENTS.beginCheckout,
       buildCatalogueAnalyticsItem(product, 1),
     );
   }
@@ -63,13 +71,14 @@ export function CatalogueProductCard({ product }: { product: CatalogueProduct })
           <li>Transport and installation excluded</li>
         </ul>
       </div>
-      <Link
-        href={href}
-        className="catalogue-card__cta"
-        onClick={handleSelect}
-      >
-        View Product
-      </Link>
+      <div className="catalogue-card__actions">
+        <Link href={orderPath(product.sku, 1)} className="catalogue-card__cta" onClick={handleBuy}>
+          Buy now
+        </Link>
+        <Link href={href} className="catalogue-card__details" onClick={handleSelect}>
+          View product
+        </Link>
+      </div>
     </article>
   );
 }

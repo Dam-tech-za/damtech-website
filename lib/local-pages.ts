@@ -634,7 +634,7 @@ export const LOCAL_LANDING_PAGES: LocalLandingPage[] = [
       { href: "/projects/stellenbosch-hdpe-dam-liner", label: "Stellenbosch HDPE dam" },
       { href: "/projects/grabouw-hdpe-farm-dam", label: "Grabouw farm dam" },
       {
-        href: "/steel-water-storage-tanks/#popular-tank-sizes",
+        href: "/shop/#popular-tank-sizes",
         label: "Steel water tank sizes and prices",
       },
     ],

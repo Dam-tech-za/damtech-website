@@ -65,7 +65,7 @@ describe("Google visibility", () => {
     assert.equal(schema.hasVariant.length, 76);
     const v = schema.hasVariant.find((x) => x.sku === "DMT-PVC-550-05M-3R");
     assert.equal(v?.offers.price, "8728.50");
-    assert.equal(v?.offers.url, "https://www.dam-tech.co.za/pvc-tank-liners/?sku=DMT-PVC-550-05M-3R");
+    assert.equal(v?.offers.url, "https://www.dam-tech.co.za/pvc-tank-liners/dmt-pvc-550-05m-3r/");
   });
 
   it("lists the liners in the Merchant feed with the tagged illustration, and none without an image", () => {

@@ -101,7 +101,7 @@ export default async function CalculatorsPage({ searchParams }: PageProps) {
             { href: "/dam-liners", label: "Dam Liners & Dam Lining Services" },
             { href: "/hdpe-dam-lining", label: "HDPE Dam Lining" },
             {
-              href: "/steel-water-storage-tanks/#popular-tank-sizes",
+              href: "/shop/#popular-tank-sizes",
               label: "Steel water tank sizes and prices",
             },
             { href: "/waterproofing", label: "Waterproofing" },

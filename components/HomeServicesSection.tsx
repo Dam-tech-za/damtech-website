@@ -25,9 +25,9 @@ const SERVICE_CARDS: readonly ServiceCard[] = [
     id: "reservoirs",
     title: "Steel Reservoirs",
     description:
-      "Fixed-price corrugated steel water tank kits for farms, estates, game lodges and commercial sites — VAT-inclusive supply-only prices.",
-    linkLabel: "View steel tank sizes and prices",
-    href: "/steel-water-storage-tanks/#popular-tank-sizes",
+      "Corrugated steel reservoirs supplied and installed for farms, estates, game lodges and commercial sites. Standard kits are sold in the shop.",
+    linkLabel: "View steel reservoirs",
+    href: "/steel-water-storage-tanks/",
     featured: false,
     image: SITE_IMAGES.steelReservoirServicesCard,
   },

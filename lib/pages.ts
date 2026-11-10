@@ -65,7 +65,7 @@ export const PAGE_SEO: Record<StaticPageKey, PageSeoEntry> = {
   "steel-tanks": {
     title: "Steel Water Tanks for Sale South Africa | Prices",
     description:
-      "Corrugated steel water tanks for sale in South Africa, 10 000L to 100 000L. VAT-inclusive kit prices, supply-only. Transport and installation excluded.",
+      "Corrugated steel water tanks in South Africa, 10 000 L to 500 000 L+. Supplied as a kit or installed by Damtech. Fixed kit prices incl. VAT in the shop.",
     path: "/steel-water-storage-tanks",
     h1: "Corrugated Steel Water Tanks for Sale in South Africa",
     serviceName: "Corrugated Steel Water Tank Supply",

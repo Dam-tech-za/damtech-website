@@ -54,11 +54,11 @@ export const WATERPROOFING_INTRO: ServiceIntroConfig = {
 
 export const STEEL_TANKS_INTRO: ServiceIntroConfig = {
   eyebrow: "STEEL WATER TANKS",
-  heading: "Fixed-price corrugated steel reservoir kits",
+  heading: "Corrugated steel reservoirs, supplied and installed",
   description:
-    "Reliable above-ground water storage for farms, estates and commercial sites. Choose a VAT-inclusive, supply-only kit sized for your water requirements.",
+    "Reliable above-ground water storage for farms, estates and commercial sites. Damtech supplies the tank as a kit or installs it on your site.",
   trustPoints: [
-    { label: "VAT-inclusive pricing", icon: "check" },
+    { label: "Supply or supply and install", icon: "check" },
     { label: "Durable galvanised steel", icon: "shield" },
     { label: "Made for South African conditions", icon: "droplet" },
   ],
@@ -75,7 +75,7 @@ export const STEEL_TANKS_INTRO: ServiceIntroConfig = {
     "Corrugated steel water reservoir installed for farm water storage in South Africa",
   ribbonFacts: [
     "10 000 L–500 000 L+",
-    "Supply-only kits",
+    "Standard kits in the shop",
     "Installation & Delivery Available",
   ],
   footnote:

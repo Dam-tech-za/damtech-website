@@ -4,6 +4,7 @@ import { PageSectionHeader } from "@/components/PageSectionHeader";
 import { PageSeo } from "@/components/PageSeo";
 import { RelatedPageLinks, ServiceFaqSection, ServiceProseSections } from "@/components/ServicePageSections";
 import { SiteSection } from "@/components/SiteSection";
+import { PvcLinerSizeTable } from "@/components/shop/PvcLinerSizeTable";
 import { PvcLinerPicker } from "@/components/shop/PvcLinerPicker";
 import { createFaqPageSchema, createMetadata } from "@/lib/seo";
 import { PVC_LINER_FAQS, PVC_LINER_SECTIONS } from "@/lib/shop/pvc-liner-content";
@@ -93,6 +94,16 @@ export default async function PvcTankLinersPage({ searchParams }: PageProps) {
             </p>
           </div>
         </div>
+      </SiteSection>
+
+      <SiteSection tone="muted" aria-labelledby="pvc-all-sizes-heading">
+        <PageSectionHeader
+          id="pvc-all-sizes-heading"
+          eyebrow="ALL LINERS"
+          title="All PVC tank liner sizes and prices"
+          intro="Every liner has its own product page. Select a price to open it."
+        />
+        <PvcLinerSizeTable />
       </SiteSection>
 
       <ServiceFaqSection faqs={[...PVC_LINER_FAQS]} heading="PVC tank liner questions" />
