@@ -16,3 +16,11 @@ alter table public.catalogue_orders
 alter table public.catalogue_orders
   add constraint catalogue_orders_tracking_url_check
   check (tracking_url is null or tracking_url ~ '^https://');
+
+-- Collection instead of delivery for online shop orders, at Pretoria or
+-- Betty's Bay. Existing rows all use 'delivery_south_africa'.
+alter table public.catalogue_orders
+  drop constraint if exists catalogue_orders_fulfilment_check;
+alter table public.catalogue_orders
+  add constraint catalogue_orders_fulfilment_check
+  check (fulfilment_method in ('delivery_south_africa', 'collection_pretoria', 'collection_bettys_bay'));

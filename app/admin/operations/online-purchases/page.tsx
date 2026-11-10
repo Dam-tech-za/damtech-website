@@ -6,6 +6,7 @@ import { requireAdmin } from "@/lib/auth/require-admin";
 import { canAccessNavItem } from "@/lib/auth/permissions";
 import { orderStatusLabel } from "@/lib/admin/labels";
 import { formatZar } from "@/lib/estimating/money";
+import { fulfilmentLabel, isCollectionMethod } from "@/lib/shop/delivery";
 import { listOnlinePurchases, type OnlinePurchaseRow } from "@/lib/orders/list";
 import {
   isPurchaseStage,
@@ -134,7 +135,7 @@ export default async function OnlinePurchasesPage({ searchParams }: PageProps) {
                   <th scope="col">Product</th>
                   <th scope="col">Stage</th>
                   <th scope="col">Payment</th>
-                  <th scope="col">Deliver to</th>
+                  <th scope="col">Delivery or collection</th>
                   <th scope="col">Courier and tracking</th>
                   <th scope="col">Dates</th>
                 </tr>
@@ -164,9 +165,13 @@ export default async function OnlinePurchasesPage({ searchParams }: PageProps) {
                         <AdminStatusBadge status={payment.status} label={payment.label} />
                         <span className="ops-table__meta">{formatZar(amountDue(row))}</span>
                       </td>
-                      <td data-label="Deliver to">
-                        {row.billing_city}
-                        <span className="ops-table__meta">{row.billing_province}</span>
+                      <td data-label="Delivery or collection">
+                        {isCollectionMethod(row.fulfilment_method)
+                          ? fulfilmentLabel(row.fulfilment_method, row.billing_province)
+                          : row.billing_city}
+                        <span className="ops-table__meta">
+                          {isCollectionMethod(row.fulfilment_method) ? "Customer collects" : row.billing_province}
+                        </span>
                       </td>
                       <td data-label="Courier and tracking">
                         {row.courier_name || row.tracking_number ? (

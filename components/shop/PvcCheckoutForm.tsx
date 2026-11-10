@@ -9,7 +9,13 @@ import { ShieldCheckIcon } from "@/components/icons/StrokeIcons";
 import { formatZarExactAmount } from "@/lib/catalogue/format";
 import { checkRequiredFields } from "@/lib/form-required";
 import type { PayfastForm } from "@/lib/payfast/payment";
-import { DELIVERY_PROVINCES, deliveryQuoteForProvince } from "@/lib/shop/delivery";
+import {
+  COLLECTION_POINT_IDS,
+  COLLECTION_POINTS,
+  DELIVERY_PROVINCES,
+  deliveryQuoteForProvince,
+  type CollectionPointId,
+} from "@/lib/shop/delivery";
 import {
   PVC_LINER_COLOUR_IMAGES,
   PVC_LINER_MANUFACTURE_LABEL,
@@ -80,6 +86,7 @@ export function PvcCheckoutForm({
   const [error, setError] = useState<string | null>(null);
   const [quantity, setQuantity] = useState(initialQuantity);
   const [province, setProvince] = useState("");
+  const [collection, setCollection] = useState<CollectionPointId | "">("");
   const [payfast, setPayfast] = useState<PayfastForm | null>(null);
   const [submissionId] = useState(() => crypto.randomUUID());
   const [formStartedAt] = useState(() => Date.now());
@@ -87,13 +94,14 @@ export function PvcCheckoutForm({
 
   const totals = useMemo(() => {
     const goodsCents = liner.priceInclVatCents * quantity;
+    if (collection) return { goods: goodsCents / 100, delivery: 0, total: goodsCents / 100 };
     const delivery = deliveryQuoteForProvince(province);
     return {
       goods: goodsCents / 100,
       delivery: delivery ? delivery.feeInclVatZar : null,
       total: delivery ? (goodsCents + delivery.feeInclVatCents) / 100 : null,
     };
-  }, [liner, quantity, province]);
+  }, [liner, quantity, province, collection]);
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -157,7 +165,7 @@ export function PvcCheckoutForm({
             <Field id="email" label="Email address" required>
               <TextInput id="email" type="email" autoComplete="email" maxLength={320} required disabled={busy} />
             </Field>
-            <Field id="phone" label="Phone number" required hint="We call this number to arrange delivery.">
+            <Field id="phone" label="Phone number" required hint={collection ? "We call this number to arrange collection." : "We call this number to arrange delivery."}>
               <TextInput id="phone" type="tel" autoComplete="tel" maxLength={40} required disabled={busy} />
             </Field>
           </div>
@@ -172,7 +180,40 @@ export function PvcCheckoutForm({
         </fieldset>
 
         <fieldset className="order-fieldset">
-          <legend>Delivery address</legend>
+          <legend>Delivery or collection</legend>
+          <label className="order-check">
+            <input
+              type="radio"
+              name="collection"
+              value=""
+              checked={collection === ""}
+              onChange={() => setCollection("")}
+              disabled={busy}
+            />
+            <span>Deliver to my address. The delivery fee depends on the province.</span>
+          </label>
+          {COLLECTION_POINT_IDS.map((id) => (
+            <label key={id} className="order-check">
+              <input
+                type="radio"
+                name="collection"
+                value={id}
+                checked={collection === id}
+                onChange={() => setCollection(id)}
+                disabled={busy}
+              />
+              <span>Collect in {COLLECTION_POINTS[id].label}. No delivery fee.</span>
+            </label>
+          ))}
+          {collection ? (
+            <p className="text-xs text-subtle">
+              We will send you the collection address and time when your liner is ready.
+            </p>
+          ) : null}
+        </fieldset>
+
+        <fieldset className="order-fieldset">
+          <legend>{collection ? "Your address" : "Delivery address"}</legend>
           <Field id="billingLine1" label="Street address" required>
             <TextInput id="billingLine1" autoComplete="address-line1" maxLength={200} required disabled={busy} />
           </Field>
@@ -188,7 +229,7 @@ export function PvcCheckoutForm({
             </Field>
           </div>
           <div className="order-form__grid">
-            <Field id="province" label="Province" required hint="The delivery fee depends on the province.">
+            <Field id="province" label="Province" required hint={collection ? "Used on your tax invoice." : "The delivery fee depends on the province."}>
               <select
                 id="province"
                 name="province"
@@ -233,7 +274,7 @@ export function PvcCheckoutForm({
               disabled={busy}
             />
           </Field>
-          <Field id="notes" label="Delivery instructions" hint="Optional: gate codes, farm directions, best time to call.">
+          <Field id="notes" label={collection ? "Notes" : "Delivery instructions"} hint={collection ? "Optional: who will collect, best time to call." : "Optional: gate codes, farm directions, best time to call."}>
             <textarea id="notes" name="notes" className="form-input" rows={3} maxLength={2000} disabled={busy} />
           </Field>
         </fieldset>
@@ -329,9 +370,11 @@ export function PvcCheckoutForm({
               </dd>
             </div>
             <div>
-              <dt>Delivery incl. VAT</dt>
+              <dt>{collection ? `Collection in ${COLLECTION_POINTS[collection].label}` : "Delivery incl. VAT"}</dt>
               <dd>
-                {totals.delivery === null ? (
+                {collection ? (
+                  <span>No fee</span>
+                ) : totals.delivery === null ? (
                   <span>Select a province</span>
                 ) : (
                   <span className="order-money">{formatZarExactAmount(totals.delivery)}</span>
@@ -346,7 +389,7 @@ export function PvcCheckoutForm({
             </div>
           </dl>
           <p className="order-summary__price-note">
-            {PVC_LINER_MANUFACTURE_LABEL}, then delivered. Installation is not included.{" "}
+            {PVC_LINER_MANUFACTURE_LABEL}, then {collection ? "ready for collection" : "delivered"}. Installation is not included.{" "}
             <Link href={`${PVC_LINER_PAGE_PATH}?sku=${liner.sku}`} className="text-water hover:underline">
               Change size
             </Link>

@@ -5,6 +5,7 @@ import { getCatalogueOrder } from "@/lib/orders/list";
 import { ORDER_STATUSES } from "@/lib/orders/types";
 import { formatZar } from "@/lib/estimating/money";
 import { DELIVERY_FULFILMENT } from "@/lib/orders/delivery";
+import { fulfilmentLabel, isCollectionMethod } from "@/lib/shop/delivery";
 import { updateOrderStatusAction, updateOrderTrackingAction } from "../actions";
 import { PURCHASE_STAGE_LABELS, makeByDate, purchaseStage } from "@/lib/orders/purchase-stage";
 import { ResendOrderConfirmationButton } from "@/components/admin/ResendOrderConfirmationButton";
@@ -234,7 +235,7 @@ export default async function AdminOrderDetailPage({ params }: PageProps) {
           </div>
         </dl>
       </AdminPanel>
-      <AdminPanel title="Delivery address">
+      <AdminPanel title={isCollectionMethod(order.fulfilment_method) ? "Customer address (collecting)" : "Delivery address"}>
         <p>
           {order.billing_line1}
           {order.billing_line2 ? `, ${order.billing_line2}` : ""}
@@ -264,7 +265,11 @@ export default async function AdminOrderDetailPage({ params }: PageProps) {
           </div>
           <div>
             <dt>Fulfilment</dt>
-            <dd>{DELIVERY_FULFILMENT.label}</dd>
+            <dd>
+              {isCollectionMethod(order.fulfilment_method)
+                ? fulfilmentLabel(order.fulfilment_method, order.billing_province)
+                : DELIVERY_FULFILMENT.label}
+            </dd>
           </div>
           <div>
             <dt>Delivery instructions</dt>

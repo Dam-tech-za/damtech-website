@@ -125,3 +125,21 @@ describe("online purchase stages", () => {
     assert.equal(makeByDate({ sku: "DMT-PVC-550-05M-3R", paid_at: null }), null);
   });
 });
+
+import { fulfilmentLabel, isCollectionMethod, parseCollectionPoint } from "./delivery.ts";
+
+describe("collection instead of delivery", () => {
+  it("accepts only the two collection points", () => {
+    assert.equal(parseCollectionPoint("pretoria"), "pretoria");
+    assert.equal(parseCollectionPoint("Bettys-Bay"), "bettys-bay");
+    assert.equal(parseCollectionPoint("cape-town"), null);
+    assert.equal(parseCollectionPoint(""), null);
+  });
+
+  it("labels the fulfilment method", () => {
+    assert.equal(fulfilmentLabel("collection_bettys_bay", "Western Cape"), "Collection in Betty's Bay");
+    assert.equal(fulfilmentLabel("delivery_south_africa", "Gauteng"), "Delivery to Gauteng");
+    assert.equal(isCollectionMethod("collection_pretoria"), true);
+    assert.equal(isCollectionMethod("delivery_south_africa"), false);
+  });
+});

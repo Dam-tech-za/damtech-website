@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Hero } from "@/components/Hero";
 import { SiteSection } from "@/components/SiteSection";
 import { formatZarExactAmount } from "@/lib/catalogue/format";
+import { fulfilmentLabel, isCollectionMethod } from "@/lib/shop/delivery";
 import { PVC_LINER_MANUFACTURE_LABEL } from "@/lib/shop/pvc-liners";
 import { getPvcOrderForCustomer } from "@/lib/shop/pvc-orders";
 
@@ -39,6 +40,7 @@ export default async function PvcReturnPage({ searchParams }: PageProps) {
   }
 
   const paid = order.paymentStatus === "paid";
+  const collecting = isCollectionMethod(order.fulfilmentMethod);
   return (
     <>
       <Hero
@@ -47,7 +49,7 @@ export default async function PvcReturnPage({ searchParams }: PageProps) {
         title={paid ? "Payment received, thank you" : "We are confirming your payment"}
         description={
           paid
-            ? `${PVC_LINER_MANUFACTURE_LABEL}. We will call you to arrange delivery.`
+            ? `${PVC_LINER_MANUFACTURE_LABEL}. ${collecting ? "We will call you with the collection address and time." : "We will call you to arrange delivery."}`
             : "PayFast usually confirms within a minute. Refresh this page shortly. You will also get an email once it is confirmed."
         }
         showActions={false}
@@ -61,8 +63,8 @@ export default async function PvcReturnPage({ searchParams }: PageProps) {
             </dd>
           </div>
           <div>
-            <dt>Delivery to</dt>
-            <dd>{order.province}</dd>
+            <dt>{collecting ? "Collection" : "Delivery to"}</dt>
+            <dd>{collecting ? fulfilmentLabel(order.fulfilmentMethod, order.province).replace("Collection in ", "") : order.province}</dd>
           </div>
           <div>
             <dt>{paid ? "Paid" : "Amount"}</dt>

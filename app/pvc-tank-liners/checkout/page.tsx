@@ -37,8 +37,8 @@ export default async function PvcCheckoutPage({ searchParams }: PageProps) {
       <Hero
         compact
         eyebrow="Checkout"
-        title="Your delivery details"
-        description="Enter where the liner must go. You pay on PayFast in the next step."
+        title="Your order details"
+        description="Choose delivery or collection and enter your details. You pay on PayFast in the next step."
         showActions={false}
       />
       <SiteSection>

@@ -10,7 +10,7 @@ import {
   splitCustomerName,
   type PayfastForm,
 } from "@/lib/payfast";
-import { deliveryQuoteForProvince } from "@/lib/shop/delivery";
+import { deliveryQuoteForProvince, fulfilmentLabel, parseCollectionPoint } from "@/lib/shop/delivery";
 import { shopOrigin } from "@/lib/shop/origin";
 import {
   getPvcLinerBySku,
@@ -48,6 +48,11 @@ export async function startPvcCheckout(formData: FormData): Promise<StartPvcChec
   const liner = getPvcLinerBySku(parsed.data.sku);
   const delivery = deliveryQuoteForProvince(parsed.data.province);
   const colour = parsePvcLinerColour(formData.get("colour"));
+  const collectionRaw = String(formData.get("collection") ?? "").trim();
+  const collection = parseCollectionPoint(collectionRaw);
+  if (collectionRaw && !collection) {
+    return { success: false, error: "Choose delivery or a collection point.", field: "collection" };
+  }
   if (!colour) return { success: false, error: "Choose a liner colour.", field: "colour" };
   if (!liner) return { success: false, error: "This liner is not available online.", field: "sku" };
   if (!delivery) {
@@ -70,7 +75,7 @@ export async function startPvcCheckout(formData: FormData): Promise<StartPvcChec
     return { success: false, error: customerMessageForCode("RATE_LIMITED", { retryAfterSeconds }) };
   }
 
-  const pricing = pricePvcOrder(liner, colour, parsed.data.quantity, delivery);
+  const pricing = pricePvcOrder(liner, colour, parsed.data.quantity, delivery, collection);
   const created = await createPvcLinerOrder({
     data: parsed.data,
     pricing,
@@ -90,7 +95,7 @@ export async function startPvcCheckout(formData: FormData): Promise<StartPvcChec
     orderReference: order.orderReference,
     amountCents: Math.round(order.amountDueZar * 100),
     itemName: `Damtech ${order.orderReference}`,
-    itemDescription: `${order.quantity} x ${order.productName}, delivery to ${order.province}`,
+    itemDescription: `${order.quantity} x ${order.productName}, ${fulfilmentLabel(order.fulfilmentMethod, order.province).toLowerCase()}`,
     firstName: name.first,
     lastName: name.last,
     email: parsed.data.email,

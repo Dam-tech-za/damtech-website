@@ -70,3 +70,30 @@ export function deliveryQuoteForProvince(province: string): DeliveryQuote | null
     feeInclVatZar: feeInclVatCents / 100,
   };
 }
+
+/**
+ * Collection instead of delivery (Tiaan, 2026-11-10). Only the town is shown:
+ * the exact address and time are sent when the order is ready.
+ */
+export const COLLECTION_POINTS = {
+  pretoria: { label: "Pretoria", fulfilmentMethod: "collection_pretoria" },
+  "bettys-bay": { label: "Betty's Bay", fulfilmentMethod: "collection_bettys_bay" },
+} as const;
+
+export type CollectionPointId = keyof typeof COLLECTION_POINTS;
+export const COLLECTION_POINT_IDS = Object.keys(COLLECTION_POINTS) as CollectionPointId[];
+
+export function parseCollectionPoint(value: unknown): CollectionPointId | null {
+  const v = typeof value === "string" ? value.trim().toLowerCase() : "";
+  return (COLLECTION_POINT_IDS as string[]).includes(v) ? (v as CollectionPointId) : null;
+}
+
+/** "Collection in Pretoria" or "Delivery to Gauteng", from the stored fulfilment method. */
+export function fulfilmentLabel(fulfilmentMethod: string | null | undefined, province: string): string {
+  const point = COLLECTION_POINT_IDS.find((id) => COLLECTION_POINTS[id].fulfilmentMethod === fulfilmentMethod);
+  return point ? `Collection in ${COLLECTION_POINTS[point].label}` : `Delivery to ${province}`;
+}
+
+export function isCollectionMethod(fulfilmentMethod: string | null | undefined): boolean {
+  return Boolean(fulfilmentMethod?.startsWith("collection_"));
+}

@@ -2,6 +2,7 @@ import { Resend } from "resend";
 import { getRfqEmailConfig } from "../rfq/email/config.ts";
 import { escapeHtml } from "../orders/email/templates.ts";
 import { formatZarNumber } from "../catalogue/format.ts";
+import { fulfilmentLabel, isCollectionMethod } from "./delivery.ts";
 import { PVC_LINER_MANUFACTURE_LABEL } from "./pvc-liners.ts";
 import type { PvcOrderRecord } from "./pvc-orders.ts";
 
@@ -22,7 +23,9 @@ function lines(order: PvcOrderRecord): Array<[string, string]> {
     ["SKU", order.sku],
     ["Quantity", String(order.quantity)],
     ["Liner total incl. VAT", zar(order.goodsTotalZar)],
-    [`Delivery to ${order.province} incl. VAT`, zar(order.deliveryFeeZar)],
+    isCollectionMethod(order.fulfilmentMethod)
+      ? [fulfilmentLabel(order.fulfilmentMethod, order.province), "No delivery fee"]
+      : [`Delivery to ${order.province} incl. VAT`, zar(order.deliveryFeeZar)],
     ["Paid", zar(order.amountPaidZar ?? order.amountDueZar)],
   ];
 }
@@ -38,7 +41,9 @@ function table(rows: Array<[string, string]>): string {
 
 export function buildPvcPaidCustomerEmail(order: PvcOrderRecord): Content {
   const intro = `Thank you, ${order.customerName}. We have received your PayFast payment for order ${order.orderReference}.`;
-  const next = `${PVC_LINER_MANUFACTURE_LABEL}. We will contact you on ${order.phone} to confirm the delivery date.`;
+  const next = isCollectionMethod(order.fulfilmentMethod)
+    ? `${PVC_LINER_MANUFACTURE_LABEL}. We will contact you on ${order.phone} with the collection address and time when it is ready.`
+    : `${PVC_LINER_MANUFACTURE_LABEL}. We will contact you on ${order.phone} to confirm the delivery date.`;
   const help = `Questions: ${CONTACT_PHONE} or ${CONTACT_EMAIL}. Please quote ${order.orderReference}.`;
   return {
     subject: `Payment received: ${order.orderReference}`,
@@ -49,7 +54,9 @@ export function buildPvcPaidCustomerEmail(order: PvcOrderRecord): Content {
 
 export function buildPvcPaidInternalEmail(order: PvcOrderRecord, adminUrl: string): Content {
   const intro = `Paid online order ${order.orderReference} from ${order.customerName} (${order.email}, ${order.phone}).`;
-  const action = "Start manufacture (3 to 5 business days) and arrange delivery.";
+  const action = isCollectionMethod(order.fulfilmentMethod)
+    ? `Start manufacture (3 to 5 business days), then arrange ${fulfilmentLabel(order.fulfilmentMethod, order.province).toLowerCase()}.`
+    : "Start manufacture (3 to 5 business days) and arrange delivery.";
   return {
     subject: `PAID PVC liner order ${order.orderReference}: ${order.productName}`,
     text: [intro, "", ...lines(order).map(([k, v]) => `${k}: ${v}`), "", action, adminUrl].join("\n"),

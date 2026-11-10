@@ -5,7 +5,7 @@ import { vatFromInclusiveCents } from "../orders/money.ts";
 import { generateOrderReference } from "../orders/reference.ts";
 import { DELIVERY_FULFILMENT } from "../orders/delivery.ts";
 import type { PublicOrderFormInput } from "../orders/schema.ts";
-import type { DeliveryQuote } from "./delivery.ts";
+import { COLLECTION_POINTS, type CollectionPointId, type DeliveryQuote } from "./delivery.ts";
 import {
   PVC_LINER_PRICE_VERSION,
   pvcLinerOrderName,
@@ -21,6 +21,9 @@ export type PvcOrderPricing = {
   goodsInclVatCents: number;
   goodsVatCents: number;
   delivery: DeliveryQuote;
+  /** Set when the customer collects; the delivery fee is then zero. */
+  collection: CollectionPointId | null;
+  deliveryFeeInclVatCents: number;
   amountDueCents: number;
 };
 
@@ -29,11 +32,13 @@ export function pricePvcOrder(
   colour: PvcLinerColour,
   quantity: number,
   delivery: DeliveryQuote,
+  collection: CollectionPointId | null = null,
 ): PvcOrderPricing {
   if (!Number.isInteger(quantity) || quantity < 1) {
     throw new Error("Quantity must be a positive whole number.");
   }
   const goodsInclVatCents = liner.priceInclVatCents * quantity;
+  const deliveryFeeInclVatCents = collection ? 0 : delivery.feeInclVatCents;
   return {
     liner,
     colour,
@@ -41,7 +46,9 @@ export function pricePvcOrder(
     goodsInclVatCents,
     goodsVatCents: vatFromInclusiveCents(goodsInclVatCents),
     delivery,
-    amountDueCents: goodsInclVatCents + delivery.feeInclVatCents,
+    collection,
+    deliveryFeeInclVatCents,
+    amountDueCents: goodsInclVatCents + deliveryFeeInclVatCents,
   };
 }
 
@@ -62,12 +69,13 @@ export type PvcOrderRecord = {
   amountDueZar: number;
   amountPaidZar: number | null;
   province: string;
+  fulfilmentMethod: string;
   createdAt: string;
   paidAt: string | null;
 };
 
 const SELECT =
-  "id, order_reference, confirmation_view_token, status, payment_status, email, customer_name, phone, product_name_snapshot, sku, quantity, total_price_snapshot, delivery_fee_snapshot, amount_due_snapshot, amount_paid, billing_province, created_at, paid_at";
+  "id, order_reference, confirmation_view_token, status, payment_status, email, customer_name, phone, product_name_snapshot, sku, quantity, total_price_snapshot, delivery_fee_snapshot, amount_due_snapshot, amount_paid, billing_province, fulfilment_method, created_at, paid_at";
 
 type Row = {
   id: string;
@@ -86,6 +94,7 @@ type Row = {
   amount_due_snapshot: number | string | null;
   amount_paid: number | string | null;
   billing_province: string;
+  fulfilment_method: string;
   created_at: string;
   paid_at: string | null;
 };
@@ -110,6 +119,7 @@ function mapRow(row: Row): PvcOrderRecord {
     amountDueZar: row.amount_due_snapshot == null ? goods + delivery : Number(row.amount_due_snapshot),
     amountPaidZar: row.amount_paid == null ? null : Number(row.amount_paid),
     province: row.billing_province,
+    fulfilmentMethod: row.fulfilment_method,
     createdAt: row.created_at,
     paidAt: row.paid_at,
   };
@@ -155,8 +165,8 @@ export async function createPvcLinerOrder(input: {
         vat_rate_snapshot: 15,
         vat_amount_snapshot: pricing.goodsVatCents / 100,
         total_price_snapshot: pricing.goodsInclVatCents / 100,
-        delivery_fee_snapshot: pricing.delivery.feeInclVatZar,
-        delivery_one_way_km_snapshot: pricing.delivery.oneWayKm,
+        delivery_fee_snapshot: pricing.deliveryFeeInclVatCents / 100,
+        delivery_one_way_km_snapshot: pricing.collection ? null : pricing.delivery.oneWayKm,
         amount_due_snapshot: pricing.amountDueCents / 100,
         price_version: PVC_LINER_PRICE_VERSION,
         currency: "ZAR",
@@ -173,7 +183,9 @@ export async function createPvcLinerOrder(input: {
         billing_city: data.city,
         billing_province: data.province,
         billing_postal_code: data.postalCode,
-        fulfilment_method: DELIVERY_FULFILMENT.method,
+        fulfilment_method: pricing.collection
+          ? COLLECTION_POINTS[pricing.collection].fulfilmentMethod
+          : DELIVERY_FULFILMENT.method,
         notes: data.notes || null,
         terms_accepted_at: acceptedAtIso,
         privacy_accepted_at: acceptedAtIso,
