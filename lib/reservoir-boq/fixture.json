@@ -1,0 +1,963 @@
+{
+ "settings": {
+  "parameter_version": "reservoir-2026-11-10-r13",
+  "generated_on": "2026-11-10",
+  "ring_height_m": 0.762,
+  "roof_sheet_cover_m": 0.762,
+  "roof_waste": 0.15,
+  "roof_pitch_deg": 10.0,
+  "roof_screws_m2": 6.0,
+  "row_bolt_pitch_m": 0.15,
+  "row_seam_bolt_rows": 1,
+  "liner_overhang_m": 0.3,
+  "liner_waste": 0.05,
+  "top_ring_from_dia_m": 12.0,
+  "stock_bar_m": 6.0,
+  "diameters_m": [
+   3.0,
+   3.5,
+   4.0,
+   4.5,
+   5.0,
+   5.5,
+   6.0,
+   6.5,
+   7.0,
+   7.5,
+   8.0,
+   8.5,
+   9.0,
+   9.5,
+   10.0,
+   10.5,
+   11.0,
+   11.5,
+   12.0,
+   12.5,
+   13.0,
+   13.5,
+   14.0,
+   14.5,
+   15.0,
+   15.5,
+   16.0,
+   16.5,
+   17.0
+  ],
+  "rings": [
+   1,
+   2,
+   3,
+   4,
+   5
+  ],
+  "standard_sizes": {
+   "2": [
+    3,
+    15
+   ],
+   "3": [
+    3,
+    17
+   ],
+   "4": [
+    3,
+    12
+   ]
+  },
+  "wall_sheet": "Corrugated galvanised Z275, 762 mm cover (76.2 x 18 mm), curved to the tank radius",
+  "seam_bolt": "M10 x 30 hex bolt, grade 8.8, hot-dip galvanised, with nut and 2 washers (12 mm holes); M10 x 40 where two sheets are doubled",
+  "roof_bolt": "M12 bolt, grade 8.8, hot-dip galvanised, with nut and washers",
+  "roof_sheet": "Roof sheet 0.47 HT galv corrugated",
+  "edge_mm": 35.0,
+  "loads": {
+   "uplift_kpa": "0.25",
+   "imposed_kpa": "0.20"
+  }
+ },
+ "wall": {
+  "rings": [
+   {
+    "ring": 1,
+    "gauge": "0.80",
+    "t_mm": 0.8,
+    "plies": 1,
+    "bolt_lines": 3,
+    "bolts_per_line": 10,
+    "sheets": 10,
+    "end_lap_m": 0.15,
+    "cut_length_m": 2.977,
+    "sheet_m": 29.774,
+    "depth_m": 2.286,
+    "Nd_kn_m": 121.1,
+    "util": 0.76,
+    "util_yield": 0.64,
+    "util_net": 0.76,
+    "util_bolt": 0.75,
+    "util_wind": 0.3
+   },
+   {
+    "ring": 2,
+    "gauge": "0.80",
+    "t_mm": 0.8,
+    "plies": 1,
+    "bolt_lines": 2,
+    "bolts_per_line": 10,
+    "sheets": 10,
+    "end_lap_m": 0.1,
+    "cut_length_m": 2.927,
+    "sheet_m": 29.274,
+    "depth_m": 1.524,
+    "Nd_kn_m": 80.73,
+    "util": 0.75,
+    "util_yield": 0.43,
+    "util_net": 0.51,
+    "util_bolt": 0.75,
+    "util_wind": 0.3
+   },
+   {
+    "ring": 3,
+    "gauge": "0.80",
+    "t_mm": 0.8,
+    "plies": 1,
+    "bolt_lines": 2,
+    "bolts_per_line": 10,
+    "sheets": 10,
+    "end_lap_m": 0.1,
+    "cut_length_m": 2.927,
+    "sheet_m": 29.274,
+    "depth_m": 0.762,
+    "Nd_kn_m": 40.37,
+    "util": 0.38,
+    "util_yield": 0.21,
+    "util_net": 0.25,
+    "util_bolt": 0.38,
+    "util_wind": 0.3
+   }
+  ],
+  "sheets_per_ring": 10,
+  "wall_m": 88.322,
+  "wall_m_single": 88.322,
+  "wind_rings": 0,
+  "wind_ring_m": 0.0,
+  "p_wind_kpa": 0.607,
+  "seam_bolts": 700,
+  "n_10": 0,
+  "n_double_08": 0,
+  "n_double_10": 0,
+  "pattern": "0.80 (3 lines) / 0.80 / 0.80",
+  "max_util": 0.76
+ },
+ "wallOpen12x4": {
+  "rings": [
+   {
+    "ring": 1,
+    "gauge": "2x0.80",
+    "t_mm": 0.8,
+    "plies": 2,
+    "bolt_lines": 2,
+    "bolts_per_line": 10,
+    "sheets": 13,
+    "end_lap_m": 0.1,
+    "cut_length_m": 3.0,
+    "sheet_m": 38.999,
+    "depth_m": 3.048,
+    "Nd_kn_m": 215.29,
+    "util": 0.92,
+    "util_yield": 0.57,
+    "util_net": 0.68,
+    "util_bolt": 0.92,
+    "util_wind": 0.22
+   },
+   {
+    "ring": 2,
+    "gauge": "1.00",
+    "t_mm": 1.0,
+    "plies": 1,
+    "bolt_lines": 3,
+    "bolts_per_line": 10,
+    "sheets": 14,
+    "end_lap_m": 0.15,
+    "cut_length_m": 2.843,
+    "sheet_m": 39.799,
+    "depth_m": 2.286,
+    "Nd_kn_m": 161.46,
+    "util": 0.82,
+    "util_yield": 0.68,
+    "util_net": 0.82,
+    "util_bolt": 0.73,
+    "util_wind": 0.44
+   },
+   {
+    "ring": 3,
+    "gauge": "0.80",
+    "t_mm": 0.8,
+    "plies": 1,
+    "bolt_lines": 3,
+    "bolts_per_line": 10,
+    "sheets": 14,
+    "end_lap_m": 0.15,
+    "cut_length_m": 2.843,
+    "sheet_m": 39.799,
+    "depth_m": 1.524,
+    "Nd_kn_m": 107.64,
+    "util": 0.68,
+    "util_yield": 0.57,
+    "util_net": 0.68,
+    "util_bolt": 0.67,
+    "util_wind": 0.61
+   },
+   {
+    "ring": 4,
+    "gauge": "0.80",
+    "t_mm": 0.8,
+    "plies": 1,
+    "bolt_lines": 2,
+    "bolts_per_line": 10,
+    "sheets": 13,
+    "end_lap_m": 0.1,
+    "cut_length_m": 3.0,
+    "sheet_m": 38.999,
+    "depth_m": 0.762,
+    "Nd_kn_m": 53.82,
+    "util": 0.61,
+    "util_yield": 0.29,
+    "util_net": 0.34,
+    "util_bolt": 0.5,
+    "util_wind": 0.61
+   }
+  ],
+  "sheets_per_ring": 14,
+  "wall_m": 196.595,
+  "wall_m_single": 157.596,
+  "wind_rings": 1,
+  "wind_ring_m": 37.699,
+  "p_wind_kpa": 1.213,
+  "seam_bolts": 1360,
+  "n_10": 1,
+  "n_double_08": 1,
+  "n_double_10": 0,
+  "pattern": "2x0.80 / 1.00 (3 lines) / 0.80 (3 lines) / 0.80",
+  "max_util": 0.92
+ },
+ "roof": {
+  "trusses": 5,
+  "truss_spacing_m": 1.5,
+  "depth_centre_mm": 650,
+  "depth_rim_mm": 150,
+  "rim_drop_mm": 100,
+  "slope_deg": 6.3,
+  "top_chord": "L 40x40x2",
+  "bottom_chord": "L 40x40x2",
+  "tie_section": "FB 25x3",
+  "tie_lines_m": [
+   -3.6,
+   -2.4,
+   -1.2,
+   0.0,
+   1.2,
+   2.4,
+   3.6
+  ],
+  "bottom_brace_spacing_m": 1.2,
+  "bottom_tie_m": 52.4,
+  "bolts_rim": 20,
+  "bolts_tie": 52,
+  "end_plates": 10,
+  "rim_angle_m": 28.3,
+  "steel_kg": "248",
+  "defl_actual_mm": 14.6,
+  "defl_limit_mm": 28.3,
+  "max_util": 0.99,
+  "utilisation": {
+   "chord": 0.77,
+   "bottom_tension": 0.4,
+   "web": 0.31,
+   "actual_deflection": 0.54,
+   "end_shear": 0.03,
+   "uplift_chord": 0.99
+  },
+  "sheet_label": "Roof sheet 0.47 HT galv corrugated",
+  "truss_detail": [
+   {
+    "y_m": -3.0,
+    "span_m": 6.708,
+    "top_chord_m": 6.716,
+    "nodes_m": [
+     0.0,
+     0.375,
+     0.75,
+     1.125,
+     1.5,
+     1.875,
+     2.25,
+     2.625,
+     3.0,
+     3.354
+    ],
+    "depths_mm": [
+     317,
+     298,
+     279,
+     261,
+     242,
+     223,
+     205,
+     186,
+     168,
+     150
+    ],
+    "ribs": [
+     "RB 12",
+     "RB 12",
+     "RB 12",
+     "RB 12",
+     "RB 12",
+     "RB 12",
+     "RB 12",
+     "RB 12",
+     "RB 12"
+    ],
+    "panels": [
+     {
+      "web": "RB 12",
+      "len_mm": 491,
+      "force_kn": 1.0,
+      "dir": "down to rim"
+     },
+     {
+      "web": "RB 12",
+      "len_mm": 479,
+      "force_kn": 0.6,
+      "dir": "down to rim"
+     },
+     {
+      "web": "RB 12",
+      "len_mm": 468,
+      "force_kn": 0.6,
+      "dir": "down to rim"
+     },
+     {
+      "web": "RB 12",
+      "len_mm": 446,
+      "force_kn": 0.9,
+      "dir": "down to centre"
+     },
+     {
+      "web": "RB 12",
+      "len_mm": 437,
+      "force_kn": 1.3,
+      "dir": "down to centre"
+     },
+     {
+      "web": "RB 12",
+      "len_mm": 427,
+      "force_kn": 1.9,
+      "dir": "down to centre"
+     },
+     {
+      "web": "RB 12",
+      "len_mm": 419,
+      "force_kn": 2.9,
+      "dir": "down to centre"
+     },
+     {
+      "web": "RB 12",
+      "len_mm": 411,
+      "force_kn": 4.4,
+      "dir": "down to centre"
+     },
+     {
+      "web": "solid",
+      "len_mm": 0,
+      "force_kn": 2.3,
+      "dir": ""
+     }
+    ]
+   },
+   {
+    "y_m": -1.5,
+    "span_m": 8.485,
+    "top_chord_m": 8.511,
+    "nodes_m": [
+     0.0,
+     0.375,
+     0.75,
+     1.125,
+     1.5,
+     1.875,
+     2.25,
+     2.625,
+     3.0,
+     3.375,
+     3.75,
+     4.125,
+     4.243
+    ],
+    "depths_mm": [
+     483,
+     454,
+     424,
+     395,
+     365,
+     336,
+     307,
+     277,
+     248,
+     218,
+     189,
+     159,
+     150
+    ],
+    "ribs": [
+     "RB 12",
+     "RB 12",
+     "RB 12",
+     "RB 12",
+     "RB 12",
+     "RB 12",
+     "RB 12",
+     "RB 12",
+     "RB 12",
+     "RB 12",
+     "RB 12",
+     "RB 12"
+    ],
+    "panels": [
+     {
+      "web": "RB 12",
+      "len_mm": 612,
+      "force_kn": 1.4,
+      "dir": "down to rim"
+     },
+     {
+      "web": "RB 12",
+      "len_mm": 589,
+      "force_kn": 1.1,
+      "dir": "down to rim"
+     },
+     {
+      "web": "RB 12",
+      "len_mm": 566,
+      "force_kn": 0.8,
+      "dir": "down to rim"
+     },
+     {
+      "web": "RB 12",
+      "len_mm": 545,
+      "force_kn": 0.5,
+      "dir": "down to rim"
+     },
+     {
+      "web": "RB 12",
+      "len_mm": 524,
+      "force_kn": 0.4,
+      "dir": "down to rim"
+     },
+     {
+      "web": "RB 12",
+      "len_mm": 484,
+      "force_kn": 0.6,
+      "dir": "down to centre"
+     },
+     {
+      "web": "RB 12",
+      "len_mm": 466,
+      "force_kn": 0.9,
+      "dir": "down to centre"
+     },
+     {
+      "web": "RB 12",
+      "len_mm": 449,
+      "force_kn": 1.6,
+      "dir": "down to centre"
+     },
+     {
+      "web": "RB 12",
+      "len_mm": 434,
+      "force_kn": 2.6,
+      "dir": "down to centre"
+     },
+     {
+      "web": "RB 12",
+      "len_mm": 420,
+      "force_kn": 4.1,
+      "dir": "down to centre"
+     },
+     {
+      "web": "RB 12",
+      "len_mm": 407,
+      "force_kn": 6.5,
+      "dir": "down to centre"
+     },
+     {
+      "web": "solid",
+      "len_mm": 0,
+      "force_kn": 3.1,
+      "dir": ""
+     }
+    ]
+   },
+   {
+    "y_m": 0.0,
+    "span_m": 9.0,
+    "top_chord_m": 9.055,
+    "nodes_m": [
+     0.0,
+     0.375,
+     0.75,
+     1.125,
+     1.5,
+     1.875,
+     2.25,
+     2.625,
+     3.0,
+     3.375,
+     3.75,
+     4.125,
+     4.5
+    ],
+    "depths_mm": [
+     650,
+     608,
+     567,
+     525,
+     483,
+     442,
+     400,
+     358,
+     317,
+     275,
+     233,
+     192,
+     150
+    ],
+    "ribs": [
+     "L 25x25x3",
+     "RB 12",
+     "RB 12",
+     "RB 12",
+     "RB 12",
+     "RB 12",
+     "RB 12",
+     "RB 12",
+     "RB 12",
+     "RB 12",
+     "RB 12",
+     "RB 12"
+    ],
+    "panels": [
+     {
+      "web": "L 25x25x3",
+      "len_mm": 750,
+      "force_kn": 1.5,
+      "dir": "down to rim"
+     },
+     {
+      "web": "L 25x25x3",
+      "len_mm": 715,
+      "force_kn": 1.3,
+      "dir": "down to rim"
+     },
+     {
+      "web": "L 25x25x3",
+      "len_mm": 680,
+      "force_kn": 1.0,
+      "dir": "down to rim"
+     },
+     {
+      "web": "L 25x25x3",
+      "len_mm": 645,
+      "force_kn": 0.8,
+      "dir": "down to rim"
+     },
+     {
+      "web": "RB 12",
+      "len_mm": 612,
+      "force_kn": 0.5,
+      "dir": "down to rim"
+     },
+     {
+      "web": "RB 12",
+      "len_mm": 579,
+      "force_kn": 0.3,
+      "dir": "down to rim"
+     },
+     {
+      "web": "RB 12",
+      "len_mm": 519,
+      "force_kn": 0.4,
+      "dir": "down to centre"
+     },
+     {
+      "web": "RB 12",
+      "len_mm": 491,
+      "force_kn": 0.7,
+      "dir": "down to centre"
+     },
+     {
+      "web": "RB 12",
+      "len_mm": 465,
+      "force_kn": 1.4,
+      "dir": "down to centre"
+     },
+     {
+      "web": "RB 12",
+      "len_mm": 442,
+      "force_kn": 2.4,
+      "dir": "down to centre"
+     },
+     {
+      "web": "RB 12",
+      "len_mm": 421,
+      "force_kn": 4.1,
+      "dir": "down to centre"
+     },
+     {
+      "web": "solid",
+      "len_mm": 0,
+      "force_kn": 3.2,
+      "dir": ""
+     }
+    ]
+   },
+   {
+    "y_m": 1.5,
+    "span_m": 8.485,
+    "top_chord_m": 8.511,
+    "nodes_m": [
+     0.0,
+     0.375,
+     0.75,
+     1.125,
+     1.5,
+     1.875,
+     2.25,
+     2.625,
+     3.0,
+     3.375,
+     3.75,
+     4.125,
+     4.243
+    ],
+    "depths_mm": [
+     483,
+     454,
+     424,
+     395,
+     365,
+     336,
+     307,
+     277,
+     248,
+     218,
+     189,
+     159,
+     150
+    ],
+    "ribs": [
+     "RB 12",
+     "RB 12",
+     "RB 12",
+     "RB 12",
+     "RB 12",
+     "RB 12",
+     "RB 12",
+     "RB 12",
+     "RB 12",
+     "RB 12",
+     "RB 12",
+     "RB 12"
+    ],
+    "panels": [
+     {
+      "web": "RB 12",
+      "len_mm": 612,
+      "force_kn": 1.4,
+      "dir": "down to rim"
+     },
+     {
+      "web": "RB 12",
+      "len_mm": 589,
+      "force_kn": 1.1,
+      "dir": "down to rim"
+     },
+     {
+      "web": "RB 12",
+      "len_mm": 566,
+      "force_kn": 0.8,
+      "dir": "down to rim"
+     },
+     {
+      "web": "RB 12",
+      "len_mm": 545,
+      "force_kn": 0.5,
+      "dir": "down to rim"
+     },
+     {
+      "web": "RB 12",
+      "len_mm": 524,
+      "force_kn": 0.4,
+      "dir": "down to rim"
+     },
+     {
+      "web": "RB 12",
+      "len_mm": 484,
+      "force_kn": 0.6,
+      "dir": "down to centre"
+     },
+     {
+      "web": "RB 12",
+      "len_mm": 466,
+      "force_kn": 0.9,
+      "dir": "down to centre"
+     },
+     {
+      "web": "RB 12",
+      "len_mm": 449,
+      "force_kn": 1.6,
+      "dir": "down to centre"
+     },
+     {
+      "web": "RB 12",
+      "len_mm": 434,
+      "force_kn": 2.6,
+      "dir": "down to centre"
+     },
+     {
+      "web": "RB 12",
+      "len_mm": 420,
+      "force_kn": 4.1,
+      "dir": "down to centre"
+     },
+     {
+      "web": "RB 12",
+      "len_mm": 407,
+      "force_kn": 6.5,
+      "dir": "down to centre"
+     },
+     {
+      "web": "solid",
+      "len_mm": 0,
+      "force_kn": 3.1,
+      "dir": ""
+     }
+    ]
+   },
+   {
+    "y_m": 3.0,
+    "span_m": 6.708,
+    "top_chord_m": 6.716,
+    "nodes_m": [
+     0.0,
+     0.375,
+     0.75,
+     1.125,
+     1.5,
+     1.875,
+     2.25,
+     2.625,
+     3.0,
+     3.354
+    ],
+    "depths_mm": [
+     317,
+     298,
+     279,
+     261,
+     242,
+     223,
+     205,
+     186,
+     168,
+     150
+    ],
+    "ribs": [
+     "RB 12",
+     "RB 12",
+     "RB 12",
+     "RB 12",
+     "RB 12",
+     "RB 12",
+     "RB 12",
+     "RB 12",
+     "RB 12"
+    ],
+    "panels": [
+     {
+      "web": "RB 12",
+      "len_mm": 491,
+      "force_kn": 1.0,
+      "dir": "down to rim"
+     },
+     {
+      "web": "RB 12",
+      "len_mm": 479,
+      "force_kn": 0.6,
+      "dir": "down to rim"
+     },
+     {
+      "web": "RB 12",
+      "len_mm": 468,
+      "force_kn": 0.6,
+      "dir": "down to rim"
+     },
+     {
+      "web": "RB 12",
+      "len_mm": 446,
+      "force_kn": 0.9,
+      "dir": "down to centre"
+     },
+     {
+      "web": "RB 12",
+      "len_mm": 437,
+      "force_kn": 1.3,
+      "dir": "down to centre"
+     },
+     {
+      "web": "RB 12",
+      "len_mm": 427,
+      "force_kn": 1.9,
+      "dir": "down to centre"
+     },
+     {
+      "web": "RB 12",
+      "len_mm": 419,
+      "force_kn": 2.9,
+      "dir": "down to centre"
+     },
+     {
+      "web": "RB 12",
+      "len_mm": 411,
+      "force_kn": 4.4,
+      "dir": "down to centre"
+     },
+     {
+      "web": "solid",
+      "len_mm": 0,
+      "force_kn": 2.3,
+      "dir": ""
+     }
+    ]
+   }
+  ],
+  "web_m": {
+   "L 25x25x3": 6.2,
+   "RB 12": 74.7
+  },
+  "top_chord_m": 39.5,
+  "bottom_chord_m": 39.4,
+  "panel_m": 0.375,
+  "rim_reaction_down_kn": 3.3,
+  "rim_reaction_up_kn": 1.3,
+  "uplift_kpa": "0.25",
+  "imposed_kpa": "0.20"
+ },
+ "roof4": {
+  "trusses": 1,
+  "truss_spacing_m": 2.0,
+  "depth_centre_mm": 350,
+  "depth_rim_mm": 150,
+  "rim_drop_mm": 100,
+  "slope_deg": 5.7,
+  "top_chord": "L 40x40x2",
+  "bottom_chord": "L 40x40x2",
+  "tie_section": "FB 25x3",
+  "tie_lines_m": [
+   -1.2,
+   0.0,
+   1.2
+  ],
+  "bottom_brace_spacing_m": 1.2,
+  "bottom_tie_m": 10.4,
+  "bolts_rim": 4,
+  "bolts_tie": 12,
+  "end_plates": 2,
+  "rim_angle_m": 12.6,
+  "steel_kg": "39",
+  "defl_actual_mm": 2.2,
+  "defl_limit_mm": 25.0,
+  "max_util": 0.39,
+  "utilisation": {
+   "chord": 0.36,
+   "bottom_tension": 0.16,
+   "web": 0.1,
+   "actual_deflection": 0.09,
+   "end_shear": 0.01,
+   "uplift_chord": 0.39
+  },
+  "sheet_label": "Roof sheet 0.47 HT galv corrugated",
+  "truss_detail": [
+   {
+    "y_m": 0.0,
+    "span_m": 4.0,
+    "top_chord_m": 4.02,
+    "nodes_m": [
+     0.0,
+     0.4,
+     0.8,
+     1.2,
+     1.6,
+     2.0
+    ],
+    "depths_mm": [
+     350,
+     310,
+     270,
+     230,
+     190,
+     150
+    ],
+    "ribs": [
+     "RB 12",
+     "RB 12",
+     "RB 12",
+     "RB 12",
+     "RB 12"
+    ],
+    "panels": [
+     {
+      "web": "RB 12",
+      "len_mm": 532,
+      "force_kn": 0.7,
+      "dir": "down to rim"
+     },
+     {
+      "web": "RB 12",
+      "len_mm": 506,
+      "force_kn": 0.6,
+      "dir": "down to rim"
+     },
+     {
+      "web": "RB 12",
+      "len_mm": 461,
+      "force_kn": 1.0,
+      "dir": "down to centre"
+     },
+     {
+      "web": "RB 12",
+      "len_mm": 443,
+      "force_kn": 2.0,
+      "dir": "down to centre"
+     },
+     {
+      "web": "solid",
+      "len_mm": 0,
+      "force_kn": 1.8,
+      "dir": ""
+     }
+    ]
+   }
+  ],
+  "web_m": {
+   "RB 12": 6.2
+  },
+  "top_chord_m": 4.0,
+  "bottom_chord_m": 4.0,
+  "panel_m": 0.4,
+  "rim_reaction_down_kn": 2.0,
+  "rim_reaction_up_kn": 0.8,
+  "uplift_kpa": "0.25",
+  "imposed_kpa": "0.20"
+ }
+}

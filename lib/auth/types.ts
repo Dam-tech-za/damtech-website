@@ -27,6 +27,7 @@ export type AdminNavItemId =
   | "ops-calendar"
   | "xero-review"
   | "procurement"
+  | "reservoir-boq"
   | "financials"
   | "rfqs"
   | "quotes"

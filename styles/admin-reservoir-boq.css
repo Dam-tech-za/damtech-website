@@ -1,0 +1,323 @@
+/* Admin: Reservoir BOQ tool (/admin/operations/reservoir-boq/). Screen and print (A4) layout. */
+
+.rboq-form {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
+  gap: 0.75rem 1rem;
+  align-items: end;
+}
+
+.rboq-form__field {
+  display: grid;
+  gap: 0.25rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--admin-text);
+}
+
+.rboq-form__field--wide {
+  grid-column: span 2;
+}
+
+.rboq-form__actions {
+  display: flex;
+  align-items: end;
+}
+
+.rboq-print {
+  display: grid;
+  gap: 1rem;
+}
+
+.rboq-doc-head {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+  background: var(--admin-card-bg);
+  border: 1px solid var(--admin-border);
+  border-radius: var(--admin-radius-md);
+}
+
+.rboq-doc-head__kicker {
+  margin: 0;
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--admin-text-muted);
+}
+
+.rboq-doc-head__title {
+  margin: 0.15rem 0 0;
+  font-size: 1.25rem;
+  color: var(--admin-text);
+}
+
+.rboq-doc-head__ref {
+  margin: 0.25rem 0 0;
+  font-size: 0.875rem;
+  color: var(--admin-text-muted);
+}
+
+.rboq-doc-head__facts,
+.rboq-sketch__facts {
+  display: grid;
+  gap: 0.35rem;
+  margin: 0;
+  font-size: 0.8125rem;
+}
+
+.rboq-doc-head__facts > div,
+.rboq-sketch__facts > div {
+  display: grid;
+  grid-template-columns: 9.5rem 1fr;
+  gap: 0.5rem;
+}
+
+.rboq-doc-head__facts dt,
+.rboq-sketch__facts dt {
+  color: var(--admin-text-muted);
+}
+
+.rboq-doc-head__facts dd,
+.rboq-sketch__facts dd {
+  margin: 0;
+  font-weight: 600;
+  color: var(--admin-text);
+}
+
+.rboq-table {
+  font-size: 0.8125rem;
+}
+
+.rboq-table {
+  table-layout: auto;
+  width: 100%;
+}
+
+.rboq-table th,
+.rboq-table td {
+  vertical-align: top;
+  white-space: normal;
+  overflow: visible;
+  text-overflow: clip;
+  max-width: none;
+}
+
+.rboq-table td:nth-child(3) {
+  min-width: 16rem;
+}
+
+.rboq-num {
+  text-align: right;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.rboq-table__section th {
+  text-align: left;
+  background: #e9eff5;
+  color: var(--admin-text);
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.rboq-table__item,
+.rboq-table__qty {
+  font-weight: 700;
+}
+
+.rboq-table__note {
+  color: var(--admin-text-muted);
+  font-size: 0.75rem;
+}
+
+.rboq-pieces {
+  display: block;
+}
+
+.rboq-sketch {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.rboq-sketch__top {
+  display: grid;
+  grid-template-columns: minmax(15rem, 21rem) 1fr;
+  gap: 1rem;
+  align-items: center;
+}
+
+.rboq-sketch__plan,
+.rboq-sketch__elevation {
+  width: 100%;
+  height: auto;
+}
+
+.rboq-sketch__elevation {
+  max-width: 58rem;
+}
+
+.rboq-sketch__note {
+  margin: 0;
+  font-size: 0.75rem;
+  color: var(--admin-text-muted);
+}
+
+.rboq-svg-rim {
+  fill: none;
+  stroke: #031926;
+  stroke-width: 1.5;
+}
+
+.rboq-svg-truss,
+.rboq-svg-chord {
+  fill: none;
+  stroke: #031926;
+  stroke-width: 1.6;
+}
+
+.rboq-svg-web {
+  stroke: #026bc6;
+  stroke-width: 0.9;
+}
+
+.rboq-svg-tie {
+  stroke: #5b6b7c;
+  stroke-width: 0.8;
+  stroke-dasharray: 4 3;
+}
+
+.rboq-svg-wall {
+  stroke: #92400e;
+  stroke-width: 0.8;
+  stroke-dasharray: 6 3;
+}
+
+.rboq-svg-plate {
+  fill: #031926;
+  fill-opacity: 0.55;
+  stroke: #031926;
+  stroke-width: 0.8;
+}
+
+.rboq-svg-tie-dot {
+  fill: #ffffff;
+  stroke: #5b6b7c;
+  stroke-width: 1;
+}
+
+.rboq-svg-label {
+  font-size: 9px;
+  fill: #5b6b7c;
+}
+
+.rboq-svg-caption {
+  font-size: 10px;
+  font-weight: 700;
+  fill: #031926;
+}
+
+.rboq-foot {
+  margin: 0;
+  font-size: 0.75rem;
+  color: var(--admin-text-muted);
+}
+
+.rboq-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+  padding-bottom: 1rem;
+}
+
+.rboq-actions__hint {
+  font-size: 0.8125rem;
+  color: var(--admin-text-muted);
+}
+
+@media (max-width: 48rem) {
+  .rboq-sketch__top {
+    grid-template-columns: 1fr;
+  }
+
+  .rboq-form__field--wide {
+    grid-column: auto;
+  }
+}
+
+@media print {
+  @page {
+    size: A4 landscape;
+    margin: 10mm;
+  }
+
+  body:has(.rboq) .admin-sidebar,
+  body:has(.rboq) .admin-header,
+  body:has(.rboq) .admin-bottom-bar,
+  body:has(.rboq) .admin-section-tabs,
+  body:has(.rboq) .admin-mobile-sidebar,
+  body:has(.rboq) .rboq-noprint {
+    display: none !important;
+  }
+
+  body:has(.rboq),
+  body:has(.rboq) .admin-shell,
+  body:has(.rboq) .admin-shell__main,
+  body:has(.rboq) .admin-shell__content {
+    display: block !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #ffffff !important;
+    min-height: 0 !important;
+  }
+
+  .rboq,
+  .rboq-print {
+    background: #ffffff !important;
+  }
+
+  .rboq-sketch__elevation {
+    max-height: 52mm;
+  }
+
+  .rboq-sketch__plan {
+    max-height: 60mm;
+  }
+
+  .rboq .admin-panel,
+  .rboq-doc-head {
+    border: 0;
+    box-shadow: none;
+    padding: 0;
+  }
+
+  .rboq .admin-table-shell {
+    overflow: visible;
+    border: 0;
+  }
+
+  .rboq-table {
+    font-size: 8.5pt;
+  }
+
+  .rboq-table th,
+  .rboq-table td {
+    padding: 2.5pt 4pt;
+    border: 0.5pt solid #9aa7b4;
+  }
+
+  .rboq-table tr,
+  .rboq-sketch__elevation,
+  .rboq-sketch__top {
+    break-inside: avoid;
+  }
+
+  .rboq .admin-panel {
+    break-inside: auto;
+    margin-top: 6mm;
+  }
+}

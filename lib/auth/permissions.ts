@@ -28,6 +28,7 @@ const NAV_ACCESS: Record<AdminNavItemId, readonly AdminRole[]> = {
   "ops-calendar": ["owner", "admin", "sales", "estimator", "viewer"],
   "xero-review": ["owner", "admin", "sales", "estimator"],
   procurement: ["owner", "admin", "sales", "estimator", "viewer"],
+  "reservoir-boq": ["owner", "admin", "sales", "estimator", "viewer"],
   financials: ["owner", "admin"],
   rfqs: ["owner", "admin", "sales", "estimator", "viewer"],
   quotes: ["owner", "admin", "sales", "estimator", "viewer"],
@@ -76,6 +77,12 @@ export const ADMIN_NAV_ITEMS: AdminNavItem[] = [
     label: "Procurement",
     href: "/admin/operations/procurement/",
     description: "Supplier orders across jobs",
+  },
+  {
+    id: "reservoir-boq",
+    label: "Reservoir BOQ",
+    href: "/admin/operations/reservoir-boq/",
+    description: "Materials and truss design per reservoir",
   },
   {
     id: "financials",
