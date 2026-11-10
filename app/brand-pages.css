@@ -1086,3 +1086,130 @@
   font-weight: 650;
   margin: 0 0 0.5rem;
 }
+
+/* PVC tank liner shop ------------------------------------------------- */
+.pvc-shop__heading {
+  font-size: var(--dt-size-lg);
+  color: var(--dt-ink);
+  margin: 0 0 0.75rem;
+}
+.pvc-shop__lead {
+  color: var(--dt-ink-2);
+  max-width: 44rem;
+  margin: 0 0 1.5rem;
+}
+.pvc-shop__columns {
+  display: grid;
+  gap: 2rem;
+}
+@media (min-width: 768px) {
+  .pvc-shop__columns {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+.pvc-shop__list {
+  list-style: disc;
+  padding-left: 1.25rem;
+  margin: 0 0 1rem;
+  display: grid;
+  gap: 0.4rem;
+}
+.pvc-shop__receipt {
+  display: grid;
+  gap: 0.5rem;
+  max-width: 36rem;
+  margin: 0 0 1.5rem;
+}
+.pvc-shop__receipt > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  border-bottom: 1px solid var(--dt-line);
+  padding-bottom: 0.5rem;
+}
+.pvc-shop__receipt dt {
+  color: var(--dt-ink-3);
+}
+.pvc-picker {
+  display: grid;
+  gap: 1.5rem;
+  border: 1px solid var(--dt-line);
+  border-radius: var(--dt-radius-lg);
+  background: var(--dt-white);
+  padding: 1.25rem;
+}
+@media (min-width: 900px) {
+  .pvc-picker {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    padding: 2rem;
+  }
+}
+.pvc-picker__fields {
+  display: grid;
+  gap: 1rem;
+  align-content: start;
+}
+.pvc-picker__gsm {
+  border: 0;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 0.5rem;
+}
+.pvc-picker__radio {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+}
+.pvc-picker__result {
+  background: var(--dt-cream);
+  border-radius: var(--dt-radius);
+  padding: 1.25rem;
+  display: grid;
+  gap: 0.75rem;
+  align-content: start;
+}
+.pvc-picker__name {
+  font-weight: 600;
+  color: var(--dt-ink);
+  margin: 0;
+}
+.pvc-picker__price {
+  font-size: var(--dt-size-xl);
+  font-weight: 700;
+  color: var(--dt-blue-deep);
+  margin: 0;
+  line-height: 1.1;
+}
+.pvc-picker__price span {
+  font-size: var(--dt-size-sm);
+  font-weight: 500;
+  color: var(--dt-ink-3);
+}
+.pvc-picker__facts {
+  display: grid;
+  gap: 0.4rem;
+  margin: 0;
+  font-size: 0.9375rem;
+}
+.pvc-picker__facts > div {
+  display: grid;
+  grid-template-columns: 6.5rem 1fr;
+  gap: 0.5rem;
+}
+.pvc-picker__facts dt {
+  color: var(--dt-ink-3);
+}
+.pvc-picker__facts dd {
+  margin: 0;
+  color: var(--dt-ink);
+}
+.pvc-picker__buy {
+  justify-self: start;
+}
+.pvc-picker__note {
+  font-size: 0.875rem;
+  color: var(--dt-ink-3);
+  margin: 0;
+}

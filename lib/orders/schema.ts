@@ -82,7 +82,23 @@ function isChecked(value: FormDataEntryValue | null): boolean {
   return value === "on" || value === "true" || value === "1" || value === "yes";
 }
 
-export function parsePublicOrderFormData(formData: FormData): ParsedPublicOrder {
+export type ParseOrderOptions = {
+  /** Override which SKUs/quantities are orderable (defaults to the kit catalogue). */
+  isOrderable?: (sku: string, quantity: number) => boolean;
+  /** Error copy for the two product confirmations, when the defaults do not fit. */
+  confirmSupplyOnlyMessage?: string;
+  confirmExclusionsMessage?: string;
+};
+
+function isCatalogueOrderable(sku: string, quantity: number): boolean {
+  return isCatalogueSku(sku) && Boolean(resolveOrderableProduct(sku, quantity));
+}
+
+export function parsePublicOrderFormData(
+  formData: FormData,
+  options: ParseOrderOptions = {},
+): ParsedPublicOrder {
+  const isOrderable = options.isOrderable ?? isCatalogueOrderable;
   void formData.get("price");
   void formData.get("unitPrice");
   void formData.get("total");
@@ -99,7 +115,7 @@ export function parsePublicOrderFormData(formData: FormData): ParsedPublicOrder 
   );
   const quantity = Number(quantityRaw);
 
-  if (!isCatalogueSku(sku) || !resolveOrderableProduct(sku, Number.isFinite(quantity) ? quantity : 0)) {
+  if (!isOrderable(sku, Number.isFinite(quantity) ? quantity : 0)) {
     return { ok: false, error: "This kit is not available to order online.", field: "sku" };
   }
   if (
@@ -172,14 +188,14 @@ export function parsePublicOrderFormData(formData: FormData): ParsedPublicOrder 
   if (!isChecked(formData.get("confirmSupplyOnly"))) {
     return {
       ok: false,
-      error: "Confirm that this is a fixed-price supply-only kit.",
+      error: options.confirmSupplyOnlyMessage ?? "Confirm that this is a fixed-price supply-only kit.",
       field: "confirmSupplyOnly",
     };
   }
   if (!isChecked(formData.get("confirmExclusions"))) {
     return {
       ok: false,
-      error: "Confirm that delivery and installation are excluded.",
+      error: options.confirmExclusionsMessage ?? "Confirm that delivery and installation are excluded.",
       field: "confirmExclusions",
     };
   }

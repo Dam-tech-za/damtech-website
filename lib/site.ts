@@ -370,6 +370,7 @@ export const INDEXABLE_STATIC_PATHS = [
   "/services",
   "/dam-liners",
   "/steel-water-storage-tanks",
+  "/pvc-tank-liners",
   "/waterproofing",
   "/roof-waterproofing",
   "/foundation-waterproofing",

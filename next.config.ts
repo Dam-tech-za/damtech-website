@@ -13,7 +13,8 @@ const isDev = process.env.NODE_ENV !== "production";
 const contentSecurityPolicy = [
   "default-src 'self'",
   "base-uri 'self'",
-  "form-action 'self'",
+  // PayFast checkout posts the signed payment form to PayFast's hosted page.
+  "form-action 'self' https://www.payfast.co.za https://sandbox.payfast.co.za",
   "frame-ancestors 'none'",
   "object-src 'none'",
   [
@@ -135,6 +136,13 @@ const nextConfig: NextConfig = {
         source: "/order/:path*",
         headers: [
           { key: "X-Robots-Tag", value: "noindex, nofollow, noarchive" },
+        ],
+      },
+      {
+        source: "/pvc-tank-liners/checkout/:path*",
+        headers: [
+          { key: "X-Robots-Tag", value: "noindex, nofollow, noarchive" },
+          { key: "Cache-Control", value: "private, no-store" },
         ],
       },
       {
