@@ -14,6 +14,7 @@ import { deliveryQuoteForProvince } from "@/lib/shop/delivery";
 import { shopOrigin } from "@/lib/shop/origin";
 import {
   getPvcLinerBySku,
+  parsePvcLinerColour,
   PVC_LINER_CHECKOUT_PATH,
   PVC_LINER_MAX_QUANTITY,
 } from "@/lib/shop/pvc-liners";
@@ -46,6 +47,8 @@ export async function startPvcCheckout(formData: FormData): Promise<StartPvcChec
 
   const liner = getPvcLinerBySku(parsed.data.sku);
   const delivery = deliveryQuoteForProvince(parsed.data.province);
+  const colour = parsePvcLinerColour(formData.get("colour"));
+  if (!colour) return { success: false, error: "Choose a liner colour.", field: "colour" };
   if (!liner) return { success: false, error: "This liner is not available online.", field: "sku" };
   if (!delivery) {
     return {
@@ -67,7 +70,7 @@ export async function startPvcCheckout(formData: FormData): Promise<StartPvcChec
     return { success: false, error: customerMessageForCode("RATE_LIMITED", { retryAfterSeconds }) };
   }
 
-  const pricing = pricePvcOrder(liner, parsed.data.quantity, delivery);
+  const pricing = pricePvcOrder(liner, colour, parsed.data.quantity, delivery);
   const created = await createPvcLinerOrder({
     data: parsed.data,
     pricing,

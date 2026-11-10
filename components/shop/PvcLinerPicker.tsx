@@ -1,16 +1,22 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { formatZarExactAmount } from "@/lib/catalogue/format";
 import {
   getPvcLinerBySku,
   PVC_LINER_CHECKOUT_PATH,
+  PVC_LINER_COLOUR_IMAGES,
+  PVC_LINER_COLOUR_LABELS,
+  PVC_LINER_COLOURS,
+  PVC_LINER_DEFAULT_COLOUR,
   PVC_LINER_GSM_OPTIONS,
   PVC_LINER_MANUFACTURE_LABEL,
   PVC_LINER_ROWS_OPTIONS,
   pvcLinerDiametersForRows,
   pvcLinerSku,
+  type PvcLinerColour,
   type PvcLinerGsm,
   type PvcLinerRows,
 } from "@/lib/shop/pvc-liners";
@@ -26,12 +32,21 @@ const GSM_LABELS: Record<PvcLinerGsm, string> = {
   800: "800 gsm (heavy duty)",
 };
 
-export function PvcLinerPicker({ initialSku = null }: { initialSku?: string | null }) {
+export function PvcLinerPicker({
+  initialSku = null,
+  syncUrl = false,
+}: {
+  initialSku?: string | null;
+  /** Keep ?sku= in the address in step with the selection (PVC liner page only). */
+  syncUrl?: boolean;
+}) {
   const initial = initialSku ? getPvcLinerBySku(initialSku) : null;
   const [rows, setRows] = useState<PvcLinerRows>(initial?.rows ?? 3);
   const [diameter, setDiameter] = useState(initial?.diameterM ?? 5);
   const [gsm, setGsm] = useState<PvcLinerGsm>(initial?.gsm ?? 550);
+  const [colour, setColour] = useState<PvcLinerColour>(PVC_LINER_DEFAULT_COLOUR);
   const touched = useRef(false);
+  const image = PVC_LINER_COLOUR_IMAGES[colour];
 
   const diameters = useMemo(() => pvcLinerDiametersForRows(rows), [rows]);
   const safeDiameter = diameters.includes(diameter) ? diameter : diameters[diameters.length - 1];
@@ -40,12 +55,12 @@ export function PvcLinerPicker({ initialSku = null }: { initialSku?: string | nu
   // Keep the address in step with the selection so each size can be shared
   // and matches the per-size link Google indexes.
   useEffect(() => {
-    if (!liner || (!touched.current && !initialSku)) return;
+    if (!syncUrl || !liner || (!touched.current && !initialSku)) return;
     const url = new URL(window.location.href);
     if (url.searchParams.get("sku") === liner.sku) return;
     url.searchParams.set("sku", liner.sku);
     window.history.replaceState(window.history.state, "", url);
-  }, [liner, initialSku]);
+  }, [liner, initialSku, syncUrl]);
 
   return (
     <div className="pvc-picker">
@@ -108,11 +123,37 @@ export function PvcLinerPicker({ initialSku = null }: { initialSku?: string | nu
             </label>
           ))}
         </fieldset>
+        <fieldset className="pvc-picker__gsm">
+          <legend className="form-label">Colour (same price)</legend>
+          {PVC_LINER_COLOURS.map((option) => (
+            <label key={option} className="pvc-picker__radio">
+              <input
+                type="radio"
+                name="pvc-colour"
+                value={option}
+                checked={colour === option}
+                onChange={() => setColour(option)}
+              />
+              <span className={`pvc-picker__swatch pvc-picker__swatch--${option}`} aria-hidden />
+              <span>{PVC_LINER_COLOUR_LABELS[option]}</span>
+            </label>
+          ))}
+        </fieldset>
       </div>
 
       {liner ? (
         <div className="pvc-picker__result" aria-live="polite">
-          <p className="pvc-picker__name">{liner.name}</p>
+          <Image
+            src={image.src}
+            alt={image.alt}
+            width={image.width}
+            height={image.height}
+            sizes="(min-width: 900px) 14rem, 60vw"
+            className="pvc-picker__image"
+          />
+          <p className="pvc-picker__name">
+            {liner.name}, {colour}
+          </p>
           <p className="pvc-picker__price">
             {formatZarExactAmount(liner.priceInclVatZar)} <span>incl. VAT</span>
           </p>
@@ -137,7 +178,7 @@ export function PvcLinerPicker({ initialSku = null }: { initialSku?: string | nu
             </div>
           </dl>
           <Link
-            href={`${PVC_LINER_CHECKOUT_PATH}?sku=${encodeURIComponent(liner.sku)}&qty=1`}
+            href={`${PVC_LINER_CHECKOUT_PATH}?sku=${encodeURIComponent(liner.sku)}&colour=${colour}&qty=1`}
             className="btn-primary pvc-picker__buy"
           >
             Buy now

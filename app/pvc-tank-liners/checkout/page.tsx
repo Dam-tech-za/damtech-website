@@ -5,6 +5,8 @@ import { SiteSection } from "@/components/SiteSection";
 import { PvcCheckoutForm } from "@/components/shop/PvcCheckoutForm";
 import {
   getPvcLinerBySku,
+  parsePvcLinerColour,
+  PVC_LINER_DEFAULT_COLOUR,
   PVC_LINER_MAX_QUANTITY,
   PVC_LINER_PAGE_PATH,
 } from "@/lib/shop/pvc-liners";
@@ -26,6 +28,7 @@ export default async function PvcCheckoutPage({ searchParams }: PageProps) {
   const params = await searchParams;
   const liner = getPvcLinerBySku(first(params.sku));
   if (!liner) redirect(PVC_LINER_PAGE_PATH);
+  const colour = parsePvcLinerColour(first(params.colour)) ?? PVC_LINER_DEFAULT_COLOUR;
   const qty = Math.trunc(Number(first(params.qty) || "1"));
   const quantity = Number.isFinite(qty) ? Math.min(PVC_LINER_MAX_QUANTITY, Math.max(1, qty)) : 1;
 
@@ -39,7 +42,7 @@ export default async function PvcCheckoutPage({ searchParams }: PageProps) {
         showActions={false}
       />
       <SiteSection>
-        <PvcCheckoutForm liner={liner} initialQuantity={quantity} />
+        <PvcCheckoutForm liner={liner} colour={colour} initialQuantity={quantity} />
       </SiteSection>
     </>
   );

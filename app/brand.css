@@ -442,7 +442,7 @@ h3 {
   color: var(--dt-blue);
 }
 
-@media (min-width: 1280px) {
+@media (min-width: 1400px) {
   .site-header__phone {
     display: inline-flex;
     margin-right: 0.75rem;
@@ -1893,5 +1893,21 @@ summary:focus-visible,
     opacity: 1 !important;
     transform: none !important;
     stroke-dashoffset: 0 !important;
+  }
+}
+
+/* Seven nav items: keep the desktop row from colliding with the brand on small laptops. */
+@media (min-width: 1024px) and (max-width: 1279.98px) {
+  .site-header__brand-subtitle {
+    display: none;
+  }
+  .site-header__nav-link {
+    font-size: 0.85rem;
+  }
+}
+
+@media (min-width: 1024px) and (max-width: 1099.98px) {
+  .site-header__nav-link {
+    font-size: 0.78rem;
   }
 }

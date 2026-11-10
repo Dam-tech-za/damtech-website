@@ -73,9 +73,11 @@ describe("production Merchant feed is enabled", () => {
     assert.ok(result.body);
     const parsed = parseMerchantFeedTsv(result.body);
     assert.deepEqual(parsed.columns, [...MERCHANT_FEED_COLUMNS]);
-    assert.equal(parsed.rows.length, 7);
+    // PVC liner rows (DMT-PVC-…) are appended after the kits; see lib/shop/shop.test.ts.
+    const kitRows = parsed.rows.filter((row) => !row.id.startsWith("DMT-PVC-"));
+    assert.equal(kitRows.length, 7);
     assert.deepEqual(
-      parsed.rows.map((row) => row.id),
+      kitRows.map((row) => row.id),
       CATALOGUE_PRODUCTS.map((product) => product.sku),
     );
 
@@ -105,7 +107,7 @@ describe("enabled Merchant TSV content", () => {
       "DMT-FP-15000": "17999.00 ZAR",
       "DMT-LT-1500": "4999.00 ZAR",
     };
-    for (const row of parsed.rows) {
+    for (const row of parsed.rows.filter((r) => !r.id.startsWith("DMT-PVC-"))) {
       const product = getBySku(row.id);
       assert.equal(row.price, expectedPrices[row.id]);
       assert.equal(row.price, formatMerchantFeedPrice(product.priceInclVatZar));

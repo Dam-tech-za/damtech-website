@@ -14,6 +14,7 @@ import {
   PVC_LINER_MAX_QUANTITY,
   PVC_LINER_PAGE_PATH,
   type PvcLiner,
+  type PvcLinerColour,
 } from "@/lib/shop/pvc-liners";
 import { ORDER_FULFILMENT_METHOD } from "@/lib/orders/types";
 
@@ -66,9 +67,11 @@ function TextInput(props: {
 
 export function PvcCheckoutForm({
   liner,
+  colour,
   initialQuantity,
 }: {
   liner: PvcLiner;
+  colour: PvcLinerColour;
   initialQuantity: number;
 }) {
   const [isPending, startTransition] = useTransition();
@@ -119,6 +122,7 @@ export function PvcCheckoutForm({
     <div className="order-layout">
       <form className="order-form" onSubmit={handleSubmit} noValidate>
         <input type="hidden" name="sku" value={liner.sku} />
+        <input type="hidden" name="colour" value={colour} />
         <input type="hidden" name="submissionId" value={submissionId} />
         <input type="hidden" name="formStartedAt" value={String(formStartedAt)} />
         <input type="hidden" name="fulfilmentMethod" value={ORDER_FULFILMENT_METHOD} />
@@ -237,8 +241,8 @@ export function PvcCheckoutForm({
           <label className="order-check">
             <input type="checkbox" name="confirmSupplyOnly" value="true" required disabled={busy} />
             <span>
-              I have checked that this liner matches my tank ({liner.diameterM} m diameter, {liner.rows} rows). It is
-              made to order for this size.
+              I have checked that this {colour} liner matches my tank ({liner.diameterM} m diameter, {liner.rows} rows).
+              It is made to order for this size.
             </span>
           </label>
           <label className="order-check">
@@ -297,7 +301,9 @@ export function PvcCheckoutForm({
         </h2>
         <div className="order-summary__product">
           <div className="order-summary__product-copy">
-            <p className="order-summary__name">{liner.name}</p>
+            <p className="order-summary__name">
+              {liner.name}, {colour}
+            </p>
             <p className="order-summary__sku">SKU {liner.sku}</p>
             <p className="order-summary__spec">{liner.summary}</p>
             <p className="order-summary__qty">Quantity {quantity}</p>

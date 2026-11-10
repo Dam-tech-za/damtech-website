@@ -1,7 +1,17 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import { deliveryQuoteForProvince, DELIVERY_PROVINCES } from "./delivery.ts";
-import { getPvcLinerBySku, isPvcLinerSku, PVC_LINERS, pvcLinerSku } from "./pvc-liners.ts";
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
+import {
+  getPvcLinerBySku,
+  isPvcLinerSku,
+  parsePvcLinerColour,
+  PVC_LINER_COLOUR_IMAGES,
+  PVC_LINERS,
+  pvcLinerOrderName,
+  pvcLinerSku,
+} from "./pvc-liners.ts";
 import { shopOrigin } from "./origin.ts";
 
 describe("PVC liner catalogue", () => {
@@ -58,10 +68,29 @@ describe("Google visibility", () => {
     assert.equal(v?.offers.url, "https://www.dam-tech.co.za/pvc-tank-liners/?sku=DMT-PVC-550-05M-3R");
   });
 
-  it("keeps liners out of the Merchant feed until an approved image exists", () => {
+  it("lists the liners in the Merchant feed with the tagged illustration, and none without an image", () => {
     assert.deepEqual(buildPvcLinerFeedRows(null), []);
     const { rows } = parseMerchantFeedTsv(createMerchantFeedHttpResult().body);
-    assert.ok(!rows.some((r) => r.id.startsWith("DMT-PVC")));
+    const liners = rows.filter((r) => r.id.startsWith("DMT-PVC"));
+    assert.equal(liners.length, 76);
+    assert.equal(liners[0].image_link, "https://www.dam-tech.co.za/images/blue-pvc-tank-liner-folded-damtech.webp");
+    assert.equal(rows.length, 76 + 7);
+  });
+
+  it("liner images are WebP files labelled as AI-rendered", () => {
+    for (const image of Object.values(PVC_LINER_COLOUR_IMAGES)) {
+      const bytes = readFileSync(join(process.cwd(), "public", image.src)).toString("latin1");
+      assert.ok(bytes.startsWith("RIFF") && bytes.slice(8, 12) === "WEBP");
+      assert.match(bytes, /digitalsourcetype\/trainedAlgorithmicMedia/);
+      assert.ok(image.alt.length > 20 && !/photo/i.test(image.alt));
+    }
+  });
+
+  it("stores the colour in the order name without changing the price", () => {
+    const liner = getPvcLinerBySku("DMT-PVC-550-05M-3R")!;
+    assert.equal(pvcLinerOrderName(liner, "black"), "550 gsm PVC tank liner, 5 m × 2.29 m, black");
+    assert.equal(parsePvcLinerColour("Blue"), "blue");
+    assert.equal(parsePvcLinerColour("green"), null);
   });
 
   it("builds valid feed rows once an image is set", () => {

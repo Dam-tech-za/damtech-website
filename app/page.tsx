@@ -7,6 +7,7 @@ import { HomeServicesSection } from "@/components/HomeServicesSection";
 import { HomeTrustWarrantySection } from "@/components/HomeTrustWarrantySection";
 import { HomeWhyChooseSection } from "@/components/HomeWhyChooseSection";
 import { PageSeo } from "@/components/PageSeo";
+import { PvcLinerShopSection } from "@/components/shop/PvcLinerShopSection";
 import { createPageMetadata, PAGE_SEO } from "@/lib/pages";
 
 export const metadata = createPageMetadata(PAGE_SEO.home);
@@ -28,6 +29,7 @@ export default function HomePage() {
       <HomeTrustWarrantySection />
 
       <HomeServicesSection />
+      <PvcLinerShopSection tone="muted" />
 
       <HomeProcessProjectsSection />
 

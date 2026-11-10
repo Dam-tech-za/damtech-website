@@ -82,3 +82,43 @@ export function pvcLinerDiametersForRows(rows: number): number[] {
 export function cheapestPvcLinerInclVat(): number {
   return Math.min(...PVC_LINERS.map((l) => l.priceInclVatZar));
 }
+
+/** Liner colours. Same price for both (Tiaan, 2026-11-10). */
+export const PVC_LINER_COLOURS = ["blue", "black"] as const;
+export type PvcLinerColour = (typeof PVC_LINER_COLOURS)[number];
+export const PVC_LINER_DEFAULT_COLOUR: PvcLinerColour = "blue";
+
+export const PVC_LINER_COLOUR_LABELS: Record<PvcLinerColour, string> = {
+  blue: "Blue",
+  black: "Black",
+};
+
+/**
+ * Owner-supplied product illustrations (AI-rendered; the WebP files carry
+ * IPTC DigitalSourceType=trainedAlgorithmicMedia). They show the material
+ * and colour, not a Damtech installation, and alt text must say no more.
+ */
+export const PVC_LINER_COLOUR_IMAGES: Record<PvcLinerColour, { src: string; alt: string; width: number; height: number }> = {
+  blue: {
+    src: "/images/blue-pvc-tank-liner-folded-damtech.webp",
+    alt: "Folded blue PVC tank liner for a corrugated steel water tank",
+    width: 1200,
+    height: 1200,
+  },
+  black: {
+    src: "/images/black-pvc-tank-liner-folded-damtech.webp",
+    alt: "Folded black PVC tank liner for a corrugated steel water tank",
+    width: 1200,
+    height: 1200,
+  },
+};
+
+export function parsePvcLinerColour(value: unknown): PvcLinerColour | null {
+  const v = typeof value === "string" ? value.trim().toLowerCase() : "";
+  return (PVC_LINER_COLOURS as readonly string[]).includes(v) ? (v as PvcLinerColour) : null;
+}
+
+/** Product name as stored on the order, e.g. "…, 5 m × 2.29 m, blue". */
+export function pvcLinerOrderName(liner: PvcLiner, colour: PvcLinerColour): string {
+  return `${liner.name}, ${colour}`;
+}

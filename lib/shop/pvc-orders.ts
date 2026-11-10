@@ -6,11 +6,17 @@ import { generateOrderReference } from "../orders/reference.ts";
 import { DELIVERY_FULFILMENT } from "../orders/delivery.ts";
 import type { PublicOrderFormInput } from "../orders/schema.ts";
 import type { DeliveryQuote } from "./delivery.ts";
-import { PVC_LINER_PRICE_VERSION, type PvcLiner } from "./pvc-liners.ts";
+import {
+  PVC_LINER_PRICE_VERSION,
+  pvcLinerOrderName,
+  type PvcLiner,
+  type PvcLinerColour,
+} from "./pvc-liners.ts";
 
 /** Server-side price for a liner order. Never trust client totals. */
 export type PvcOrderPricing = {
   liner: PvcLiner;
+  colour: PvcLinerColour;
   quantity: number;
   goodsInclVatCents: number;
   goodsVatCents: number;
@@ -20,6 +26,7 @@ export type PvcOrderPricing = {
 
 export function pricePvcOrder(
   liner: PvcLiner,
+  colour: PvcLinerColour,
   quantity: number,
   delivery: DeliveryQuote,
 ): PvcOrderPricing {
@@ -29,6 +36,7 @@ export function pricePvcOrder(
   const goodsInclVatCents = liner.priceInclVatCents * quantity;
   return {
     liner,
+    colour,
     quantity,
     goodsInclVatCents,
     goodsVatCents: vatFromInclusiveCents(goodsInclVatCents),
@@ -141,7 +149,7 @@ export async function createPvcLinerOrder(input: {
         payment_method: "payfast",
         payment_status: "pending",
         sku: pricing.liner.sku,
-        product_name_snapshot: pricing.liner.name,
+        product_name_snapshot: pvcLinerOrderName(pricing.liner, pricing.colour),
         quantity: pricing.quantity,
         unit_price_snapshot: pricing.liner.priceInclVatZar,
         vat_rate_snapshot: 15,

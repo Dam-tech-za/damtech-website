@@ -1,6 +1,8 @@
 import { CANONICAL_ORIGIN } from "../site-url.ts";
 import {
   PVC_LINERS,
+  PVC_LINER_COLOUR_IMAGES,
+  PVC_LINER_DEFAULT_COLOUR,
   PVC_LINER_PAGE_PATH,
   type PvcLiner,
 } from "./pvc-liners.ts";
@@ -10,14 +12,12 @@ import {
  *
  * Every liner has its own URL (`/pvc-tank-liners/?sku=…`) whose server-rendered
  * picker shows that liner's exact VAT-inclusive price, so the price Google
- * reads always matches the page.
- *
- * Merchant listings (Shopping tab, product results) need a real product image.
- * Until the owner supplies an approved photo of a PVC liner, this stays null:
- * the structured data carries no image and the liners are left out of the
- * Merchant feed. Never use stock or AI imagery here.
+ * reads always matches the page. Colour (blue/black) does not change the
+ * price, so it is not a separate Merchant variant; the blue illustration is
+ * the listing image. Set to null to withdraw the liners from the feed.
  */
-export const PVC_LINER_MERCHANT_IMAGE: { src: string; alt: string } | null = null;
+export const PVC_LINER_MERCHANT_IMAGE: { src: string; alt: string } | null =
+  PVC_LINER_COLOUR_IMAGES[PVC_LINER_DEFAULT_COLOUR];
 
 /** Merchant Center shipping label; per-province rates are set on this label. */
 export const PVC_LINER_SHIPPING_LABEL = "pvc-tank-liner";
@@ -67,6 +67,7 @@ export function buildPvcLinerProductGroupSchema(): Record<string, unknown> {
       description: liner.summary,
       size: sizeLabel(liner),
       material: `${liner.gsm} gsm PVC`,
+      color: "Blue or black",
       ...(image ? { image } : {}),
       offers: {
         "@type": "Offer",
