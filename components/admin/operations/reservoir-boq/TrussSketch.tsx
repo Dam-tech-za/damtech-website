@@ -17,6 +17,17 @@ function distinctTrusses(detail: TrussDetail[]) {
   return [...groups.values()].sort((a, b) => Math.abs(a.truss.y_m) - Math.abs(b.truss.y_m));
 }
 
+/** Ribs and diagonals of one truss as "17 x L25x25x2.5 (L25x25x2 where not available)". */
+function memberLists(truss: TrussDetail, roof: RoofDesign) {
+  const diagonals = new Map<string, number>();
+  for (const p of truss.panels) if (p.web !== "solid") diagonals.set(short(p.web), (diagonals.get(short(p.web)) ?? 0) + 2);
+  const ribs = new Map<string, number>();
+  truss.ribs.forEach((r, i) => ribs.set(short(r), (ribs.get(short(r)) ?? 0) + (i === 0 ? 1 : 2)));
+  const alt = new Map(Object.entries(roof.web_alternative ?? {}).map(([k, v]) => [short(k), short(v)]));
+  const list = (m: Map<string, number>) => [...m.entries()].map(([k, v]) => `${v} x ${k}${alt.has(k) ? ` (${alt.get(k)} where not available)` : ""}`).join(", ");
+  return { ribs: list(ribs), diagonals: list(diagonals) || "none" };
+}
+
 function PlanView({ roof, diameterM }: Props) {
   const size = 260;
   const pad = 26;
@@ -68,13 +79,7 @@ function Elevation({ truss, names, roof }: { truss: TrussDetail; names: string[]
   const last = nodes.length - 1;
   const sides = [1, -1];
   const centre = depths[0];
-  const diagonals = truss.panels.filter((p) => p.web !== "solid");
-  const counts = new Map<string, number>();
-  for (const p of diagonals) counts.set(short(p.web), (counts.get(short(p.web)) ?? 0) + 2);
-  const ribCounts = new Map<string, number>();
-  truss.ribs.forEach((r, i) => ribCounts.set(short(r), (ribCounts.get(short(r)) ?? 0) + (i === 0 ? 1 : 2)));
-  const alt = new Map(Object.entries(roof.web_alternative ?? {}).map(([k, v]) => [short(k), short(v)]));
-  const list = (m: Map<string, number>) => [...m.entries()].map(([k, v]) => `${v} x ${k}${alt.has(k) ? ` (${alt.get(k)} where not available)` : ""}`).join(", ");
+  const members = memberLists(truss, roof);
 
   const tiesHere = roof.tie_lines_m.filter((x) => Math.abs(x) < rho - 0.05);
   const details: [string, string][] = [
@@ -82,8 +87,8 @@ function Elevation({ truss, names, roof }: { truss: TrussDetail; names: string[]
     ["Span (bottom chord)", `${truss.span_m.toFixed(3)} m, ${short(roof.bottom_chord)}`],
     ["Top chord", `2 x ${(truss.top_chord_m / 2).toFixed(3)} m, ${short(roof.top_chord)}`],
     ["Depth", `${centre} mm at the centre, ${depths[last]} mm at the rim`],
-    ["Ribs", list(ribCounts)],
-    ["Diagonals", list(counts) || "none"],
+    ["Ribs", members.ribs],
+    ["Diagonals", members.diagonals],
     ["Truss ends", "solid 4 mm plate over the last panel at each end"],
     ["Tie lines", tiesHere.length ? `${tiesHere.length} (dots on the bottom chord)` : "none"],
   ];
@@ -92,15 +97,17 @@ function Elevation({ truss, names, roof }: { truss: TrussDetail; names: string[]
     <figure className="rboq-truss">
       <figcaption className="rboq-truss__title">
         {names.join(" and ")}: span {truss.span_m.toFixed(3)} m
-        <span className="rboq-info" tabIndex={0} role="button" aria-label={`Details of truss ${names.join(" and ")}`}>
-          <svg viewBox="0 0 20 20" width="16" height="16" aria-hidden className="rboq-info__icon">
-            <circle cx="10" cy="10" r="8.5" fill="none" stroke="currentColor" strokeWidth="1.5" />
-            <path d="M10 9v5M10 6.2v.1" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
-          </svg>
-          <span className="rboq-info__pop" role="tooltip">
+        <details className="rboq-info">
+          <summary aria-label={`Details of truss ${names.join(" and ")}`}>
+            <svg viewBox="0 0 20 20" width="18" height="18" aria-hidden className="rboq-info__icon">
+              <circle cx="10" cy="10" r="8.5" fill="none" stroke="currentColor" strokeWidth="1.5" />
+              <path d="M10 9v5M10 6.2v.1" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+            </svg>
+          </summary>
+          <div className="rboq-info__pop">
             <TrussDetails rows={details} />
-          </span>
-        </span>
+          </div>
+        </details>
       </figcaption>
       <svg viewBox={`0 0 ${width} ${baseY + 14}`} className="rboq-sketch__elevation" role="img" aria-label={`Truss ${names.join(", ")} elevation`}>
         {roof.rim_drop_mm > 0 ? <line x1={padX - 20} y1={Y(roof.rim_drop_mm)} x2={width - padX + 20} y2={Y(roof.rim_drop_mm)} className="rboq-svg-wall" /> : null}
@@ -212,7 +219,7 @@ export function TrussSketch({ roof, diameterM }: Props) {
         <Elevation key={group.names.join("-")} truss={group.truss} names={group.names} roof={roof} />
       ))}
       <p className="rboq-sketch__note">
-        Not to scale: depth is drawn larger than span. Dashed line = top of the wall. Hover over the i beside a truss for its members; they print as a table beside each truss.
+        Not to scale: depth is drawn larger than span. Dashed line = top of the wall. Click the i beside a truss for its members; they print as a table beside each truss.
       </p>
       <table className="admin-table rboq-table rboq-table--trusses">
         <thead>
@@ -221,19 +228,26 @@ export function TrussSketch({ roof, diameterM }: Props) {
             <th>From centre</th>
             <th>Span (bottom chord)</th>
             <th>Top chord</th>
+            <th>Ribs</th>
+            <th>Diagonals</th>
             <th>Rib heights, centre to rim (mm)</th>
           </tr>
         </thead>
         <tbody>
-          {groups.map((group) => (
-            <tr key={group.names.join("-")}>
-              <td>{group.names.join(", ")}</td>
-              <td>{Math.abs(group.truss.y_m).toFixed(2)} m</td>
-              <td>{group.truss.span_m.toFixed(3)} m</td>
-              <td>2 x {(group.truss.top_chord_m / 2).toFixed(3)} m</td>
-              <td>{group.truss.depths_mm.join(", ")}</td>
-            </tr>
-          ))}
+          {groups.map((group) => {
+            const members = memberLists(group.truss, roof);
+            return (
+              <tr key={group.names.join("-")}>
+                <td>{group.names.join(", ")}</td>
+                <td>{Math.abs(group.truss.y_m).toFixed(2)} m</td>
+                <td>{group.truss.span_m.toFixed(3)} m</td>
+                <td>2 x {(group.truss.top_chord_m / 2).toFixed(3)} m</td>
+                <td>{members.ribs}</td>
+                <td>{members.diagonals}</td>
+                <td>{group.truss.depths_mm.join(", ")}</td>
+              </tr>
+            );
+          })}
         </tbody>
       </table>
     </div>

@@ -184,14 +184,35 @@
   position: relative;
   display: inline-flex;
   color: var(--admin-primary);
-  cursor: help;
+}
+
+.rboq-info > summary {
+  display: inline-flex;
+  padding: 0.15rem;
+  border-radius: 999px;
+  list-style: none;
+  cursor: pointer;
+}
+
+.rboq-info > summary::-webkit-details-marker {
+  display: none;
+}
+
+.rboq-info > summary:hover,
+.rboq-info[open] > summary {
+  background: #e9eff5;
+}
+
+.rboq-info > summary:focus-visible {
+  outline: 2px solid var(--admin-focus-ring);
+  outline-offset: 1px;
 }
 
 .rboq-info__pop {
   display: none;
   position: absolute;
   z-index: 20;
-  left: 1.4rem;
+  left: calc(100% + 0.25rem);
   top: -0.4rem;
   width: max-content;
   max-width: min(30rem, 80vw);
@@ -205,10 +226,14 @@
   cursor: default;
 }
 
-.rboq-info:hover .rboq-info__pop,
-.rboq-info:focus .rboq-info__pop,
-.rboq-info:focus-within .rboq-info__pop {
+.rboq-info[open] .rboq-info__pop {
   display: block;
+}
+
+@media (hover: hover) {
+  .rboq-info:hover .rboq-info__pop {
+    display: block;
+  }
 }
 
 .rboq-truss__details {
@@ -353,16 +378,43 @@
     background: #ffffff !important;
   }
 
+  /* Chrome fragments grid containers badly across pages (items overlap), so print as blocks and flex rows. */
+  .rboq-print,
+  .rboq-sketch {
+    display: block;
+  }
+
+  .rboq-print > * + *,
+  .rboq-sketch > * + * {
+    margin-top: 4mm;
+  }
+
+  .rboq-sketch__top {
+    display: flex;
+    align-items: center;
+    gap: 6mm;
+  }
+
+  .rboq-sketch__top > svg {
+    flex: 0 0 75mm;
+  }
+
   .rboq-truss {
-    grid-template-columns: 1fr 78mm;
+    display: flex;
+    flex-wrap: wrap;
     align-items: center;
     column-gap: 6mm;
+    row-gap: 1mm;
     break-inside: avoid;
-    margin-top: 3mm;
   }
 
   .rboq-truss__title {
-    grid-column: 1 / -1;
+    flex: 0 0 100%;
+  }
+
+  .rboq-truss > .rboq-sketch__elevation {
+    flex: 1 1 0;
+    min-width: 0;
   }
 
   .rboq-info {
@@ -371,10 +423,33 @@
 
   .rboq-truss__print {
     display: block;
+    flex: 0 0 85mm;
   }
 
   .rboq-truss__details {
+    width: 100%;
     font-size: 8pt;
+  }
+
+  .rboq-truss__details th,
+  .rboq-truss__details td {
+    padding: 1.5pt 4pt;
+    border: 0.5pt solid #9aa7b4;
+  }
+
+  .rboq-table--trusses {
+    break-inside: avoid;
+  }
+
+  .rboq-table--trusses td:nth-child(3) {
+    min-width: 0;
+  }
+
+  .rboq-foot {
+    break-inside: avoid;
+    margin-top: 6mm;
+    padding-top: 2mm;
+    border-top: 0.5pt solid #9aa7b4;
   }
 
   .rboq-sketch__elevation {
