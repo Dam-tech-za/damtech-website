@@ -11,12 +11,13 @@ type AdminSidebarProps = {
   onToggleCollapse?: () => void;
 };
 
-type IconId = AdminNavItemId | "projects" | "money" | "shop";
+type IconId = AdminNavItemId | "projects" | "money" | "shop" | "courier";
 
 const SECTION_ICON: Record<AdminSectionId, IconId> = {
   overview: "dashboard",
   enquiries: "rfqs",
   shop: "shop",
+  "courier-quotes": "courier",
   projects: "projects",
   customers: "customers",
   money: "money",
@@ -71,6 +72,14 @@ export function NavIcon({ id }: { id: IconId }) {
         <svg {...common}>
           <path d="M4 8l8-4 8 4v8l-8 4-8-4V8Z" stroke="currentColor" strokeWidth="1.7" strokeLinejoin="round" />
           <path d="M4 8l8 4 8-4M12 12v8" stroke="currentColor" strokeWidth="1.7" strokeLinejoin="round" />
+        </svg>
+      );
+    case "courier":
+      return (
+        <svg {...common}>
+          <path d="M3 7h11v9H3V7Zm11 3h4l3 3v3h-7v-6Z" stroke="currentColor" strokeWidth="1.7" strokeLinejoin="round" />
+          <circle cx="7" cy="17.5" r="1.8" stroke="currentColor" strokeWidth="1.7" />
+          <circle cx="17" cy="17.5" r="1.8" stroke="currentColor" strokeWidth="1.7" />
         </svg>
       );
     case "customers":

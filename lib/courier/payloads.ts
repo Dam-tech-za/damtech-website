@@ -113,10 +113,12 @@ export function parseRates(body: unknown): CourierRate[] {
       const rate = Number(obj(entry).rate);
       const serviceCode = str(level.code);
       if (!serviceCode || !Number.isFinite(rate)) return null;
+      const exVat = Number(obj(entry).rate_excluding_vat);
       return {
         serviceCode,
         serviceName: str(level.name) || serviceCode,
         rate,
+        ...(obj(entry).rate_excluding_vat != null && Number.isFinite(exVat) ? { rateExVat: exVat } : {}),
         deliveryFrom: day(level.delivery_date_from),
         deliveryTo: day(level.delivery_date_to),
       };

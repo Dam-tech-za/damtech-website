@@ -14,7 +14,7 @@ export type AdminNavGroup = {
 
 export const ADMIN_NAV_GROUPS: AdminNavGroup[] = [
   { id: "overview", label: "Overview", itemIds: ["dashboard"] },
-  { id: "operations", label: "Operations", itemIds: ["operations", "ops-projects", "online-purchases", "ops-calendar", "procurement", "reservoir-boq", "xero-review", "financials"] },
+  { id: "operations", label: "Operations", itemIds: ["operations", "ops-projects", "online-purchases", "liner-courier", "ops-calendar", "procurement", "reservoir-boq", "xero-review", "financials"] },
   {
     id: "sales",
     label: "Sales",
@@ -79,6 +79,7 @@ const SEGMENT_LABELS: Record<string, string> = {
   rfqs: "Enquiries",
   quotes: "Quotations",
   "online-purchases": "Online purchases",
+  "liner-courier": "Liner courier",
   customers: "Customers",
   pricing: "Pricing",
   import: "CSV import",
@@ -152,7 +153,7 @@ export function adminPageTitle(pathname: string): string {
 // the page, so the menu stays short however many pages exist.
 // ---------------------------------------------------------------------------
 
-export type AdminSectionId = "overview" | "enquiries" | "shop" | "projects" | "customers" | "money" | "settings";
+export type AdminSectionId = "overview" | "enquiries" | "shop" | "courier-quotes" | "projects" | "customers" | "money" | "settings";
 
 export type AdminSection = {
   id: AdminSectionId;
@@ -172,6 +173,7 @@ export const ADMIN_SECTIONS: AdminSection[] = [
     tabLabels: { rfqs: "Enquiries", quotes: "Quotations" },
   },
   { id: "shop", label: "Online purchases", itemIds: ["online-purchases"] },
+  { id: "courier-quotes", label: "Liner courier", itemIds: ["liner-courier"] },
   {
     id: "projects",
     label: "Projects",
