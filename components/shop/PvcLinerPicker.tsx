@@ -202,7 +202,7 @@ export function PvcLinerPicker({
               Buy now
             </Link>
           ) : (
-            <Link href={pvcLinerQuotePath(liner)} className="btn-primary pvc-picker__buy">
+            <Link href={pvcLinerQuotePath(liner, 1, colour)} className="btn-primary pvc-picker__buy">
               Request Quote
             </Link>
           )}

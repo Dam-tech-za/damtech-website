@@ -107,7 +107,7 @@ export function PvcLinerBuyBox({ liner }: { liner: PvcLiner }) {
             <p className="catalogue-buybox__help">
               Up to {maxQuantity} online. Secure payment by card or Instant EFT through PayFast. Installation is not
               included.{" "}
-              <Link href={pvcLinerQuotePath(liner, quantity)} className="text-water hover:underline">
+              <Link href={pvcLinerQuotePath(liner, quantity, colour)} className="text-water hover:underline">
                 Request a quote
               </Link>{" "}
               for more.
@@ -115,7 +115,7 @@ export function PvcLinerBuyBox({ liner }: { liner: PvcLiner }) {
           </>
         ) : (
           <>
-            <Link href={pvcLinerQuotePath(liner)} className="btn-primary catalogue-cta">
+            <Link href={pvcLinerQuotePath(liner, 1, colour)} className="btn-primary catalogue-cta">
               Request Quote
             </Link>
             <p className="catalogue-buybox__help">

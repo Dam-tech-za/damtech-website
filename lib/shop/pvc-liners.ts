@@ -162,7 +162,8 @@ export function pvcLinerMaxOnlineQuantity(liner: PvcLiner): number {
   return Math.min(PVC_LINER_MAX_QUANTITY, Math.floor(PVC_LINER_ONLINE_MAX_ORDER_INCL_VAT_ZAR / liner.priceInclVatZar));
 }
 
-/** Quote form with this liner and quantity filled in. */
-export function pvcLinerQuotePath(liner: PvcLiner, quantity = 1): string {
-  return `/quote/?service=${encodeURIComponent("PVC dam liner")}&liner=${encodeURIComponent(liner.sku)}&qty=${quantity}`;
+/** Quote form with this liner, quantity and (when chosen) colour filled in. */
+export function pvcLinerQuotePath(liner: PvcLiner, quantity = 1, colour?: PvcLinerColour): string {
+  const colourPart = colour ? `&colour=${colour}` : "";
+  return `/quote/?service=${encodeURIComponent("PVC tank liner")}&liner=${encodeURIComponent(liner.sku)}&qty=${quantity}${colourPart}`;
 }

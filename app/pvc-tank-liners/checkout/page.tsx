@@ -35,7 +35,7 @@ export default async function PvcCheckoutPage({ searchParams }: PageProps) {
   const requested = Number.isFinite(qty) ? Math.max(1, qty) : 1;
   // Larger liners and orders above the online limit are quoted, not sold online.
   const maxQuantity = pvcLinerMaxOnlineQuantity(liner);
-  if (requested > maxQuantity) redirect(pvcLinerQuotePath(liner, requested));
+  if (requested > maxQuantity) redirect(pvcLinerQuotePath(liner, requested, colour));
   const quantity = requested;
 
   return (

@@ -7,7 +7,7 @@ import { SimpleQuoteForm } from "@/components/SimpleQuoteForm";
 import { resolveCatalogueSelectionFromParams } from "@/lib/catalogue";
 import { createPageMetadata, PAGE_SEO } from "@/lib/pages";
 import { normaliseServiceOption } from "@/lib/form";
-import { getPvcLinerBySku } from "@/lib/shop/pvc-liners";
+import { getPvcLinerBySku, parsePvcLinerColour } from "@/lib/shop/pvc-liners";
 import {
   LazyCTA as CTA,
   LazyInternalServiceLinks as InternalServiceLinks,
@@ -31,8 +31,9 @@ export default async function QuotePage({ searchParams }: QuotePageProps) {
   const quoteLiner = linerParam ? getPvcLinerBySku(linerParam) : null;
   const qtyParam = Math.trunc(Number(Array.isArray(params.qty) ? params.qty[0] : params.qty));
   const linerQty = Number.isFinite(qtyParam) && qtyParam > 0 ? Math.min(qtyParam, 99) : 1;
+  const linerColour = parsePvcLinerColour(Array.isArray(params.colour) ? params.colour[0] : params.colour);
   const defaultMessage = quoteLiner
-    ? `Please quote ${linerQty} x ${quoteLiner.name} (${quoteLiner.sku}), blue or black, delivered to my address. Installation: please say if you need it.`
+    ? `Please quote ${linerQty} x ${quoteLiner.name}, ${linerColour ?? "blue or black"} (${quoteLiner.sku}), delivered to my address. Installation: please say if you need it.`
     : undefined;
 
   return (
