@@ -76,9 +76,10 @@ export default async function AdminOrderDetailPage({ params }: PageProps) {
     ? "The customer is collecting this order, so no courier is needed."
     : order.status === "cancelled"
       ? "This order is cancelled."
-      : order.payment_method === "payfast" && order.payment_status !== "paid"
-        ? "Courier booking opens once the order is paid."
-        : null;
+      : null;
+  const awaitingPayfast = order.payment_method === "payfast" && order.payment_status !== "paid";
+  // Rates can be checked before payment; booking waits until PayFast confirms it.
+  const courierBookingBlocked = awaitingPayfast ? "Booking opens once the order is paid. You can check rates now." : null;
 
   const supabase = await createClient();
   const { data: history } = await supabase
@@ -106,7 +107,9 @@ export default async function AdminOrderDetailPage({ params }: PageProps) {
         title="Status"
         description={
           order.payment_method === "payfast"
-            ? "Paid online through PayFast. Move the order through manufacture and delivery here."
+            ? awaitingPayfast
+              ? "PayFast order, waiting for the customer to pay. Nothing is made or emailed until PayFast confirms the payment."
+              : "Paid online through PayFast. Move the order through manufacture and delivery here."
             : "Invoice order: nothing is charged online. Move the order through invoicing, payment and delivery here."
         }
       >
@@ -145,16 +148,21 @@ export default async function AdminOrderDetailPage({ params }: PageProps) {
           <p>{orderStatusLabel(order.status)}</p>
         )}
         <p className="admin-empty__hint">
-          Customer confirmation email:{" "}
-          {communicationStatusLabel(order.confirmation_email_status)}. Email to
-          Damtech: {communicationStatusLabel(order.internal_email_status)}.
+          {awaitingPayfast ? (
+            <>Order emails: not sent yet. They go out once the payment is confirmed.</>
+          ) : (
+            <>
+              Customer confirmation email: {communicationStatusLabel(order.confirmation_email_status)}. Email to
+              Damtech: {communicationStatusLabel(order.internal_email_status)}.
+            </>
+          )}
         </p>
       </AdminPanel>
       <AdminPanel
         title="Payment"
         description={`Stage: ${PURCHASE_STAGE_LABELS[purchaseStage(order)]}${makeBy && !order.dispatched_on ? `. Make by ${formatDateTime(makeBy.toISOString())}` : ""}`}
       >
-        <dl className="admin-kv">
+        <dl className="admin-dl admin-dl--grid">
           <div>
             <dt>Method</dt>
             <dd>{order.payment_method === "payfast" ? "PayFast" : "Invoice"}</dd>
@@ -243,7 +251,7 @@ export default async function AdminOrderDetailPage({ params }: PageProps) {
           description="Get a live rate for the packed parcel, book the collection and pull tracking updates. Booking is a real order on the Courier Guy account."
         >
           {order.courier_status ? (
-            <dl className="admin-kv">
+            <dl className="admin-dl admin-dl--grid">
               <div>
                 <dt>Courier status</dt>
                 <dd>{courierStatusSummary(order.courier_status, order.courier_last_message)}</dd>
@@ -304,6 +312,7 @@ export default async function AdminOrderDetailPage({ params }: PageProps) {
                   ? "This order already has tracking from another courier."
                   : courierBlocked
               }
+              bookingBlockedReason={courierBookingBlocked}
             />
           ) : (
             <p className="admin-empty__hint">
@@ -314,7 +323,7 @@ export default async function AdminOrderDetailPage({ params }: PageProps) {
         </AdminPanel>
       ) : null}
       <AdminPanel title="Customer">
-        <dl className="admin-kv">
+        <dl className="admin-dl admin-dl--grid">
           <div>
             <dt>Type</dt>
             <dd>{order.customer_type}</dd>
@@ -356,7 +365,7 @@ export default async function AdminOrderDetailPage({ params }: PageProps) {
         </p>
       </AdminPanel>
       <AdminPanel title="Order">
-        <dl className="admin-kv">
+        <dl className="admin-dl admin-dl--grid">
           <div>
             <dt>Quantity</dt>
             <dd>{order.quantity}</dd>
@@ -366,12 +375,26 @@ export default async function AdminOrderDetailPage({ params }: PageProps) {
             <dd>{formatZar(Number(order.unit_price_snapshot))}</dd>
           </div>
           <div>
-            <dt>VAT</dt>
+            <dt>Goods incl. VAT</dt>
+            <dd>{formatZar(Number(order.total_price_snapshot))}</dd>
+          </div>
+          <div>
+            <dt>VAT on goods</dt>
             <dd>{formatZar(Number(order.vat_amount_snapshot))}</dd>
           </div>
           <div>
-            <dt>Total incl. VAT</dt>
-            <dd>{formatZar(Number(order.total_price_snapshot))}</dd>
+            <dt>Delivery incl. VAT</dt>
+            <dd>{order.delivery_fee_snapshot == null ? "On invoice" : formatZar(Number(order.delivery_fee_snapshot))}</dd>
+          </div>
+          <div>
+            <dt>Order total incl. VAT</dt>
+            <dd>
+              <strong>
+                {order.amount_due_snapshot == null
+                  ? formatZar(Number(order.total_price_snapshot) + Number(order.delivery_fee_snapshot ?? 0))
+                  : formatZar(Number(order.amount_due_snapshot))}
+              </strong>
+            </dd>
           </div>
           <div>
             <dt>Fulfilment</dt>

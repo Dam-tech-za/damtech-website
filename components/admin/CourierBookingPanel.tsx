@@ -16,6 +16,8 @@ type Props = {
   trackingNumber: string | null;
   /** Why booking is not offered (collection, unpaid, cancelled), if any. */
   blockedReason: string | null;
+  /** Rates can be checked, but booking waits (e.g. until the order is paid). */
+  bookingBlockedReason?: string | null;
   /** Packed size and weight worked out for the product, to pre-fill the form. */
   defaultParcel?: { lengthCm: number; widthCm: number; heightCm: number; weightKg: number } | null;
   /** Collection addresses that are set up, and the one nearest the customer. */
@@ -40,7 +42,7 @@ function formatEventTime(value: string): string {
     : date.toLocaleString("en-ZA", { dateStyle: "medium", timeStyle: "short", timeZone: "Africa/Johannesburg" });
 }
 
-export function CourierBookingPanel({ orderId, orderReference, trackingNumber, blockedReason, defaultParcel, depots, defaultDepot }: Props) {
+export function CourierBookingPanel({ orderId, orderReference, trackingNumber, blockedReason, bookingBlockedReason, defaultParcel, depots, defaultDepot }: Props) {
   const formRef = useRef<HTMLFormElement>(null);
   const [pending, startTransition] = useTransition();
   const [result, setResult] = useState<CourierActionResult | null>(null);
@@ -179,6 +181,9 @@ export function CourierBookingPanel({ orderId, orderReference, trackingNumber, b
               <span className="ops-courier__price">{rand.format(rate.rate)}</span>
             </label>
           ))}
+          {bookingBlockedReason ? (
+            <p className="admin-empty__hint">{bookingBlockedReason}</p>
+          ) : (
           <button
             type="button"
             className="admin-btn admin-btn--primary"
@@ -197,6 +202,7 @@ export function CourierBookingPanel({ orderId, orderReference, trackingNumber, b
           >
             {pending ? "Booking…" : "Book collection"}
           </button>
+          )}
         </fieldset>
       ) : null}
     </form>

@@ -5353,3 +5353,13 @@ table.admin-sheet .admin-status {
 .ops-courier__test li[data-ok="false"] strong {
   color: var(--admin-danger, #b42318);
 }
+
+/* Order detail facts: label above value, in columns on wider screens. */
+.admin-dl--grid {
+  grid-template-columns: repeat(auto-fill, minmax(12rem, 1fr));
+  gap: 0.9rem 1.5rem;
+}
+
+.admin-dl--grid dd {
+  overflow-wrap: anywhere;
+}
