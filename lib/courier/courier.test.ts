@@ -207,3 +207,25 @@ test("the courier's own error wording is passed on without the key", async () =>
   const result = await getCourierRates(config(), order, parcel, fetcher);
   assert.ok(!result.ok && /error 401/.test(result.error) && /Unauthorized/.test(result.error) && !result.error.includes("test-key"));
 });
+
+test("a key refused by api.shiplogic.com is retried on the Courier Guy portal host", async () => {
+  const seen: string[] = [];
+  const fetcher = (async (url: string) => {
+    seen.push(new URL(url).host);
+    return url.startsWith("https://api.shiplogic.com")
+      ? Response.json({ message: "Unauthorized" }, { status: 401 })
+      : Response.json({ rates: [{ rate: 350, service_level: { code: "ECO", name: "Economy" } }] });
+  }) as unknown as typeof fetch;
+  const cfg = getCourierConfig({ ...env, COURIER_GUY_API_KEY: ' "Bearer abc123" ' });
+  assert.ok(cfg.ok && cfg.config.apiKey === "abc123");
+  const rates = await getCourierRates(cfg.config, order, parcel, fetcher);
+  assert.ok(rates.ok && rates.data[0].rate === 350);
+  assert.deepEqual(seen, ["api.shiplogic.com", "api.portal.thecourierguy.co.za"]);
+
+  const both = (async () => Response.json({ message: "Unauthorized" }, { status: 401 })) as unknown as typeof fetch;
+  const refused = await getCourierRates(getCourierConfig({ ...env, COURIER_GUY_API_KEY: "zzz" }).ok ? (getCourierConfig({ ...env, COURIER_GUY_API_KEY: "zzz" }) as { ok: true; config: Parameters<typeof getCourierRates>[0] }).config : config(), order, parcel, both);
+  assert.ok(!refused.ok && /both refused the key/.test(refused.error));
+
+  const pinned = getCourierConfig({ ...env, COURIER_GUY_API_URL: "https://example.test" });
+  assert.ok(pinned.ok && !pinned.config.fallbackBaseUrls);
+});

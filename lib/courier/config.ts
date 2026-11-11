@@ -30,6 +30,8 @@ export type CourierDepotId = keyof typeof COURIER_DEPOTS;
 export type CourierConfig = {
   apiKey: string;
   baseUrl: string;
+  /** Other hosts to try when the key is refused (only when no URL is set). */
+  fallbackBaseUrls?: string[];
   /** The collection address in use for this request. */
   sender: CourierSender;
   depots: Partial<Record<CourierDepotId, CourierSender>>;
@@ -78,6 +80,8 @@ export type CourierConfigResult =
   | { ok: false; reason: string; missing: string[] };
 
 const DEFAULT_BASE_URL = "https://api.shiplogic.com";
+/** The Courier Guy's own Ship Logic host, for keys made in portal.thecourierguy.co.za. */
+export const TCG_PORTAL_API_URL = "https://api.portal.thecourierguy.co.za";
 
 const REQUIRED = [
   "COURIER_GUY_API_KEY",
@@ -115,8 +119,13 @@ export function getCourierConfig(
   return {
     ok: true,
     config: {
-      apiKey: value("COURIER_GUY_API_KEY"),
+      // Keys pasted with quotes, a "Bearer " prefix or spaces are cleaned up.
+      apiKey: value("COURIER_GUY_API_KEY")
+        .replace(/^["']|["']$/g, "")
+        .replace(/^Bearer\s+/i, "")
+        .trim(),
       baseUrl: rawUrl.replace(/\/+$/, ""),
+      ...(value("COURIER_GUY_API_URL") ? {} : { fallbackBaseUrls: [TCG_PORTAL_API_URL] }),
       sender: main,
       depots: { pretoria: main, ...(bettysBay ? { "bettys-bay": bettysBay } : {}) },
     },

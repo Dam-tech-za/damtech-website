@@ -46,6 +46,9 @@ function failureMessage(status: number, body: unknown): string {
     : `The Courier Guy could not do this (error ${status}).`;
 }
 
+/** Hosts that accepted the key, so later calls go straight there. */
+const workingHost = new Map<string, string>();
+
 async function request(
   config: CourierConfig,
   method: "GET" | "POST",
@@ -53,8 +56,42 @@ async function request(
   body: unknown,
   fetcher: Fetcher,
 ): Promise<CourierResult<unknown>> {
+  const hosts = [config.baseUrl, ...(config.fallbackBaseUrls ?? [])];
+  const known = workingHost.get(config.apiKey);
+  const ordered = known && hosts.includes(known) ? [known, ...hosts.filter((h) => h !== known)] : hosts;
+  let last: CourierResult<unknown> = { ok: false, error: "The Courier Guy could not be reached." };
+  const refused: string[] = [];
+  for (const host of ordered) {
+    const result = await requestHost(config, host, method, path, body, fetcher);
+    if (result.ok) {
+      workingHost.set(config.apiKey, host);
+      return result;
+    }
+    if (!result.authRefused) {
+      // A later host that cannot be reached must not hide why the first one refused.
+      if (refused.length === 0) last = result;
+      else last = { ok: false, error: `${last.ok ? "" : last.error} (Also tried ${host.replace(/^https:\/\//, "")}: ${result.error})` };
+      break;
+    }
+    last = result;
+    refused.push(host.replace(/^https:\/\//, ""));
+  }
+  if (refused.length > 1) {
+    return { ok: false, error: `${last.ok ? "" : last.error} Tried ${refused.join(" and ")}; both refused the key.` };
+  }
+  return last.ok ? last : { ok: false, error: last.error };
+}
+
+async function requestHost(
+  config: CourierConfig,
+  host: string,
+  method: "GET" | "POST",
+  path: string,
+  body: unknown,
+  fetcher: Fetcher,
+): Promise<CourierResult<unknown> & { authRefused?: boolean }> {
   try {
-    const response = await fetcher(`${config.baseUrl}/${path}`, {
+    const response = await fetcher(`${host}/${path}`, {
       method,
       headers: {
         Authorization: `Bearer ${config.apiKey}`,
@@ -67,8 +104,12 @@ async function request(
     });
     const parsed: unknown = await response.json().catch(() => null);
     if (!response.ok) {
-      console.error("[courier] request failed:", method, path, response.status, courierErrorDetail(parsed));
-      return { ok: false, error: failureMessage(response.status, parsed) };
+      console.error("[courier] request failed:", host, method, path, response.status, courierErrorDetail(parsed));
+      return {
+        ok: false,
+        error: failureMessage(response.status, parsed),
+        authRefused: response.status === 401 || response.status === 403,
+      };
     }
     return { ok: true, data: parsed };
   } catch (error) {
