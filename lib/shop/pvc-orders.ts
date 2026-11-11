@@ -5,6 +5,7 @@ import { vatFromInclusiveCents } from "../orders/money.ts";
 import { generateOrderReference } from "../orders/reference.ts";
 import { DELIVERY_FULFILMENT } from "../orders/delivery.ts";
 import type { PublicOrderFormInput } from "../orders/schema.ts";
+import type { CourierDepotId } from "../courier/index.ts";
 import { COLLECTION_POINTS, type CollectionPointId, type DeliveryQuote } from "./delivery.ts";
 import {
   PVC_LINER_PRICE_VERSION,
@@ -24,7 +25,7 @@ export type PvcOrderPricing = {
   /** Set when the customer collects; the delivery fee is then zero. */
   collection: CollectionPointId | null;
   /** Live courier quote, when one replaced the fixed province fee. */
-  courier: { feeInclVatCents: number; serviceCode: string; serviceName: string } | null;
+  courier: { feeInclVatCents: number; serviceCode: string; serviceName: string; depot: CourierDepotId } | null;
   deliveryFeeInclVatCents: number;
   amountDueCents: number;
 };
@@ -195,6 +196,8 @@ export async function createPvcLinerOrder(input: {
         terms_accepted_at: acceptedAtIso,
         privacy_accepted_at: acceptedAtIso,
         exclusions_accepted_at: acceptedAtIso,
+        // The depot the live rate came from, so the admin books from the same one.
+        ...(pricing.courier ? { courier_depot: pricing.courier.depot } : {}),
         confirmation_email_status: "pending",
         internal_email_status: "pending",
       })

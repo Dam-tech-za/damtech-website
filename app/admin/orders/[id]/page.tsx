@@ -15,6 +15,7 @@ import {
   courierDepotForProvince,
   courierStatusSummary,
   getCourierConfig,
+  isCourierDepotId,
   type CourierDepotId,
 } from "@/lib/courier";
 import { EmailTrackingButton } from "@/components/admin/EmailTrackingButton";
@@ -38,6 +39,12 @@ import {
   AdminStatusBadge,
   AdminSubmitButton,
 } from "@/components/admin/ui";
+
+/** Depot name for an order: a depot id from checkout or booking, or an older city name. */
+function courierDepotLabel(value: string | null | undefined): string {
+  if (!value) return "—";
+  return isCourierDepotId(value) ? COURIER_DEPOTS[value] : value;
+}
 
 function formatDateTime(value: string | null | undefined): string {
   if (!value) return "—";
@@ -251,7 +258,7 @@ export default async function AdminOrderDetailPage({ params }: PageProps) {
               </div>
               <div>
                 <dt>Collected from</dt>
-                <dd>{order.courier_depot || "—"}</dd>
+                <dd>{courierDepotLabel(order.courier_depot)}</dd>
               </div>
               <div>
                 <dt>Courier cost</dt>
@@ -286,7 +293,11 @@ export default async function AdminOrderDetailPage({ params }: PageProps) {
                 id,
                 label: `${COURIER_DEPOTS[id]} (${courier.config.depots[id]?.address.city})`,
               }))}
-              defaultDepot={courierDepotForProvince(courier.config, order.billing_province)}
+              defaultDepot={
+                isCourierDepotId(order.courier_depot) && courier.config.depots[order.courier_depot]
+                  ? order.courier_depot
+                  : courierDepotForProvince(courier.config, order.billing_province)
+              }
               trackingNumber={order.courier_name === "The Courier Guy" ? (order.tracking_number ?? null) : null}
               blockedReason={
                 order.tracking_number && order.courier_name !== "The Courier Guy"

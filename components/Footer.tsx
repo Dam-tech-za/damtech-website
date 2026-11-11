@@ -15,6 +15,12 @@ import {
   whatsAppUrl,
 } from "@/lib/site";
 
+const LEGAL_HREFS = new Set(["/privacy", "/terms", "/returns"]);
+// Company column without the legal pages (they sit in the bottom bar) and
+// without "Request a Quote" (it heads the Quote column).
+const COMPANY_LINKS = FOOTER_COMPANY_LINKS.filter((link) => !LEGAL_HREFS.has(link.href) && link.href !== "/quote");
+const LEGAL_LINKS = FOOTER_COMPANY_LINKS.filter((link) => LEGAL_HREFS.has(link.href));
+
 export function Footer() {
   return (
     <footer id="site-footer" className="dt-footer pb-[4.5rem] lg:pb-0">
@@ -34,7 +40,7 @@ export function Footer() {
         </div>
 
         <div className="dt-footer__grid">
-          <div>
+          <div className="dt-footer__col dt-footer__col--brand">
             <p className="dt-footer__brand">{siteConfig.name}</p>
             <p className="dt-footer__about">{siteConfig.defaultDescription}</p>
             <p className="dt-footer__heading">Where we work</p>
@@ -49,7 +55,7 @@ export function Footer() {
             </ul>
           </div>
 
-          <div>
+          <div className="dt-footer__col">
             <p className="dt-footer__heading">Water Storage &amp; Dam Linings</p>
             <ul className="dt-footer__list">
               {FOOTER_SERVICE_LINKS.map((link) => (
@@ -62,7 +68,7 @@ export function Footer() {
             </ul>
           </div>
 
-          <div>
+          <div className="dt-footer__col">
             <p className="dt-footer__heading">Waterproofing</p>
             <ul className="dt-footer__list">
               {FOOTER_WATERPROOFING_LINKS.map((link) => (
@@ -73,11 +79,12 @@ export function Footer() {
                 </li>
               ))}
             </ul>
-            <p className="dt-footer__heading" style={{ marginTop: "2rem" }}>
-              Company
-            </p>
+          </div>
+
+          <div className="dt-footer__col">
+            <p className="dt-footer__heading">Company</p>
             <ul className="dt-footer__list">
-              {FOOTER_COMPANY_LINKS.map((link) => (
+              {COMPANY_LINKS.map((link) => (
                 <li key={link.href}>
                   <Link href={link.href} scroll={true}>
                     {link.label}
@@ -87,7 +94,7 @@ export function Footer() {
             </ul>
           </div>
 
-          <div>
+          <div className="dt-footer__col">
             <p className="dt-footer__heading">Quote</p>
             <ul className="dt-footer__list">
               <li>
@@ -137,7 +144,18 @@ export function Footer() {
           <p className="dt-footer__entity">
             {formatRegisteredAddressOneLine()}. {LEGAL_ENTITY.walkInNote}
           </p>
-          <p>Dam linings · Steel reservoirs · Waterproofing</p>
+          <div className="dt-footer__legal-row">
+            <p>Dam linings · Steel reservoirs · Waterproofing</p>
+            <ul className="dt-footer__legal-links">
+              {LEGAL_LINKS.map((link) => (
+                <li key={link.href}>
+                  <Link href={link.href} scroll={true}>
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
       </div>
       <p className="dt-footer__wordmark" aria-hidden>

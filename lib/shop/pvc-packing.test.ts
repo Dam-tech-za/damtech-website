@@ -58,9 +58,42 @@ test("checkout uses the cheapest live rate only when switched on and sane", asyn
     feeInclVatCents: 41235,
     serviceCode: "ECO",
     serviceName: "Economy",
+    depot: "pretoria",
   });
   assert.equal(await quotePvcCourierDelivery(liner, 1, address, answer([{ rate: 0, service_level: { code: "ECO" } }]), env), null);
   assert.equal(await quotePvcCourierDelivery(liner, 1, address, answer([]), env), null);
+});
+
+test("checkout quotes every depot and collects from the cheaper one", async () => {
+  const liner = PVC_LINERS[0];
+  const bettysBay = {
+    COURIER_SENDER_BETTYS_BAY_NAME: "Stores",
+    COURIER_SENDER_BETTYS_BAY_PHONE: "0100000000",
+    COURIER_SENDER_BETTYS_BAY_EMAIL: "stores@example.com",
+    COURIER_SENDER_BETTYS_BAY_STREET: "2 Sea Road",
+    COURIER_SENDER_BETTYS_BAY_SUBURB: "Betty's Bay",
+    COURIER_SENDER_BETTYS_BAY_CITY: "Betty's Bay",
+    COURIER_SENDER_BETTYS_BAY_PROVINCE: "Western Cape",
+    COURIER_SENDER_BETTYS_BAY_POSTAL_CODE: "7141",
+  };
+  // Pretoria is dearer to Kleinmond than Betty's Bay is.
+  const byOrigin = (async (_url: string, init: RequestInit) => {
+    const body = JSON.parse(String(init.body));
+    const fromBettysBay = body.collection_address.city === "Betty's Bay";
+    return Response.json({
+      rates: [{ rate: fromBettysBay ? 310 : 820.93, service_level: { code: "ECO", name: "Economy" } }],
+    });
+  }) as unknown as typeof fetch;
+  const quote = await quotePvcCourierDelivery(liner, 1, address, byOrigin, { ...env, ...bettysBay });
+  assert.deepEqual(quote, { feeInclVatCents: 31000, serviceCode: "ECO", serviceName: "Economy", depot: "bettys-bay" });
+  // One depot failing still gives a rate from the other.
+  const pretoriaOnly = (async (_url: string, init: RequestInit) => {
+    const body = JSON.parse(String(init.body));
+    if (body.collection_address.city === "Betty's Bay") return new Response("bad", { status: 500 });
+    return Response.json({ rates: [{ rate: 820.93, service_level: { code: "ECO", name: "Economy" } }] });
+  }) as unknown as typeof fetch;
+  const fallback = await quotePvcCourierDelivery(liner, 1, address, pretoriaOnly, { ...env, ...bettysBay });
+  assert.equal(fallback?.depot, "pretoria");
 });
 
 test("tracking email carries the waybill and link and escapes names", async () => {

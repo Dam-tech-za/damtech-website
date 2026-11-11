@@ -1,9 +1,11 @@
 import {
-  courierDepotForProvince,
+  COURIER_DEPOTS,
   getCourierConfig,
   getCourierRates,
   withCourierDepot,
+  type CourierDepotId,
   type CourierOrderInput,
+  type CourierRate,
 } from "../courier/index.ts";
 import type { PvcLiner } from "./pvc-liners.ts";
 import { pvcLinerPackedParcel } from "./pvc-packing.ts";
@@ -19,7 +21,13 @@ export function courierCheckoutRatesEnabled(
   return env.COURIER_CHECKOUT_RATES?.trim().toLowerCase() === "true" && getCourierConfig(env).ok;
 }
 
-export type CourierDeliveryQuote = { feeInclVatCents: number; serviceCode: string; serviceName: string };
+export type CourierDeliveryQuote = {
+  feeInclVatCents: number;
+  serviceCode: string;
+  serviceName: string;
+  /** Where the courier collects from: the depot that gave the cheapest rate. */
+  depot: CourierDepotId;
+};
 
 export type CheckoutAddress = {
   customerName: string;
@@ -35,7 +43,11 @@ export type CheckoutAddress = {
   postalCode: string;
 };
 
-/** Cheapest courier service for this liner and address, or null to fall back to the fixed fee. */
+/**
+ * Cheapest courier service for this liner and address, or null to fall back to
+ * the fixed fee. Every collection depot that is set up (Pretoria, Betty's Bay)
+ * is quoted, and the cheapest rate wins, so the nearer depot is used.
+ */
 export async function quotePvcCourierDelivery(
   liner: PvcLiner,
   quantity: number,
@@ -75,22 +87,42 @@ export async function quotePvcCourierDeliveryWithReason(
     total_price_snapshot: (liner.priceInclVatCents * quantity) / 100,
   };
   const parcel = pvcLinerPackedParcel(liner);
-  const from = withCourierDepot(config.config, courierDepotForProvince(config.config, address.province));
-  const result = await getCourierRates(from, order, Array.from({ length: quantity }, () => parcel), fetcher);
-  if (!result.ok) {
-    console.error("[checkout] courier rate failed:", result.error);
-    return fail(result.error);
+  const parcels = Array.from({ length: quantity }, () => parcel);
+  const depots = Object.keys(config.config.depots) as CourierDepotId[];
+  const results = await Promise.all(
+    depots.map(async (depot) => ({
+      depot,
+      result: await getCourierRates(withCourierDepot(config.config, depot), order, parcels, fetcher),
+    })),
+  );
+  const rates: (CourierRate & { depot: CourierDepotId })[] = [];
+  const errors: string[] = [];
+  for (const { depot, result } of results) {
+    if (result.ok) rates.push(...result.data.map((rate) => ({ ...rate, depot })));
+    else errors.push(depots.length > 1 ? `${COURIER_DEPOTS[depot]}: ${result.error}` : result.error);
   }
+  if (rates.length === 0) {
+    console.error("[checkout] courier rate failed:", errors.join(" | "));
+    return fail(errors.join(" ") || "The Courier Guy returned no services for this address.");
+  }
+  rates.sort((a, b) => a.rate - b.rate);
   // Every service offered, cheapest first, so a test site can show why one was picked.
-  const options = result.data.map((rate) => `${rate.serviceName} R${rate.rate.toFixed(2)}`);
-  const cheapest = result.data[0];
+  const options = rates.map(
+    (rate) => `${depots.length > 1 ? `${COURIER_DEPOTS[rate.depot]}: ` : ""}${rate.serviceName} R${rate.rate.toFixed(2)}`,
+  );
+  const cheapest = rates[0];
   const feeInclVatCents = Math.round(cheapest.rate * 100);
   // A zero or absurd rate means the answer was not understood: use the fixed fee.
   if (!Number.isFinite(feeInclVatCents) || feeInclVatCents < 1000) {
     return fail(`The Courier Guy returned a rate of R${cheapest.rate} for ${cheapest.serviceName}, which looks wrong.`);
   }
   return {
-    quote: { feeInclVatCents, serviceCode: cheapest.serviceCode, serviceName: cheapest.serviceName },
+    quote: {
+      feeInclVatCents,
+      serviceCode: cheapest.serviceCode,
+      serviceName: cheapest.serviceName,
+      depot: cheapest.depot,
+    },
     reason: null,
     options,
   };

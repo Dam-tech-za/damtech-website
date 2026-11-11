@@ -77,6 +77,8 @@ export async function bookCourierAction(formData: FormData): Promise<CourierActi
     const loaded = await loadForCourier(id, formData.get("depot"));
     if (loaded.error) return loaded.error;
     const { admin, order, config } = loaded;
+    const depotField = formData.get("depot");
+    const depotId = isCourierDepotId(depotField) ? depotField : "pretoria";
 
     if (isCollectionMethod(order.fulfilment_method)) {
       return fail("The customer is collecting this order, so no courier is needed.");
@@ -138,7 +140,7 @@ export async function bookCourierAction(formData: FormData): Promise<CourierActi
         courier_status: shipment.status || "submitted",
         courier_status_at: new Date().toISOString(),
         courier_cost: shipment.rate,
-        courier_depot: config.sender.address.city,
+        courier_depot: depotId,
       })
       .eq("id", id);
     if (extra.error) console.error("[courier] booking detail not saved:", extra.error.message);
