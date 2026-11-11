@@ -24,7 +24,7 @@ docs host was blocked, so no draft/quote endpoint could be confirmed. The button
 and **Open portal with brief** (opens portal.thecourierguy.co.za and copies the brief). The attempt is recorded in history.
 To revisit: check the Ship Logic API docs with the live key for a draft or quote endpoint before adding an API submit.
 
-## Database (not applied)
+## Database
 `supabase/migrations/20261111120000_liner_courier_quotes.sql` adds `public.liner_courier_quotes` (additive, RLS on,
-service role only). Until applied the page works but shows a note and keeps no history.
-Apply after the owner's go-ahead, e.g. Supabase SQL editor (paste the file) or `supabase db push`.
+service role only). **Applied to the Damtech Admin project on 2026-11-11** (owner's request, via the Supabase connector).
+Checked after: RLS on, grants to service_role only, one service-role policy, no new security advisor findings.
