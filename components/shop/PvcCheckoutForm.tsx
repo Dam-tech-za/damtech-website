@@ -93,7 +93,7 @@ export function PvcCheckoutForm({
   const [province, setProvince] = useState("");
   const [collection, setCollection] = useState<CollectionPointId | "">("");
   const [payfast, setPayfast] = useState<PayfastForm | null>(null);
-  const [liveQuote, setLiveQuote] = useState<{ feeInclVatCents: number; serviceName: string; debugReason?: string } | null>(null);
+  const [liveQuote, setLiveQuote] = useState<{ feeInclVatCents: number; serviceName: string; debugReason?: string; debugOptions?: string } | null>(null);
   const [submissionId] = useState(() => crypto.randomUUID());
   const [formStartedAt] = useState(() => Date.now());
   const payfastFormRef = useRef<HTMLFormElement>(null);
@@ -195,7 +195,7 @@ export function PvcCheckoutForm({
 
   return (
     <div className="order-layout">
-      <form className="order-form" onSubmit={handleSubmit} onChange={handleFormChange} onBlur={handleFormBlur} noValidate>
+      <form id="pvc-order-form" className="order-form" onSubmit={handleSubmit} onChange={handleFormChange} onBlur={handleFormBlur} noValidate>
         <input type="hidden" name="sku" value={liner.sku} />
         <input type="hidden" name="colour" value={colour} />
         <input type="hidden" name="submissionId" value={submissionId} />
@@ -385,56 +385,9 @@ export function PvcCheckoutForm({
           <LegalSupplierDetails compact />
         </section>
 
-        <section className="order-section" aria-labelledby="pvc-payment-heading">
-          <h2 id="pvc-payment-heading" className="order-section__heading">
-            Payment
-          </h2>
-          <p>
-            You pay securely on PayFast by card, Instant EFT or another method PayFast offers. DamTech never sees your
-            card details.
-          </p>
-          <p className="order-payment-security">
-            <ShieldCheckIcon className="order-payment-security__icon" />
-            <span>Manufacture starts once PayFast confirms your payment.</span>
-          </p>
-        </section>
-
-        <div className="order-submit">
-          <button type="submit" className="btn-primary order-submit__button" disabled={busy}>
-            {payfast
-              ? "Opening PayFast…"
-              : isPending
-                ? needsDeliveryQuote
-                  ? "Getting your delivery fee…"
-                  : "Saving your order…"
-                : needsDeliveryQuote
-                  ? "Calculate delivery"
-                  : "Continue to secure payment"}
-          </button>
-          {liveRates && !collection && liveQuote ? (
-            <p className="order-submit__note" role="status">
-              Delivery to your address is {formatZarExactAmount(liveQuote.feeInclVatCents / 100)} ({liveQuote.serviceName}).
-              Check the total, then continue.
-            </p>
-          ) : null}
-          {liveRates && !collection && liveQuote?.debugReason ? (
-            <p className="order-submit__note" role="note">
-              Test site only, not shown to customers: the fixed fee was used because {liveQuote.debugReason}
-            </p>
-          ) : null}
-          <p className="order-submit__note">You will be taken to PayFast to pay.</p>
-          {payfast && payfastStuck ? (
-            <p className="order-submit__note" role="status">
-              PayFast has not opened yet.{" "}
-              <button type="submit" form="pvc-payfast-form" className="btn-primary">
-                Continue to PayFast
-              </button>
-            </p>
-          ) : null}
-        </div>
       </form>
 
-      <aside className="order-summary order-summary--sticky" aria-labelledby="pvc-summary-heading">
+      <aside className="order-summary order-summary--sticky pvc-checkout-summary" aria-labelledby="pvc-summary-heading">
         <h2 id="pvc-summary-heading" className="order-summary__heading">
           Order summary
         </h2>
@@ -457,7 +410,7 @@ export function PvcCheckoutForm({
           </div>
         </div>
         <p className="order-summary__spec pvc-summary__spec">{liner.summary}</p>
-        <section className="order-summary__block order-summary__block--last" aria-label="Price">
+        <section className="order-summary__block" aria-label="Price">
           <dl className="order-summary__rows">
             <div>
               <dt>Liner incl. VAT</dt>
@@ -491,6 +444,58 @@ export function PvcCheckoutForm({
             </Link>
           </p>
         </section>
+        <section className="order-summary__block" aria-labelledby="pvc-payment-heading">
+          <h2 id="pvc-payment-heading" className="order-summary__heading">
+            Payment
+          </h2>
+          <p>
+            You pay securely on PayFast by card, Instant EFT or another method PayFast offers. DamTech never sees your
+            card details.
+          </p>
+          <p className="order-payment-security">
+            <ShieldCheckIcon className="order-payment-security__icon" />
+            <span>Manufacture starts once PayFast confirms your payment.</span>
+          </p>
+        </section>
+
+        <div className="order-submit">
+          <button type="submit" form="pvc-order-form" className="btn-primary order-submit__button" disabled={busy}>
+            {payfast
+              ? "Opening PayFast…"
+              : isPending
+                ? needsDeliveryQuote
+                  ? "Getting your delivery fee…"
+                  : "Saving your order…"
+                : needsDeliveryQuote
+                  ? "Calculate delivery"
+                  : "Continue to secure payment"}
+          </button>
+          {liveRates && !collection && liveQuote ? (
+            <p className="order-submit__note" role="status">
+              Delivery to your address is {formatZarExactAmount(liveQuote.feeInclVatCents / 100)} ({liveQuote.serviceName}).
+              Check the total, then continue.
+            </p>
+          ) : null}
+          {liveRates && !collection && liveQuote?.debugOptions ? (
+            <p className="order-submit__note" role="note">
+              Test site only, not shown to customers: Courier Guy offered {liveQuote.debugOptions}.
+            </p>
+          ) : null}
+          {liveRates && !collection && liveQuote?.debugReason ? (
+            <p className="order-submit__note" role="note">
+              Test site only, not shown to customers: the fixed fee was used because {liveQuote.debugReason}
+            </p>
+          ) : null}
+          <p className="order-submit__note">You will be taken to PayFast to pay.</p>
+          {payfast && payfastStuck ? (
+            <p className="order-submit__note" role="status">
+              PayFast has not opened yet.{" "}
+              <button type="submit" form="pvc-payfast-form" className="btn-primary">
+                Continue to PayFast
+              </button>
+            </p>
+          ) : null}
+        </div>
       </aside>
 
       {payfast ? (

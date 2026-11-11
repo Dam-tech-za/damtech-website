@@ -53,7 +53,7 @@ export async function quotePvcCourierDeliveryWithReason(
   address: CheckoutAddress,
   fetcher: typeof fetch = fetch,
   env: Record<string, string | undefined> = process.env,
-): Promise<{ quote: CourierDeliveryQuote | null; reason: string | null }> {
+): Promise<{ quote: CourierDeliveryQuote | null; reason: string | null; options?: string[] }> {
   const fail = (reason: string) => ({ quote: null, reason });
   if (!courierCheckoutRatesEnabled(env)) return fail("Live courier rates are switched off.");
   const config = getCourierConfig(env);
@@ -81,6 +81,8 @@ export async function quotePvcCourierDeliveryWithReason(
     console.error("[checkout] courier rate failed:", result.error);
     return fail(result.error);
   }
+  // Every service offered, cheapest first, so a test site can show why one was picked.
+  const options = result.data.map((rate) => `${rate.serviceName} R${rate.rate.toFixed(2)}`);
   const cheapest = result.data[0];
   const feeInclVatCents = Math.round(cheapest.rate * 100);
   // A zero or absurd rate means the answer was not understood: use the fixed fee.
@@ -90,5 +92,6 @@ export async function quotePvcCourierDeliveryWithReason(
   return {
     quote: { feeInclVatCents, serviceCode: cheapest.serviceCode, serviceName: cheapest.serviceName },
     reason: null,
+    options,
   };
 }

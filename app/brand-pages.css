@@ -1434,3 +1434,22 @@
   color: var(--dt-ink-2);
   max-width: 34rem;
 }
+
+/* PVC checkout: payment and the pay button sit in the sticky summary card.
+   Keep the card inside the screen so the button is always reachable. */
+@media (min-width: 960px) {
+  .pvc-checkout-summary.order-summary--sticky {
+    max-height: calc(100vh - 7rem);
+    overflow-y: auto;
+  }
+}
+@media (min-width: 960px) {
+  .pvc-checkout-summary .order-submit {
+    position: sticky;
+    bottom: -1.25rem;
+    margin: 0 -1.25rem -1.25rem;
+    padding: 1rem 1.25rem 1.25rem;
+    border-top: 1px solid var(--border-subtle);
+    background: #fff;
+  }
+}

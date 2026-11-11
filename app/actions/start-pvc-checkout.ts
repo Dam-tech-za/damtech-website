@@ -54,7 +54,7 @@ const clean = (formData: FormData, name: string, max: number) =>
  */
 export async function quotePvcDelivery(
   formData: FormData,
-): Promise<{ feeInclVatCents: number; serviceName: string; debugReason?: string } | null> {
+): Promise<{ feeInclVatCents: number; serviceName: string; debugReason?: string; debugOptions?: string } | null> {
   const liner = getPvcLinerBySku(clean(formData, "sku", 40));
   const quantity = Math.trunc(Number(formData.get("quantity") ?? "1"));
   const province = clean(formData, "province", 40);
@@ -82,11 +82,18 @@ export async function quotePvcDelivery(
   const result = limit.success
     ? await quotePvcCourierDeliveryWithReason(liner, quantity, address)
     : { quote: null, reason: "Too many delivery quotes from this connection; wait a few minutes." };
+  const preview = process.env.VERCEL_ENV !== "production";
   if (result.quote) {
-    return { feeInclVatCents: result.quote.feeInclVatCents, serviceName: result.quote.serviceName };
+    // The services Courier Guy offered, shown on preview deployments only, never to live customers.
+    const debugOptions = preview && "options" in result && result.options?.length ? result.options.join(", ") : undefined;
+    return {
+      feeInclVatCents: result.quote.feeInclVatCents,
+      serviceName: result.quote.serviceName,
+      ...(debugOptions ? { debugOptions } : {}),
+    };
   }
   // Why the fixed fee was used, shown on preview deployments only, never to live customers.
-  const debugReason = process.env.VERCEL_ENV !== "production" && result.reason ? result.reason : undefined;
+  const debugReason = preview && result.reason ? result.reason : undefined;
   return { feeInclVatCents: fixed.feeInclVatCents, serviceName: "Standard delivery", ...(debugReason ? { debugReason } : {}) };
 }
 
