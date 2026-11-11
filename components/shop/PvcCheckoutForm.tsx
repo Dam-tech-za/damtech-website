@@ -99,14 +99,14 @@ export function PvcCheckoutForm({
   const payfastFormRef = useRef<HTMLFormElement>(null);
   const summaryRef = useRef<HTMLElement>(null);
 
-  // Keep the summary card sticky, but when it is taller than the screen let it
-  // scroll with the page until its bottom (the pay button) is in view.
+  // Keep the summary card in view while the form scrolls, when it fits the screen.
   useEffect(() => {
     const card = summaryRef.current;
     if (!card || typeof ResizeObserver === "undefined") return;
     const place = () => {
-      const fits = window.innerHeight - card.offsetHeight - 16;
-      card.style.top = `${Math.min(96, fits)}px`;
+      // Sticky only when the whole card fits below the header; otherwise it
+      // scrolls with the page like any other block (no inner scroll bar).
+      card.classList.toggle("is-static", card.offsetHeight > window.innerHeight - 112);
     };
     place();
     const observer = new ResizeObserver(place);
@@ -215,6 +215,29 @@ export function PvcCheckoutForm({
 
   return (
     <div className="order-layout">
+      <details className="pvc-mobile-summary">
+        <summary>
+          <span className="pvc-mobile-summary__toggle">Order summary</span>
+          <span className="order-money">{totals.total === null ? formatZarExactAmount(totals.goods) : formatZarExactAmount(totals.total)}</span>
+        </summary>
+        <p className="pvc-mobile-summary__name">
+          {liner.name}, {colour} × {quantity}
+        </p>
+        <dl className="order-summary__rows">
+          <div>
+            <dt>Liner incl. VAT</dt>
+            <dd className="order-money">{formatZarExactAmount(totals.goods)}</dd>
+          </div>
+          <div>
+            <dt>{collection ? "Collection" : "Delivery incl. VAT"}</dt>
+            <dd>{collection ? "No fee" : totals.delivery === null ? "Not yet worked out" : formatZarExactAmount(totals.delivery)}</dd>
+          </div>
+          <div className="order-summary__rows-total">
+            <dt>Total to pay</dt>
+            <dd>{totals.total === null ? "–" : formatZarExactAmount(totals.total)}</dd>
+          </div>
+        </dl>
+      </details>
       <form id="pvc-order-form" className="order-form" onSubmit={handleSubmit} onChange={handleFormChange} onBlur={handleFormBlur} noValidate>
         <input type="hidden" name="sku" value={liner.sku} />
         <input type="hidden" name="colour" value={colour} />
@@ -439,7 +462,12 @@ export function PvcCheckoutForm({
               </dd>
             </div>
             <div>
-              <dt>{collection ? `Collection in ${COLLECTION_POINTS[collection].label}` : "Delivery incl. VAT"}</dt>
+              <dt>
+                {collection ? `Collection in ${COLLECTION_POINTS[collection].label}` : "Delivery incl. VAT"}
+                {liveRates && !collection && liveQuote ? (
+                  <span className="pvc-checkout-summary__service">{liveQuote.serviceName}</span>
+                ) : null}
+              </dt>
               <dd>
                 {collection ? (
                   <span>No fee</span>
@@ -464,20 +492,6 @@ export function PvcCheckoutForm({
             </Link>
           </p>
         </section>
-        <section className="order-summary__block" aria-labelledby="pvc-payment-heading">
-          <h2 id="pvc-payment-heading" className="order-summary__heading">
-            Payment
-          </h2>
-          <p>
-            You pay securely on PayFast by card, Instant EFT or another method PayFast offers. DamTech never sees your
-            card details.
-          </p>
-          <p className="order-payment-security">
-            <ShieldCheckIcon className="order-payment-security__icon" />
-            <span>Manufacture starts once PayFast confirms your payment.</span>
-          </p>
-        </section>
-
         <div className="order-submit">
           <button type="submit" form="pvc-order-form" className="btn-primary order-submit__button" disabled={busy}>
             {payfast
@@ -491,11 +505,32 @@ export function PvcCheckoutForm({
                   : "Continue to secure payment"}
           </button>
           {liveRates && !collection && liveQuote ? (
-            <p className="order-submit__note" role="status">
+            <p className="sr-only" role="status">
               Delivery to your address is {formatZarExactAmount(liveQuote.feeInclVatCents / 100)} ({liveQuote.serviceName}).
               Check the total, then continue.
             </p>
           ) : null}
+          {payfast && payfastStuck ? (
+            <p className="order-submit__note" role="status">
+              PayFast has not opened yet.{" "}
+              <button type="submit" form="pvc-payfast-form" className="btn-primary">
+                Continue to PayFast
+              </button>
+            </p>
+          ) : null}
+        </div>
+
+        <section className="pvc-checkout-summary__payment" aria-labelledby="pvc-payment-heading">
+          <h2 id="pvc-payment-heading" className="order-summary__block-title">
+            Payment
+          </h2>
+          <p className="order-payment-security">
+            <ShieldCheckIcon className="order-payment-security__icon" />
+            <span>
+              You will be taken to PayFast to pay securely by card, Instant EFT or another method PayFast offers.
+              DamTech never sees your card details. Manufacture starts once PayFast confirms your payment.
+            </span>
+          </p>
           {liveRates && !collection && liveQuote?.debugOptions ? (
             <p className="order-submit__note" role="note">
               Test site only, not shown to customers: Courier Guy offered {liveQuote.debugOptions}.
@@ -506,16 +541,7 @@ export function PvcCheckoutForm({
               Test site only, not shown to customers: the fixed fee was used because {liveQuote.debugReason}
             </p>
           ) : null}
-          <p className="order-submit__note">You will be taken to PayFast to pay.</p>
-          {payfast && payfastStuck ? (
-            <p className="order-submit__note" role="status">
-              PayFast has not opened yet.{" "}
-              <button type="submit" form="pvc-payfast-form" className="btn-primary">
-                Continue to PayFast
-              </button>
-            </p>
-          ) : null}
-        </div>
+        </section>
       </aside>
 
       {payfast ? (

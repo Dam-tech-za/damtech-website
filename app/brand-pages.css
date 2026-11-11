@@ -1434,3 +1434,97 @@
   color: var(--dt-ink-2);
   max-width: 34rem;
 }
+
+/* PVC checkout summary: compact, pay button straight under the total.
+   Sticky only when it fits the screen (PvcCheckoutForm toggles .is-static). */
+.pvc-checkout-summary__service {
+  display: block;
+  font-size: 0.8125rem;
+  font-weight: 400;
+  color: var(--text-secondary);
+}
+.pvc-checkout-summary__payment {
+  display: grid;
+  gap: 0.5rem;
+}
+.pvc-checkout-summary__payment .order-payment-security {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
+.pvc-mobile-summary {
+  border: 1px solid var(--border-subtle);
+  border-radius: 1rem;
+  background: #fff;
+  padding: 0.875rem 1.25rem;
+}
+.pvc-mobile-summary > summary {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+.pvc-mobile-summary[open] > summary {
+  margin-bottom: 0.75rem;
+}
+.pvc-mobile-summary__name {
+  margin: 0 0 0.5rem;
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
+@media (min-width: 960px) {
+  .pvc-mobile-summary {
+    display: none;
+  }
+  .pvc-checkout-summary {
+    gap: 1rem;
+  }
+  .pvc-checkout-summary.order-summary--sticky.is-static {
+    position: static;
+  }
+}
+.pvc-mobile-summary > summary::-webkit-details-marker {
+  display: none;
+}
+.pvc-mobile-summary__toggle::after {
+  content: "";
+  display: inline-block;
+  width: 0.45rem;
+  height: 0.45rem;
+  margin: 0 0 0.2rem 0.6rem;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: rotate(45deg);
+  transition: transform 0.15s;
+}
+.pvc-mobile-summary[open] .pvc-mobile-summary__toggle::after {
+  transform: rotate(-135deg);
+  margin-bottom: -0.1rem;
+}
+@media (min-width: 960px) {
+  .pvc-checkout-summary .order-summary__product {
+    padding-bottom: 1rem;
+  }
+  .pvc-checkout-summary .pvc-summary__spec,
+  .pvc-checkout-summary .order-summary__price-note {
+    font-size: 0.8125rem;
+    line-height: 1.45;
+  }
+}
+@media (min-width: 960px) {
+  .pvc-checkout-summary {
+    padding-block: 1.125rem;
+  }
+  .pvc-checkout-summary .order-summary__block {
+    padding-bottom: 0.75rem;
+  }
+  .pvc-checkout-summary__payment {
+    gap: 0.35rem;
+  }
+}
+@media (max-width: 959px) {
+  /* Clear the site's fixed Call / WhatsApp / Request Quote bar on phones. */
+  .pvc-checkout-summary {
+    margin-bottom: 5.5rem;
+  }
+}
