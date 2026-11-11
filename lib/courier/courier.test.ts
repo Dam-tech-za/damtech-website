@@ -164,3 +164,32 @@ test("Western Cape orders collect from Betty's Bay when that address is set", as
   assert.equal(withCourierDepot(both.config, "bettys-bay").sender.address.city, "Betty's Bay");
   assert.equal(withCourierDepot(single, "bettys-bay").sender.address.city, "Pretoria");
 });
+
+test("a tracking check produces the fields saved on the order", async () => {
+  const { courierStatusFields, courierStatusSummary, isCourierStatusFinal } = await import("./sync.ts");
+  const tracking = parseTracking({
+    shipments: [
+      {
+        short_tracking_reference: "ABC123",
+        status: "in-transit",
+        tracking_events: [
+          { date: "2026-11-11T08:00:00Z", status: "collected", message: "Collected from sender", location: "Pretoria" },
+          { date: "2026-11-12T06:00:00Z", status: "in-transit", message: "Departed hub", location: "Johannesburg" },
+        ],
+      },
+    ],
+  });
+  assert.ok(tracking);
+  const fields = courierStatusFields({ dispatched_on: null, delivered_on: null }, tracking, "2026-11-12T07:00:00.000Z");
+  assert.equal(fields.courier_status, "in-transit");
+  assert.equal(fields.courier_last_message, "Departed hub");
+  assert.equal(fields.courier_status_at, "2026-11-12T06:00:00.000Z");
+  assert.equal(fields.dispatched_on, "2026-11-11");
+  assert.equal("delivered_on" in fields, false);
+  assert.equal(fields.courier_events.length, 2);
+  const kept = courierStatusFields({ dispatched_on: "2026-11-10" }, tracking, "2026-11-12T07:00:00.000Z");
+  assert.equal("dispatched_on" in kept, false);
+  assert.equal(courierStatusSummary("in-transit", "Departed hub"), "In transit: Departed hub");
+  assert.equal(isCourierStatusFinal("delivered"), true);
+  assert.equal(isCourierStatusFinal("in-transit"), false);
+});

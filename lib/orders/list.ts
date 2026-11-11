@@ -59,6 +59,13 @@ export type CatalogueOrderShipping = {
   expected_delivery_on?: string | null;
   delivered_on?: string | null;
   fulfilment_notes?: string | null;
+  courier_status?: string | null;
+  courier_status_at?: string | null;
+  courier_last_message?: string | null;
+  courier_events?: { date: string; status: string; message: string; location: string }[] | null;
+  courier_checked_at?: string | null;
+  courier_cost?: number | string | null;
+  courier_depot?: string | null;
 };
 
 export async function listCatalogueOrders(filters: {

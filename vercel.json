@@ -44,6 +44,10 @@
       "schedule": "15 5 * * *"
     },
     {
+      "path": "/api/cron/courier-tracking/",
+      "schedule": "30 5 * * *"
+    },
+    {
       "path": "/api/cron/publish-scheduled-posts/",
       "schedule": "0 3 * * *"
     },

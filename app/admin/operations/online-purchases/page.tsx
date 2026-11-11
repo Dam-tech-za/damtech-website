@@ -1,3 +1,4 @@
+import { courierStatusSummary } from "@/lib/courier";
 import Link from "next/link";
 import { Suspense } from "react";
 import type { Metadata } from "next";
@@ -186,6 +187,11 @@ export default async function OnlinePurchasesPage({ searchParams }: PageProps) {
                                 row.tracking_number || "No tracking number"
                               )}
                             </span>
+                            {row.courier_status ? (
+                              <span className="ops-table__meta">
+                                {courierStatusSummary(row.courier_status, row.courier_last_message)}
+                              </span>
+                            ) : null}
                           </>
                         ) : (
                           "—"

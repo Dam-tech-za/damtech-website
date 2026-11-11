@@ -10,7 +10,13 @@ import { updateOrderStatusAction, updateOrderTrackingAction } from "../actions";
 import { PURCHASE_STAGE_LABELS, makeByDate, purchaseStage } from "@/lib/orders/purchase-stage";
 import { ResendOrderConfirmationButton } from "@/components/admin/ResendOrderConfirmationButton";
 import { CourierBookingPanel } from "@/components/admin/CourierBookingPanel";
-import { COURIER_DEPOTS, courierDepotForProvince, getCourierConfig, type CourierDepotId } from "@/lib/courier";
+import {
+  COURIER_DEPOTS,
+  courierDepotForProvince,
+  courierStatusSummary,
+  getCourierConfig,
+  type CourierDepotId,
+} from "@/lib/courier";
 import { EmailTrackingButton } from "@/components/admin/EmailTrackingButton";
 import { getPvcLinerBySku } from "@/lib/shop/pvc-liners";
 import { pvcLinerPackedParcel } from "@/lib/shop/pvc-packing";
@@ -229,6 +235,48 @@ export default async function AdminOrderDetailPage({ params }: PageProps) {
           title="The Courier Guy"
           description="Get a live rate for the packed parcel, book the collection and pull tracking updates. Booking is a real order on the Courier Guy account."
         >
+          {order.courier_status ? (
+            <dl className="admin-kv">
+              <div>
+                <dt>Courier status</dt>
+                <dd>{courierStatusSummary(order.courier_status, order.courier_last_message)}</dd>
+              </div>
+              <div>
+                <dt>Status time</dt>
+                <dd>{formatDateTime(order.courier_status_at)}</dd>
+              </div>
+              <div>
+                <dt>Last checked</dt>
+                <dd>{formatDateTime(order.courier_checked_at)}</dd>
+              </div>
+              <div>
+                <dt>Collected from</dt>
+                <dd>{order.courier_depot || "—"}</dd>
+              </div>
+              <div>
+                <dt>Courier cost</dt>
+                <dd>{order.courier_cost == null ? "—" : formatZar(Number(order.courier_cost))}</dd>
+              </div>
+              <div>
+                <dt>Delivery charged</dt>
+                <dd>{order.delivery_fee_snapshot == null ? "—" : formatZar(Number(order.delivery_fee_snapshot))}</dd>
+              </div>
+            </dl>
+          ) : null}
+          {(order.courier_events ?? []).length > 0 ? (
+            <ol className="admin-timeline">
+              {(order.courier_events ?? []).map((event, index) => (
+                <li key={`${event.date}-${index}`}>
+                  <strong>{event.message || event.status}</strong>
+                  <span className="admin-muted">
+                    {" "}
+                    · {formatDateTime(event.date)}
+                    {event.location ? ` · ${event.location}` : ""}
+                  </span>
+                </li>
+              ))}
+            </ol>
+          ) : null}
           {courier.ok ? (
             <CourierBookingPanel
               orderId={order.id}

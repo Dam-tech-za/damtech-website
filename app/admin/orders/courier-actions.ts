@@ -10,6 +10,7 @@ import { adminOrdersDb } from "@/lib/orders/admin-db";
 import { isCollectionMethod } from "@/lib/shop/delivery";
 import {
   COURIER_NAME,
+  courierStatusFields,
   courierStatusLabel,
   courierTrackingUrl,
   createCourierShipment,
@@ -19,7 +20,6 @@ import {
   isCourierDepotId,
   withCourierDepot,
   parseParcel,
-  trackingDates,
   type CourierRate,
   type CourierTrackingEvent,
 } from "@/lib/courier";
@@ -131,6 +131,17 @@ export async function bookCourierAction(formData: FormData): Promise<CourierActi
         `The collection IS booked with The Courier Guy (waybill ${shipment.trackingReference}), but it could not be saved on this order. Do not book again. Type the waybill into the tracking number field once the tracking database update is applied.`,
       );
     }
+    // Extra detail for the admin; needs the courier status database update.
+    const extra = await supabase
+      .from("catalogue_orders")
+      .update({
+        courier_status: shipment.status || "submitted",
+        courier_status_at: new Date().toISOString(),
+        courier_cost: shipment.rate,
+        courier_depot: config.sender.address.city,
+      })
+      .eq("id", id);
+    if (extra.error) console.error("[courier] booking detail not saved:", extra.error.message);
     revalidateOrder(id);
     return { ok: true, message: `Booked with The Courier Guy. Waybill ${shipment.trackingReference}.` };
   } catch (error) {
@@ -150,20 +161,24 @@ export async function refreshCourierTrackingAction(formData: FormData): Promise<
 
     const result = await getCourierTracking(config, order.tracking_number);
     if (!result.ok) return fail(result.error);
-    const dates = trackingDates(result.data);
-    const changes: Record<string, string> = {};
-    if (dates.dispatchedOn && !order.dispatched_on) changes.dispatched_on = dates.dispatchedOn;
-    if (dates.deliveredOn && !order.delivered_on) changes.delivered_on = dates.deliveredOn;
-
-    if (Object.keys(changes).length > 0) {
-      const supabase = await adminOrdersDb({ manage: true });
-      const { error } = await supabase
-        .from("catalogue_orders")
-        .update({ ...changes, updated_at: new Date().toISOString() })
-        .eq("id", id);
-      if (error) console.error("[courier] tracking dates not saved:", error.message);
-      else revalidateOrder(id);
+    const fields = courierStatusFields(order, result.data, new Date().toISOString());
+    const supabase = await adminOrdersDb({ manage: true });
+    const saved = await supabase
+      .from("catalogue_orders")
+      .update({ ...fields, updated_at: new Date().toISOString() })
+      .eq("id", id);
+    if (saved.error) {
+      // Older database without the courier status columns: save the dates only.
+      console.error("[courier] status not saved:", saved.error.message);
+      const dates = {
+        ...(fields.dispatched_on ? { dispatched_on: fields.dispatched_on } : {}),
+        ...(fields.delivered_on ? { delivered_on: fields.delivered_on } : {}),
+      };
+      if (Object.keys(dates).length > 0) {
+        await supabase.from("catalogue_orders").update(dates).eq("id", id);
+      }
     }
+    revalidateOrder(id);
     return {
       ok: true,
       message: `Courier status: ${courierStatusLabel(result.data.status)}.`,
