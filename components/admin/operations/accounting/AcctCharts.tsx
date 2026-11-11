@@ -10,15 +10,10 @@ import { axisTicks, shortRand } from "@/lib/operations/financial-charts";
  * whenever there is more than one series. Values also live in the tables.
  */
 
-export type Fmt = "rand" | "percent" | "count";
+import { fmtValue, type Fmt } from "./format";
 
-export const fmtValue = (v: number | null | undefined, fmt: Fmt): string => {
-  if (v === null || v === undefined || !Number.isFinite(v)) return "—";
-  if (fmt === "percent") return `${v.toFixed(1)}%`;
-  if (fmt === "count") return String(Math.round(v));
-  const sign = v < 0 ? "−" : "";
-  return `${sign}R${Math.round(Math.abs(v)).toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")}`;
-};
+export { fmtValue, type Fmt };
+
 const axisLabel = (v: number, fmt: Fmt) => (fmt === "percent" ? `${Math.round(v)}%` : fmt === "count" ? String(Math.round(v)) : shortRand(v));
 
 export type Series = {
@@ -47,6 +42,8 @@ type Props = {
   legend?: boolean;
   /** Drawing width; wide panels use more so the chart does not scale up too tall. */
   width?: number;
+  /** Target lines across the plot, e.g. a margin target. */
+  refLines?: { value: number; label: string }[];
 };
 
 const BASE_W = 680;
@@ -60,7 +57,7 @@ function barPath(x: number, w: number, y0: number, y1: number): string {
   return `M${x},${y0}V${y1 - r}Q${x},${y1} ${x + r},${y1}H${x + w - r}Q${x + w},${y1} ${x + w},${y1 - r}V${y0}Z`;
 }
 
-export function TrendChart({ labels, forecastLabels = [], series, fmt, height = 240, title, legend, width = BASE_W }: Props) {
+export function TrendChart({ labels, forecastLabels = [], series, fmt, height = 240, title, legend, width = BASE_W, refLines = [] }: Props) {
   const W = width;
   const id = useId();
   const wrapRef = useRef<HTMLDivElement>(null);
@@ -83,6 +80,7 @@ export function TrendChart({ labels, forecastLabels = [], series, fmt, height = 
     }
     for (const group of stacks.values()) pool.push(group.reduce((sum, s) => sum + (valuesAt(s, i) ?? 0), 0));
   }
+  for (const r of refLines) pool.push(r.value);
   const ticks = axisTicks(Math.min(0, ...pool), Math.max(0, ...pool));
   const lo = ticks[0];
   const hi = ticks[ticks.length - 1];
@@ -240,6 +238,14 @@ export function TrendChart({ labels, forecastLabels = [], series, fmt, height = 
                 })()}
               </g>
             ))}
+          {refLines.map((r) => (
+            <g key={r.label} className="acct-ref">
+              <line x1={PAD.left} x2={W - PAD.right} y1={y(r.value)} y2={y(r.value)} />
+              <text x={W - PAD.right} y={y(r.value) - 4} textAnchor="end">
+                {r.label}
+              </text>
+            </g>
+          ))}
           {hover !== null ? <line x1={cx(hover)} x2={cx(hover)} y1={PAD.top} y2={H - PAD.bottom} className="acct-crosshair" /> : null}
           <rect x={PAD.left} y={PAD.top} width={W - PAD.left - PAD.right} height={H - PAD.top - PAD.bottom} fill="transparent" />
         </svg>

@@ -2,8 +2,9 @@
 
 import { useState } from "react";
 import type { FinancialSnapshot } from "@/lib/operations/financials";
-import { monthLabel, type AccountingDashboard as Dashboard, type Health, type Metric } from "@/lib/operations/financial-metrics";
-import { fmtValue, SegmentedBar, Sparkline, TrendChart } from "./AcctCharts";
+import { ACCOUNTING_TARGETS, monthLabel, type AccountingDashboard as Dashboard, type Metric } from "@/lib/operations/financial-metrics";
+import { MetricCard } from "./MetricCard";
+import { fmtValue, SegmentedBar, TrendChart } from "./AcctCharts";
 
 /** Chart colours: categorical slots 1–3 and the diverging pole, as CSS variables (see .acct in admin-layout.css). */
 const C = {
@@ -13,72 +14,6 @@ const C = {
   negative: "var(--acct-negative)",
   age: ["var(--acct-seq-250)", "var(--acct-seq-350)", "var(--acct-seq-450)", "var(--acct-seq-550)", "var(--acct-seq-650)"],
 };
-
-const HEALTH: Record<Exclude<Health, null>, { label: string; icon: string }> = {
-  good: { label: "Healthy", icon: "✓" },
-  warning: { label: "Watch", icon: "!" },
-  critical: { label: "Act now", icon: "!" },
-};
-
-function formatMetric(m: Metric): string {
-  if (m.value === null) return "—";
-  switch (m.format) {
-    case "percent":
-      return `${m.value.toFixed(1)}%`;
-    case "days":
-      return `${Math.round(m.value)} days`;
-    case "ratio":
-      return `${m.value >= 10 ? Math.round(m.value) : m.value.toFixed(2)}×`;
-    case "count":
-      return String(Math.round(m.value));
-    case "months":
-      return `${m.value.toFixed(1)} months`;
-    default:
-      return fmtValue(m.value, "rand");
-  }
-}
-
-function formatDelta(m: Metric): string | null {
-  const d = m.delta;
-  if (!d) return null;
-  const sign = d.value > 0 ? "+" : d.value < 0 ? "−" : "±";
-  const abs = Math.abs(d.value);
-  const text = m.format === "percent" ? `${abs.toFixed(1)} pts` : m.format === "rand" ? fmtValue(abs, "rand") : abs.toFixed(1);
-  return `${sign}${text} vs ${d.vs}`;
-}
-
-function MetricCard({ m, large }: { m: Metric; large?: boolean }) {
-  const delta = formatDelta(m);
-  const good = m.delta ? (m.delta.value >= 0) === m.delta.goodWhenUp : null;
-  return (
-    <article className={`acct-card${large ? " acct-card--large" : ""}${m.value === null ? " acct-card--empty" : ""}`}>
-      <header className="acct-card__head">
-        <h3>{m.label}</h3>
-        {m.health ? (
-          <span className={`acct-health acct-health--${m.health}`}>
-            <span aria-hidden="true">{HEALTH[m.health].icon}</span>
-            {HEALTH[m.health].label}
-          </span>
-        ) : m.basis !== "actual" ? (
-          <span className="acct-health acct-health--estimate">Estimate</span>
-        ) : null}
-      </header>
-      <div className="acct-card__body">
-        <p className="acct-card__value">{formatMetric(m)}</p>
-        {m.trend ? <Sparkline values={m.trend} /> : null}
-      </div>
-      {delta ? (
-        <p className={`acct-card__delta${good === null ? "" : good ? " is-good" : " is-bad"}`}>
-          <span aria-hidden="true">{m.delta && m.delta.value >= 0 ? "▲" : "▼"}</span> {delta}
-        </p>
-      ) : null}
-      <p className="acct-card__note" title={m.note}>
-        {m.note}
-      </p>
-      {m.rule ? <p className="acct-card__rule">Rule of thumb: {m.rule}</p> : null}
-    </article>
-  );
-}
 
 function Panel({ title, sub, children, wide }: { title: string; sub?: string; children: React.ReactNode; wide?: boolean }) {
   return (
@@ -209,11 +144,16 @@ export function AccountingDashboard({ d, s }: { d: Dashboard; s: FinancialSnapsh
               />
             </Panel>
 
-            <Panel title="Margins" sub="Gross and net profit as a share of revenue.">
+            <Panel title="Margins" sub="Gross and net profit as a share of revenue, against your targets.">
               <TrendChart
                 title="Gross and net margin per month"
                 labels={labels}
                 fmt="percent"
+                refLines={[
+                  { value: ACCOUNTING_TARGETS.grossMarginPercent.max, label: `Gross target ${ACCOUNTING_TARGETS.grossMarginPercent.max}%` },
+                  { value: ACCOUNTING_TARGETS.grossMarginPercent.min, label: `Gross target ${ACCOUNTING_TARGETS.grossMarginPercent.min}%` },
+                  { value: ACCOUNTING_TARGETS.netMarginPercent.min, label: `Net target ${ACCOUNTING_TARGETS.netMarginPercent.min}%` },
+                ]}
                 series={[
                   { name: "Gross margin", color: C.blue, kind: "line", values: d.rows.map((r) => r.grossMargin) },
                   { name: "Net margin", color: C.orange, kind: "line", values: d.rows.map((r) => r.netMargin) },

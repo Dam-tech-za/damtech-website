@@ -1,9 +1,9 @@
 import type { FinancialSnapshot } from "./financials.ts";
 
 /**
- * Chart data for the Financials page, built from the stored Xero snapshot so
- * the graphs refresh whenever Xero is refreshed. Pure functions; the SVG is
- * drawn in components/admin/operations/FinancialCharts.tsx.
+ * Chart helpers built from the stored Xero snapshot. Pure functions. The axis
+ * helpers (axisTicks, shortRand) are used by the Accounting charts in
+ * components/admin/operations/accounting/AcctCharts.tsx.
  */
 
 export type MonthBar = { key: string; label: string; income: number; costs: number; net: number; partial: boolean };

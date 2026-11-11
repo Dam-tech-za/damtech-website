@@ -5558,3 +5558,19 @@ table.admin-sheet .admin-status {
 .acct-details { display: grid; gap: 1rem; }
 .acct-details > summary { cursor: pointer; font-size: 0.875rem; font-weight: 600; color: var(--acct-ink-2, #52657a); }
 .acct-details[open] > summary { margin-bottom: 0.25rem; }
+/* Owner targets on accounting cards and charts */
+.acct-target { display: inline-flex; align-items: center; gap: 0.3rem; padding: 0.1rem 0.5rem; border-radius: 999px; font-size: 0.6875rem; font-weight: 650; white-space: nowrap; background: #eef2f7; color: var(--acct-ink-2, #52657a); }
+.acct-target span[aria-hidden="true"] { font-size: 0.6rem; }
+.acct-target--good { background: #e8f6ec; color: #0a7a3c; }
+.acct-target--critical { background: #fdecea; color: #b42318; }
+.acct-card__target { margin: 0; font-size: 0.75rem; font-weight: 600; color: var(--acct-ink-2, #52657a); }
+.acct-ref line { stroke: #9aa7b5; stroke-width: 1; stroke-dasharray: 4 3; }
+.acct-ref text { fill: var(--acct-muted, #8a97a6); font-size: 10px; }
+a.acct-card--link { color: inherit; text-decoration: none; transition: border-color 120ms, box-shadow 120ms; }
+a.acct-card--link:hover { border-color: #b9c8d8; box-shadow: 0 4px 14px rgba(11, 31, 51, 0.08); }
+a.acct-card--link:focus-visible { outline: 2px solid var(--admin-focus-ring, #2b9ff3); outline-offset: 2px; }
+/* Overview in the Accounting style */
+@media (min-width: 1100px) { .acct-kpis--4 { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+.acct-panel__head--row { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; }
+.acct-panel__link { flex: none; font-size: 0.8125rem; font-weight: 600; color: var(--admin-primary, #026bc6); text-decoration: none; }
+.acct-panel__link:hover { text-decoration: underline; }
