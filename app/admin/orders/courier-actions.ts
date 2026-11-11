@@ -63,7 +63,10 @@ export async function courierRatesAction(formData: FormData): Promise<CourierAct
     if (!parcel) return fail(PARCEL_ERROR);
     const result = await getCourierRates(loaded.config, loaded.order, parcel);
     if (!result.ok) return fail(result.error);
-    return { ok: true, message: "Rates from The Courier Guy. Nothing is booked yet.", rates: result.data };
+    const dropped = result.declaredValueDropped
+      ? ` Courier Guy refused the declared value of R${result.declaredValueDropped.toFixed(2)}, so these rates are without one.`
+      : "";
+    return { ok: true, message: `Rates from The Courier Guy. Nothing is booked yet.${dropped}`, rates: result.data };
   } catch (error) {
     unstable_rethrow(error);
     return fail(describeActionError(error));
@@ -145,7 +148,10 @@ export async function bookCourierAction(formData: FormData): Promise<CourierActi
       .eq("id", id);
     if (extra.error) console.error("[courier] booking detail not saved:", extra.error.message);
     revalidateOrder(id);
-    return { ok: true, message: `Booked with The Courier Guy. Waybill ${shipment.trackingReference}.` };
+    const dropped = booked.declaredValueDropped
+      ? ` Courier Guy refused the declared value of R${booked.declaredValueDropped.toFixed(2)}, so it was booked without one (standard cover only).`
+      : "";
+    return { ok: true, message: `Booked with The Courier Guy. Waybill ${shipment.trackingReference}.${dropped}` };
   } catch (error) {
     unstable_rethrow(error);
     return fail(describeActionError(error));

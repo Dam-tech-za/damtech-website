@@ -1625,12 +1625,10 @@ body:has(.dt-hero) .site-header-spacer {
   }
 }
 
-/* Phones and tablets: the long region list runs in columns, not one tall strip. */
-@media (max-width: 1023px) {
-  .dt-footer__col--brand .dt-footer__list {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    column-gap: 1.5rem;
-  }
+/* The long region list runs in two columns, not one tall strip. */
+.dt-footer__col--brand .dt-footer__list {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: 1.5rem;
 }
 @media (min-width: 640px) and (max-width: 1023px) {
   .dt-footer__col--brand .dt-footer__list {

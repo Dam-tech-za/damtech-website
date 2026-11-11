@@ -9,7 +9,9 @@ import {
 } from "./payloads.ts";
 import type { CourierOrderInput, CourierRate, CourierShipment, CourierTracking } from "./types.ts";
 
-export type CourierResult<T> = { ok: true; data: T } | { ok: false; error: string };
+export type CourierResult<T> =
+  | { ok: true; data: T; declaredValueDropped?: number }
+  | { ok: false; error: string; status?: number };
 
 type Fetcher = typeof fetch;
 
@@ -31,6 +33,14 @@ export function courierErrorDetail(body: unknown): string {
   } else if (data.errors && typeof data.errors === "object") {
     for (const [field, value] of Object.entries(data.errors as Record<string, unknown>)) {
       parts.push(`${field}: ${Array.isArray(value) ? value.join(", ") : String(value)}`);
+    }
+  }
+  if (parts.length === 0) {
+    // Unknown error shape: show the raw answer so the cause is visible.
+    try {
+      return JSON.stringify(body).slice(0, 300);
+    } catch {
+      return "";
     }
   }
   return parts.join("; ").slice(0, 400);
@@ -79,7 +89,26 @@ async function request(
   if (refused.length > 1) {
     return { ok: false, error: `${last.ok ? "" : last.error} Tried ${refused.join(" and ")}; both refused the key.` };
   }
-  return last.ok ? last : { ok: false, error: last.error };
+  return last.ok ? last : { ok: false, error: last.error, ...(last.status ? { status: last.status } : {}) };
+}
+
+/**
+ * Courier Guy refuses (error 400) some requests with a high declared value,
+ * e.g. liner orders above about R40 000. Ask again without one, so the order
+ * can still be quoted and booked; the caller tells the admin it was dropped.
+ */
+async function withoutDeclaredValueOn400(
+  config: CourierConfig,
+  path: string,
+  payload: { declared_value: number },
+  fetcher: Fetcher,
+): Promise<CourierResult<unknown>> {
+  const first = await request(config, "POST", path, payload, fetcher);
+  if (first.ok || first.status !== 400 || !(payload.declared_value > 0)) return first;
+  const retry = await request(config, "POST", path, { ...payload, declared_value: 0 }, fetcher);
+  if (!retry.ok) return first;
+  console.warn("[courier] accepted only without declared value:", path, payload.declared_value);
+  return { ...retry, declaredValueDropped: payload.declared_value };
 }
 
 async function requestHost(
@@ -102,12 +131,19 @@ async function requestHost(
       cache: "no-store",
       signal: AbortSignal.timeout(20_000),
     });
-    const parsed: unknown = await response.json().catch(() => null);
+    const text = await response.text().catch(() => "");
+    let parsed: unknown = text || null;
+    try {
+      parsed = text ? JSON.parse(text) : null;
+    } catch {
+      // Not JSON: keep the plain text so the error says what Courier Guy said.
+    }
     if (!response.ok) {
       console.error("[courier] request failed:", host, method, path, response.status, courierErrorDetail(parsed));
       return {
         ok: false,
         error: failureMessage(response.status, parsed),
+        status: response.status,
         authRefused: response.status === 401 || response.status === 403,
       };
     }
@@ -124,13 +160,13 @@ export async function getCourierRates(
   parcel: ParcelInput | ParcelInput[],
   fetcher: Fetcher = fetch,
 ): Promise<CourierResult<CourierRate[]>> {
-  const result = await request(config, "POST", "rates", buildRatesPayload(config.sender, order, parcel), fetcher);
+  const result = await withoutDeclaredValueOn400(config, "rates", buildRatesPayload(config.sender, order, parcel), fetcher);
   if (!result.ok) return result;
   const rates = parseRates(result.data);
   if (rates.length === 0) {
     return { ok: false, error: "The Courier Guy returned no rates for this address and parcel size." };
   }
-  return { ok: true, data: rates };
+  return { ok: true, data: rates, ...(result.declaredValueDropped ? { declaredValueDropped: result.declaredValueDropped } : {}) };
 }
 
 export async function createCourierShipment(
@@ -141,7 +177,7 @@ export async function createCourierShipment(
   fetcher: Fetcher = fetch,
 ): Promise<CourierResult<CourierShipment>> {
   const payload = buildShipmentPayload(config.sender, order, parcel, serviceCode);
-  const result = await request(config, "POST", "shipments", payload, fetcher);
+  const result = await withoutDeclaredValueOn400(config, "shipments", payload, fetcher);
   if (!result.ok) return result;
   const shipment = parseShipment(result.data);
   if (!shipment) {
@@ -150,7 +186,7 @@ export async function createCourierShipment(
       error: "The Courier Guy answered without a waybill number. Check the Courier Guy portal before booking again.",
     };
   }
-  return { ok: true, data: shipment };
+  return { ok: true, data: shipment, ...(result.declaredValueDropped ? { declaredValueDropped: result.declaredValueDropped } : {}) };
 }
 
 export async function getCourierTracking(

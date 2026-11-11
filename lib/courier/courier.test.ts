@@ -229,3 +229,17 @@ test("a key refused by api.shiplogic.com is retried on the Courier Guy portal ho
   const pinned = getCourierConfig({ ...env, COURIER_GUY_API_URL: "https://example.test" });
   assert.ok(pinned.ok && !pinned.config.fallbackBaseUrls);
 });
+
+test("a 400 with a declared value is retried without one and flagged", async () => {
+  const { getCourierRates } = await import("./client.ts");
+  const seen: number[] = [];
+  const fetcher = (async (_url: string, init: RequestInit) => {
+    const body = JSON.parse(String(init.body));
+    seen.push(body.declared_value);
+    if (body.declared_value > 0) return new Response("Declared value too high", { status: 400 });
+    return Response.json({ rates: [{ rate: 940.22, service_level: { code: "ECO", name: "Economy" } }] });
+  }) as unknown as typeof fetch;
+  const result = await getCourierRates(config(), { ...order, total_price_snapshot: 45793 }, parcel, fetcher);
+  assert.deepEqual(seen, [45793, 0]);
+  assert.ok(result.ok && result.declaredValueDropped === 45793 && result.data[0].rate === 940.22);
+});
