@@ -64,6 +64,55 @@ export function buildPvcPaidInternalEmail(order: PvcOrderRecord, adminUrl: strin
   };
 }
 
+export type TrackingEmailOrder = {
+  orderReference: string;
+  customerName: string;
+  email: string;
+  productName: string;
+  quantity: number;
+  courierName: string | null;
+  trackingNumber: string;
+  trackingUrl: string | null;
+  expectedDeliveryOn: string | null;
+};
+
+function longDate(value: string): string {
+  const date = new Date(`${value.slice(0, 10)}T12:00:00Z`);
+  return Number.isNaN(date.getTime())
+    ? value
+    : date.toLocaleDateString("en-ZA", { weekday: "long", day: "numeric", month: "long", year: "numeric", timeZone: "UTC" });
+}
+
+/** "Your order is on its way": sent from the admin once the courier is booked. */
+export function buildPvcTrackingEmail(order: TrackingEmailOrder): Content {
+  const courier = order.courierName || "our courier";
+  const intro = `Good news, ${order.customerName}. Your order ${order.orderReference} is booked for delivery with ${courier}.`;
+  const rows: Array<[string, string]> = [
+    ["Order reference", order.orderReference],
+    ["Product", order.productName],
+    ["Quantity", String(order.quantity)],
+    ["Courier", order.courierName || "To be confirmed"],
+    ["Tracking number", order.trackingNumber],
+  ];
+  if (order.expectedDeliveryOn) rows.push(["Expected delivery", longDate(order.expectedDeliveryOn)]);
+  const track = order.trackingUrl ? `Track your delivery: ${order.trackingUrl}` : "";
+  const note = "The expected date comes from the courier and can change. The courier will contact you on the phone number you gave us.";
+  const help = `Questions: ${CONTACT_PHONE} or ${CONTACT_EMAIL}. Please quote ${order.orderReference}.`;
+  return {
+    subject: `Your order is on its way: ${order.orderReference}`,
+    text: [intro, "", ...rows.map(([k, v]) => `${k}: ${v}`), "", ...(track ? [track, ""] : []), note, "", help].join("\n"),
+    html: `<p>${escapeHtml(intro)}</p>${table(rows)}${
+      order.trackingUrl
+        ? `<p><a href="${escapeHtml(order.trackingUrl)}">Track your delivery</a></p>`
+        : ""
+    }<p>${escapeHtml(note)}</p><p>${escapeHtml(help)}</p>`,
+  };
+}
+
+export async function sendPvcTrackingEmail(order: TrackingEmailOrder): Promise<PvcEmailStatus> {
+  return send([order.email], buildPvcTrackingEmail(order));
+}
+
 async function send(to: string[], content: Content): Promise<PvcEmailStatus> {
   const config = getRfqEmailConfig();
   if (!config.apiKey) return "pending_configuration";

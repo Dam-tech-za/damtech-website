@@ -10,7 +10,8 @@ import { updateOrderStatusAction, updateOrderTrackingAction } from "../actions";
 import { PURCHASE_STAGE_LABELS, makeByDate, purchaseStage } from "@/lib/orders/purchase-stage";
 import { ResendOrderConfirmationButton } from "@/components/admin/ResendOrderConfirmationButton";
 import { CourierBookingPanel } from "@/components/admin/CourierBookingPanel";
-import { getCourierConfig } from "@/lib/courier";
+import { COURIER_DEPOTS, courierDepotForProvince, getCourierConfig, type CourierDepotId } from "@/lib/courier";
+import { EmailTrackingButton } from "@/components/admin/EmailTrackingButton";
 import { getPvcLinerBySku } from "@/lib/shop/pvc-liners";
 import { pvcLinerPackedParcel } from "@/lib/shop/pvc-packing";
 import { createClient } from "@/lib/supabase/server";
@@ -173,7 +174,7 @@ export default async function AdminOrderDetailPage({ params }: PageProps) {
       </AdminPanel>
       <AdminPanel
         title="Delivery and tracking"
-        description="Record the courier booking here. The customer is not emailed automatically."
+        description="Record the courier booking here. The customer is only emailed when you press the email button."
       >
         {canPerform(admin.profile.role, "manageOrders") ? (
           <AdminActionForm action={updateOrderTrackingAction} className="ops-track-form">
@@ -212,7 +213,11 @@ export default async function AdminOrderDetailPage({ params }: PageProps) {
             </label>
             <AdminSubmitButton>Save delivery and tracking</AdminSubmitButton>
           </AdminActionForm>
-        ) : (
+        ) : null}
+        {canManage && order.tracking_number && !isCollectionMethod(order.fulfilment_method) ? (
+          <EmailTrackingButton orderId={order.id} email={order.email} />
+        ) : null}
+        {canManage ? null : (
           <p>
             {order.courier_name || "No courier yet"}
             {order.tracking_number ? ` · ${order.tracking_number}` : ""}
@@ -229,6 +234,11 @@ export default async function AdminOrderDetailPage({ params }: PageProps) {
               orderId={order.id}
               orderReference={order.order_reference}
               defaultParcel={defaultParcel}
+              depots={(Object.keys(courier.config.depots) as CourierDepotId[]).map((id) => ({
+                id,
+                label: `${COURIER_DEPOTS[id]} (${courier.config.depots[id]?.address.city})`,
+              }))}
+              defaultDepot={courierDepotForProvince(courier.config, order.billing_province)}
               trackingNumber={order.courier_name === "The Courier Guy" ? (order.tracking_number ?? null) : null}
               blockedReason={
                 order.tracking_number && order.courier_name !== "The Courier Guy"

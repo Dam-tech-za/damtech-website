@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useMemo, useRef, useState, useTransition, type FormEvent, type ReactNode } from "react";
-import { startPvcCheckout } from "@/app/actions/start-pvc-checkout";
+import { quotePvcDelivery, startPvcCheckout } from "@/app/actions/start-pvc-checkout";
 import { LegalSupplierDetails } from "@/components/LegalSupplierDetails";
 import { ShieldCheckIcon } from "@/components/icons/StrokeIcons";
 import { formatZarExactAmount } from "@/lib/catalogue/format";
@@ -141,6 +141,32 @@ export function PvcCheckoutForm({
 
   const busy = isPending || Boolean(payfast);
   const needsDeliveryQuote = liveRates && !collection && !liveQuote;
+  const [quoting, setQuoting] = useState(false);
+  const quotedFor = useRef("");
+
+  /** Work out the delivery fee as soon as the address is complete. */
+  function handleFormBlur(event: FormEvent<HTMLFormElement>) {
+    if (!liveRates || busy) return;
+    const formData = new FormData(event.currentTarget);
+    if (formData.get("collection")) return;
+    const parts = ["billingLine1", "billingLine2", "suburb", "city", "province", "postalCode", "quantity", "customerType"].map(
+      (name) => String(formData.get(name) ?? "").trim(),
+    );
+    // Street, suburb, city, province and postal code must all be filled in.
+    if ([0, 2, 3, 4, 5].some((index) => !parts[index])) return;
+    const signature = parts.join("|");
+    if (signature === quotedFor.current) return;
+    quotedFor.current = signature;
+    setQuoting(true);
+    quotePvcDelivery(formData)
+      .then((quote) => {
+        if (quotedFor.current === signature && quote) setLiveQuote(quote);
+      })
+      .catch(() => {
+        quotedFor.current = "";
+      })
+      .finally(() => setQuoting(false));
+  }
   /** Address or quantity changed: the courier fee has to be worked out again. */
   function handleFormChange(event: FormEvent<HTMLFormElement>) {
     if (!liveQuote) return;
@@ -152,7 +178,7 @@ export function PvcCheckoutForm({
 
   return (
     <div className="order-layout">
-      <form className="order-form" onSubmit={handleSubmit} onChange={handleFormChange} noValidate>
+      <form className="order-form" onSubmit={handleSubmit} onChange={handleFormChange} onBlur={handleFormBlur} noValidate>
         <input type="hidden" name="sku" value={liner.sku} />
         <input type="hidden" name="colour" value={colour} />
         <input type="hidden" name="submissionId" value={submissionId} />
@@ -415,7 +441,7 @@ export function PvcCheckoutForm({
                 {collection ? (
                   <span>No fee</span>
                 ) : totals.delivery === null ? (
-                  <span>{liveRates ? "Worked out from your address" : "Select a province"}</span>
+                  <span>{liveRates ? (quoting ? "Working it out…" : "Enter your address") : "Select a province"}</span>
                 ) : (
                   <span className="order-money">{formatZarExactAmount(totals.delivery)}</span>
                 )}

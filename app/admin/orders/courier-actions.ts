@@ -16,6 +16,8 @@ import {
   getCourierConfig,
   getCourierRates,
   getCourierTracking,
+  isCourierDepotId,
+  withCourierDepot,
   parseParcel,
   trackingDates,
   type CourierRate,
@@ -39,19 +41,23 @@ function revalidateOrder(id: string) {
   revalidatePath("/admin/operations/online-purchases/");
 }
 
-async function loadForCourier(id: string) {
+async function loadForCourier(id: string, depot?: unknown) {
   const admin = await assertAdmin({ permission: "manageOrders" });
   const order = id ? await getCatalogueOrder(id) : null;
   if (!order) return { error: fail("This order no longer exists.") };
   const config = getCourierConfig();
   if (!config.ok) return { error: fail(config.reason) };
-  return { error: null, admin, order, config: config.config };
+  if (depot && (!isCourierDepotId(depot) || !config.config.depots[depot])) {
+    return { error: fail("Choose where the courier collects from.") };
+  }
+  const chosen = isCourierDepotId(depot) ? withCourierDepot(config.config, depot) : config.config;
+  return { error: null, admin, order, config: chosen };
 }
 
 /** Ask The Courier Guy what this parcel costs to deliver. Books nothing. */
 export async function courierRatesAction(formData: FormData): Promise<CourierActionResult> {
   try {
-    const loaded = await loadForCourier(String(formData.get("id") ?? ""));
+    const loaded = await loadForCourier(String(formData.get("id") ?? ""), formData.get("depot"));
     if (loaded.error) return loaded.error;
     const parcel = parseParcel((name) => formData.get(name));
     if (!parcel) return fail(PARCEL_ERROR);
@@ -68,7 +74,7 @@ export async function courierRatesAction(formData: FormData): Promise<CourierAct
 export async function bookCourierAction(formData: FormData): Promise<CourierActionResult> {
   try {
     const id = String(formData.get("id") ?? "");
-    const loaded = await loadForCourier(id);
+    const loaded = await loadForCourier(id, formData.get("depot"));
     if (loaded.error) return loaded.error;
     const { admin, order, config } = loaded;
 
@@ -108,6 +114,7 @@ export async function bookCourierAction(formData: FormData): Promise<CourierActi
         ...tracking,
         order_reference: order.order_reference,
         service_code: serviceCode,
+        collected_from: config.sender.address.city,
         courier_rate: shipment.rate,
         parcel,
       },

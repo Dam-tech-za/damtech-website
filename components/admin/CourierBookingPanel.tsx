@@ -2,6 +2,7 @@
 
 import { useRef, useState, useTransition } from "react";
 import { AdminInput } from "@/components/admin/ui/AdminInput";
+import { AdminSelect } from "@/components/admin/ui/AdminSelect";
 import {
   bookCourierAction,
   courierRatesAction,
@@ -17,6 +18,9 @@ type Props = {
   blockedReason: string | null;
   /** Packed size and weight worked out for the product, to pre-fill the form. */
   defaultParcel?: { lengthCm: number; widthCm: number; heightCm: number; weightKg: number } | null;
+  /** Collection addresses that are set up, and the one nearest the customer. */
+  depots: { id: string; label: string }[];
+  defaultDepot: string;
 };
 
 const rand = new Intl.NumberFormat("en-ZA", { style: "currency", currency: "ZAR" });
@@ -36,7 +40,7 @@ function formatEventTime(value: string): string {
     : date.toLocaleString("en-ZA", { dateStyle: "medium", timeStyle: "short", timeZone: "Africa/Johannesburg" });
 }
 
-export function CourierBookingPanel({ orderId, orderReference, trackingNumber, blockedReason, defaultParcel }: Props) {
+export function CourierBookingPanel({ orderId, orderReference, trackingNumber, blockedReason, defaultParcel, depots, defaultDepot }: Props) {
   const formRef = useRef<HTMLFormElement>(null);
   const [pending, startTransition] = useTransition();
   const [result, setResult] = useState<CourierActionResult | null>(null);
@@ -103,6 +107,27 @@ export function CourierBookingPanel({ orderId, orderReference, trackingNumber, b
     <form ref={formRef} className="ops-courier" onSubmit={(event) => event.preventDefault()}>
       <input type="hidden" name="id" value={orderId} />
       <div className="ops-track-form">
+        {depots.length > 1 ? (
+          <label>
+            <span>Collect from</span>
+            <AdminSelect
+              name="depot"
+              defaultValue={defaultDepot}
+              onChange={() => {
+                setService("");
+                setResult(null);
+              }}
+            >
+              {depots.map((depot) => (
+                <option key={depot.id} value={depot.id}>
+                  {depot.label}
+                </option>
+              ))}
+            </AdminSelect>
+          </label>
+        ) : (
+          <input type="hidden" name="depot" value={defaultDepot} />
+        )}
         {[
           ["length_cm", "Packed length (cm)", defaultParcel?.lengthCm],
           ["width_cm", "Packed width (cm)", defaultParcel?.widthCm],

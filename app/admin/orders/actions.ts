@@ -22,6 +22,7 @@ import { updateOrderEmailStatus } from "@/lib/orders/create";
 import { resolveOrderableProduct } from "@/lib/orders/pricing";
 import type { PublicOrderFormInput } from "@/lib/orders/schema";
 import { ORDER_FULFILMENT_METHOD } from "@/lib/orders/types";
+import { sendPvcTrackingEmail } from "@/lib/shop/pvc-emails";
 
 export async function updateOrderStatusAction(
   _prev: AdminActionState,
@@ -132,6 +133,48 @@ export async function resendOrderConfirmationAction(orderId: string) {
     return { ok: false as const, error: "Confirmation could not be sent." };
   }
   return { ok: true as const };
+}
+
+/** Email the customer their courier and tracking details. Sent only when an admin presses the button. */
+export async function emailOrderTrackingAction(orderId: string): Promise<{ ok: boolean; message: string }> {
+  try {
+    const admin = await assertAdmin({ permission: "manageOrders" });
+    const order = await getCatalogueOrder(orderId);
+    if (!order) return { ok: false, message: "This order no longer exists." };
+    if (!order.tracking_number) return { ok: false, message: "Save a tracking number first." };
+
+    const status = await sendPvcTrackingEmail({
+      orderReference: order.order_reference,
+      customerName: order.customer_name,
+      email: order.email,
+      productName: order.product_name_snapshot,
+      quantity: order.quantity,
+      courierName: order.courier_name ?? null,
+      trackingNumber: order.tracking_number,
+      trackingUrl: order.tracking_url ?? null,
+      expectedDeliveryOn: order.expected_delivery_on ?? null,
+    });
+    await writeAuditLog({
+      actorUserId: admin.user.id,
+      actorEmail: admin.profile.email,
+      action: "order.tracking_emailed",
+      entityType: "catalogue_order",
+      entityId: orderId,
+      metadata: { status, tracking_number: order.tracking_number },
+    });
+    revalidatePath(`/admin/orders/${orderId}/`);
+    if (status === "sent") return { ok: true, message: `Tracking details emailed to ${order.email}.` };
+    return {
+      ok: false,
+      message:
+        status === "pending_configuration"
+          ? "Email is not set up on this site, so nothing was sent."
+          : "The email could not be sent. Please try again.",
+    };
+  } catch (error) {
+    unstable_rethrow(error);
+    return { ok: false, message: describeActionError(error) };
+  }
 }
 
 const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;

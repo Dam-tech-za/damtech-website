@@ -62,3 +62,22 @@ test("checkout uses the cheapest live rate only when switched on and sane", asyn
   assert.equal(await quotePvcCourierDelivery(liner, 1, address, answer([{ rate: 0, service_level: { code: "ECO" } }]), env), null);
   assert.equal(await quotePvcCourierDelivery(liner, 1, address, answer([]), env), null);
 });
+
+test("tracking email carries the waybill and link and escapes names", async () => {
+  const { buildPvcTrackingEmail } = await import("./pvc-emails.ts");
+  const email = buildPvcTrackingEmail({
+    orderReference: "DMT-1001",
+    customerName: "A <b>Customer</b>",
+    email: "c@example.com",
+    productName: "PVC tank liner",
+    quantity: 1,
+    courierName: "The Courier Guy",
+    trackingNumber: "XYZ9",
+    trackingUrl: "https://portal.thecourierguy.co.za/track?ref=XYZ9",
+    expectedDeliveryOn: "2026-11-20",
+  });
+  assert.match(email.subject, /DMT-1001/);
+  assert.match(email.text, /Tracking number: XYZ9/);
+  assert.match(email.text, /Friday, 20 November 2026/);
+  assert.ok(email.html.includes("track?ref=XYZ9") && !email.html.includes("<b>Customer"));
+});

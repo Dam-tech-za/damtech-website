@@ -1,4 +1,10 @@
-import { getCourierConfig, getCourierRates, type CourierOrderInput } from "../courier/index.ts";
+import {
+  courierDepotForProvince,
+  getCourierConfig,
+  getCourierRates,
+  withCourierDepot,
+  type CourierOrderInput,
+} from "../courier/index.ts";
 import type { PvcLiner } from "./pvc-liners.ts";
 import { pvcLinerPackedParcel } from "./pvc-packing.ts";
 
@@ -57,7 +63,8 @@ export async function quotePvcCourierDelivery(
     total_price_snapshot: (liner.priceInclVatCents * quantity) / 100,
   };
   const parcel = pvcLinerPackedParcel(liner);
-  const result = await getCourierRates(config.config, order, Array.from({ length: quantity }, () => parcel), fetcher);
+  const from = withCourierDepot(config.config, courierDepotForProvince(config.config, address.province));
+  const result = await getCourierRates(from, order, Array.from({ length: quantity }, () => parcel), fetcher);
   if (!result.ok) return null;
   const cheapest = result.data[0];
   const feeInclVatCents = Math.round(cheapest.rate * 100);

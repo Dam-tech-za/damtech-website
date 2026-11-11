@@ -142,3 +142,25 @@ test("several parcels are sent as separate parcels", () => {
   const payload = buildShipmentPayload(config().sender, order, [parcel, parcel], "ECO");
   assert.equal(payload.parcels.length, 2);
 });
+
+test("Western Cape orders collect from Betty's Bay when that address is set", async () => {
+  const { courierDepotForProvince, withCourierDepot } = await import("./config.ts");
+  const single = config();
+  assert.equal(courierDepotForProvince(single, "Western Cape"), "pretoria");
+  const both = getCourierConfig({
+    ...env,
+    COURIER_SENDER_BETTYS_BAY_NAME: "Workshop",
+    COURIER_SENDER_BETTYS_BAY_PHONE: "0210000000",
+    COURIER_SENDER_BETTYS_BAY_EMAIL: "bb@example.com",
+    COURIER_SENDER_BETTYS_BAY_STREET: "2 Test Street",
+    COURIER_SENDER_BETTYS_BAY_SUBURB: "Betty's Bay",
+    COURIER_SENDER_BETTYS_BAY_CITY: "Betty's Bay",
+    COURIER_SENDER_BETTYS_BAY_PROVINCE: "Western Cape",
+    COURIER_SENDER_BETTYS_BAY_POSTAL_CODE: "7141",
+  });
+  assert.ok(both.ok);
+  assert.equal(courierDepotForProvince(both.config, "Western Cape"), "bettys-bay");
+  assert.equal(courierDepotForProvince(both.config, "Gauteng"), "pretoria");
+  assert.equal(withCourierDepot(both.config, "bettys-bay").sender.address.city, "Betty's Bay");
+  assert.equal(withCourierDepot(single, "bettys-bay").sender.address.city, "Pretoria");
+});

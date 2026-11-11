@@ -25,7 +25,7 @@ import { publicClientRateKey, type RateLimitPolicy } from "@/lib/rate-limit/type
 
 const DELIVERY_QUOTE_POLICY: RateLimitPolicy = {
   name: "public-delivery-quote",
-  limit: 12,
+  limit: 30,
   windowMs: 10 * 60 * 1000,
   onProviderError: "fail_open_public",
 };
@@ -43,6 +43,46 @@ function isOrderableLiner(sku: string, quantity: number): boolean {
     quantity >= 1 &&
     quantity <= PVC_LINER_MAX_QUANTITY
   );
+}
+
+const clean = (formData: FormData, name: string, max: number) =>
+  String(formData.get(name) ?? "").trim().slice(0, max);
+
+/**
+ * Delivery fee for the address typed so far, shown as soon as it is complete.
+ * Creates nothing. The fee is checked again when the order is placed.
+ */
+export async function quotePvcDelivery(
+  formData: FormData,
+): Promise<{ feeInclVatCents: number; serviceName: string } | null> {
+  const liner = getPvcLinerBySku(clean(formData, "sku", 40));
+  const quantity = Math.trunc(Number(formData.get("quantity") ?? "1"));
+  const province = clean(formData, "province", 40);
+  const fixed = deliveryQuoteForProvince(province);
+  const address = {
+    customerName: clean(formData, "customerName", 120) || "Customer",
+    businessName: clean(formData, "businessName", 160),
+    customerType: clean(formData, "customerType", 20),
+    email: clean(formData, "email", 200),
+    phone: clean(formData, "phone", 30),
+    billingLine1: clean(formData, "billingLine1", 200),
+    billingLine2: clean(formData, "billingLine2", 200),
+    suburb: clean(formData, "suburb", 120),
+    city: clean(formData, "city", 120),
+    province,
+    postalCode: clean(formData, "postalCode", 12),
+  };
+  if (!liner || !fixed || !isOrderableLiner(liner.sku, quantity)) return null;
+  if (!address.billingLine1 || !address.suburb || !address.city || !address.postalCode) return null;
+
+  const limit = await enforceRateLimit(
+    publicClientRateKey(await headers(), "public-delivery-quote"),
+    DELIVERY_QUOTE_POLICY,
+  );
+  const courier = limit.success ? await quotePvcCourierDelivery(liner, quantity, address) : null;
+  return courier
+    ? { feeInclVatCents: courier.feeInclVatCents, serviceName: courier.serviceName }
+    : { feeInclVatCents: fixed.feeInclVatCents, serviceName: "Standard delivery" };
 }
 
 export async function startPvcCheckout(formData: FormData): Promise<StartPvcCheckoutResult> {
