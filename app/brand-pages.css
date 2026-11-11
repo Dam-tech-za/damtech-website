@@ -1436,7 +1436,7 @@
 }
 
 /* PVC checkout summary: compact, pay button straight under the total.
-   Sticky only when it fits the screen (PvcCheckoutForm toggles .is-static). */
+   Always sticky on desktop; PvcCheckoutForm lowers its top when it is taller than the window. */
 .pvc-checkout-summary__service {
   display: block;
   font-size: 0.8125rem;
@@ -1478,9 +1478,6 @@
   }
   .pvc-checkout-summary {
     gap: 1rem;
-  }
-  .pvc-checkout-summary.order-summary--sticky.is-static {
-    position: static;
   }
 }
 .pvc-mobile-summary > summary::-webkit-details-marker {

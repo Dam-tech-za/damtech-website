@@ -100,14 +100,15 @@ export function PvcCheckoutForm({
   const maxQuantity = pvcLinerMaxOnlineQuantity(liner);
   const summaryRef = useRef<HTMLElement>(null);
 
-  // Keep the summary card in view while the form scrolls, when it fits the screen.
+  // Keep the summary card in view while the form scrolls.
   useEffect(() => {
     const card = summaryRef.current;
     if (!card || typeof ResizeObserver === "undefined") return;
     const place = () => {
-      // Sticky only when the whole card fits below the header; otherwise it
-      // scrolls with the page like any other block (no inner scroll bar).
-      card.classList.toggle("is-static", card.offsetHeight > window.innerHeight - 112);
+      // A card taller than the window sticks once its bottom (the pay button)
+      // is in view, so it never scrolls away and needs no inner scroll bar.
+      const room = window.innerHeight - card.offsetHeight - 16;
+      card.style.top = room < 96 ? `${room}px` : "";
     };
     place();
     const observer = new ResizeObserver(place);
