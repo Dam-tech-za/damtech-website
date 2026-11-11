@@ -3,7 +3,7 @@ import { getRfqEmailConfig } from "../rfq/email/config.ts";
 import { escapeHtml } from "../orders/email/templates.ts";
 import { formatZarNumber } from "../catalogue/format.ts";
 import { fulfilmentLabel, isCollectionMethod } from "./delivery.ts";
-import { PVC_LINER_MANUFACTURE_LABEL } from "./pvc-liners.ts";
+import { isDeliveryChargedSeparately, PVC_LINER_MANUFACTURE_LABEL } from "./pvc-liners.ts";
 import type { PvcOrderRecord } from "./pvc-orders.ts";
 
 const CONTACT_PHONE = "+27 82 853 1026";
@@ -25,7 +25,9 @@ function lines(order: PvcOrderRecord): Array<[string, string]> {
     ["Liner total incl. VAT", zar(order.goodsTotalZar)],
     isCollectionMethod(order.fulfilmentMethod)
       ? [fulfilmentLabel(order.fulfilmentMethod, order.province), "No delivery fee"]
-      : [`Delivery to ${order.province} incl. VAT`, zar(order.deliveryFeeZar)],
+      : isDeliveryChargedSeparately(order.fulfilmentMethod, order.deliveryFeeZar)
+        ? [`Delivery to ${order.province}`, "Charged separately: we send you the cost before dispatch"]
+        : [`Delivery to ${order.province} incl. VAT`, zar(order.deliveryFeeZar)],
     ["Paid", zar(order.amountPaidZar ?? order.amountDueZar)],
   ];
 }

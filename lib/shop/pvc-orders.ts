@@ -37,13 +37,16 @@ export function pricePvcOrder(
   delivery: DeliveryQuote,
   collection: CollectionPointId | null = null,
   courier: PvcOrderPricing["courier"] = null,
+  /** Delivery is quoted and charged after payment (orders above the courier cover limit). */
+  deliverySeparate = false,
 ): PvcOrderPricing {
   if (!Number.isInteger(quantity) || quantity < 1) {
     throw new Error("Quantity must be a positive whole number.");
   }
   const goodsInclVatCents = liner.priceInclVatCents * quantity;
-  const liveCourier = collection ? null : courier;
-  const deliveryFeeInclVatCents = collection ? 0 : (liveCourier?.feeInclVatCents ?? delivery.feeInclVatCents);
+  const liveCourier = collection || deliverySeparate ? null : courier;
+  const deliveryFeeInclVatCents =
+    collection || deliverySeparate ? 0 : (liveCourier?.feeInclVatCents ?? delivery.feeInclVatCents);
   return {
     liner,
     colour,
@@ -172,7 +175,7 @@ export async function createPvcLinerOrder(input: {
         vat_amount_snapshot: pricing.goodsVatCents / 100,
         total_price_snapshot: pricing.goodsInclVatCents / 100,
         delivery_fee_snapshot: pricing.deliveryFeeInclVatCents / 100,
-        delivery_one_way_km_snapshot: pricing.collection || pricing.courier ? null : pricing.delivery.oneWayKm,
+        delivery_one_way_km_snapshot: pricing.collection || pricing.courier || pricing.deliveryFeeInclVatCents === 0 ? null : pricing.delivery.oneWayKm,
         amount_due_snapshot: pricing.amountDueCents / 100,
         price_version: PVC_LINER_PRICE_VERSION,
         currency: "ZAR",
