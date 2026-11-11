@@ -1,0 +1,67 @@
+import { getCourierConfig, getCourierRates, type CourierOrderInput } from "../courier/index.ts";
+import type { PvcLiner } from "./pvc-liners.ts";
+import { pvcLinerPackedParcel } from "./pvc-packing.ts";
+
+/**
+ * Live Courier Guy rate for a liner order at checkout. Off unless
+ * COURIER_CHECKOUT_RATES=true and the courier settings are complete, so the
+ * fixed per-province fee stays in charge until the connection is proven.
+ */
+export function courierCheckoutRatesEnabled(
+  env: Record<string, string | undefined> = process.env,
+): boolean {
+  return env.COURIER_CHECKOUT_RATES?.trim().toLowerCase() === "true" && getCourierConfig(env).ok;
+}
+
+export type CourierDeliveryQuote = { feeInclVatCents: number; serviceCode: string; serviceName: string };
+
+export type CheckoutAddress = {
+  customerName: string;
+  businessName?: string;
+  customerType?: string;
+  email: string;
+  phone: string;
+  billingLine1: string;
+  billingLine2?: string;
+  suburb: string;
+  city: string;
+  province: string;
+  postalCode: string;
+};
+
+/** Cheapest courier service for this liner and address, or null to fall back to the fixed fee. */
+export async function quotePvcCourierDelivery(
+  liner: PvcLiner,
+  quantity: number,
+  address: CheckoutAddress,
+  fetcher: typeof fetch = fetch,
+  env: Record<string, string | undefined> = process.env,
+): Promise<CourierDeliveryQuote | null> {
+  if (!courierCheckoutRatesEnabled(env)) return null;
+  const config = getCourierConfig(env);
+  if (!config.ok) return null;
+  const order: CourierOrderInput = {
+    order_reference: "quote",
+    customer_name: address.customerName,
+    business_name: address.businessName || null,
+    customer_type: address.customerType ?? null,
+    email: address.email,
+    phone: address.phone,
+    billing_line1: address.billingLine1,
+    billing_line2: address.billingLine2 || null,
+    billing_suburb: address.suburb,
+    billing_city: address.city,
+    billing_province: address.province,
+    billing_postal_code: address.postalCode,
+    product_name_snapshot: liner.name,
+    total_price_snapshot: (liner.priceInclVatCents * quantity) / 100,
+  };
+  const parcel = pvcLinerPackedParcel(liner);
+  const result = await getCourierRates(config.config, order, Array.from({ length: quantity }, () => parcel), fetcher);
+  if (!result.ok) return null;
+  const cheapest = result.data[0];
+  const feeInclVatCents = Math.round(cheapest.rate * 100);
+  // A zero or absurd rate means the answer was not understood: use the fixed fee.
+  if (!Number.isFinite(feeInclVatCents) || feeInclVatCents < 1000) return null;
+  return { feeInclVatCents, serviceCode: cheapest.serviceCode, serviceName: cheapest.serviceName };
+}

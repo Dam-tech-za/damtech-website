@@ -137,3 +137,8 @@ test("client sends the key as a bearer token and handles failures", async () => 
   const tracking = await getCourierTracking(config(), "XYZ9", fetcher);
   assert.ok(!tracking.ok && /API key/.test(tracking.error) && !tracking.error.includes("test-key"));
 });
+
+test("several parcels are sent as separate parcels", () => {
+  const payload = buildShipmentPayload(config().sender, order, [parcel, parcel], "ECO");
+  assert.equal(payload.parcels.length, 2);
+});

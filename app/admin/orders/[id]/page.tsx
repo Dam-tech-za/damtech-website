@@ -11,6 +11,8 @@ import { PURCHASE_STAGE_LABELS, makeByDate, purchaseStage } from "@/lib/orders/p
 import { ResendOrderConfirmationButton } from "@/components/admin/ResendOrderConfirmationButton";
 import { CourierBookingPanel } from "@/components/admin/CourierBookingPanel";
 import { getCourierConfig } from "@/lib/courier";
+import { getPvcLinerBySku } from "@/lib/shop/pvc-liners";
+import { pvcLinerPackedParcel } from "@/lib/shop/pvc-packing";
 import { createClient } from "@/lib/supabase/server";
 import {
   communicationStatusLabel,
@@ -53,6 +55,9 @@ export default async function AdminOrderDetailPage({ params }: PageProps) {
   const makeBy = makeByDate(order);
   const canManage = canPerform(admin.profile.role, "manageOrders");
   const courier = getCourierConfig();
+  const orderLiner = getPvcLinerBySku(order.sku);
+  // One parcel per liner; for more than one the admin adjusts the figures.
+  const defaultParcel = orderLiner && order.quantity === 1 ? pvcLinerPackedParcel(orderLiner) : null;
   const courierBlocked = isCollectionMethod(order.fulfilment_method)
     ? "The customer is collecting this order, so no courier is needed."
     : order.status === "cancelled"
@@ -223,6 +228,7 @@ export default async function AdminOrderDetailPage({ params }: PageProps) {
             <CourierBookingPanel
               orderId={order.id}
               orderReference={order.order_reference}
+              defaultParcel={defaultParcel}
               trackingNumber={order.courier_name === "The Courier Guy" ? (order.tracking_number ?? null) : null}
               blockedReason={
                 order.tracking_number && order.courier_name !== "The Courier Guy"

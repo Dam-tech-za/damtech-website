@@ -60,7 +60,7 @@ async function request(
 export async function getCourierRates(
   config: CourierConfig,
   order: CourierOrderInput,
-  parcel: ParcelInput,
+  parcel: ParcelInput | ParcelInput[],
   fetcher: Fetcher = fetch,
 ): Promise<CourierResult<CourierRate[]>> {
   const result = await request(config, "POST", "rates", buildRatesPayload(config.sender, order, parcel), fetcher);
@@ -75,7 +75,7 @@ export async function getCourierRates(
 export async function createCourierShipment(
   config: CourierConfig,
   order: CourierOrderInput,
-  parcel: ParcelInput,
+  parcel: ParcelInput | ParcelInput[],
   serviceCode: string,
   fetcher: Fetcher = fetch,
 ): Promise<CourierResult<CourierShipment>> {

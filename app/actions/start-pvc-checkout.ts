@@ -19,10 +19,22 @@ import {
   PVC_LINER_MAX_QUANTITY,
 } from "@/lib/shop/pvc-liners";
 import { createPvcLinerOrder, pricePvcOrder } from "@/lib/shop/pvc-orders";
+import { quotePvcCourierDelivery } from "@/lib/shop/pvc-courier-delivery";
+import { enforceRateLimit } from "@/lib/rate-limit/client";
+import { publicClientRateKey, type RateLimitPolicy } from "@/lib/rate-limit/types";
+
+const DELIVERY_QUOTE_POLICY: RateLimitPolicy = {
+  name: "public-delivery-quote",
+  limit: 12,
+  windowMs: 10 * 60 * 1000,
+  onProviderError: "fail_open_public",
+};
 
 export type StartPvcCheckoutResult =
   | { success: true; orderReference: string; payfast: PayfastForm }
-  | { success: false; error: string; field?: string };
+  | { success: false; error: string; field?: string }
+  /** Live courier fee the customer must see before paying. Nothing is created yet. */
+  | { success: false; confirmDelivery: { feeInclVatCents: number; serviceName: string } };
 
 function isOrderableLiner(sku: string, quantity: number): boolean {
   return (
@@ -69,13 +81,39 @@ export async function startPvcCheckout(formData: FormData): Promise<StartPvcChec
     return { success: false, error: "Online payment is temporarily unavailable. Please contact us to order." };
   }
 
+  // Live courier rate for this address, when switched on. The customer has to
+  // have seen this exact fee before we create the order and send them to pay.
+  let courier = null;
+  if (!collection) {
+    const quoteLimit = await enforceRateLimit(
+      publicClientRateKey(await headers(), "public-delivery-quote"),
+      DELIVERY_QUOTE_POLICY,
+    );
+    courier = quoteLimit.success
+      ? await quotePvcCourierDelivery(liner, parsed.data.quantity, parsed.data)
+      : null;
+    const shownCents = Number(formData.get("deliveryFeeShownCents") ?? "");
+    if (courier && shownCents !== courier.feeInclVatCents) {
+      return {
+        success: false,
+        confirmDelivery: { feeInclVatCents: courier.feeInclVatCents, serviceName: courier.serviceName },
+      };
+    }
+    if (!courier && Number.isFinite(shownCents) && shownCents > 0 && shownCents !== delivery.feeInclVatCents) {
+      return {
+        success: false,
+        confirmDelivery: { feeInclVatCents: delivery.feeInclVatCents, serviceName: "Standard delivery" },
+      };
+    }
+  }
+
   const limited = await limitPublicOrderSubmit(await headers());
   if (!limited.success && limited.reason === "rate_limited") {
     const retryAfterSeconds = Math.max(1, Math.ceil((limited.resetAt - Date.now()) / 1000));
     return { success: false, error: customerMessageForCode("RATE_LIMITED", { retryAfterSeconds }) };
   }
 
-  const pricing = pricePvcOrder(liner, colour, parsed.data.quantity, delivery, collection);
+  const pricing = pricePvcOrder(liner, colour, parsed.data.quantity, delivery, collection, courier);
   const created = await createPvcLinerOrder({
     data: parsed.data,
     pricing,

@@ -23,6 +23,8 @@ export type PvcOrderPricing = {
   delivery: DeliveryQuote;
   /** Set when the customer collects; the delivery fee is then zero. */
   collection: CollectionPointId | null;
+  /** Live courier quote, when one replaced the fixed province fee. */
+  courier: { feeInclVatCents: number; serviceCode: string; serviceName: string } | null;
   deliveryFeeInclVatCents: number;
   amountDueCents: number;
 };
@@ -33,12 +35,14 @@ export function pricePvcOrder(
   quantity: number,
   delivery: DeliveryQuote,
   collection: CollectionPointId | null = null,
+  courier: PvcOrderPricing["courier"] = null,
 ): PvcOrderPricing {
   if (!Number.isInteger(quantity) || quantity < 1) {
     throw new Error("Quantity must be a positive whole number.");
   }
   const goodsInclVatCents = liner.priceInclVatCents * quantity;
-  const deliveryFeeInclVatCents = collection ? 0 : delivery.feeInclVatCents;
+  const liveCourier = collection ? null : courier;
+  const deliveryFeeInclVatCents = collection ? 0 : (liveCourier?.feeInclVatCents ?? delivery.feeInclVatCents);
   return {
     liner,
     colour,
@@ -47,6 +51,7 @@ export function pricePvcOrder(
     goodsVatCents: vatFromInclusiveCents(goodsInclVatCents),
     delivery,
     collection,
+    courier: liveCourier,
     deliveryFeeInclVatCents,
     amountDueCents: goodsInclVatCents + deliveryFeeInclVatCents,
   };
@@ -166,7 +171,7 @@ export async function createPvcLinerOrder(input: {
         vat_amount_snapshot: pricing.goodsVatCents / 100,
         total_price_snapshot: pricing.goodsInclVatCents / 100,
         delivery_fee_snapshot: pricing.deliveryFeeInclVatCents / 100,
-        delivery_one_way_km_snapshot: pricing.collection ? null : pricing.delivery.oneWayKm,
+        delivery_one_way_km_snapshot: pricing.collection || pricing.courier ? null : pricing.delivery.oneWayKm,
         amount_due_snapshot: pricing.amountDueCents / 100,
         price_version: PVC_LINER_PRICE_VERSION,
         currency: "ZAR",

@@ -15,6 +15,8 @@ type Props = {
   trackingNumber: string | null;
   /** Why booking is not offered (collection, unpaid, cancelled), if any. */
   blockedReason: string | null;
+  /** Packed size and weight worked out for the product, to pre-fill the form. */
+  defaultParcel?: { lengthCm: number; widthCm: number; heightCm: number; weightKg: number } | null;
 };
 
 const rand = new Intl.NumberFormat("en-ZA", { style: "currency", currency: "ZAR" });
@@ -34,7 +36,7 @@ function formatEventTime(value: string): string {
     : date.toLocaleString("en-ZA", { dateStyle: "medium", timeStyle: "short", timeZone: "Africa/Johannesburg" });
 }
 
-export function CourierBookingPanel({ orderId, orderReference, trackingNumber, blockedReason }: Props) {
+export function CourierBookingPanel({ orderId, orderReference, trackingNumber, blockedReason, defaultParcel }: Props) {
   const formRef = useRef<HTMLFormElement>(null);
   const [pending, startTransition] = useTransition();
   const [result, setResult] = useState<CourierActionResult | null>(null);
@@ -102,14 +104,22 @@ export function CourierBookingPanel({ orderId, orderReference, trackingNumber, b
       <input type="hidden" name="id" value={orderId} />
       <div className="ops-track-form">
         {[
-          ["length_cm", "Packed length (cm)"],
-          ["width_cm", "Packed width (cm)"],
-          ["height_cm", "Packed height (cm)"],
-          ["weight_kg", "Packed weight (kg)"],
-        ].map(([name, label]) => (
+          ["length_cm", "Packed length (cm)", defaultParcel?.lengthCm],
+          ["width_cm", "Packed width (cm)", defaultParcel?.widthCm],
+          ["height_cm", "Packed height (cm)", defaultParcel?.heightCm],
+          ["weight_kg", "Packed weight (kg)", defaultParcel?.weightKg],
+        ].map(([name, label, value]) => (
           <label key={name}>
             <span>{label}</span>
-            <AdminInput name={name} type="number" inputMode="decimal" min="0.1" step="0.1" required />
+            <AdminInput
+              name={String(name)}
+              type="number"
+              inputMode="decimal"
+              min="0.1"
+              step="0.1"
+              defaultValue={value ?? ""}
+              required
+            />
           </label>
         ))}
       </div>

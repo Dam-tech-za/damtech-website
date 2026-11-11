@@ -77,10 +77,13 @@ export function PvcCheckoutForm({
   liner,
   colour,
   initialQuantity,
+  liveRates = false,
 }: {
   liner: PvcLiner;
   colour: PvcLinerColour;
   initialQuantity: number;
+  /** Delivery is quoted live by the courier from the full address. */
+  liveRates?: boolean;
 }) {
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
@@ -88,6 +91,7 @@ export function PvcCheckoutForm({
   const [province, setProvince] = useState("");
   const [collection, setCollection] = useState<CollectionPointId | "">("");
   const [payfast, setPayfast] = useState<PayfastForm | null>(null);
+  const [liveQuote, setLiveQuote] = useState<{ feeInclVatCents: number; serviceName: string } | null>(null);
   const [submissionId] = useState(() => crypto.randomUUID());
   const [formStartedAt] = useState(() => Date.now());
   const payfastFormRef = useRef<HTMLFormElement>(null);
@@ -95,13 +99,20 @@ export function PvcCheckoutForm({
   const totals = useMemo(() => {
     const goodsCents = liner.priceInclVatCents * quantity;
     if (collection) return { goods: goodsCents / 100, delivery: 0, total: goodsCents / 100 };
+    if (liveRates) {
+      return {
+        goods: goodsCents / 100,
+        delivery: liveQuote ? liveQuote.feeInclVatCents / 100 : null,
+        total: liveQuote ? (goodsCents + liveQuote.feeInclVatCents) / 100 : null,
+      };
+    }
     const delivery = deliveryQuoteForProvince(province);
     return {
       goods: goodsCents / 100,
       delivery: delivery ? delivery.feeInclVatZar : null,
       total: delivery ? (goodsCents + delivery.feeInclVatCents) / 100 : null,
     };
-  }, [liner, quantity, province, collection]);
+  }, [liner, quantity, province, collection, liveRates, liveQuote]);
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -114,10 +125,12 @@ export function PvcCheckoutForm({
       return;
     }
     const formData = new FormData(form);
+    if (liveRates && liveQuote) formData.set("deliveryFeeShownCents", String(liveQuote.feeInclVatCents));
     startTransition(async () => {
       const result = await startPvcCheckout(formData);
       if (!result.success) {
-        setError(result.error);
+        if ("confirmDelivery" in result) setLiveQuote(result.confirmDelivery);
+        else setError(result.error);
         return;
       }
       setPayfast(result.payfast);
@@ -127,10 +140,19 @@ export function PvcCheckoutForm({
   }
 
   const busy = isPending || Boolean(payfast);
+  const needsDeliveryQuote = liveRates && !collection && !liveQuote;
+  /** Address or quantity changed: the courier fee has to be worked out again. */
+  function handleFormChange(event: FormEvent<HTMLFormElement>) {
+    if (!liveQuote) return;
+    const name = (event.target as HTMLInputElement).name;
+    if (["billingLine1", "billingLine2", "suburb", "city", "province", "postalCode", "quantity", "collection", "customerType"].includes(name)) {
+      setLiveQuote(null);
+    }
+  }
 
   return (
     <div className="order-layout">
-      <form className="order-form" onSubmit={handleSubmit} noValidate>
+      <form className="order-form" onSubmit={handleSubmit} onChange={handleFormChange} noValidate>
         <input type="hidden" name="sku" value={liner.sku} />
         <input type="hidden" name="colour" value={colour} />
         <input type="hidden" name="submissionId" value={submissionId} />
@@ -190,7 +212,11 @@ export function PvcCheckoutForm({
               onChange={() => setCollection("")}
               disabled={busy}
             />
-            <span>Deliver to my address. The delivery fee depends on the province.</span>
+            <span>
+              {liveRates
+                ? "Deliver to my address. The delivery fee is worked out from your address."
+                : "Deliver to my address. The delivery fee depends on the province."}
+            </span>
           </label>
           {COLLECTION_POINT_IDS.map((id) => (
             <label key={id} className="order-check">
@@ -332,8 +358,22 @@ export function PvcCheckoutForm({
 
         <div className="order-submit">
           <button type="submit" className="btn-primary order-submit__button" disabled={busy}>
-            {payfast ? "Opening PayFast…" : isPending ? "Saving your order…" : "Continue to secure payment"}
+            {payfast
+              ? "Opening PayFast…"
+              : isPending
+                ? needsDeliveryQuote
+                  ? "Getting your delivery fee…"
+                  : "Saving your order…"
+                : needsDeliveryQuote
+                  ? "Calculate delivery"
+                  : "Continue to secure payment"}
           </button>
+          {liveRates && !collection && liveQuote ? (
+            <p className="order-submit__note" role="status">
+              Delivery to your address is {formatZarExactAmount(liveQuote.feeInclVatCents / 100)} ({liveQuote.serviceName}).
+              Check the total, then continue.
+            </p>
+          ) : null}
           <p className="order-submit__note">You will be taken to PayFast to pay.</p>
         </div>
       </form>
@@ -375,7 +415,7 @@ export function PvcCheckoutForm({
                 {collection ? (
                   <span>No fee</span>
                 ) : totals.delivery === null ? (
-                  <span>Select a province</span>
+                  <span>{liveRates ? "Worked out from your address" : "Select a province"}</span>
                 ) : (
                   <span className="order-money">{formatZarExactAmount(totals.delivery)}</span>
                 )}

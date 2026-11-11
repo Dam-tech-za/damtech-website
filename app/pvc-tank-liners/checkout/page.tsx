@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { Hero } from "@/components/Hero";
 import { SiteSection } from "@/components/SiteSection";
 import { PvcCheckoutForm } from "@/components/shop/PvcCheckoutForm";
+import { courierCheckoutRatesEnabled } from "@/lib/shop/pvc-courier-delivery";
 import {
   getPvcLinerBySku,
   parsePvcLinerColour,
@@ -42,7 +43,7 @@ export default async function PvcCheckoutPage({ searchParams }: PageProps) {
         showActions={false}
       />
       <SiteSection>
-        <PvcCheckoutForm liner={liner} colour={colour} initialQuantity={quantity} />
+        <PvcCheckoutForm liner={liner} colour={colour} initialQuantity={quantity} liveRates={courierCheckoutRatesEnabled()} />
       </SiteSection>
     </>
   );

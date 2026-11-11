@@ -50,6 +50,8 @@ export function deliveryContactFor(order: CourierOrderInput): CourierContact {
   return { name: order.customer_name, mobile_number: order.phone, email: order.email };
 }
 
+const parcelList = (parcel: ParcelInput | ParcelInput[]) => (Array.isArray(parcel) ? parcel : [parcel]);
+
 function parcelFor(order: CourierOrderInput, parcel: ParcelInput): CourierParcel {
   return {
     submitted_length_cm: parcel.lengthCm,
@@ -63,12 +65,12 @@ function parcelFor(order: CourierOrderInput, parcel: ParcelInput): CourierParcel
 export function buildRatesPayload(
   sender: { address: CourierAddress },
   order: CourierOrderInput,
-  parcel: ParcelInput,
+  parcel: ParcelInput | ParcelInput[],
 ) {
   return {
     collection_address: sender.address,
     delivery_address: deliveryAddressFor(order),
-    parcels: [parcelFor(order, parcel)],
+    parcels: parcelList(parcel).map((item) => parcelFor(order, item)),
     declared_value: Number(order.total_price_snapshot) || 0,
   };
 }
@@ -76,7 +78,7 @@ export function buildRatesPayload(
 export function buildShipmentPayload(
   sender: { address: CourierAddress; contact: CourierContact },
   order: CourierOrderInput,
-  parcel: ParcelInput,
+  parcel: ParcelInput | ParcelInput[],
   serviceCode: string,
 ) {
   return {
