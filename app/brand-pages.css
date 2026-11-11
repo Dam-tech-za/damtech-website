@@ -1528,3 +1528,7 @@
     margin-bottom: 5.5rem;
   }
 }
+.order-submit__note--problem {
+  color: #b42318;
+  font-weight: 600;
+}

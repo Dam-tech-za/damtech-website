@@ -58,6 +58,40 @@ export async function quotePvcCourierDelivery(
   return (await quotePvcCourierDeliveryWithReason(liner, quantity, address, fetcher, env)).quote;
 }
 
+type QuoteResult = { quote: CourierDeliveryQuote | null; reason: string | null; options?: string[] };
+
+/**
+ * Recent live quotes, per server instance, so the checkout page and the order
+ * step reuse one Courier Guy answer for the same liner and address instead of
+ * asking again (and the customer is charged exactly what they were shown).
+ */
+const QUOTE_TTL_MS = 15 * 60 * 1000;
+const QUOTE_CACHE_MAX = 500;
+const quoteCache = new Map<string, { at: number; result: QuoteResult }>();
+
+export function pvcQuoteCacheKey(liner: PvcLiner, quantity: number, address: CheckoutAddress): string {
+  return [liner.sku, quantity, address.billingLine1, address.suburb, address.city, address.province, address.postalCode]
+    .map((part) => String(part).trim().toLowerCase().replace(/\s+/g, " "))
+    .join("|");
+}
+
+/** Forget cached quotes (tests, or after the courier settings change). */
+export function clearPvcQuoteCache(): void {
+  quoteCache.clear();
+}
+
+/** A live quote for this liner and address from the last 15 minutes, if any. */
+export function cachedPvcCourierQuote(liner: PvcLiner, quantity: number, address: CheckoutAddress): QuoteResult | null {
+  const key = pvcQuoteCacheKey(liner, quantity, address);
+  const hit = quoteCache.get(key);
+  if (!hit) return null;
+  if (Date.now() - hit.at > QUOTE_TTL_MS) {
+    quoteCache.delete(key);
+    return null;
+  }
+  return hit.result;
+}
+
 /** Same as quotePvcCourierDelivery, plus why the fixed fee was used instead. */
 export async function quotePvcCourierDeliveryWithReason(
   liner: PvcLiner,
@@ -65,7 +99,9 @@ export async function quotePvcCourierDeliveryWithReason(
   address: CheckoutAddress,
   fetcher: typeof fetch = fetch,
   env: Record<string, string | undefined> = process.env,
-): Promise<{ quote: CourierDeliveryQuote | null; reason: string | null; options?: string[] }> {
+): Promise<QuoteResult> {
+  const cached = cachedPvcCourierQuote(liner, quantity, address);
+  if (cached) return cached;
   const fail = (reason: string) => ({ quote: null, reason });
   if (!courierCheckoutRatesEnabled(env)) return fail("Live courier rates are switched off.");
   const config = getCourierConfig(env);
@@ -116,7 +152,7 @@ export async function quotePvcCourierDeliveryWithReason(
   if (!Number.isFinite(feeInclVatCents) || feeInclVatCents < 1000) {
     return fail(`The Courier Guy returned a rate of R${cheapest.rate} for ${cheapest.serviceName}, which looks wrong.`);
   }
-  return {
+  const answer: QuoteResult = {
     quote: {
       feeInclVatCents,
       serviceCode: cheapest.serviceCode,
@@ -126,4 +162,7 @@ export async function quotePvcCourierDeliveryWithReason(
     reason: null,
     options,
   };
+  if (quoteCache.size >= QUOTE_CACHE_MAX) quoteCache.delete(quoteCache.keys().next().value as string);
+  quoteCache.set(pvcQuoteCacheKey(liner, quantity, address), { at: Date.now(), result: answer });
+  return answer;
 }

@@ -151,7 +151,10 @@ export function PvcCheckoutForm({
     startTransition(async () => {
       const result = await startPvcCheckout(formData);
       if (!result.success) {
-        if ("confirmDelivery" in result) setLiveQuote(result.confirmDelivery);
+        if ("confirmDelivery" in result) {
+          setQuoteProblem(null);
+          setLiveQuote(result.confirmDelivery);
+        }
         else setError(result.error);
         return;
       }
@@ -173,6 +176,8 @@ export function PvcCheckoutForm({
   const needsDeliveryQuote = liveRates && !collection && !liveQuote;
   const [quoting, setQuoting] = useState(false);
   const quotedFor = useRef("");
+  // Live rates on, but no rate came back: no fee is shown and payment waits.
+  const [quoteProblem, setQuoteProblem] = useState<{ message: string; debugReason?: string } | null>(null);
 
   /** Work out the delivery fee as soon as the address is complete. */
   function requestQuote(form: HTMLFormElement) {
@@ -190,7 +195,15 @@ export function PvcCheckoutForm({
     setQuoting(true);
     quotePvcDelivery(formData)
       .then((quote) => {
-        if (quotedFor.current === signature && quote) setLiveQuote(quote);
+        if (quotedFor.current !== signature || !quote) return;
+        if ("unavailable" in quote) {
+          setQuoteProblem({ message: quote.unavailable, debugReason: quote.debugReason });
+          // Let the next blur or "Calculate delivery" try again.
+          quotedFor.current = "";
+          return;
+        }
+        setQuoteProblem(null);
+        setLiveQuote(quote);
       })
       .catch(() => {
         quotedFor.current = "";
@@ -207,6 +220,7 @@ export function PvcCheckoutForm({
     const target = event.target as HTMLInputElement;
     if (!QUOTE_FIELDS.includes(target.name)) return;
     setLiveQuote(null);
+    setQuoteProblem(null);
     quotedFor.current = "";
     // Back from collection to delivery: quote straight away for the address already typed.
     // A dropdown (province) does not always blur, so quote on its change too.
@@ -472,7 +486,15 @@ export function PvcCheckoutForm({
                 {collection ? (
                   <span>No fee</span>
                 ) : totals.delivery === null ? (
-                  <span>{liveRates ? (quoting ? "Working it out…" : "Enter your address") : "Select a province"}</span>
+                  <span>
+                    {liveRates
+                      ? quoting
+                        ? "Working it out…"
+                        : quoteProblem
+                          ? "Not available yet"
+                          : "Enter your address"
+                      : "Select a province"}
+                  </span>
                 ) : (
                   <span className="order-money">{formatZarExactAmount(totals.delivery)}</span>
                 )}
@@ -509,6 +531,14 @@ export function PvcCheckoutForm({
               Delivery to your address is {formatZarExactAmount(liveQuote.feeInclVatCents / 100)} ({liveQuote.serviceName}).
               Check the total, then continue.
             </p>
+          ) : null}
+          {liveRates && !collection && !liveQuote && quoteProblem ? (
+            <p className="order-submit__note order-submit__note--problem" role="alert">
+              {quoteProblem.message}
+              {quoteProblem.debugReason ? ` (Test site only: ${quoteProblem.debugReason})` : ""}
+            </p>
+          ) : error ? (
+            <p className="order-submit__note order-submit__note--problem">{error}</p>
           ) : null}
           {payfast && payfastStuck ? (
             <p className="order-submit__note" role="status">

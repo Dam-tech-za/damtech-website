@@ -2,7 +2,13 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { PVC_LINERS } from "./pvc-liners.ts";
 import { pvcLinerPackedParcel, pvcLinerWeightKg } from "./pvc-packing.ts";
-import { courierCheckoutRatesEnabled, quotePvcCourierDelivery } from "./pvc-courier-delivery.ts";
+import { clearPvcQuoteCache, courierCheckoutRatesEnabled, quotePvcCourierDelivery as quoteUncached } from "./pvc-courier-delivery.ts";
+
+// Each call starts without cached quotes so every case asks the fake courier.
+const quotePvcCourierDelivery: typeof quoteUncached = (...args) => {
+  clearPvcQuoteCache();
+  return quoteUncached(...args);
+};
 
 test("liner weight is area x gsm and every liner has a packed size", () => {
   assert.equal(pvcLinerWeightKg({ linerAreaM2: 25, gsm: 550 }), 13.8);
@@ -113,4 +119,20 @@ test("tracking email carries the waybill and link and escapes names", async () =
   assert.match(email.text, /Tracking number: XYZ9/);
   assert.match(email.text, /Friday, 20 November 2026/);
   assert.ok(email.html.includes("track?ref=XYZ9") && !email.html.includes("<b>Customer"));
+});
+
+test("a live quote is reused for the same address instead of asking again", async () => {
+  clearPvcQuoteCache();
+  let calls = 0;
+  const counting = (async () => {
+    calls += 1;
+    return Response.json({ rates: [{ rate: 500, service_level: { code: "ECO", name: "Economy" } }] });
+  }) as unknown as typeof fetch;
+  const first = await quoteUncached(PVC_LINERS[0], 1, address, counting, env);
+  const again = await quoteUncached(PVC_LINERS[0], 1, { ...address, city: " kleinmond " }, counting, env);
+  assert.equal(calls, 1);
+  assert.deepEqual(first, again);
+  await quoteUncached(PVC_LINERS[0], 2, address, counting, env);
+  assert.equal(calls, 2);
+  clearPvcQuoteCache();
 });

@@ -19,13 +19,26 @@ import {
   PVC_LINER_MAX_QUANTITY,
 } from "@/lib/shop/pvc-liners";
 import { createPvcLinerOrder, pricePvcOrder } from "@/lib/shop/pvc-orders";
-import { quotePvcCourierDelivery, quotePvcCourierDeliveryWithReason } from "@/lib/shop/pvc-courier-delivery";
+import {
+  cachedPvcCourierQuote,
+  courierCheckoutRatesEnabled,
+  quotePvcCourierDelivery,
+  quotePvcCourierDeliveryWithReason,
+} from "@/lib/shop/pvc-courier-delivery";
+
+/** Shown when live courier rates are on but no rate came back. No fixed fee is charged instead. */
+const DELIVERY_UNAVAILABLE =
+  "We could not work out the delivery cost for this address right now. Check the address and try again in a minute, or contact us to order.";
+
+export type PvcDeliveryQuoteResult =
+  | { feeInclVatCents: number; serviceName: string; debugReason?: string; debugOptions?: string }
+  | { unavailable: string; debugReason?: string };
 import { enforceRateLimit } from "@/lib/rate-limit/client";
 import { publicClientRateKey, type RateLimitPolicy } from "@/lib/rate-limit/types";
 
 const DELIVERY_QUOTE_POLICY: RateLimitPolicy = {
   name: "public-delivery-quote",
-  limit: 30,
+  limit: 60,
   windowMs: 10 * 60 * 1000,
   onProviderError: "fail_open_public",
 };
@@ -54,7 +67,7 @@ const clean = (formData: FormData, name: string, max: number) =>
  */
 export async function quotePvcDelivery(
   formData: FormData,
-): Promise<{ feeInclVatCents: number; serviceName: string; debugReason?: string; debugOptions?: string } | null> {
+): Promise<PvcDeliveryQuoteResult | null> {
   const liner = getPvcLinerBySku(clean(formData, "sku", 40));
   const quantity = Math.trunc(Number(formData.get("quantity") ?? "1"));
   const province = clean(formData, "province", 40);
@@ -75,13 +88,16 @@ export async function quotePvcDelivery(
   if (!liner || !fixed || !isOrderableLiner(liner.sku, quantity)) return null;
   if (!address.billingLine1 || !address.suburb || !address.city || !address.postalCode) return null;
 
-  const limit = await enforceRateLimit(
-    publicClientRateKey(await headers(), "public-delivery-quote"),
-    DELIVERY_QUOTE_POLICY,
-  );
-  const result = limit.success
-    ? await quotePvcCourierDeliveryWithReason(liner, quantity, address)
-    : { quote: null, reason: "Too many delivery quotes from this connection; wait a few minutes." };
+  // A quote already worked out for this address costs nothing and is not rate limited.
+  const cached = cachedPvcCourierQuote(liner, quantity, address);
+  const limit = cached
+    ? { success: true }
+    : await enforceRateLimit(publicClientRateKey(await headers(), "public-delivery-quote"), DELIVERY_QUOTE_POLICY);
+  const result = cached
+    ? cached
+    : limit.success
+      ? await quotePvcCourierDeliveryWithReason(liner, quantity, address)
+      : { quote: null, reason: "Too many delivery quotes from this connection; wait a few minutes." };
   const preview = process.env.VERCEL_ENV !== "production";
   if (result.quote) {
     // The services Courier Guy offered, shown on preview deployments only, never to live customers.
@@ -92,8 +108,11 @@ export async function quotePvcDelivery(
       ...(debugOptions ? { debugOptions } : {}),
     };
   }
-  // Why the fixed fee was used, shown on preview deployments only, never to live customers.
+  // Why no live rate came back, shown on preview deployments only, never to live customers.
   const debugReason = preview && result.reason ? result.reason : undefined;
+  // With live rates on, never fall back to the fixed province fee: it can be far
+  // off the real courier cost. The customer tries again or contacts us.
+  if (courierCheckoutRatesEnabled()) return { unavailable: DELIVERY_UNAVAILABLE, ...(debugReason ? { debugReason } : {}) };
   return { feeInclVatCents: fixed.feeInclVatCents, serviceName: "Standard delivery", ...(debugReason ? { debugReason } : {}) };
 }
 
@@ -137,13 +156,17 @@ export async function startPvcCheckout(formData: FormData): Promise<StartPvcChec
   // have seen this exact fee before we create the order and send them to pay.
   let courier = null;
   if (!collection) {
-    const quoteLimit = await enforceRateLimit(
-      publicClientRateKey(await headers(), "public-delivery-quote"),
-      DELIVERY_QUOTE_POLICY,
-    );
-    courier = quoteLimit.success
-      ? await quotePvcCourierDelivery(liner, parsed.data.quantity, parsed.data)
-      : null;
+    courier = cachedPvcCourierQuote(liner, parsed.data.quantity, parsed.data)?.quote ?? null;
+    if (!courier && courierCheckoutRatesEnabled()) {
+      const quoteLimit = await enforceRateLimit(
+        publicClientRateKey(await headers(), "public-delivery-quote"),
+        DELIVERY_QUOTE_POLICY,
+      );
+      if (quoteLimit.success) courier = await quotePvcCourierDelivery(liner, parsed.data.quantity, parsed.data);
+    }
+    if (!courier && courierCheckoutRatesEnabled()) {
+      return { success: false, error: DELIVERY_UNAVAILABLE, field: "postalCode" };
+    }
     const shownCents = Number(formData.get("deliveryFeeShownCents") ?? "");
     if (courier && shownCents !== courier.feeInclVatCents) {
       return {
