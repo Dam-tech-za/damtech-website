@@ -59,6 +59,11 @@ export type PnlPeriod = {
   operatingExpenses: number;
   otherIncome: number;
   netProfit: number;
+  /** Individual expense accounts used by the year-end ratios (0 when Xero has no such account). */
+  interest?: number;
+  depreciation?: number;
+  incomeTax?: number;
+  marketing?: number;
 };
 
 const INCOME = [/^total (trading )?income$/, /^total revenue$/, /^total sales$/];
@@ -67,6 +72,17 @@ const GROSS = [/^gross profit$/];
 const OPEX = [/^total operating expenses$/, /^total expenses$/, /^total overheads$/];
 const OTHER_INCOME = [/^total other income$/];
 const NET = [/^net profit$/, /^net (income|loss)$/, /^net profit \(loss\)$/];
+const INTEREST = /^interest (expense|paid)$|^finance costs?$|^bank interest$/;
+const DEPRECIATION = /depreciation|amorti[sz]ation/;
+const INCOME_TAX = /^income tax( expense)?$|^company tax$|^taxation$/;
+const MARKETING = /advertis|marketing|promotion/;
+
+/** Sum of the non-total account lines whose label matches, in one column. */
+function sumAccounts(report: FlatReport, pattern: RegExp, key: string | number): number {
+  return report.lines
+    .filter((l) => !l.is_total && !/^total /.test(norm(l.label)) && pattern.test(norm(l.label)))
+    .reduce((s, l) => s + valueAt(l, key), 0);
+}
 
 /** One PnlPeriod per report column, in the report's order (Xero puts the latest first). */
 export function parseProfitAndLoss(report: FlatReport): PnlPeriod[] {
@@ -94,6 +110,56 @@ export function parseProfitAndLoss(report: FlatReport): PnlPeriod[] {
       operatingExpenses: round2(o),
       otherIncome: round2(oi),
       netProfit: round2(n),
+      interest: round2(sumAccounts(report, INTEREST, key)),
+      depreciation: round2(sumAccounts(report, DEPRECIATION, key)),
+      incomeTax: round2(sumAccounts(report, INCOME_TAX, key)),
+      marketing: round2(sumAccounts(report, MARKETING, key)),
+    };
+  });
+}
+
+/** One balance-sheet date (a report column). Current assets include the bank. */
+export type BalancePoint = {
+  label: string;
+  cash: number;
+  currentAssets: number;
+  inventory: number;
+  totalAssets: number;
+  currentLiabilities: number;
+  totalLiabilities: number;
+  equity: number;
+};
+
+const sumOf = (report: FlatReport, patterns: RegExp[], key: string | number) => {
+  const line = findLine(report, patterns);
+  return line ? valueAt(line, key) : null;
+};
+
+/**
+ * Xero's standard balance sheet: "Total Bank" and "Total Current Assets" are
+ * separate sections, so current assets for the ratios are their sum.
+ * One BalancePoint per column, in the report's order (latest first).
+ */
+export function parseBalanceSheet(report: FlatReport): BalancePoint[] {
+  const columns = report.columns.length ? report.columns : ["0"];
+  return columns.map((column, index) => {
+    const key = report.columns.length ? column : index;
+    const bank = sumOf(report, [/^total bank$/, /^total cash( and cash equivalents)?$/], key) ?? 0;
+    const otherCurrent = sumOf(report, [/^total current assets$/], key) ?? 0;
+    const inventory = sumAccounts(report, /^inventory$|^stock( on hand)?$/, key);
+    const totalAssets = sumOf(report, [/^total assets$/], key) ?? 0;
+    const currentLiabilities = sumOf(report, [/^total current liabilities$/], key) ?? 0;
+    const totalLiabilities = sumOf(report, [/^total liabilities$/], key) ?? currentLiabilities;
+    const equity = sumOf(report, [/^total equity$/, /^net assets$/], key) ?? totalAssets - totalLiabilities;
+    return {
+      label: column,
+      cash: round2(bank),
+      currentAssets: round2(bank + otherCurrent),
+      inventory: round2(inventory),
+      totalAssets: round2(totalAssets),
+      currentLiabilities: round2(currentLiabilities),
+      totalLiabilities: round2(totalLiabilities),
+      equity: round2(equity),
     };
   });
 }
@@ -231,5 +297,19 @@ export type FinancialSnapshot = {
   creditors: ReturnType<typeof ageDocuments>;
   forecast: ForecastMonth[];
   averageMonthlyOpex: number | null;
+  /** Balance sheet today, and at the last 12 month-ends (latest first). Missing on older refreshes. */
+  balanceToday?: BalancePoint | null;
+  balanceMonthEnds?: BalancePoint[];
+  /** Full previous financial year, and the previous year up to the same date. */
+  priorYear?: PnlPeriod | null;
+  priorYearToDate?: PnlPeriod | null;
+  /** Sales invoices (24 months) and Xero quotes (12 months), for customer and pipeline metrics. */
+  sales?: SaleRecord[];
+  quotes?: QuoteRecord[];
   warnings: string[];
 };
+
+/** One approved or paid sales invoice, excl. VAT. */
+export type SaleRecord = { contact: string; date: string; amount: number };
+/** One Xero quote. */
+export type QuoteRecord = { status: string; date: string | null; expiry: string | null; total: number; contact: string | null };

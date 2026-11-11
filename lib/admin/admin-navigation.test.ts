@@ -226,7 +226,7 @@ describe("section menu", () => {
   it("shows owners eight sections with sub-pages as tabs", async () => {
     const { visibleSections } = await import("./navigation.ts");
     const sections = visibleSections(getNavItemsForRole("owner"));
-    assert.deepEqual(sections.map((s) => s.section.label), ["Overview", "Enquiries", "Online purchases", "Liner courier", "Projects", "Customers", "Money", "Settings"]);
+    assert.deepEqual(sections.map((s) => s.section.label), ["Overview", "Enquiries", "Online purchases", "Liner courier", "Projects", "Customers", "Accounting", "Settings"]);
     assert.equal(sections.find((s) => s.section.id === "projects")?.href, "/admin/operations/projects/");
   });
 
@@ -273,7 +273,7 @@ describe("section menu", () => {
     assert.equal(activeSectionId("/admin/", items), "overview");
   });
 
-  it("hides Money from sales except the unmatched Xero tab", async () => {
+  it("hides Accounting from sales except the unmatched Xero tab", async () => {
     const { visibleSections } = await import("./navigation.ts");
     const money = visibleSections(getNavItemsForRole("sales")).find((s) => s.section.id === "money");
     assert.deepEqual(money?.tabs.map((t) => t.item.id), ["xero-review"]);
