@@ -14,7 +14,9 @@ const contentSecurityPolicy = [
   "default-src 'self'",
   "base-uri 'self'",
   // PayFast checkout posts the signed payment form to PayFast's hosted page.
-  "form-action 'self' https://www.payfast.co.za https://sandbox.payfast.co.za",
+  // Chrome also applies form-action to redirects, and live PayFast redirects
+  // between its payfast.co.za and payfast.io hosts.
+  "form-action 'self' https://www.payfast.co.za https://sandbox.payfast.co.za https://*.payfast.co.za https://payfast.io https://*.payfast.io",
   "frame-ancestors 'none'",
   "object-src 'none'",
   [
