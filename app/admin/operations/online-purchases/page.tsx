@@ -1,12 +1,11 @@
-import { courierStatusSummary } from "@/lib/courier";
-import { CourierTestPanel } from "@/components/admin/CourierTestPanel";
-import { canPerform } from "@/lib/auth/permissions";
 import Link from "next/link";
 import { Suspense } from "react";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { CourierTestPanel } from "@/components/admin/CourierTestPanel";
+import { courierStatusSummary } from "@/lib/courier";
 import { requireAdmin } from "@/lib/auth/require-admin";
-import { canAccessNavItem } from "@/lib/auth/permissions";
+import { canAccessNavItem, canPerform } from "@/lib/auth/permissions";
 import { orderStatusLabel } from "@/lib/admin/labels";
 import { formatZar } from "@/lib/estimating/money";
 import { fulfilmentLabel, isCollectionMethod } from "@/lib/shop/delivery";
