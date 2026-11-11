@@ -5354,148 +5354,30 @@ table.admin-sheet .admin-status {
 .ops-purchases__ref { font-weight: 650; font-variant-numeric: tabular-nums; }
 .ops-purchases__customer { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 400; font-size: 12px; color: #627d98; }
 .ops-order-actions { display: grid; gap: 0.75rem; margin: 0.75rem 0; }
-/* ---------------------------------------------------------------------------
-   Liner courier (/admin/operations/liner-courier/): form left, results right.
-   --------------------------------------------------------------------------- */
-.lc-tool {
-  display: grid;
-  gap: 1rem;
-  align-items: start;
-}
-@media (min-width: 1100px) {
-  .lc-tool {
-    grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
-  }
-  .lc-tool__history {
-    grid-column: 1 / -1;
-  }
-}
-.lc-tool__main,
-.lc-tool__side {
-  display: grid;
-  gap: 1rem;
-  min-width: 0;
-}
-.lc-tool .ops-track-form + .ops-track-form {
-  margin-top: 0.875rem;
-}
-.lc-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  align-items: center;
-}
-.lc-row > input {
-  flex: 1 1 14rem;
-}
-.lc-list {
-  display: grid;
-  gap: 0.375rem;
-  margin: 0.75rem 0 0;
-  padding: 0;
-  list-style: none;
-}
-.lc-list li {
-  display: flex;
-  justify-content: space-between;
-  gap: 0.5rem;
-  align-items: center;
-  padding: 0.5rem 0.75rem;
-  border: 1px solid var(--admin-border, #d9e2ec);
-  border-radius: 6px;
-}
-.lc-linked {
-  margin: 0.75rem 0 0;
-  font-size: 0.875rem;
-}
-.lc-segment {
-  display: inline-flex;
-  flex-wrap: wrap;
-  margin-bottom: 0.875rem;
-  border: 1px solid var(--admin-border, #d9e2ec);
-  border-radius: 6px;
-  overflow: hidden;
-}
-.lc-segment label {
-  display: inline-flex;
-  gap: 0.375rem;
-  align-items: center;
-  padding: 0.45rem 0.8rem;
-  font-size: 0.8125rem;
-  font-weight: 600;
-  cursor: pointer;
-}
-.lc-segment label.is-active {
-  background: var(--admin-primary-soft, #e6f0fa);
-}
-.lc-segment input {
-  position: absolute;
-  opacity: 0;
-  pointer-events: none;
-}
-.lc-facts {
-  display: grid;
-  gap: 0.25rem;
-  margin: 0 0 0.75rem;
-  font-size: 0.875rem;
-}
-.lc-facts > div {
-  display: flex;
-  justify-content: space-between;
-  gap: 1rem;
-  padding: 0.25rem 0;
-  border-bottom: 1px solid var(--admin-border, #d9e2ec);
-}
-.lc-facts dt,
-.lc-facts dd {
-  margin: 0;
-}
-.lc-facts dd {
-  font-variant-numeric: tabular-nums;
-  text-align: right;
-}
-.lc-facts__strong {
-  font-weight: 700;
-}
-.lc-parcel {
-  display: grid;
-  gap: 0.375rem;
-  margin: 0.75rem 0;
-  padding: 0;
-  border: 0;
-}
-.lc-parcel legend {
-  padding: 0 0 0.375rem;
-  font-size: 0.8125rem;
-  font-weight: 600;
-}
-.lc-parcel label {
-  display: flex;
-  gap: 0.5rem;
-  align-items: center;
-  font-size: 0.875rem;
-}
-.lc-summary {
-  display: grid;
-  gap: 0.5rem;
-  margin-top: 0.75rem;
-  padding: 0.75rem;
-  border-radius: 6px;
-  background: var(--admin-surface-muted, #f5f7fa);
-  font-size: 0.875rem;
-}
-.lc-summary p {
-  margin: 0;
-  overflow-wrap: anywhere;
-}
-.lc-brief {
-  margin: 0.75rem 0 0;
-  padding: 0.75rem;
-  max-height: 16rem;
-  overflow: auto;
-  border-radius: 6px;
-  background: var(--admin-surface-muted, #f5f7fa);
-  font-size: 0.8125rem;
-  white-space: pre-wrap;
-  overflow-wrap: anywhere;
-}
+/* Liner courier drawer (/admin/operations/liner-courier/): compact, same look as the order quick view. */
+.lc-form { display: grid; gap: 0.75rem; }
+.lc-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(6.5rem, 1fr)); gap: 0.6rem; }
+.lc-grid--2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.lc-grid--4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.lc-grid--size { grid-template-columns: repeat(auto-fill, minmax(5.5rem, 1fr)); }
+.lc-wide { grid-column: 1 / -1; }
+.lc-segment { display: inline-flex; justify-self: start; padding: 2px; border-radius: 8px; background: #eef2f7; }
+.lc-segment button { border: 0; background: none; padding: 0.3rem 0.8rem; border-radius: 6px; font: inherit; font-size: 0.8125rem; font-weight: 600; color: var(--admin-text-muted); cursor: pointer; }
+.lc-segment button.is-active { background: #fff; color: var(--admin-text); box-shadow: 0 1px 2px rgba(11, 31, 51, 0.12); }
+.lc-more > summary { cursor: pointer; font-size: 0.8125rem; color: var(--admin-text-muted); list-style: none; }
+.lc-more > summary::-webkit-details-marker { display: none; }
+.lc-more > summary::before { content: "▸ "; }
+.lc-more[open] > summary::before { content: "▾ "; }
+.lc-more[open] > summary { margin-bottom: 0.6rem; }
+.lc-result { display: block; }
+.lc-result__body { display: grid; gap: 0.45rem; }
+.lc-result__sep { color: var(--admin-text-muted); font-weight: 400; }
+.lc-result__parcel { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; font-weight: 600; font-size: 0.9375rem; }
+.lc-result__parcel select { width: auto; }
+.lc-find { display: flex; gap: 0.5rem; }
+.lc-find > input { flex: 1; min-width: 0; }
+.lc-linked { display: flex; align-items: center; gap: 0.5rem; margin: 0; }
+.lc-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; }
+.lc-quote { display: grid; gap: 0.6rem; padding-top: 0.75rem; border-top: 1px solid var(--admin-border); }
+.lc-quote__price { display: flex; flex-wrap: wrap; align-items: center; gap: 0.4rem; }
+.lc-quote__markup { width: 4.5rem; }

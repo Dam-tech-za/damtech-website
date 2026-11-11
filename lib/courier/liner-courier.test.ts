@@ -231,3 +231,20 @@ test("quotation line replaces the earlier courier line instead of adding a secon
   assert.equal(second[1].costUnitPrice, 2000);
   assert.deepEqual(second[0], other);
 });
+
+test("board stages: on a quotation, formal quote asked, rated, draft", async () => {
+  const { groupLinerQuotes, linerQuoteStage, matchesLinerQuoteSearch } = await import("./liner-board.ts");
+  const base = { quote_id: null, chosen_amount: null, formal_quote_status: "none", courier_rates: null };
+  assert.equal(linerQuoteStage(base), "draft");
+  assert.equal(linerQuoteStage({ ...base, courier_rates: [{}] }), "rated");
+  assert.equal(linerQuoteStage({ ...base, courier_rates: [{}], formal_quote_status: "brief_copied" }), "brief");
+  assert.equal(linerQuoteStage({ ...base, quote_id: "q", chosen_amount: 1150, formal_quote_status: "portal_opened" }), "quoted");
+  // A linked quote without a chosen rate is not yet on the quotation.
+  assert.equal(linerQuoteStage({ ...base, quote_id: "q" }), "draft");
+  const groups = groupLinerQuotes([base, { ...base, courier_rates: [{}] }]);
+  assert.deepEqual(groups.map((g) => [g.id, g.rows.length]), [["quoted", 0], ["brief", 0], ["rated", 1], ["draft", 1]]);
+  const row = { reference: "Q-2026-0101", customer_name: "A Farmer", delivery_address: { city: "Kleinmond", phone: "0820000000" } };
+  assert.ok(matchesLinerQuoteSearch(row, "kleinmond"));
+  assert.ok(matchesLinerQuoteSearch(row, "0101"));
+  assert.ok(!matchesLinerQuoteSearch(row, "durban"));
+});
