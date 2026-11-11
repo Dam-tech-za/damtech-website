@@ -1,0 +1,233 @@
+import { test } from "node:test";
+import assert from "node:assert/strict";
+import { PVC_LINER_PRICE_ROWS } from "../shop/pvc-liner-prices.generated.ts";
+import {
+  catalogueRuleParcel,
+  circularLinerArea,
+  foldLinerParcel,
+  linedWallHeightForRows,
+  listedHeightForRows,
+  rectangularLinerArea,
+  sheetThicknessMm,
+  volumetricWeightKg,
+} from "./liner-pack.ts";
+import {
+  buildCourierQuoteBrief,
+  buildCourierQuoteLine,
+  buildWhatsAppSummary,
+  checkJob,
+  declaredValueFor,
+  linerJobAsCourierOrder,
+  LINER_COURIER_LINE_SOURCE,
+  parcelsForQuantity,
+  quoteLineCopyText,
+  rateExVat,
+  upsertCourierQuoteLine,
+  whatsAppLink,
+  type LinerCourierJob,
+} from "./liner-quote.ts";
+import { buildRatesPayload, parseRates } from "./payloads.ts";
+import type { QuoteLineInput } from "../quotes/types.ts";
+
+const area = (result: ReturnType<typeof circularLinerArea>) => {
+  assert.ok(result.ok, result.ok ? "" : result.error);
+  return result.area;
+};
+const fold = (a: ReturnType<typeof area>, gsm: number) =>
+  foldLinerParcel({ flatLengthM: a.flatLengthM, flatWidthM: a.flatWidthM, areaM2: a.materialAreaM2, gsm });
+
+test("tank rows: listed height and lined height after 50 mm overlaps", () => {
+  assert.equal(listedHeightForRows(2), 1.524);
+  assert.equal(listedHeightForRows(3), 2.286);
+  assert.equal(linedWallHeightForRows(2), 1.474);
+  assert.equal(linedWallHeightForRows(3), 2.186);
+  assert.equal(linedWallHeightForRows(4), 2.898);
+});
+
+test("circular area reproduces every catalogue liner area to 0.1 m²", () => {
+  for (const row of PVC_LINER_PRICE_ROWS) {
+    const a = area(circularLinerArea({ diameterM: row.diameterM, wallHeightM: linedWallHeightForRows(row.rows) }));
+    assert.ok(Math.abs(a.materialAreaM2 - row.linerAreaM2) <= 0.1, `${row.diameterM} m ${row.rows} rows: ${a.materialAreaM2} vs ${row.linerAreaM2}`);
+  }
+});
+
+test("circular area: formula parts and waste applied once", () => {
+  const a = area(circularLinerArea({ diameterM: 5, wallHeightM: 2, foldOverM: 0.3, wastePercent: 0 }));
+  const expected = Math.PI * 6.25 + Math.PI * 5 * 2.3;
+  assert.equal(a.materialAreaM2, Math.round(expected * 10) / 10);
+  const withWaste = area(circularLinerArea({ diameterM: 5, wallHeightM: 2, foldOverM: 0.3, wastePercent: 5 }));
+  assert.equal(withWaste.materialAreaM2, Math.round(expected * 1.05 * 10) / 10);
+  assert.equal(withWaste.installationAreaM2, Math.round((Math.PI * 6.25 + Math.PI * 10) * 100) / 100);
+  assert.equal(circularLinerArea({ diameterM: 0, wallHeightM: 2 }).ok, false);
+  assert.equal(circularLinerArea({ diameterM: 5, wallHeightM: 2, wastePercent: -1 }).ok, false);
+});
+
+test("rectangular area: vertical-wall box liner", () => {
+  // 4 x 3 x 1.5 m, 0.3 m fold-over, 5% overlap then 5% waste.
+  const a = area(rectangularLinerArea({ lengthM: 4, widthM: 3, depthM: 1.5 }));
+  const base = 12 + 2 * 4 * 1.5 + 2 * 3 * 1.5 + 14 * 0.3;
+  assert.equal(a.installationAreaM2, 33);
+  assert.equal(a.materialAreaM2, Math.round(base * 1.05 * 1.05 * 10) / 10);
+  assert.equal(a.overlapPercentApplied, 5);
+  assert.equal(a.wastePercentApplied, 5);
+  assert.equal(a.flatLengthM, 4 + 2 * 1.8);
+  assert.equal(a.flatWidthM, 3 + 2 * 1.8);
+});
+
+test("rectangular area: sloped earth dam matches the RFQ dam geometry", () => {
+  // Same as calculateRectangularDam: 20 x 12 top, 2.5 deep, 1.5:1 slopes, 1.2 m anchor run-out.
+  const a = area(rectangularLinerArea({ lengthM: 20, widthM: 12, depthM: 2.5, sideSlopeZH: 1.5, foldOverM: 0, anchorRunoutM: 1.2, overlapPercent: 5, wastePercent: 5 }));
+  const lb = 20 - 7.5;
+  const wb = 12 - 7.5;
+  const s = Math.sqrt(2.5 ** 2 + 3.75 ** 2);
+  const floor = lb * wb;
+  const walls = (20 + lb) * s + (12 + wb) * s;
+  assert.equal(a.installationAreaM2, Math.round((floor + walls) * 100) / 100);
+  const material = Math.round((floor + walls + 64 * 1.2) * 1.05 * 1.05 * 100) / 100;
+  assert.equal(a.materialAreaM2, Math.round(material * 10) / 10);
+  assert.equal(rectangularLinerArea({ lengthM: 4, widthM: 3, depthM: 2, sideSlopeZH: 1 }).ok, false);
+});
+
+test("fabric thickness from gsm", () => {
+  assert.equal(sheetThicknessMm(550), 0.423);
+  assert.equal(sheetThicknessMm(800), 0.615);
+});
+
+test("fold: tiny liner stays a small parcel", () => {
+  const a = area(rectangularLinerArea({ lengthM: 1, widthM: 0.6, depthM: 0.4, foldOverM: 0.1 }));
+  const parcel = fold(a, 550);
+  assert.ok(parcel.lengthCm <= 40 && parcel.heightCm >= 2, JSON.stringify(parcel));
+  assert.ok(parcel.weightKg > 0 && parcel.weightKg < 3);
+  assert.ok(parcel.fitsMaxEdge);
+  assert.match(parcel.note, /folded into/);
+});
+
+test("fold: catalogue 5 m x 3-row 550 gsm fits inside the 100 x 40 x 40 rule", () => {
+  const a = area(circularLinerArea({ diameterM: 5, wallHeightM: linedWallHeightForRows(3) }));
+  assert.equal(a.materialAreaM2, 61.6);
+  const parcel = fold(a, 550);
+  const rule = catalogueRuleParcel(a.materialAreaM2, 550);
+  assert.equal(parcel.weightKg, 33.9);
+  assert.equal(rule.weightKg, 33.9);
+  assert.ok(parcel.lengthCm * parcel.widthCm * parcel.heightCm <= rule.lengthCm * rule.widthCm * rule.heightCm);
+  // Solid fabric volume x2 must fit in the bundle (no impossible compression).
+  const solidLitres = (61.6 * 0.423) / 1000 * 1000 * 2;
+  assert.ok((parcel.lengthCm * parcel.widthCm * parcel.heightCm) / 1000 >= solidLitres);
+});
+
+test("fold: huge 17 m x 3-row 800 gsm is close to the rule of thumb volume", () => {
+  const a = area(circularLinerArea({ diameterM: 17, wallHeightM: linedWallHeightForRows(3) }));
+  const parcel = fold(a, 800);
+  const rule = catalogueRuleParcel(a.materialAreaM2, 800);
+  assert.equal(parcel.weightKg, 302.2);
+  assert.ok(parcel.fitsMaxEdge && parcel.lengthCm <= 100);
+  const ratio = (parcel.lengthCm * parcel.widthCm * parcel.heightCm) / (rule.lengthCm * rule.widthCm * rule.heightCm);
+  assert.ok(ratio > 0.7 && ratio < 1.4, `volume ratio ${ratio}`);
+  // Heavy PVC: the courier charges on actual weight, not volume.
+  assert.ok(parcel.weightKg > parcel.volumetricWeightKg);
+});
+
+test("fold: a rectangular dam liner", () => {
+  const a = area(rectangularLinerArea({ lengthM: 20, widthM: 12, depthM: 2.5, sideSlopeZH: 1.5, anchorRunoutM: 1.2 }));
+  const parcel = fold(a, 800);
+  assert.ok(parcel.fitsMaxEdge);
+  assert.ok(parcel.layers === parcel.panelsAlongLength * parcel.panelsAlongWidth);
+  assert.ok(parcel.lengthCm >= parcel.widthCm && parcel.widthCm >= parcel.heightCm);
+});
+
+test("fold: a smaller max edge gives a smaller longest side, or says it cannot", () => {
+  const a = area(circularLinerArea({ diameterM: 17, wallHeightM: linedWallHeightForRows(3) }));
+  const tight = foldLinerParcel({ flatLengthM: a.flatLengthM, flatWidthM: a.flatWidthM, areaM2: a.materialAreaM2, gsm: 800 }, { maxEdgeCm: 60 });
+  assert.equal(tight.fitsMaxEdge, false);
+  assert.match(tight.note, /over 60 cm/);
+  assert.equal(volumetricWeightKg({ lengthCm: 100, widthCm: 50, heightCm: 50 }), 50);
+});
+
+const job: LinerCourierJob = {
+  reference: "Q-2026-0101",
+  customerName: "A Farmer",
+  companyName: "",
+  phone: "082 000 0000",
+  email: "farmer@example.com",
+  street: "5 Farm Road",
+  suburb: "Kleinmond",
+  city: "Kleinmond",
+  province: "Western Cape",
+  postalCode: "7195",
+  description: "550 gsm PVC liner 5 m x 2.19 m",
+  declaredValue: 45_000,
+  notes: "Gate code 1234",
+};
+
+test("ad-hoc job: checks, order shape and rates payload with capped declared value", () => {
+  assert.deepEqual(checkJob(job), { ok: true });
+  assert.equal(checkJob({ ...job, postalCode: "71" }).ok, false);
+  assert.equal(checkJob({ ...job, province: "Atlantis" }).ok, false);
+  assert.match((checkJob({ ...job, street: " " }) as { error: string }).error, /street/);
+  assert.deepEqual(declaredValueFor(45_000), { value: 30_000, capped: true });
+  assert.deepEqual(declaredValueFor(-5), { value: 0, capped: false });
+
+  const order = linerJobAsCourierOrder(job);
+  assert.equal(order.customer_type, "individual");
+  const parcels = parcelsForQuantity({ lengthCm: 40, widthCm: 40, heightCm: 40, weightKg: 33.9 }, 2);
+  assert.equal(parcels.length, 2);
+  const payload = buildRatesPayload(
+    { address: { type: "business", street_address: "1 Depot", local_area: "Betty's Bay", city: "Betty's Bay", zone: "Western Cape", country: "ZA", code: "7141" } },
+    order,
+    parcels,
+  );
+  assert.equal(payload.declared_value, 30_000);
+  assert.equal(payload.parcels.length, 2);
+  assert.equal(payload.parcels[1].submitted_weight_kg, 33.9);
+  assert.equal(payload.delivery_address.code, "7195");
+  assert.equal(payload.delivery_address.type, "residential");
+  assert.equal(linerJobAsCourierOrder({ ...job, companyName: "Farm Co" }).customer_type, "business");
+});
+
+test("rates: ex-VAT figure is the courier's when stated, else derived", () => {
+  const [stated] = parseRates({ rates: [{ rate: 1150, rate_excluding_vat: 1000, service_level: { code: "ECO", name: "Economy" } }] });
+  assert.equal(stated.rateExVat, 1000);
+  assert.deepEqual(rateExVat(stated), { exVat: 1000, stated: true });
+  const [plain] = parseRates({ rates: [{ rate: 1150, service_level: { code: "ECO", name: "Economy" } }] });
+  assert.equal("rateExVat" in plain, false);
+  assert.deepEqual(rateExVat(plain), { exVat: 1000, stated: false });
+});
+
+test("summary, brief and WhatsApp link", () => {
+  const parcel = { lengthCm: 40, widthCm: 40, heightCm: 40, weightKg: 33.9 };
+  const summary = buildWhatsAppSummary({ areaM2: 61.6, gsm: 550, parcel, quantity: 1, depotLabel: "Betty's Bay", city: "Kleinmond", rate: { serviceName: "Economy", rate: 1150 } });
+  assert.match(summary, /550 gsm PVC liner \(61.6 m²\) · 40×40×40 cm, 33.9 kg · Betty's Bay → Kleinmond · The Courier Guy Economy: R1 150\.00 incl\. VAT/);
+  const brief = buildCourierQuoteBrief({ areaM2: 61.6, gsm: 550, parcel, quantity: 2, depotLabel: "Betty's Bay", city: "Kleinmond", job, collection: "Betty's Bay depot" });
+  assert.match(brief, /please quote, do not book yet/);
+  assert.match(brief, /2 × \(40×40×40 cm, 33\.9 kg\)/);
+  assert.match(brief, /capped at R30 000/);
+  assert.match(brief, /Gate code 1234/);
+  assert.equal(whatsAppLink("082 000 0000", "hi there"), "https://wa.me/27820000000?text=hi%20there");
+});
+
+test("quotation line: delivery type, cost ex VAT, markup or entered sell", () => {
+  const input = { rate: { serviceName: "Economy", serviceCode: "ECO", rate: 1150 }, parcel: { lengthCm: 40, widthCm: 40, heightCm: 40, weightKg: 33.9 }, quantity: 1, depotLabel: "Pretoria", city: "Polokwane", markupPercent: 20 };
+  const line = buildCourierQuoteLine(input, 3);
+  assert.equal(line.lineType, "delivery");
+  assert.equal(line.costUnitPrice, 1000);
+  assert.equal(line.sellUnitPrice, 1200);
+  assert.equal(line.metadata?.source, LINER_COURIER_LINE_SOURCE);
+  assert.match(line.description, /^Courier delivery — The Courier Guy \(Economy\) · 40×40×40 cm, 33\.9 kg · Pretoria → Polokwane$/);
+  assert.equal(buildCourierQuoteLine({ ...input, sellExVat: 1500 }, 0).sellUnitPrice, 1500);
+  assert.match(quoteLineCopyText(line), /Sell R1 200\.00 excl\. VAT \(R1 380\.00 incl\. VAT\)/);
+});
+
+test("quotation line replaces the earlier courier line instead of adding a second", () => {
+  const other: QuoteLineInput = { id: "a", sortOrder: 0, lineType: "material", description: "Liner", quantity: 1, unit: "each", sellUnitPrice: 9000, discountPercent: 0, taxCategory: "standard" };
+  const input = { rate: { serviceName: "Economy", serviceCode: "ECO", rate: 1150 }, parcel: { lengthCm: 40, widthCm: 40, heightCm: 40, weightKg: 33.9 }, quantity: 1, depotLabel: "Pretoria", city: "Polokwane" };
+  const first = upsertCourierQuoteLine([other], buildCourierQuoteLine(input, 0));
+  assert.equal(first.length, 2);
+  assert.equal(first[1].sortOrder, 1);
+  const withId = [first[0], { ...first[1], id: "b" }];
+  const second = upsertCourierQuoteLine(withId, buildCourierQuoteLine({ ...input, rate: { ...input.rate, rate: 2300 } }, 0));
+  assert.equal(second.length, 2);
+  assert.equal(second[1].id, "b");
+  assert.equal(second[1].sortOrder, 1);
+  assert.equal(second[1].costUnitPrice, 2000);
+  assert.deepEqual(second[0], other);
+});

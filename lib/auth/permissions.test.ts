@@ -13,13 +13,14 @@ import { RATE_LIMITS, rateLimit } from "../security/rate-limit.ts";
 describe("admin permissions", () => {
   it("grants owner access to all nav items", () => {
     const items = getNavItemsForRole("owner");
-    assert.equal(items.length, 17);
+    assert.equal(items.length, 18);
     assert.ok(items.some((item) => item.id === "financials"));
     assert.ok(items.some((item) => item.id === "operations"));
     assert.ok(items.some((item) => item.id === "ops-projects"));
     assert.ok(items.some((item) => item.id === "xero-review"));
     assert.ok(items.some((item) => item.id === "procurement"));
     assert.ok(items.some((item) => item.id === "online-purchases"));
+    assert.ok(items.some((item) => item.id === "liner-courier"));
     assert.ok(items.some((item) => item.id === "project-templates"));
     assert.ok(items.some((item) => item.id === "settings"));
     assert.ok(items.some((item) => item.id === "audit"));
@@ -32,6 +33,8 @@ describe("admin permissions", () => {
     assert.equal(canAccessNavItem("viewer", "online-purchases"), true);
     assert.equal(canPerform("viewer", "manageOrders"), false);
     assert.equal(canPerform("sales", "manageOrders"), true);
+    assert.equal(canAccessNavItem("viewer", "liner-courier"), false);
+    assert.equal(canAccessNavItem("sales", "liner-courier"), true);
   });
 
   it("allows sales to manage quotes but not approve", () => {

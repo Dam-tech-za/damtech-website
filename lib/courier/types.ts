@@ -24,6 +24,8 @@ export type CourierRate = {
   serviceName: string;
   /** Rand, as quoted by the courier (their account pricing, incl. VAT where they include it). */
   rate: number;
+  /** Rand excl. VAT, only when the courier's answer states it (rate_excluding_vat). */
+  rateExVat?: number;
   deliveryFrom: string | null;
   deliveryTo: string | null;
 };

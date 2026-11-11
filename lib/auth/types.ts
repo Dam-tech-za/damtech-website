@@ -25,6 +25,7 @@ export type AdminNavItemId =
   | "operations"
   | "ops-projects"
   | "online-purchases"
+  | "liner-courier"
   | "ops-calendar"
   | "xero-review"
   | "procurement"

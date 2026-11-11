@@ -223,10 +223,10 @@ describe("operations navigation", () => {
 });
 
 describe("section menu", () => {
-  it("shows owners seven sections with sub-pages as tabs", async () => {
+  it("shows owners eight sections with sub-pages as tabs", async () => {
     const { visibleSections } = await import("./navigation.ts");
     const sections = visibleSections(getNavItemsForRole("owner"));
-    assert.deepEqual(sections.map((s) => s.section.label), ["Overview", "Enquiries", "Online purchases", "Projects", "Customers", "Money", "Settings"]);
+    assert.deepEqual(sections.map((s) => s.section.label), ["Overview", "Enquiries", "Online purchases", "Liner courier", "Projects", "Customers", "Money", "Settings"]);
     assert.equal(sections.find((s) => s.section.id === "projects")?.href, "/admin/operations/projects/");
   });
 
@@ -248,6 +248,19 @@ describe("section menu", () => {
     }
     const enquiries = visibleSections(getNavItemsForRole("owner")).find((s) => s.section.id === "enquiries");
     assert.ok(!enquiries?.tabs.some((t) => t.item.id === "online-purchases"));
+  });
+
+  it("puts Liner courier directly under Online purchases, for the roles that manage orders", async () => {
+    const { visibleSections, activeSectionId } = await import("./navigation.ts");
+    for (const role of ["owner", "admin", "sales", "estimator"] as const) {
+      const items = getNavItemsForRole(role);
+      const ids = visibleSections(items).map((s) => s.section.id);
+      assert.equal(ids[ids.indexOf("shop") + 1], "courier-quotes", `${role}: Liner courier follows Online purchases`);
+      const courier = visibleSections(items).find((s) => s.section.id === "courier-quotes");
+      assert.equal(courier?.href, "/admin/operations/liner-courier/");
+      assert.equal(activeSectionId("/admin/operations/liner-courier/", items), "courier-quotes");
+    }
+    assert.ok(!visibleSections(getNavItemsForRole("viewer")).some((s) => s.section.id === "courier-quotes"));
   });
 
   it("highlights exactly one section for a page, including detail pages", async () => {

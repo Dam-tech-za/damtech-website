@@ -26,6 +26,8 @@ const NAV_ACCESS: Record<AdminNavItemId, readonly AdminRole[]> = {
   operations: ["owner", "admin", "sales", "estimator", "viewer"],
   "ops-projects": ["owner", "admin", "sales", "estimator", "viewer"],
   "online-purchases": ["owner", "admin", "sales", "estimator", "viewer"],
+  // Same roles as manageOrders: the page only quotes, so viewers have nothing to do there.
+  "liner-courier": ["owner", "admin", "sales", "estimator"],
   "ops-calendar": ["owner", "admin", "sales", "estimator", "viewer"],
   "xero-review": ["owner", "admin", "sales", "estimator"],
   procurement: ["owner", "admin", "sales", "estimator", "viewer"],
@@ -65,6 +67,12 @@ export const ADMIN_NAV_ITEMS: AdminNavItem[] = [
     label: "Online Purchases",
     href: "/admin/operations/online-purchases/",
     description: "Shop orders, payment and delivery tracking",
+  },
+  {
+    id: "liner-courier",
+    label: "Liner courier",
+    href: "/admin/operations/liner-courier/",
+    description: "Courier Guy rate for a custom liner, onto a quotation",
   },
   {
     id: "ops-calendar",
