@@ -78,9 +78,10 @@ async function request(
       return result;
     }
     if (!result.authRefused) {
-      // A later host that cannot be reached must not hide why the first one refused.
-      if (refused.length === 0) last = result;
-      else last = { ok: false, error: `${last.ok ? "" : last.error} (Also tried ${host.replace(/^https:\/\//, "")}: ${result.error})` };
+      // This host accepted the key (it answered with another error), so use it first next time.
+      if (result.status && result.status >= 400 && result.status < 500) workingHost.set(config.apiKey, host);
+      // Report this host's own answer (and status) rather than the earlier key refusal.
+      last = refused.length === 0 ? result : { ...result, error: `${result.error} (${refused.join(" and ")} refused the key.)` };
       break;
     }
     last = result;

@@ -2,10 +2,12 @@ import Link from "next/link";
 import { formatZarExactAmount } from "@/lib/catalogue/format";
 import {
   getPvcLinerBySku,
+  isPvcLinerSoldOnline,
   PVC_LINER_GSM_OPTIONS,
   PVC_LINER_ROWS_OPTIONS,
   pvcLinerDiametersForRows,
   pvcLinerProductPath,
+  pvcLinerQuotePath,
   pvcLinerSku,
 } from "@/lib/shop/pvc-liners";
 
@@ -39,7 +41,15 @@ export function PvcLinerSizeTable() {
                       <td>{liners[0] ? `${Math.round(liners[0].volumeKl)} kL` : ""}</td>
                       {liners.map((liner, index) => (
                         <td key={PVC_LINER_GSM_OPTIONS[index]}>
-                          {liner ? (
+                          {liner && !isPvcLinerSoldOnline(liner) ? (
+                            <Link
+                              href={pvcLinerQuotePath(liner)}
+                              className="text-water hover:underline"
+                              aria-label={`Request a quote for the ${liner.name}`}
+                            >
+                              Request Quote
+                            </Link>
+                          ) : liner ? (
                             <Link
                               href={pvcLinerProductPath(liner)}
                               className="text-water hover:underline"

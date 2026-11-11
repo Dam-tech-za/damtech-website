@@ -14,7 +14,9 @@ import {
   PVC_LINER_GSM_OPTIONS,
   PVC_LINER_MANUFACTURE_LABEL,
   PVC_LINER_ROWS_OPTIONS,
+  isPvcLinerSoldOnline,
   pvcLinerDiametersForRows,
+  pvcLinerQuotePath,
   pvcLinerProductPath,
   pvcLinerSku,
   type PvcLinerColour,
@@ -158,7 +160,13 @@ export function PvcLinerPicker({
                 {liner.name}, {colour}
               </p>
               <p className="pvc-picker__price">
-                {formatZarExactAmount(liner.priceInclVatZar)} <span>incl. VAT</span>
+                {isPvcLinerSoldOnline(liner) ? (
+                  <>
+                    {formatZarExactAmount(liner.priceInclVatZar)} <span>incl. VAT</span>
+                  </>
+                ) : (
+                  "Price on request"
+                )}
               </p>
             </div>
           </div>
@@ -179,19 +187,33 @@ export function PvcLinerPicker({
             </div>
             <div>
               <dt>Delivery</dt>
-              <dd>Fixed fee per province, shown at checkout</dd>
+              <dd>
+                {isPvcLinerSoldOnline(liner)
+                  ? "Worked out from your address at checkout"
+                  : "Quoted with the liner for this size"}
+              </dd>
             </div>
           </dl>
-          <Link
-            href={`${PVC_LINER_CHECKOUT_PATH}?sku=${encodeURIComponent(liner.sku)}&colour=${colour}&qty=1`}
-            className="btn-primary pvc-picker__buy"
-          >
-            Buy now
-          </Link>
+          {isPvcLinerSoldOnline(liner) ? (
+            <Link
+              href={`${PVC_LINER_CHECKOUT_PATH}?sku=${encodeURIComponent(liner.sku)}&colour=${colour}&qty=1`}
+              className="btn-primary pvc-picker__buy"
+            >
+              Buy now
+            </Link>
+          ) : (
+            <Link href={pvcLinerQuotePath(liner)} className="btn-primary pvc-picker__buy">
+              Request Quote
+            </Link>
+          )}
           <Link href={pvcLinerProductPath(liner)} className="pvc-picker__details">
             View product details
           </Link>
-          <p className="pvc-picker__note">Secure payment by card or Instant EFT through PayFast.</p>
+          <p className="pvc-picker__note">
+            {isPvcLinerSoldOnline(liner)
+              ? "Secure payment by card or Instant EFT through PayFast."
+              : "Larger liners are quoted with delivery, not sold online."}
+          </p>
         </div>
       ) : null}
     </div>

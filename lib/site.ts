@@ -116,7 +116,8 @@ export const OFFICES = [
     id: "pretoria",
     name: "Gauteng — Pretoria",
     publicLabel: "Gauteng service area",
-    phone: siteConfig.phone,
+    // Gauteng service-area line (Tiaan, 2026-11-11). The main number stays siteConfig.phone.
+    phone: "+27 67 358 7425",
     googleBusinessProfileUrl: "https://share.google/g5SH5mH2fQ3N9mM0X",
     showStreetAddress: false,
     address: {

@@ -13,6 +13,7 @@ import { buildPvcLinerProductSchema } from "@/lib/shop/pvc-merchant";
 import {
   getPvcLinerBySku,
   getPvcLinerBySlug,
+  isPvcLinerSoldOnline,
   PVC_LINER_COLOUR_IMAGES,
   PVC_LINER_GSM_OPTIONS,
   PVC_LINER_MANUFACTURE_LABEL,
@@ -40,9 +41,14 @@ export async function generateMetadata({ params }: Props) {
   const { sku } = await params;
   const liner = getPvcLinerBySlug(sku);
   if (!liner) return {};
+  const online = isPvcLinerSoldOnline(liner);
   return createMetadata({
-    title: `${liner.gsm} gsm PVC Tank Liner ${pvcLinerSizeLabel(liner)} | Buy Online`,
-    description: `Buy a ${liner.gsm} gsm PVC liner for a ${liner.diameterM} m, ${liner.rows}-row steel tank (about ${Math.round(liner.volumeKl)} kL). ${formatZarExactAmount(liner.priceInclVatZar)} incl. VAT, blue or black.`,
+    title: online
+      ? `${liner.gsm} gsm PVC Tank Liner ${pvcLinerSizeLabel(liner)} | Buy Online`
+      : `${liner.gsm} gsm PVC Tank Liner ${pvcLinerSizeLabel(liner)} | Request a Quote`,
+    description: online
+      ? `Buy a ${liner.gsm} gsm PVC liner for a ${liner.diameterM} m, ${liner.rows}-row steel tank (about ${Math.round(liner.volumeKl)} kL). ${formatZarExactAmount(liner.priceInclVatZar)} incl. VAT, blue or black.`
+      : `Made-to-order ${liner.gsm} gsm PVC liner for a ${liner.diameterM} m, ${liner.rows}-row steel tank (about ${Math.round(liner.volumeKl)} kL), blue or black. Request a quote with delivery.`,
     path: pvcLinerProductPath(liner),
     image: PVC_LINER_COLOUR_IMAGES.blue.src,
     imageAlt: PVC_LINER_COLOUR_IMAGES.blue.alt,
@@ -55,6 +61,10 @@ export default async function PvcLinerProductPage({ params }: Props) {
   if (!liner) notFound();
 
   const path = pvcLinerProductPath(liner);
+  const online = isPvcLinerSoldOnline(liner);
+  const productSchema = buildPvcLinerProductSchema(liner);
+  const priceLabel = (item: PvcLiner) =>
+    isPvcLinerSoldOnline(item) ? `${formatZarExactAmount(item.priceInclVatZar)} incl. VAT` : "price on request";
   const breadcrumbs = [
     { name: "Home", path: "/" },
     { name: "Shop", path: "/shop" },
@@ -67,7 +77,7 @@ export default async function PvcLinerProductPage({ params }: Props) {
   const relatedLinks = [
     ...otherGsm.map((item) => ({
       href: pvcLinerProductPath(item),
-      label: `Same size in ${item.gsm} gsm, ${formatZarExactAmount(item.priceInclVatZar)} incl. VAT`,
+      label: `Same size in ${item.gsm} gsm, ${priceLabel(item)}`,
     })),
     { href: "/pvc-tank-liners/#choose-size", label: "Choose a different tank size" },
     { href: "/pvc-tank-liners/#how-to-measure", label: "How to measure your tank" },
@@ -77,12 +87,12 @@ export default async function PvcLinerProductPage({ params }: Props) {
 
   return (
     <>
-      <PageSeo breadcrumbs={breadcrumbs} schemas={[buildPvcLinerProductSchema(liner)]} />
+      <PageSeo breadcrumbs={breadcrumbs} schemas={productSchema ? [productSchema] : []} />
       <Hero
         compact
-        eyebrow={`${liner.sku} · ${formatZarExactAmount(liner.priceInclVatZar)} incl. VAT`}
+        eyebrow={online ? `${liner.sku} · ${formatZarExactAmount(liner.priceInclVatZar)} incl. VAT` : `${liner.sku} · Price on request`}
         title={heading(liner)}
-        description={`Made-to-order liner in blue or black for a ${liner.diameterM} m diameter, ${liner.rows}-row corrugated steel tank of about ${Math.round(liner.volumeKl)} kL. Pay securely online.`}
+        description={`Made-to-order liner in blue or black for a ${liner.diameterM} m diameter, ${liner.rows}-row corrugated steel tank of about ${Math.round(liner.volumeKl)} kL. ${online ? "Pay securely online." : "Request a quote with delivery."}`}
         breadcrumbs={breadcrumbs}
         showActions={false}
       />

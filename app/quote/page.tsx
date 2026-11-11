@@ -7,6 +7,7 @@ import { SimpleQuoteForm } from "@/components/SimpleQuoteForm";
 import { resolveCatalogueSelectionFromParams } from "@/lib/catalogue";
 import { createPageMetadata, PAGE_SEO } from "@/lib/pages";
 import { normaliseServiceOption } from "@/lib/form";
+import { getPvcLinerBySku } from "@/lib/shop/pvc-liners";
 import {
   LazyCTA as CTA,
   LazyInternalServiceLinks as InternalServiceLinks,
@@ -25,6 +26,14 @@ export default async function QuotePage({ searchParams }: QuotePageProps) {
   const catalogueLine = resolveCatalogueSelectionFromParams(params);
   const serviceParam = Array.isArray(params.service) ? params.service[0] : params.service;
   const defaultService = serviceParam ? (normaliseServiceOption(serviceParam) ?? "") : "";
+  // A PVC liner sent from the shop (too big to buy online): name it in the message.
+  const linerParam = Array.isArray(params.liner) ? params.liner[0] : params.liner;
+  const quoteLiner = linerParam ? getPvcLinerBySku(linerParam) : null;
+  const qtyParam = Math.trunc(Number(Array.isArray(params.qty) ? params.qty[0] : params.qty));
+  const linerQty = Number.isFinite(qtyParam) && qtyParam > 0 ? Math.min(qtyParam, 99) : 1;
+  const defaultMessage = quoteLiner
+    ? `Please quote ${linerQty} x ${quoteLiner.name} (${quoteLiner.sku}), blue or black, delivered to my address. Installation: please say if you need it.`
+    : undefined;
 
   return (
     <>
@@ -59,6 +68,7 @@ export default async function QuotePage({ searchParams }: QuotePageProps) {
             sourcePage="/quote"
             catalogueLine={catalogueLine}
             defaultService={defaultService}
+            defaultMessage={defaultMessage}
           />
           <QuoteTrustPanel />
         </div>

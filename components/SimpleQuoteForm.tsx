@@ -42,6 +42,8 @@ type SimpleQuoteFormProps = {
   catalogueLine?: CatalogueLineSnapshot | null;
   /** Preselects the service dropdown (e.g. from `/quote/?service=…`). Must be a SERVICE_OPTIONS value. */
   defaultService?: string;
+  /** Prefills the message (e.g. a PVC liner size sent from the shop). */
+  defaultMessage?: string;
 };
 
 function Field({
@@ -127,6 +129,7 @@ export function SimpleQuoteForm({
   id = "simple-quote-form",
   catalogueLine = null,
   defaultService = "",
+  defaultMessage,
 }: SimpleQuoteFormProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
@@ -378,7 +381,7 @@ export function SimpleQuoteForm({
             defaultValue={
               isInvoiceRequest
                 ? "Please confirm transport and send an invoice for this supply-only kit. Installation is not included unless quoted separately."
-                : undefined
+                : defaultMessage
             }
             placeholder="Describe your dam, tank or waterproofing requirements."
             className="form-input"

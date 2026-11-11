@@ -427,7 +427,8 @@ export function createLocalBusinessSchema() {
       const place: Record<string, unknown> = {
         "@type": "Place",
         name: office.publicLabel,
-        telephone: phoneTel,
+        // Each service area's own line (Gauteng has its own number since 2026-11-11).
+        telephone: office.phone.replace(/\s/g, ""),
       };
 
       if ("address" in office && office.address) {

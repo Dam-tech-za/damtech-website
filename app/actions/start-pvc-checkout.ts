@@ -17,6 +17,8 @@ import {
   parsePvcLinerColour,
   PVC_LINER_CHECKOUT_PATH,
   PVC_LINER_MAX_QUANTITY,
+  PVC_LINER_ONLINE_MAX_ORDER_INCL_VAT_ZAR,
+  pvcLinerMaxOnlineQuantity,
 } from "@/lib/shop/pvc-liners";
 import { createPvcLinerOrder, pricePvcOrder } from "@/lib/shop/pvc-orders";
 import {
@@ -50,13 +52,18 @@ export type StartPvcCheckoutResult =
   | { success: false; confirmDelivery: { feeInclVatCents: number; serviceName: string } };
 
 function isOrderableLiner(sku: string, quantity: number): boolean {
+  const liner = getPvcLinerBySku(sku);
   return (
-    Boolean(getPvcLinerBySku(sku)) &&
+    Boolean(liner) &&
     Number.isInteger(quantity) &&
     quantity >= 1 &&
-    quantity <= PVC_LINER_MAX_QUANTITY
+    quantity <= PVC_LINER_MAX_QUANTITY &&
+    // Larger liners and orders above the online limit go through a quote.
+    quantity <= (liner ? pvcLinerMaxOnlineQuantity(liner) : 0)
   );
 }
+
+const QUOTE_ONLY_MESSAGE = `Orders over R${PVC_LINER_ONLINE_MAX_ORDER_INCL_VAT_ZAR.toLocaleString("en-ZA")} incl. VAT are quoted. Lower the quantity or request a quote.`;
 
 const clean = (formData: FormData, name: string, max: number) =>
   String(formData.get(name) ?? "").trim().slice(0, max);
@@ -117,6 +124,11 @@ export async function quotePvcDelivery(
 }
 
 export async function startPvcCheckout(formData: FormData): Promise<StartPvcCheckoutResult> {
+  const requested = getPvcLinerBySku(String(formData.get("sku") ?? ""));
+  const requestedQty = Math.trunc(Number(formData.get("quantity") ?? "1"));
+  if (requested && requestedQty > pvcLinerMaxOnlineQuantity(requested)) {
+    return { success: false, error: QUOTE_ONLY_MESSAGE, field: "quantity" };
+  }
   const parsed = parsePublicOrderFormData(formData, {
     isOrderable: isOrderableLiner,
     confirmSupplyOnlyMessage: "Confirm that the liner is made to order for your tank size.",

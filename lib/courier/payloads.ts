@@ -62,6 +62,9 @@ function parcelFor(order: CourierOrderInput, parcel: ParcelInput): CourierParcel
   };
 }
 
+/** Courier Guy refuses a declared value above R30 000 (error 400). */
+export const COURIER_MAX_DECLARED_VALUE = 30_000;
+
 export function buildRatesPayload(
   sender: { address: CourierAddress },
   order: CourierOrderInput,
@@ -71,7 +74,7 @@ export function buildRatesPayload(
     collection_address: sender.address,
     delivery_address: deliveryAddressFor(order),
     parcels: parcelList(parcel).map((item) => parcelFor(order, item)),
-    declared_value: Number(order.total_price_snapshot) || 0,
+    declared_value: Math.min(Number(order.total_price_snapshot) || 0, COURIER_MAX_DECLARED_VALUE),
   };
 }
 

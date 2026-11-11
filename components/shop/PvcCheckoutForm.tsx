@@ -19,7 +19,7 @@ import {
 import {
   PVC_LINER_COLOUR_IMAGES,
   PVC_LINER_MANUFACTURE_LABEL,
-  PVC_LINER_MAX_QUANTITY,
+  pvcLinerMaxOnlineQuantity,
   PVC_LINER_PAGE_PATH,
   type PvcLiner,
   type PvcLinerColour,
@@ -97,6 +97,7 @@ export function PvcCheckoutForm({
   const [submissionId] = useState(() => crypto.randomUUID());
   const [formStartedAt] = useState(() => Date.now());
   const payfastFormRef = useRef<HTMLFormElement>(null);
+  const maxQuantity = pvcLinerMaxOnlineQuantity(liner);
   const summaryRef = useRef<HTMLElement>(null);
 
   // Keep the summary card in view while the form scrolls, when it fits the screen.
@@ -211,6 +212,14 @@ export function PvcCheckoutForm({
       .finally(() => setQuoting(false));
   }
 
+  // An address typed (or autofilled) before the page finished loading never
+  // fired our blur handler, so quote once now for whatever is already filled in.
+  const orderFormRef = useRef<HTMLFormElement>(null);
+  const requestQuoteRef = useRef(requestQuote);
+  useEffect(() => {
+    if (orderFormRef.current) requestQuoteRef.current(orderFormRef.current);
+  }, []);
+
   function handleFormBlur(event: FormEvent<HTMLFormElement>) {
     requestQuote(event.currentTarget);
   }
@@ -252,7 +261,7 @@ export function PvcCheckoutForm({
           </div>
         </dl>
       </details>
-      <form id="pvc-order-form" className="order-form" onSubmit={handleSubmit} onChange={handleFormChange} onBlur={handleFormBlur} noValidate>
+      <form id="pvc-order-form" ref={orderFormRef} className="order-form" onSubmit={handleSubmit} onChange={handleFormChange} onBlur={handleFormBlur} noValidate>
         <input type="hidden" name="sku" value={liner.sku} />
         <input type="hidden" name="colour" value={colour} />
         <input type="hidden" name="submissionId" value={submissionId} />
@@ -383,19 +392,24 @@ export function PvcCheckoutForm({
 
         <fieldset className="order-fieldset">
           <legend>Order</legend>
-          <Field id="quantity" label="Quantity" required>
+          <Field
+            id="quantity"
+            label="Quantity"
+            required
+            hint={`Up to ${maxQuantity} online. For more, request a quote.`}
+          >
             <input
               id="quantity"
               name="quantity"
               type="number"
               min={1}
-              max={PVC_LINER_MAX_QUANTITY}
+              max={maxQuantity}
               step={1}
               className="form-input catalogue-buybox__qty-input"
               value={quantity}
               onChange={(event) => {
                 const n = Math.trunc(Number(event.target.value));
-                setQuantity(Number.isFinite(n) ? Math.min(PVC_LINER_MAX_QUANTITY, Math.max(1, n)) : 1);
+                setQuantity(Number.isFinite(n) ? Math.min(maxQuantity, Math.max(1, n)) : 1);
               }}
               disabled={busy}
             />

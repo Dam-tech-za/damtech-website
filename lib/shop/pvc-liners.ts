@@ -144,3 +144,25 @@ export function parsePvcLinerColour(value: unknown): PvcLinerColour | null {
 export function pvcLinerOrderName(liner: PvcLiner, colour: PvcLinerColour): string {
   return `${liner.name}, ${colour}`;
 }
+
+/**
+ * Online checkout stops at this order value (incl. VAT). Courier Guy will not
+ * cover a declared value above R30 000, so bigger liners and bigger orders go
+ * through a quote instead. Change this one number to move the cut-off.
+ */
+export const PVC_LINER_ONLINE_MAX_ORDER_INCL_VAT_ZAR = 30_000;
+
+/** Whether one of this liner can be bought online (otherwise: request a quote). */
+export function isPvcLinerSoldOnline(liner: PvcLiner): boolean {
+  return liner.priceInclVatZar <= PVC_LINER_ONLINE_MAX_ORDER_INCL_VAT_ZAR;
+}
+
+/** The most of this liner one online order can hold (0 when it is quote-only). */
+export function pvcLinerMaxOnlineQuantity(liner: PvcLiner): number {
+  return Math.min(PVC_LINER_MAX_QUANTITY, Math.floor(PVC_LINER_ONLINE_MAX_ORDER_INCL_VAT_ZAR / liner.priceInclVatZar));
+}
+
+/** Quote form with this liner and quantity filled in. */
+export function pvcLinerQuotePath(liner: PvcLiner, quantity = 1): string {
+  return `/quote/?service=${encodeURIComponent("PVC dam liner")}&liner=${encodeURIComponent(liner.sku)}&qty=${quantity}`;
+}

@@ -236,10 +236,26 @@ test("a 400 with a declared value is retried without one and flagged", async () 
   const fetcher = (async (_url: string, init: RequestInit) => {
     const body = JSON.parse(String(init.body));
     seen.push(body.declared_value);
-    if (body.declared_value > 0) return new Response("Declared value too high", { status: 400 });
+    if (body.declared_value > 0) return new Response("declared value is more than the allowed maximum", { status: 400 });
     return Response.json({ rates: [{ rate: 940.22, service_level: { code: "ECO", name: "Economy" } }] });
   }) as unknown as typeof fetch;
   const result = await getCourierRates(config(), { ...order, total_price_snapshot: 45793 }, parcel, fetcher);
-  assert.deepEqual(seen, [45793, 0]);
-  assert.ok(result.ok && result.declaredValueDropped === 45793 && result.data[0].rate === 940.22);
+  assert.deepEqual(seen, [30000, 0]);
+  assert.ok(result.ok && result.declaredValueDropped === 30000 && result.data[0].rate === 940.22);
+});
+
+test("after the first host refuses the key, a 400 from the portal host is still retried", async () => {
+  const { getCourierRates } = await import("./client.ts");
+  const calls: string[] = [];
+  const fetcher = (async (url: string, init: RequestInit) => {
+    const body = JSON.parse(String(init.body));
+    calls.push(`${new URL(url).host}:${body.declared_value}`);
+    if (url.includes("api.shiplogic.com")) return new Response("unauthorised", { status: 401 });
+    if (body.declared_value > 0) return Response.json({ message: "declared value is more than the allowed maximum (30000)" }, { status: 400 });
+    return Response.json({ rates: [{ rate: 2432.29, service_level: { code: "ECO", name: "Economy" } }] });
+  }) as unknown as typeof fetch;
+  const result = await getCourierRates({ ...config(), apiKey: "fresh-key" }, { ...order, total_price_snapshot: 25000 }, parcel, fetcher);
+  assert.ok(result.ok, JSON.stringify(result));
+  assert.equal(result.ok && result.data[0].rate, 2432.29);
+  assert.ok(calls.includes("api.portal.thecourierguy.co.za:0"));
 });
