@@ -97,6 +97,26 @@ export function PvcCheckoutForm({
   const [submissionId] = useState(() => crypto.randomUUID());
   const [formStartedAt] = useState(() => Date.now());
   const payfastFormRef = useRef<HTMLFormElement>(null);
+  const summaryRef = useRef<HTMLElement>(null);
+
+  // Keep the summary card sticky, but when it is taller than the screen let it
+  // scroll with the page until its bottom (the pay button) is in view.
+  useEffect(() => {
+    const card = summaryRef.current;
+    if (!card || typeof ResizeObserver === "undefined") return;
+    const place = () => {
+      const fits = window.innerHeight - card.offsetHeight - 16;
+      card.style.top = `${Math.min(96, fits)}px`;
+    };
+    place();
+    const observer = new ResizeObserver(place);
+    observer.observe(card);
+    window.addEventListener("resize", place);
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("resize", place);
+    };
+  }, []);
 
   const totals = useMemo(() => {
     const goodsCents = liner.priceInclVatCents * quantity;
@@ -298,7 +318,7 @@ export function PvcCheckoutForm({
             </Field>
           </div>
           <div className="order-form__grid">
-            <Field id="province" label="Province" required hint={collection ? "Used on your tax invoice." : "The delivery fee depends on the province."}>
+            <Field id="province" label="Province" required hint={collection ? "Used on your tax invoice." : liveRates ? "The delivery fee is worked out from your address." : "The delivery fee depends on the province."}>
               <select
                 id="province"
                 name="province"
@@ -387,7 +407,7 @@ export function PvcCheckoutForm({
 
       </form>
 
-      <aside className="order-summary order-summary--sticky pvc-checkout-summary" aria-labelledby="pvc-summary-heading">
+      <aside ref={summaryRef} className="order-summary order-summary--sticky pvc-checkout-summary" aria-labelledby="pvc-summary-heading">
         <h2 id="pvc-summary-heading" className="order-summary__heading">
           Order summary
         </h2>
