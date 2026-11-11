@@ -6,7 +6,7 @@ import { COURIER_DEPOTS, getCourierConfig, type CourierDepotId } from "@/lib/cou
 import { createServiceRoleClient } from "@/lib/supabase/admin";
 import { AdminInfoBanner, AdminPageHeader, AdminPanel } from "@/components/admin/ui";
 import { LinerCourierBoard } from "@/components/admin/operations/liner-courier/LinerCourierBoard";
-import type { LinerCourierHistoryRow } from "@/components/admin/operations/liner-courier/LinerQuoteDrawer";
+import type { LinerCourierHistoryRow } from "@/lib/courier/liner-board";
 
 export const metadata: Metadata = { title: "Liner courier" };
 

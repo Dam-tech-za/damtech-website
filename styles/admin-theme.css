@@ -991,3 +991,64 @@
     min-width: 100%;
   }
 }
+
+/* ---------------------------------------------------------------------------
+   Drawers and dialogs: the body scrolls (wheel, touch, keyboard) without a
+   visible scrollbar; an edge with more content fades out instead.
+   --------------------------------------------------------------------------- */
+.admin-drawer__panel {
+  height: 100dvh;
+  grid-template-rows: auto minmax(0, 1fr);
+}
+
+.admin-drawer__body,
+.admin-dialog__panel--wide .admin-dialog__body,
+.admin-dialog__panel--large .admin-dialog__body {
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior: contain;
+  scrollbar-width: none;
+}
+
+.admin-drawer__body::-webkit-scrollbar,
+.admin-dialog__body::-webkit-scrollbar {
+  display: none;
+}
+
+.admin-drawer__body[data-more-below],
+.admin-dialog__body[data-more-below] {
+  -webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - 2.5rem), transparent);
+  mask-image: linear-gradient(to bottom, #000 calc(100% - 2.5rem), transparent);
+}
+
+.admin-drawer__body[data-more-above],
+.admin-dialog__body[data-more-above] {
+  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 1.5rem);
+  mask-image: linear-gradient(to bottom, transparent, #000 1.5rem);
+}
+
+.admin-drawer__body[data-more-above][data-more-below],
+.admin-dialog__body[data-more-above][data-more-below] {
+  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 1.5rem, #000 calc(100% - 2.5rem), transparent);
+  mask-image: linear-gradient(to bottom, transparent, #000 1.5rem, #000 calc(100% - 2.5rem), transparent);
+}
+
+/* Large dialog: about 80% of the screen, header and footer fixed. */
+.admin-dialog__panel--large {
+  width: min(1280px, 80vw);
+  height: auto;
+  max-height: min(880px, 86vh);
+  overflow: hidden;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+}
+
+@media (max-width: 900px) {
+  .admin-dialog__panel--large {
+    width: 100%;
+    height: 100dvh;
+    border-radius: 0;
+    margin: 0;
+  }
+}

@@ -5381,3 +5381,42 @@ table.admin-sheet .admin-status {
 .lc-quote { display: grid; gap: 0.6rem; padding-top: 0.75rem; border-top: 1px solid var(--admin-border); }
 .lc-quote__price { display: flex; flex-wrap: wrap; align-items: center; gap: 0.4rem; }
 .lc-quote__markup { width: 4.5rem; }
+
+/* Liner courier: large "new quote" card in three columns, and the quote side panel. */
+.admin-dialog__panel--large .admin-dialog__body:has(> .lc-modal) {
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto;
+  padding: 0;
+  overflow: hidden;
+}
+.lc-modal {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1.75rem;
+  align-content: start;
+  padding: 1.25rem 1.5rem 1.5rem;
+  overflow-y: auto;
+  scrollbar-width: none;
+}
+.lc-modal::-webkit-scrollbar { display: none; }
+.lc-modal[data-more-below] { -webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - 2.5rem), transparent); mask-image: linear-gradient(to bottom, #000 calc(100% - 2.5rem), transparent); }
+.lc-modal[data-more-above] { -webkit-mask-image: linear-gradient(to bottom, transparent, #000 1.5rem); mask-image: linear-gradient(to bottom, transparent, #000 1.5rem); }
+.lc-modal[data-more-above][data-more-below] { -webkit-mask-image: linear-gradient(to bottom, transparent, #000 1.5rem, #000 calc(100% - 2.5rem), transparent); mask-image: linear-gradient(to bottom, transparent, #000 1.5rem, #000 calc(100% - 2.5rem), transparent); }
+.lc-col { display: grid; gap: 0.75rem; align-content: start; min-width: 0; }
+.lc-col + .lc-col { padding-left: 1.75rem; border-left: 1px solid #eef2f7; }
+.lc-grid--3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.lc-modal__footer { align-items: center; }
+.lc-modal__error { margin-right: auto; }
+@media (max-width: 1100px) {
+  .lc-modal { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .lc-col:nth-child(3) { grid-column: 1 / -1; padding-left: 0; border-left: 0; }
+}
+@media (max-width: 700px) {
+  .lc-modal { grid-template-columns: 1fr; }
+  .lc-col + .lc-col { padding-left: 0; border-left: 0; }
+}
+.ops-peek > .lc-actions { display: flex; }
+.lc-view { gap: 0.9rem; }
+.lc-services { display: grid; gap: 0.35rem; margin: 0; padding: 0; border: 0; }
+.lc-services label { display: grid; grid-template-columns: auto 1fr auto; gap: 0.6rem; align-items: center; padding: 0.45rem 0.65rem; border: 1px solid var(--admin-border); border-radius: 6px; font-size: 0.875rem; cursor: pointer; }
+.lc-services label.is-active { border-color: var(--admin-primary); background: #f3f8fe; }

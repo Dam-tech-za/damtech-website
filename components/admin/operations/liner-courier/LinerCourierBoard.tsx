@@ -1,6 +1,7 @@
 "use client";
 
 import { useId, useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 import { IconSearch } from "@/components/admin/board/BoardKit";
 import { GroupedSheet, SheetPill, SheetStack, useCollapsedGroups, type SheetColumn } from "@/components/admin/board/GroupedSheet";
 import { formatRand } from "@/lib/courier/liner-quote";
@@ -10,8 +11,10 @@ import {
   LINER_QUOTE_STAGE_TONES,
   linerQuoteStage,
   matchesLinerQuoteSearch,
+  type LinerCourierHistoryRow,
 } from "@/lib/courier/liner-board";
-import { LinerQuoteDrawer, type DrawerTarget, type LinerCourierHistoryRow } from "./LinerQuoteDrawer";
+import { LinerQuoteDrawer } from "./LinerQuoteDrawer";
+import { LinerQuoteModal } from "./LinerQuoteModal";
 
 type Props = {
   rows: LinerCourierHistoryRow[];
@@ -29,7 +32,12 @@ export function LinerCourierBoard({ rows, depots, courierReady, canEditQuotes }:
   const [searchOpen, setSearchOpen] = useState(false);
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [collapsed, setCollapsed] = useCollapsedGroups("damtech-admin-liner-courier-collapsed", ["draft"]);
-  const [target, setTarget] = useState<DrawerTarget | null>(null);
+  const router = useRouter();
+  const [modal, setModal] = useState<"new" | LinerCourierHistoryRow | null>(null);
+  // The open quote: its id, plus the copy the card just saved (shown until the board refreshes).
+  const [peek, setPeek] = useState<{ id: string; local: LinerCourierHistoryRow | null } | null>(null);
+  const peekRow = peek ? (rows.find((row) => row.id === peek.id && (!peek.local || row.updated_at >= peek.local.updated_at)) ?? peek.local ?? rows.find((row) => row.id === peek.id) ?? null) : null;
+  const openRow = (row: LinerCourierHistoryRow) => setPeek({ id: row.id, local: null });
 
   const visible = useMemo(() => rows.filter((row) => matchesLinerQuoteSearch(row, q)), [rows, q]);
   const groups = groupLinerQuotes(visible);
@@ -99,7 +107,7 @@ export function LinerCourierBoard({ rows, depots, courierReady, canEditQuotes }:
     <div className="ops-workspace">
       <div className="ops-toolbar">
         <div className="ops-toolbar__row" role="toolbar" aria-label="Board tools">
-          <button type="button" className="ops-toolbar__primary" onClick={() => setTarget({ kind: "new" })}>
+          <button type="button" className="ops-toolbar__primary" onClick={() => setModal("new")}>
             New courier quote
           </button>
           <div className={`ops-toolbar__search${searchOpen || q ? " is-open" : ""}`}>
@@ -144,12 +152,12 @@ export function LinerCourierBoard({ rows, depots, courierReady, canEditQuotes }:
           titleLabel="Quote"
           rowName={(row) => `courier quote ${row.reference || row.customer_name || row.id}`}
           renderTitle={(row) => (
-            <button type="button" className="ops-purchases__title" onClick={() => setTarget({ kind: "row", row })}>
+            <button type="button" className="ops-purchases__title" onClick={() => openRow(row)}>
               <span className="ops-purchases__ref">{row.quotes?.quote_number || row.rfqs?.rfq_number || row.reference || "No reference"}</span>
               <span className="ops-purchases__customer">{row.customer_name || "—"}</span>
             </button>
           )}
-          onPeek={(row) => setTarget({ kind: "row", row })}
+          onPeek={openRow}
           selected={selected}
           onSelectedChange={setSelected}
           collapsed={collapsed}
@@ -159,12 +167,22 @@ export function LinerCourierBoard({ rows, depots, courierReady, canEditQuotes }:
         />
       )}
 
-      <LinerQuoteDrawer
-        target={target}
+      <LinerQuoteModal
+        target={modal}
         depots={depots}
         courierReady={courierReady}
+        onClose={() => setModal(null)}
+        onDone={(row) => {
+          setModal(null);
+          setPeek({ id: row.id, local: row });
+          router.refresh();
+        }}
+      />
+      <LinerQuoteDrawer
+        row={modal ? null : peekRow}
         canEditQuotes={canEditQuotes}
-        onClose={() => setTarget(null)}
+        onClose={() => setPeek(null)}
+        onEdit={(row) => setModal(row)}
       />
     </div>
   );
