@@ -191,9 +191,13 @@ export const COURIER_QUOTE_STATUS = "quote";
 /** Days ahead for the collection date on a quote, so an accidental booking is not collected before it can be cancelled. */
 export const COURIER_QUOTE_LEAD_DAYS = 7;
 
+/**
+ * Collection date for a quote: 08:00 South African time, `leadDays` from now.
+ * Ship Logic wants a full RFC 3339 timestamp (a bare "2026-11-18" is refused).
+ */
 export function courierQuoteCollectionDate(now: Date, leadDays = COURIER_QUOTE_LEAD_DAYS): string {
-  const date = new Date(now.getTime() + leadDays * 24 * 60 * 60 * 1000);
-  return date.toISOString().slice(0, 10);
+  const day = new Date(now.getTime() + leadDays * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
+  return `${day}T08:00:00+02:00`;
 }
 
 export function buildQuoteShipmentPayload(

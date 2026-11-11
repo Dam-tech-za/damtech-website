@@ -281,12 +281,13 @@ test("formal quote: shipment payload marked as a quote, muted, collection a week
   const payload = buildQuoteShipmentPayload(sender, order, parcelsForQuantity({ lengthCm: 40, widthCm: 40, heightCm: 40, weightKg: 33.9 }, 1), "ECO", now);
   assert.equal(payload.status, "quote");
   assert.equal(payload.mute_notifications, true);
-  assert.equal(payload.collection_min_date, "2026-11-18");
+  assert.equal(payload.collection_min_date, "2026-11-18T08:00:00+02:00");
+  assert.ok(!Number.isNaN(Date.parse(payload.collection_min_date)));
   assert.equal(payload.service_level_code, "ECO");
   assert.equal(payload.customer_reference, "Q-2026-0101");
   assert.equal(payload.declared_value, 30_000);
   assert.equal(payload.delivery_contact.mobile_number, "082 000 0000");
-  assert.equal(courierQuoteCollectionDate(now, 0), "2026-11-11");
+  assert.equal(courierQuoteCollectionDate(now, 0), "2026-11-11T08:00:00+02:00");
 
   assert.deepEqual(parseQuoteShipment({ id: 991, status: "quote", rate: 1150 }), { id: "991", trackingReference: null, status: "quote", rate: 1150, isQuote: true });
   const booked = parseQuoteShipment({ id: 992, status: "submitted", short_tracking_reference: "TCG9" });
