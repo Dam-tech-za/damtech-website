@@ -7,6 +7,7 @@ import {
   healthAbove,
   healthBelow,
   linearForecast,
+  targetStatus,
   monthRows,
   operatingCashFlow,
   pipelineSummary,
@@ -229,3 +230,32 @@ describe("Accounting metrics", () => {
 function round1(n: number) {
   return Math.round(n * 10) / 10;
 }
+
+describe("Owner targets", () => {
+  it("places a value against a target range", () => {
+    assert.equal(targetStatus(52, 45, 60), "on");
+    assert.equal(targetStatus(40, 45, 60), "below");
+    assert.equal(targetStatus(65, 45, 60), "above");
+    assert.equal(targetStatus(25, 20), "on");
+    assert.equal(targetStatus(null, 20), null);
+  });
+
+  it("shows the gross and net margin targets on the monthly cards", () => {
+    // Last month: R400 000 revenue, 55% gross margin (R220 000 GP), 30% net.
+    const s = {
+      fetchedAt: "", financialYearStart: "2026-03-01", today: "2026-11-11", ytd: null, monthToDate: null,
+      months: [pnl(400_000)], cash: null,
+      debtors: { total: 0, ageing: { current: 0, "1-30": 0, "31-60": 0, "61-90": 0, "90+": 0 }, top: [] },
+      creditors: { total: 0, ageing: { current: 0, "1-30": 0, "31-60": 0, "61-90": 0, "90+": 0 }, top: [] },
+      forecast: [], averageMonthlyOpex: null, warnings: [],
+    } as FinancialSnapshot;
+    const d = buildAccountingDashboard(s, []);
+    const gross = d.monthly.find((m) => m.id === "gross-margin");
+    assert.equal(gross?.target?.label, "Target 45–60%");
+    assert.equal(gross?.target?.status, "on");
+    assert.match(gross?.target?.detail ?? "", /Gross profit R220\u00a0000 · target R225\u00a0000–R300\u00a0000 \(below\)/);
+    const net = d.monthly.find((m) => m.id === "net-margin");
+    assert.equal(net?.target?.label, "Target 20%+");
+    assert.equal(net?.target?.status, "on");
+  });
+});

@@ -3,16 +3,14 @@ import { getDashboardMetrics } from "@/lib/admin/dashboard/get-dashboard-metrics
 import { getOverviewOps } from "@/lib/admin/dashboard/overview-ops";
 import { parseDashboardRange } from "@/lib/admin/dashboard/types";
 import { DashboardHeaderControls } from "@/components/admin/dashboard/DashboardHeaderControls";
-import { PrimaryKpiGrid } from "@/components/admin/dashboard/PrimaryKpiGrid";
+import { OverviewAccounting } from "@/components/admin/dashboard/OverviewAccounting";
 import { RfqWorkflow } from "@/components/admin/dashboard/RfqWorkflow";
 import { QuotePipeline } from "@/components/admin/dashboard/QuotePipeline";
 import { ProvisionalPipeline } from "@/components/admin/dashboard/ProvisionalPipeline";
 import { BreakdownPanel } from "@/components/admin/dashboard/BreakdownPanel";
 import { RecentActivity } from "@/components/admin/dashboard/RecentActivity";
 import { RecentRfqs } from "@/components/admin/dashboard/RecentRfqs";
-import { IncomeAndCostsChart } from "@/components/admin/operations/FinancialCharts";
 import {
-  AdminButton,
   AdminErrorState,
   AdminInfoBanner,
   AdminPageHeader,
@@ -23,8 +21,9 @@ type PageProps = {
 };
 
 /**
- * Overview, in the order an owner reads it: four key figures, the money
- * trend from Xero, the latest enquiries. Things that need action live on the
+ * Overview, in the order an owner reads it: the key money and work figures
+ * (Accounting card style, with the owner's targets), revenue and cash from
+ * Xero, the latest enquiries. Things that need action live on the
  * header bell. Detailed enquiry statistics stay one click away, folded at the
  * bottom.
  */
@@ -54,19 +53,7 @@ export default async function AdminDashboardPage({ searchParams }: PageProps) {
         />
       ) : null}
 
-      <PrimaryKpiGrid metrics={metrics} activeProjects={ops.activeProjects} financials={ops.financials} />
-
-      {ops.financials ? (
-        <section className="fin-charts__panel" aria-labelledby="dash-money-title">
-          <header className="fin-charts__head">
-            <h2 id="dash-money-title">Income and costs per month</h2>
-            <AdminButton href="/admin/operations/financials/" variant="link" size="sm">
-              All financials
-            </AdminButton>
-          </header>
-          <IncomeAndCostsChart s={ops.financials} />
-        </section>
-      ) : null}
+      <OverviewAccounting metrics={metrics} activeProjects={ops.activeProjects} financials={ops.financials} />
 
       <RecentRfqs rows={metrics.recentRfqs.slice(0, 5)} />
 

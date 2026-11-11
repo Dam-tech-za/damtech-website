@@ -13,6 +13,27 @@ export type Health = "good" | "warning" | "critical" | null;
 export type MetricFormat = "rand" | "percent" | "days" | "ratio" | "count" | "months";
 export type Basis = "actual" | "forecast" | "estimate";
 
+/**
+ * The owner's targets, set 11 Nov 2026. Change them here; the cards and
+ * the margins chart follow.
+ */
+export const ACCOUNTING_TARGETS = {
+  grossMarginPercent: { min: 45, max: 60 },
+  grossProfitMonthly: { min: 225_000, max: 300_000 },
+  netMarginPercent: { min: 20 },
+} as const;
+
+export type TargetStatus = "below" | "on" | "above";
+export type Target = { label: string; status: TargetStatus | null; detail?: string };
+
+/** Where a value sits against a target range (max optional). */
+export function targetStatus(value: number | null, min: number, max?: number): TargetStatus | null {
+  if (value === null || !Number.isFinite(value)) return null;
+  if (value < min) return "below";
+  if (max !== undefined && value > max) return "above";
+  return "on";
+}
+
 export type Metric = {
   id: string;
   label: string;
@@ -23,6 +44,8 @@ export type Metric = {
   /** Oldest first, for a sparkline. */
   trend?: (number | null)[];
   health?: Health;
+  /** Owner's target for this figure, shown beside the label. */
+  target?: Target;
   rule?: string;
   note: string;
   basis: Basis;
@@ -353,6 +376,15 @@ export function buildAccountingDashboard(
       format: "percent",
       trend: rows.map((r) => r.grossMargin),
       delta: last?.grossMargin != null && prev?.grossMargin != null ? { value: round1(last.grossMargin - prev.grossMargin), vs: prev.label, goodWhenUp: true } : null,
+      target: {
+        label: `Target ${ACCOUNTING_TARGETS.grossMarginPercent.min}–${ACCOUNTING_TARGETS.grossMarginPercent.max}%`,
+        status: targetStatus(last?.grossMargin ?? null, ACCOUNTING_TARGETS.grossMarginPercent.min, ACCOUNTING_TARGETS.grossMarginPercent.max),
+        detail: last
+          ? `Gross profit ${fmtRand(last.grossProfit)} · target ${fmtRand(ACCOUNTING_TARGETS.grossProfitMonthly.min)}–${fmtRand(ACCOUNTING_TARGETS.grossProfitMonthly.max)} (${
+              { below: "below", on: "on target", above: "above" }[targetStatus(last.grossProfit, ACCOUNTING_TARGETS.grossProfitMonthly.min, ACCOUNTING_TARGETS.grossProfitMonthly.max) ?? "below"]
+            })`
+          : undefined,
+      },
       note: last ? `${last.label}: revenue left after materials and subcontractors.` : "",
       basis: "actual",
     },
@@ -364,6 +396,11 @@ export function buildAccountingDashboard(
       trend: rows.map((r) => r.netMargin),
       delta: last?.netMargin != null && prev?.netMargin != null ? { value: round1(last.netMargin - prev.netMargin), vs: prev.label, goodWhenUp: true } : null,
       health: last?.netMargin == null ? null : last.netMargin < 0 ? "critical" : null,
+      target: {
+        label: `Target ${ACCOUNTING_TARGETS.netMarginPercent.min}%+`,
+        status: targetStatus(last?.netMargin ?? null, ACCOUNTING_TARGETS.netMarginPercent.min),
+        detail: last ? `Net profit ${fmtRand(last.netProfit)}; 20% of ${fmtRand(last.income)} revenue is ${fmtRand((last.income * ACCOUNTING_TARGETS.netMarginPercent.min) / 100)}.` : undefined,
+      },
       note: last ? `${last.label}: bottom line after all expenses in Xero.` : "",
       basis: "actual",
     },
@@ -575,5 +612,5 @@ export function buildAccountingDashboard(
 
 export function fmtRand(v: number): string {
   const sign = v < 0 ? "−" : "";
-  return `${sign}R${Math.round(Math.abs(v)).toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")}`;
+  return `${sign}R${Math.round(Math.abs(v)).toString().replace(/\B(?=(\d{3})+(?!\d))/g, "\u00a0")}`;
 }
