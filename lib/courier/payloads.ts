@@ -175,3 +175,66 @@ export function courierStatusLabel(status: string): string {
   const text = status.replace(/[-_]/g, " ").trim();
   return text ? text.charAt(0).toUpperCase() + text.slice(1) : "Unknown";
 }
+
+// ---------------------------------------------------------------------------
+// Formal quote in the Courier Guy portal.
+//
+// Ship Logic has no separate "create quote" endpoint. It does have a shipment
+// status "quote" ("a quote has been generated but the shipment has not been
+// booked yet"), and POST /shipments validates a `status` field. So a quote is
+// sent as a shipment with status "quote". This is not documented as a create
+// option: the answer's status is checked, and if Courier Guy booked it
+// instead (e.g. "submitted") the admin is told to cancel it.
+// ---------------------------------------------------------------------------
+
+export const COURIER_QUOTE_STATUS = "quote";
+/** Days ahead for the collection date on a quote, so an accidental booking is not collected before it can be cancelled. */
+export const COURIER_QUOTE_LEAD_DAYS = 7;
+
+export function courierQuoteCollectionDate(now: Date, leadDays = COURIER_QUOTE_LEAD_DAYS): string {
+  const date = new Date(now.getTime() + leadDays * 24 * 60 * 60 * 1000);
+  return date.toISOString().slice(0, 10);
+}
+
+export function buildQuoteShipmentPayload(
+  sender: { address: CourierAddress; contact: CourierContact },
+  order: CourierOrderInput,
+  parcel: ParcelInput | ParcelInput[],
+  serviceCode: string,
+  now: Date = new Date(),
+) {
+  return {
+    ...buildShipmentPayload(sender, order, parcel, serviceCode),
+    status: COURIER_QUOTE_STATUS,
+    collection_min_date: courierQuoteCollectionDate(now),
+    customer_reference_name: "Damtech quote",
+    // A quote must not SMS or email the customer.
+    mute_notifications: true,
+  };
+}
+
+export type CourierQuoteShipment = {
+  id: string;
+  trackingReference: string | null;
+  status: string;
+  rate: number | null;
+  /** True when Courier Guy kept it as a quote (not booked). */
+  isQuote: boolean;
+};
+
+/** The answer to a quote request; unlike a booking it may have no waybill number. */
+export function parseQuoteShipment(body: unknown): CourierQuoteShipment | null {
+  const data = obj(body);
+  const id = str(data.id);
+  const status = str(data.status);
+  if (!id && !status) return null;
+  const trackingReference = str(data.short_tracking_reference) || str(data.custom_tracking_reference) || null;
+  const rate = Number(data.rate);
+  return {
+    id,
+    trackingReference,
+    status,
+    rate: Number.isFinite(rate) ? rate : null,
+    isQuote: status === COURIER_QUOTE_STATUS,
+  };
+}

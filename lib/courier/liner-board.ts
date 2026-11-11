@@ -80,6 +80,8 @@ export type LinerCourierHistoryRow = {
   chosen_service_name: string | null;
   chosen_amount: number | null;
   formal_quote_status: string;
+  /** Courier Guy reference and status when sent through the API, e.g. "TCG123 · quote". */
+  formal_quote_ref?: string | null;
   rfq_id: string | null;
   quote_id: string | null;
   notes: string | null;

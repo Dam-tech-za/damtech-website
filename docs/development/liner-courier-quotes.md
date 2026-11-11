@@ -17,12 +17,19 @@ Roles: owner, admin, sales, estimator (same as `manageOrders`). Adding the line 
 4. "Add to quotation": a `delivery` line (cost = rate excl. VAT, sell = cost + markup or as entered) on a draft
    quotation, totals recalculated with `calculateQuote` (`lib/quotes/add-courier-line.ts`). Re-adding replaces the earlier line.
 
-## Formal Courier Guy quote: finding
-The code uses only `POST /rates`, `POST /shipments` and `GET /tracking/shipments`. `POST /shipments` books a real
-collection, so it must not be used as a "quote". No live key was available in the build sandbox and the Ship Logic
-docs host was blocked, so no draft/quote endpoint could be confirmed. The button is therefore honest: **Copy quote brief**
-and **Open portal with brief** (opens portal.thecourierguy.co.za and copies the brief). The attempt is recorded in history.
-To revisit: check the Ship Logic API docs with the live key for a draft or quote endpoint before adding an API submit.
+## Formal Courier Guy quote: finding (docs read 2026-11-11)
+Source: https://www.shiplogic.com/api-docs (the old api-docs.shiplogic.com now serves the portal app) and its Postman collection.
+- The account API has no "create quote" or "draft" endpoint: only rates, opt-in rates, create / get / cancel shipment, labels, tracking.
+- Ship Logic does have a shipment **status `quote`** ("a quote has been generated but the shipment has not been booked yet"), plus `quote-expired`.
+- `POST /shipments` validates a `status` field ("{value} is not a valid status"), but the docs only show setting a status on the courier's Admin API.
+- `POST /shipments/cancel` reverses all charges if the shipment has not been collected.
+
+So **Send quote to Courier Guy** (side panel) sends `POST /shipments` with `status: "quote"`, `mute_notifications: true`
+and `collection_min_date` a week out (`buildQuoteShipmentPayload`). The answer's status is checked:
+`quote` = saved as a quote in the portal; anything else (e.g. `submitted`) = it was booked, the admin is warned and gets a
+**Cancel booking** button (`POST /shipments/cancel`). The reference and status are stored in `formal_quote_ref`.
+**Not yet proven with the live key**: the first real send confirms whether Courier Guy honours the quote status.
+Copy brief / Open portal remain in the ⋯ menu as the manual fallback.
 
 ## Database
 `supabase/migrations/20261111120000_liner_courier_quotes.sql` adds `public.liner_courier_quotes` (additive, RLS on,
