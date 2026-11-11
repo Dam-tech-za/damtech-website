@@ -178,7 +178,7 @@ function entityHref(
   if (entityType === "rfq") return `/admin/rfqs/${entityId}/`;
   if (entityType === "quote") return `/admin/quotes/${entityId}/`;
   if (entityType === "customer") return `/admin/customers/${entityId}/`;
-  if (entityType === "catalogue_order") return `/admin/orders/${entityId}/`;
+  if (entityType === "catalogue_order") return `/admin/operations/online-purchases/?order=${entityId}`;
   return null;
 }
 
@@ -385,7 +385,7 @@ export async function getDashboardMetrics(
       failedEmailHref: failedRfqId
         ? `/admin/rfqs/${failedRfqId}/#rfq-communication`
         : failedOrderId
-          ? `/admin/orders/${failedOrderId}/`
+          ? `/admin/operations/online-purchases/?order=${failedOrderId}`
           : null,
       quotesAwaitingApproval: countOrNull(reviewCount),
       quotesExpiringSoon: countOrNull(expiring),

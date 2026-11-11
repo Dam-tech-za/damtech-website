@@ -32,7 +32,6 @@ export type AdminNavItemId =
   | "financials"
   | "rfqs"
   | "quotes"
-  | "orders"
   | "customers"
   | "pricing"
   | "project-templates"

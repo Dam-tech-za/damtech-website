@@ -829,32 +829,6 @@ form[aria-busy="true"] {
   color: var(--admin-text-muted);
 }
 
-.ops-filter {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--admin-space-2);
-}
-
-.ops-filter__link {
-  padding: 6px 12px;
-  border: 1px solid var(--admin-border);
-  border-radius: 999px;
-  font-size: 0.875rem;
-  color: var(--admin-text);
-  text-decoration: none;
-  background: var(--admin-card-bg);
-}
-
-.ops-filter__link:hover {
-  border-color: var(--admin-primary);
-}
-
-.ops-filter__link--active {
-  background: var(--admin-primary);
-  border-color: var(--admin-primary);
-  color: #fff;
-}
-
 .ops-detail {
   display: grid;
   gap: var(--admin-space-4);
@@ -1020,13 +994,6 @@ form[aria-busy="true"] {
 .ops-board-filters select {
   width: auto;
   min-width: 9rem;
-}
-
-.ops-filter__sep {
-  width: 1px;
-  align-self: stretch;
-  background: var(--admin-border);
-  margin-inline: var(--admin-space-1);
 }
 
 .ops-group {
@@ -5273,19 +5240,7 @@ table.admin-sheet .admin-status {
 .ops-location .ops-inline.ops-inline--wrap { white-space: normal; overflow: visible; }
 .ops-client__org .ops-inline-input { field-sizing: content; width: auto; max-width: 100%; min-width: 2ch; }
 
-/* Online Purchases: toolbar and the order tracking form */
-.ops-purchases__toolbar {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.75rem 1.5rem;
-  margin-bottom: 1rem;
-}
-.ops-purchases__search {
-  flex: 1 1 16rem;
-  max-width: 24rem;
-}
+/* Order tracking form (Online Purchases quick view) */
 .ops-track-form {
   display: grid;
   gap: 0.875rem 1rem;
@@ -5363,3 +5318,39 @@ table.admin-sheet .admin-status {
 .admin-dl--grid dd {
   overflow-wrap: anywhere;
 }
+
+/* ---------------------------------------------------------------------------
+   Shared monday-style board (components/admin/board). One colour tone per
+   group drives the group heading, its left stripe, cell pills and peek chips.
+   --------------------------------------------------------------------------- */
+.ops-tone-amber { --ops-tone: #b45309; --ops-tone-soft: #fff1d6; }
+.ops-tone-blue { --ops-tone: #026bc6; --ops-tone-soft: #dcecfb; }
+.ops-tone-purple { --ops-tone: #7c3aed; --ops-tone-soft: #ece3fd; }
+.ops-tone-teal { --ops-tone: #0f766e; --ops-tone-soft: #d5f3ef; }
+.ops-tone-green { --ops-tone: #0b7a47; --ops-tone-soft: #cdf3e0; }
+.ops-tone-grey { --ops-tone: #627d98; --ops-tone-soft: #eef1f4; }
+.ops-tone-red { --ops-tone: #b42339; --ops-tone-soft: #fde2e6; }
+
+.ops-sheet--generic .ops-sheet__group-btn { color: var(--ops-tone, inherit); }
+.ops-sheet--generic .ops-sheet__group > tr:not(.ops-sheet__group-row) > td.ops-sheet__c-check { box-shadow: inset 3px 0 0 var(--ops-tone, transparent); }
+.ops-sheet--generic .ops-sheet__group > tr:not(.ops-sheet__group-row) > td { height: 52px; max-height: 52px; }
+.ops-sheet--generic .ops-sheet__c-left { text-align: left; }
+.ops-sheet--generic .ops-sheet__empty-row td { height: auto; padding: 0; text-align: left; border-right: 0; color: #8a97a6; font-size: 12px; }
+.ops-sheet--generic .ops-sheet__empty-row .ops-sheet__sticky-row { padding: 8px 12px 8px calc(var(--col-check) + 10px); }
+
+.ops-pay--static { cursor: default; padding: 0 10px; background: var(--ops-tone-soft); color: var(--ops-tone); }
+.ops-pay--static:hover { filter: none; }
+.ops-peek-chip[class*="ops-tone-"] { background: var(--ops-tone-soft); color: var(--ops-tone); }
+
+.ops-sheet__stack { display: grid; gap: 1px; min-width: 0; line-height: 1.25; }
+.ops-sheet__stack-main,
+.ops-sheet__stack-sub { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ops-sheet__stack-sub { font-size: 12px; color: #8a97a6; }
+.ops-sheet__num { font-variant-numeric: tabular-nums; font-weight: 600; }
+
+/* Online Purchases board */
+.ops-purchases__title { display: grid; gap: 1px; min-width: 0; margin: 0; padding: 0; border: 0; background: none; font: inherit; text-align: left; color: inherit; cursor: pointer; }
+.ops-purchases__title:hover .ops-purchases__ref { color: var(--admin-primary); text-decoration: underline; text-underline-offset: 2px; }
+.ops-purchases__ref { font-weight: 650; font-variant-numeric: tabular-nums; }
+.ops-purchases__customer { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 400; font-size: 12px; color: #627d98; }
+.ops-order-actions { display: grid; gap: 0.75rem; margin: 0.75rem 0; }

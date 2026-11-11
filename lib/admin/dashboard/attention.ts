@@ -96,7 +96,7 @@ export function buildAttentionItems(
       label: (n) => `${n} ${plural(n, "order", "orders")} awaiting an invoice`,
       hint: () =>
         "Online kit orders are invoice-only. Send the invoice, then update the order status (or cancel test orders).",
-      href: "/admin/orders/?status=pending_invoice",
+      href: "/admin/operations/online-purchases/?stage=awaiting_payment",
       unavailableLabel: "Orders awaiting invoice",
     },
     {

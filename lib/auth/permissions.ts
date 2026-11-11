@@ -33,7 +33,6 @@ const NAV_ACCESS: Record<AdminNavItemId, readonly AdminRole[]> = {
   financials: ["owner", "admin"],
   rfqs: ["owner", "admin", "sales", "estimator", "viewer"],
   quotes: ["owner", "admin", "sales", "estimator", "viewer"],
-  orders: ["owner", "admin", "sales", "estimator", "viewer"],
   customers: ["owner", "admin", "sales", "viewer"],
   pricing: ["owner", "admin", "estimator", "viewer"],
   "project-templates": ["owner", "admin", "estimator", "viewer"],
@@ -108,12 +107,6 @@ export const ADMIN_NAV_ITEMS: AdminNavItem[] = [
     label: "Quotations",
     href: "/admin/quotes/",
     description: "Draft and sent quotes",
-  },
-  {
-    id: "orders",
-    label: "Orders",
-    href: "/admin/orders/",
-    description: "Online tank kit orders",
   },
   {
     id: "customers",

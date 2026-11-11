@@ -33,12 +33,12 @@ describe("admin navigation", () => {
     }
   });
 
-  it("shows Orders in the expanded sidebar for every role that may open it", () => {
+  it("shows Online purchases in the expanded sidebar for every role that may open it", () => {
     for (const role of ["owner", "admin", "sales", "estimator", "viewer"] as const) {
       const ids = groupNavItems(getNavItemsForRole(role)).flatMap((entry) =>
         entry.items.map((item) => item.id),
       );
-      assert.ok(ids.includes("orders"), `${role} should see Orders`);
+      assert.ok(ids.includes("online-purchases"), `${role} should see Online purchases`);
     }
   });
 
@@ -58,7 +58,7 @@ describe("admin navigation", () => {
       "project-templates",
     );
     assert.equal(activeNavItemId("/admin/rfqs/123/?status=new", items), "rfqs");
-    assert.equal(activeNavItemId("/admin/orders", items), "orders");
+    assert.equal(activeNavItemId("/admin/operations/online-purchases", items), "online-purchases");
   });
 
   it("does not treat /admin/rfqsx as the enquiries section", () => {
@@ -222,11 +222,11 @@ describe("operations navigation", () => {
   });
 });
 
-describe("six-section menu", () => {
-  it("shows owners six sections with sub-pages as tabs", async () => {
+describe("section menu", () => {
+  it("shows owners seven sections with sub-pages as tabs", async () => {
     const { visibleSections } = await import("./navigation.ts");
     const sections = visibleSections(getNavItemsForRole("owner"));
-    assert.deepEqual(sections.map((s) => s.section.label), ["Overview", "Enquiries", "Projects", "Customers", "Money", "Settings"]);
+    assert.deepEqual(sections.map((s) => s.section.label), ["Overview", "Enquiries", "Online purchases", "Projects", "Customers", "Money", "Settings"]);
     assert.equal(sections.find((s) => s.section.id === "projects")?.href, "/admin/operations/projects/");
   });
 
@@ -238,12 +238,16 @@ describe("six-section menu", () => {
     }
   });
 
-  it("shows Online purchases as a tab under Enquiries", async () => {
+  it("gives Online purchases its own menu heading for every role", async () => {
     const { visibleSections, activeSectionId } = await import("./navigation.ts");
-    const items = getNavItemsForRole("owner");
-    const enquiries = visibleSections(items).find((s) => s.section.id === "enquiries");
-    assert.ok(enquiries?.tabs.some((t) => t.item.href === "/admin/operations/online-purchases/"));
-    assert.equal(activeSectionId("/admin/operations/online-purchases/", items), "enquiries");
+    for (const role of ["owner", "admin", "sales", "estimator", "viewer"] as const) {
+      const items = getNavItemsForRole(role);
+      const shop = visibleSections(items).find((s) => s.section.id === "shop");
+      assert.equal(shop?.href, "/admin/operations/online-purchases/", `${role} should see Online purchases`);
+      assert.equal(activeSectionId("/admin/operations/online-purchases/", items), "shop");
+    }
+    const enquiries = visibleSections(getNavItemsForRole("owner")).find((s) => s.section.id === "enquiries");
+    assert.ok(!enquiries?.tabs.some((t) => t.item.id === "online-purchases"));
   });
 
   it("highlights exactly one section for a page, including detail pages", async () => {

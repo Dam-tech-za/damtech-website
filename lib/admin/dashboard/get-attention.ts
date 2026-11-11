@@ -32,7 +32,7 @@ function countOrNull(result: CountResult): number | null {
 async function getRfqAttentionCounts(role: AdminRole): Promise<AttentionCounts> {
   try {
     const supabase = await createClient();
-    const canOrders = canAccessNavItem(role, "orders");
+    const canOrders = canAccessNavItem(role, "online-purchases");
     const canQuotes = canAccessNavItem(role, "quotes");
     const ordersDb = canOrders ? await adminOrdersDb().catch(() => null) : null;
     const ordersUnavailable = Promise.resolve({
@@ -119,7 +119,7 @@ async function getRfqAttentionCounts(role: AdminRole): Promise<AttentionCounts> 
       failedEmailHref: failedRfqId
         ? `/admin/rfqs/${failedRfqId}/#rfq-communication`
         : failedOrderId && canOrders
-          ? `/admin/orders/${failedOrderId}/`
+          ? `/admin/operations/online-purchases/?order=${failedOrderId}`
           : null,
       quotesAwaitingApproval: canQuotes ? countOrNull(reviewCount) : 0,
       quotesExpiringSoon: canQuotes ? countOrNull(expiring) : 0,

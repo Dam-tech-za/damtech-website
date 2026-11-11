@@ -80,7 +80,7 @@ export async function POST(request: Request): Promise<Response> {
       outcome = changed ? "paid" : "duplicate_paid";
       if (changed) {
         const paidOrder = { ...order, status: "paid", paymentStatus: "paid", amountPaidZar: Number(itn.amountGross) };
-        const adminUrl = `${shopOrigin()}/admin/orders/${order.id}/`;
+        const adminUrl = `${shopOrigin()}/admin/operations/online-purchases/?order=${order.id}`;
         // Reply to PayFast quickly; send the emails after the response.
         after(async () => {
           const result = await sendPvcPaidEmails(paidOrder, adminUrl);

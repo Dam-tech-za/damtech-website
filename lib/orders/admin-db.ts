@@ -14,7 +14,7 @@ import { createServiceRoleClient } from "@/lib/supabase/admin";
  */
 export async function adminOrdersDb(options: { manage?: boolean } = {}): Promise<SupabaseClient> {
   const admin = await assertAdmin(options.manage ? { permission: "manageOrders" } : {});
-  if (!canAccessNavItem(admin.profile.role, "orders")) {
+  if (!canAccessNavItem(admin.profile.role, "online-purchases")) {
     throw new Error("Your role cannot view orders.");
   }
   return createServiceRoleClient();

@@ -18,7 +18,7 @@ export const ADMIN_NAV_GROUPS: AdminNavGroup[] = [
   {
     id: "sales",
     label: "Sales",
-    itemIds: ["rfqs", "quotes", "orders", "customers"],
+    itemIds: ["rfqs", "quotes", "customers"],
   },
   {
     id: "estimating",
@@ -78,7 +78,7 @@ const SEGMENT_LABELS: Record<string, string> = {
   financials: "Financials",
   rfqs: "Enquiries",
   quotes: "Quotations",
-  orders: "Orders",
+  "online-purchases": "Online purchases",
   customers: "Customers",
   pricing: "Pricing",
   import: "CSV import",
@@ -112,7 +112,6 @@ function segmentLabel(segment: string, parent: string | undefined): string {
   if (ID_SEGMENT.test(segment)) {
     if (parent === "rfqs") return "Enquiry";
     if (parent === "quotes") return "Quotation";
-    if (parent === "orders") return "Order";
     if (parent === "customers") return "Customer";
     if (parent === "projects") return "Project";
     return "Details";
@@ -150,10 +149,10 @@ export function adminPageTitle(pathname: string): string {
 
 // ---------------------------------------------------------------------------
 // Sections: the short left menu. Each section's pages show as tabs on top of
-// the page, so the menu stays at six items however many pages exist.
+// the page, so the menu stays short however many pages exist.
 // ---------------------------------------------------------------------------
 
-export type AdminSectionId = "overview" | "enquiries" | "projects" | "customers" | "money" | "settings";
+export type AdminSectionId = "overview" | "enquiries" | "shop" | "projects" | "customers" | "money" | "settings";
 
 export type AdminSection = {
   id: AdminSectionId;
@@ -169,9 +168,10 @@ export const ADMIN_SECTIONS: AdminSection[] = [
   {
     id: "enquiries",
     label: "Enquiries",
-    itemIds: ["rfqs", "quotes", "orders", "online-purchases"],
-    tabLabels: { rfqs: "Enquiries", quotes: "Quotations", orders: "Online orders", "online-purchases": "Online purchases" },
+    itemIds: ["rfqs", "quotes"],
+    tabLabels: { rfqs: "Enquiries", quotes: "Quotations" },
   },
+  { id: "shop", label: "Online purchases", itemIds: ["online-purchases"] },
   {
     id: "projects",
     label: "Projects",

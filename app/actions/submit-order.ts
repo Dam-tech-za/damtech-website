@@ -165,7 +165,7 @@ export async function submitCatalogueOrder(
   const origin =
     process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") ||
     "https://www.dam-tech.co.za";
-  const adminUrl = `${origin}/admin/orders/${created.order.id}/`;
+  const adminUrl = `${origin}/admin/operations/online-purchases/?order=${created.order.id}`;
   const emailConfig = getRfqEmailConfig();
 
   const [customerResult, internalResult] = await Promise.all([

@@ -4,7 +4,7 @@ import { activeSectionId, visibleSections, type AdminSectionId } from "@/lib/adm
 import { NavIcon } from "./AdminSidebar";
 
 const BAR: AdminSectionId[] = ["overview", "enquiries", "projects", "money"];
-const ICON = { overview: "dashboard", enquiries: "rfqs", projects: "projects", money: "money", customers: "customers", settings: "settings" } as const;
+const ICON = { overview: "dashboard", enquiries: "rfqs", shop: "shop", projects: "projects", money: "money", customers: "customers", settings: "settings" } as const;
 
 /** Phones: the main sections along the bottom; "More" opens the full menu. */
 export function AdminBottomBar({
