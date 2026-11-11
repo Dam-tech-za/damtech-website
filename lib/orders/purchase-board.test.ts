@@ -2,6 +2,7 @@ import { describe, it } from "node:test";
 import assert from "node:assert/strict";
 import {
   groupPurchases,
+  isPaidPurchase,
   matchesPurchaseSearch,
   purchaseAmountDue,
   purchaseDateTime,
@@ -56,6 +57,14 @@ describe("online purchases board", () => {
     assert.equal(purchasePaymentKind(row({ payment_status: "failed" })), "failed");
     assert.equal(purchasePaymentKind(row({ payment_status: null })), "pending");
     assert.equal(purchasePaymentKind(row({ payment_method: null, status: "invoice_sent" })), "invoice");
+  });
+
+  it("counts only confirmed payments as paid orders", () => {
+    assert.equal(isPaidPurchase(row({})), true);
+    assert.equal(isPaidPurchase(row({ payment_status: "pending" })), false);
+    assert.equal(isPaidPurchase(row({ payment_status: "paid", status: "cancelled" })), true);
+    assert.equal(isPaidPurchase(row({ payment_method: null, status: "invoice_sent" })), false);
+    assert.equal(isPaidPurchase(row({ payment_method: null, status: "paid" })), true);
   });
 
   it("adds delivery to the goods unless the amount due was saved", () => {

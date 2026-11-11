@@ -16,6 +16,7 @@ import { formatZar } from "@/lib/estimating/money";
 import type { OnlinePurchaseRow } from "@/lib/orders/list";
 import {
   groupPurchases,
+  isPaidPurchase,
   matchesPurchaseSearch,
   PAYMENT_FILTER_LABELS,
   PURCHASE_SORT_LABELS,
@@ -108,6 +109,12 @@ export function PurchasesWorkspace({ rows, extras, courier, canManage, initialSt
   const [open, setOpen] = useState<Popover>(null);
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [peekId, setPeekId] = useState<string | null>(initialOrderId);
+  const unpaidCount = useMemo(() => rows.filter((row) => !isPaidPurchase(row)).length, [rows]);
+  // A link straight to an unpaid order (or to the Awaiting payment stage) shows unpaid checkouts too.
+  const [showUnpaid, setShowUnpaid] = useState(() => {
+    const linked = rows.find((row) => row.id === initialOrderId);
+    return initialStage === "awaiting_payment" || Boolean(linked && !isPaidPurchase(linked));
+  });
   const [collapsed, setCollapsed] = useCollapsedGroups(COLLAPSE_KEY, DEFAULT_COLLAPSED);
   const filterBtn = useRef<HTMLButtonElement>(null);
   const sortBtn = useRef<HTMLButtonElement>(null);
@@ -116,17 +123,23 @@ export function PurchasesWorkspace({ rows, extras, courier, canManage, initialSt
 
   const visible = useMemo(() => {
     const filtered = rows.filter((row) => {
+      if (!showUnpaid && !isPaidPurchase(row)) return false;
       if (stages.length && !stages.includes(purchaseStage(row))) return false;
       if (payments.length && !payments.includes(purchasePaymentKind(row))) return false;
       if (fulfilment && isCollectionMethod(row.fulfilment_method) !== (fulfilment === "collection")) return false;
       return matchesPurchaseSearch(row, q);
     });
     return sortPurchases(filtered, sort);
-  }, [rows, stages, payments, fulfilment, q, sort]);
+  }, [rows, showUnpaid, stages, payments, fulfilment, q, sort]);
 
   const filterActive = Boolean(q.trim() || stages.length || payments.length || fulfilment);
   const filterCount = stages.length + payments.length + (fulfilment ? 1 : 0);
-  const groups = groupPurchases(visible).map((g) => ({ id: g.stage, label: g.label, tone: g.tone, rows: g.rows }));
+  const groups = groupPurchases(visible)
+    .filter((g) => showUnpaid || g.stage !== "awaiting_payment")
+    .map((g) => ({ id: g.stage, label: g.label, tone: g.tone, rows: g.rows }));
+  const stageChoices = PURCHASE_STAGES.filter((s) => showUnpaid || s !== "awaiting_payment");
+  const paymentChoices = PAYMENT_FILTERS.filter((p) => showUnpaid || p === "paid" || p === "invoice");
+  const paidRows = showUnpaid ? rows : rows.filter(isPaidPurchase);
   const peekOrder = rows.find((row) => row.id === peekId) ?? null;
   const selectedRows = rows.filter((row) => selected.has(row.id));
 
@@ -336,7 +349,7 @@ export function PurchasesWorkspace({ rows, extras, courier, canManage, initialSt
             <fieldset>
               <legend>Stage</legend>
               <div className="ops-toolbar__chips-inline">
-                {PURCHASE_STAGES.map((s) => (
+                {stageChoices.map((s) => (
                   <button key={s} type="button" className={`ops-toolbar__chip${stages.includes(s) ? " is-on" : ""}`} onClick={() => setStages((v) => toggle(v, s))}>
                     {PURCHASE_STAGE_LABELS[s]}
                   </button>
@@ -346,7 +359,7 @@ export function PurchasesWorkspace({ rows, extras, courier, canManage, initialSt
             <fieldset>
               <legend>Payment</legend>
               <div className="ops-toolbar__chips-inline">
-                {PAYMENT_FILTERS.map((p) => (
+                {paymentChoices.map((p) => (
                   <button key={p} type="button" className={`ops-toolbar__chip${payments.includes(p) ? " is-on" : ""}`} onClick={() => setPayments((v) => toggle(v, p))}>
                     {PAYMENT_FILTER_LABELS[p]}
                   </button>
@@ -398,6 +411,21 @@ export function PurchasesWorkspace({ rows, extras, courier, canManage, initialSt
         <ToolbarPopover open={open === "more"} anchorRef={moreBtn} onClose={() => setOpen(null)} width={220}>
           <ul className="ops-toolbar__menu-list">
             <li>
+              <button
+                type="button"
+                onClick={() => {
+                  if (showUnpaid) {
+                    setStages((v) => v.filter((s) => s !== "awaiting_payment"));
+                    setPayments((v) => v.filter((p) => p === "paid" || p === "invoice"));
+                  }
+                  setShowUnpaid(!showUnpaid);
+                  setOpen(null);
+                }}
+              >
+                {showUnpaid ? "Show paid orders only" : `Show unpaid checkouts (${unpaidCount})`}
+              </button>
+            </li>
+            <li>
               <button type="button" onClick={() => { setCollapsed([]); setOpen(null); }}>
                 Expand all
               </button>
@@ -434,13 +462,15 @@ export function PurchasesWorkspace({ rows, extras, courier, canManage, initialSt
         </ToolbarPopover>
       </div>
 
-      {rows.length === 0 ? (
-        <p className="ops-table__meta">No online purchases yet.</p>
+      {paidRows.length === 0 ? (
+        <p className="ops-table__meta">
+          {showUnpaid ? "No online purchases yet." : `No paid orders yet.${unpaidCount ? ` ${unpaidCount} unpaid checkout${unpaidCount === 1 ? " is" : "s are"} hidden (More menu).` : ""}`}
+        </p>
       ) : visible.length === 0 ? (
         <p className="ops-table__meta">No orders match these filters.</p>
       ) : null}
 
-      {rows.length > 0 ? (
+      {paidRows.length > 0 ? (
         <GroupedSheet
           groups={groups}
           columns={shownColumns}

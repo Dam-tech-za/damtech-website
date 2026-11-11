@@ -79,6 +79,17 @@ export function purchasePaymentKind(row: Pick<PurchaseBoardRow, "payment_method"
   return "pending";
 }
 
+const UNPAID_INVOICE_STATUSES = ["pending_invoice", "invoice_sent", "awaiting_payment", "cancelled"];
+
+/**
+ * Money has come in: PayFast confirmed the payment, or an invoice order has
+ * moved past invoicing. Unpaid checkouts and cancelled invoice orders are not.
+ */
+export function isPaidPurchase(row: Pick<PurchaseBoardRow, "payment_method" | "payment_status" | "status">): boolean {
+  if (row.payment_method === "payfast") return row.payment_status === "paid";
+  return !UNPAID_INVOICE_STATUSES.includes(row.status);
+}
+
 export function purchasePaymentPill(row: Pick<PurchaseBoardRow, "payment_method" | "payment_status" | "status">): { label: string; tone: BoardTone } {
   switch (purchasePaymentKind(row)) {
     case "paid":
