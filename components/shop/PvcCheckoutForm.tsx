@@ -73,6 +73,8 @@ function TextInput(props: {
   );
 }
 
+const QUOTE_FIELDS = ["billingLine1", "billingLine2", "suburb", "city", "province", "postalCode", "quantity", "collection", "customerType"];
+
 export function PvcCheckoutForm({
   liner,
   colour,
@@ -145,9 +147,9 @@ export function PvcCheckoutForm({
   const quotedFor = useRef("");
 
   /** Work out the delivery fee as soon as the address is complete. */
-  function handleFormBlur(event: FormEvent<HTMLFormElement>) {
+  function requestQuote(form: HTMLFormElement) {
     if (!liveRates || busy) return;
-    const formData = new FormData(event.currentTarget);
+    const formData = new FormData(form);
     if (formData.get("collection")) return;
     const parts = ["billingLine1", "billingLine2", "suburb", "city", "province", "postalCode", "quantity", "customerType"].map(
       (name) => String(formData.get(name) ?? "").trim(),
@@ -167,13 +169,20 @@ export function PvcCheckoutForm({
       })
       .finally(() => setQuoting(false));
   }
-  /** Address or quantity changed: the courier fee has to be worked out again. */
+
+  function handleFormBlur(event: FormEvent<HTMLFormElement>) {
+    requestQuote(event.currentTarget);
+  }
+
+  /** Address, quantity or delivery choice changed: the courier fee has to be worked out again. */
   function handleFormChange(event: FormEvent<HTMLFormElement>) {
-    if (!liveQuote) return;
-    const name = (event.target as HTMLInputElement).name;
-    if (["billingLine1", "billingLine2", "suburb", "city", "province", "postalCode", "quantity", "collection", "customerType"].includes(name)) {
-      setLiveQuote(null);
-    }
+    const target = event.target as HTMLInputElement;
+    if (!QUOTE_FIELDS.includes(target.name)) return;
+    setLiveQuote(null);
+    quotedFor.current = "";
+    // Back from collection to delivery: quote straight away for the address already typed.
+    // A dropdown (province) does not always blur, so quote on its change too.
+    if (target.name === "collection" || target.tagName === "SELECT") requestQuote(event.currentTarget);
   }
 
   return (
