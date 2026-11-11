@@ -2,6 +2,7 @@
 
 import { useEffect, useId, useRef, type ReactNode } from "react";
 import { AdminButton } from "./AdminButton";
+import { useScrollEdges } from "./use-scroll-edges";
 
 type AdminDrawerProps = {
   open: boolean;
@@ -13,6 +14,8 @@ type AdminDrawerProps = {
 export function AdminDrawer({ open, title, onClose, children }: AdminDrawerProps) {
   const titleId = useId();
   const panelRef = useRef<HTMLDivElement>(null);
+  const bodyRef = useRef<HTMLDivElement>(null);
+  useScrollEdges(bodyRef, open);
 
   useEffect(() => {
     if (!open) return;
@@ -48,7 +51,9 @@ export function AdminDrawer({ open, title, onClose, children }: AdminDrawerProps
             Close
           </AdminButton>
         </header>
-        <div className="admin-drawer__body">{children}</div>
+        <div ref={bodyRef} className="admin-drawer__body">
+          {children}
+        </div>
       </div>
     </div>
   );

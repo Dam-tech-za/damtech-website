@@ -248,3 +248,24 @@ test("board stages: on a quotation, formal quote asked, rated, draft", async () 
   assert.ok(matchesLinerQuoteSearch(row, "0101"));
   assert.ok(!matchesLinerQuoteSearch(row, "durban"));
 });
+
+test("saved rows give back the parcel, job and size line", async () => {
+  const { savedJob, savedParcel, savedSizeLabel } = await import("./liner-board.ts");
+  const row = {
+    id: "1", created_at: "", updated_at: "", reference: "Q-1", customer_name: "A Farmer", shape: "circular" as const,
+    inputs: { diameter: "5", rows: "3", colour: "blue" }, area_m2: 61.6, gsm: 550, quantity: 2, weight_kg: 33.9,
+    parcel_length_cm: 40, parcel_width_cm: 40, parcel_height_cm: 40, parcel_source: "folded" as const, depot: "pretoria",
+    delivery_address: { customerName: "A Farmer", phone: "082", street: "5 Farm Rd", suburb: "K", city: "Kleinmond", province: "Western Cape", postalCode: "7195" },
+    declared_value: 5000, courier_rates: null, rated_at: null, chosen_service_name: null, chosen_amount: null,
+    formal_quote_status: "none", rfq_id: null, quote_id: null, notes: "Gate 4",
+  };
+  assert.deepEqual(savedParcel(row), { lengthCm: 40, widthCm: 40, heightCm: 40, weightKg: 33.9 });
+  const job = savedJob(row);
+  assert.equal(job.description, "2 x 550 gsm PVC liner (blue), 61.6 m2 made up");
+  assert.equal(job.postalCode, "7195");
+  assert.equal(job.declaredValue, 5000);
+  assert.deepEqual(checkJob(job), { ok: true });
+  assert.equal(savedSizeLabel(row), "Round tank 5 m, 3 rows");
+  assert.equal(savedSizeLabel({ shape: "circular", inputs: { diameter: "6", rows: "custom", wallHeight: "2.4" } }), "Round tank 6 m, 2.4 m wall");
+  assert.equal(savedSizeLabel({ shape: "rectangular", inputs: { length: "4", width: "3", depth: "1.5" } }), "Rectangular 4 × 3 × 1.5 m");
+});

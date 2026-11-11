@@ -3,6 +3,7 @@
 import { useEffect, useId, useRef, type ReactNode } from "react";
 import { createPortal } from "react-dom";
 import { AdminButton } from "./AdminButton";
+import { useScrollEdges } from "./use-scroll-edges";
 
 type AdminDialogProps = {
   open: boolean;
@@ -12,7 +13,8 @@ type AdminDialogProps = {
   children: ReactNode;
   footer?: ReactNode;
   role?: "dialog" | "alertdialog";
-  size?: "default" | "wide";
+  /** "large": about 80% of the screen, for forms laid out in columns. */
+  size?: "default" | "wide" | "large";
 };
 
 export function AdminDialog({
@@ -28,6 +30,8 @@ export function AdminDialog({
   const titleId = useId();
   const descId = useId();
   const panelRef = useRef<HTMLDivElement>(null);
+  const bodyRef = useRef<HTMLDivElement>(null);
+  useScrollEdges(bodyRef, open);
 
   useEffect(() => {
     if (!open) return;
@@ -51,7 +55,7 @@ export function AdminDialog({
       />
       <div
         ref={panelRef}
-        className={`admin-dialog__panel${size === "wide" ? " admin-dialog__panel--wide" : ""}`}
+        className={`admin-dialog__panel${size === "wide" ? " admin-dialog__panel--wide" : size === "large" ? " admin-dialog__panel--large" : ""}`}
         role={role}
         aria-modal="true"
         aria-labelledby={titleId}
@@ -71,7 +75,9 @@ export function AdminDialog({
             Close
           </AdminButton>
         </header>
-        <div className="admin-dialog__body">{children}</div>
+        <div ref={bodyRef} className="admin-dialog__body">
+          {children}
+        </div>
         {footer ? <footer className="admin-dialog__footer">{footer}</footer> : null}
       </div>
     </div>,
