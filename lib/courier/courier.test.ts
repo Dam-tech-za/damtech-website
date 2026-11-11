@@ -193,3 +193,17 @@ test("a tracking check produces the fields saved on the order", async () => {
   assert.equal(isCourierStatusFinal("delivered"), true);
   assert.equal(isCourierStatusFinal("in-transit"), false);
 });
+
+test("the courier's own error wording is passed on without the key", async () => {
+  const { courierErrorDetail } = await import("./client.ts");
+  assert.equal(courierErrorDetail({ message: "Invalid postal code" }), "Invalid postal code");
+  assert.equal(
+    courierErrorDetail({ errors: [{ field: "delivery_address.code", message: "does not match suburb" }] }),
+    "delivery_address.code: does not match suburb",
+  );
+  assert.equal(courierErrorDetail({ errors: { parcels: ["too heavy"] } }), "parcels: too heavy");
+  assert.equal(courierErrorDetail(null), "");
+  const fetcher = (async () => Response.json({ message: "Unauthorized" }, { status: 401 })) as unknown as typeof fetch;
+  const result = await getCourierRates(config(), order, parcel, fetcher);
+  assert.ok(!result.ok && /error 401/.test(result.error) && /Unauthorized/.test(result.error) && !result.error.includes("test-key"));
+});

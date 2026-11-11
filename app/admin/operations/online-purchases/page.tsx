@@ -1,4 +1,6 @@
 import { courierStatusSummary } from "@/lib/courier";
+import { CourierTestPanel } from "@/components/admin/CourierTestPanel";
+import { canPerform } from "@/lib/auth/permissions";
 import Link from "next/link";
 import { Suspense } from "react";
 import type { Metadata } from "next";
@@ -99,6 +101,12 @@ export default async function OnlinePurchasesPage({ searchParams }: PageProps) {
       <Suspense fallback={null}>
         <AdminListMemory listPath={LIST_PATH} />
       </Suspense>
+
+      {canPerform(admin.profile.role, "manageOrders") ? (
+        <AdminPanel title="The Courier Guy" description="Check that rates come back. This books nothing.">
+          <CourierTestPanel />
+        </AdminPanel>
+      ) : null}
 
       {error ? (
         <AdminErrorState title="Online purchases could not be loaded." message="Refresh in a moment." />

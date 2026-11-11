@@ -5341,3 +5341,15 @@ table.admin-sheet .admin-status {
   font-weight: 700;
   font-variant-numeric: tabular-nums;
 }
+
+.ops-courier__test {
+  display: grid;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.875rem;
+}
+.ops-courier__test li[data-ok="false"] strong {
+  color: var(--admin-danger, #b42318);
+}
