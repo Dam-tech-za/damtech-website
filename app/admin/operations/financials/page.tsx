@@ -19,11 +19,13 @@ import {
   AdminSubmitButton,
   AdminTable,
 } from "@/components/admin/ui";
-import { FinancialCharts } from "@/components/admin/operations/FinancialCharts";
+import { AccountingDashboard } from "@/components/admin/operations/accounting/AccountingDashboard";
+import { buildAccountingDashboard } from "@/lib/operations/financial-metrics";
+import type { SupabaseClient } from "@supabase/supabase-js";
 import { OpsSetupBanners } from "@/components/admin/operations/OpsParts";
 import { formatOpsDate, formatOpsDateTime, formatOpsMoney } from "@/components/admin/operations/ops-format";
 
-export const metadata: Metadata = { title: "Financials" };
+export const metadata: Metadata = { title: "Accounting" };
 
 const BASIS: Record<FigureBasis, { label: string; tone: string; help: string }> = {
   actual: { label: "Actual", tone: "ops-good", help: "From Xero reports, open invoices and bills." },
@@ -54,6 +56,20 @@ function PnlStrip({ period, label }: { period: PnlPeriod; label: string }) {
   );
 }
 
+/** Website enquiry dates (last 6 months) and whether any crew is on the operations calendar. */
+async function loadSalesInputs(db: SupabaseClient, today: string): Promise<{ enquiryDates: string[]; crewTracked: boolean }> {
+  const since = new Date(Date.parse(`${today}T00:00:00Z`) - 186 * 86_400_000).toISOString();
+  const [rfqs, crew] = await Promise.all([
+    db.from("rfqs").select("submitted_at").gte("submitted_at", since).limit(5000),
+    db.from("ops_resources").select("id", { count: "exact", head: true }),
+  ]);
+  if (rfqs.error) console.error("[accounting] enquiries not loaded:", rfqs.error.message);
+  return {
+    enquiryDates: (rfqs.data ?? []).map((r) => String(r.submitted_at ?? "")).filter(Boolean),
+    crewTracked: (crew.count ?? 0) > 0,
+  };
+}
+
 export default async function FinancialsPage() {
   await requireAdmin({ permission: "viewFinancials" });
   const { db } = await adminOpsDb({ permission: "viewFinancials" });
@@ -69,7 +85,7 @@ export default async function FinancialsPage() {
   if (load.state !== "ready") {
     return (
       <div className="admin-stack--page ops">
-        <AdminPageHeader title="Financials" description="Company results from Xero. Nothing here is typed in by hand." primaryActionNode={refresh} />
+        <AdminPageHeader title="Accounting" description="Company results from Xero. Nothing here is typed in by hand." primaryActionNode={refresh} />
         <OpsSetupBanners setup={{ tablesReady: load.state !== "tables_missing", bridgeConfigured }} />
         {load.state === "error" ? <AdminErrorState title="Financials could not be loaded." message={load.message} /> : null}
         {load.state === "empty" ? (
@@ -86,10 +102,12 @@ export default async function FinancialsPage() {
   }
 
   const s = load.snapshot;
+  const sales = await loadSalesInputs(db, s.today);
+  const dashboard = buildAccountingDashboard(s, sales.enquiryDates, { crewTracked: sales.crewTracked });
   return (
     <div className="admin-stack--page ops">
       <AdminPageHeader
-        title="Financials"
+        title="Accounting"
         description={`From Xero, last refreshed ${formatOpsDateTime(s.fetchedAt)}. Change figures in Xero, not here.`}
         primaryActionNode={refresh}
       />
@@ -108,7 +126,10 @@ export default async function FinancialsPage() {
         </AdminInfoBanner>
       ))}
 
-      <FinancialCharts s={s} basis={(b) => <Basis basis={b} />} />
+      <AccountingDashboard d={dashboard} s={s} />
+
+      <details className="acct-details">
+        <summary>All figures as tables</summary>
 
       {s.ytd ? (
         <AdminPanel title="This financial year" description={`From ${formatOpsDate(s.financialYearStart)} to ${formatOpsDate(s.today)}.`} actions={<Basis basis="actual" />}>
@@ -165,7 +186,7 @@ export default async function FinancialsPage() {
         </AdminPanel>
       </div>
 
-      <AdminPanel title="Last six complete months" actions={<Basis basis="actual" />}>
+      <AdminPanel title="Last 12 complete months" actions={<Basis basis="actual" />}>
         {s.months.length ? (
           <AdminTable caption="Monthly results" className="ops-table">
             <thead>
@@ -231,6 +252,8 @@ export default async function FinancialsPage() {
           </p>
         ) : null}
       </AdminPanel>
+
+      </details>
 
       <AdminPanel title="Profit per project" compact>
         <p className="ops-table__meta">

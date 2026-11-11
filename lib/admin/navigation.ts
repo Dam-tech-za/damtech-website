@@ -183,9 +183,9 @@ export const ADMIN_SECTIONS: AdminSection[] = [
   { id: "customers", label: "Customers", itemIds: ["customers", "suppliers"], tabLabels: { customers: "Customers", suppliers: "Suppliers" } },
   {
     id: "money",
-    label: "Money",
+    label: "Accounting",
     itemIds: ["financials", "xero-review"],
-    tabLabels: { financials: "Financials", "xero-review": "Unmatched Xero" },
+    tabLabels: { financials: "Dashboard", "xero-review": "Unmatched Xero" },
   },
   {
     id: "settings",

@@ -11,7 +11,7 @@ import {
   type FlatReport,
 } from "./financials.ts";
 import { composeFinancialSnapshot, fetchFinancialParts } from "./financials-sync.ts";
-import type { XeroBridgeClient, XeroInvoiceSummary } from "./xero-bridge.ts";
+import { XERO_BRIDGE_READ_TOOLS, type XeroBridgeClient, type XeroInvoiceSummary } from "./xero-bridge.ts";
 
 const TODAY = "2026-10-26";
 
@@ -166,9 +166,19 @@ describe("financials from Xero reports", () => {
       },
     };
     const parts = await fetchFinancialParts(bridge, TODAY);
-    assert.ok(calls.every((c) => ["get_organisation", "get_profit_and_loss", "get_bank_summary", "get_invoices"].includes(c.tool)));
-    assert.equal(calls.length, 7);
-    assert.deepEqual(calls.find((c) => c.args.periods)?.args, { date_from: "2026-09-01", date_to: "2026-09-30", periods: 5, timeframe: "MONTH" });
+    assert.ok(calls.every((c) => (XERO_BRIDGE_READ_TOOLS as readonly string[]).includes(c.tool)));
+    // 7 core reads, plus last year's P&L (full and to date), the balance sheet (today and month-ends), 24 months of sales and the quotes.
+    assert.equal(calls.length, 13);
+    assert.deepEqual(calls.find((c) => c.tool === "get_profit_and_loss" && c.args.periods)?.args, { date_from: "2026-09-01", date_to: "2026-09-30", periods: 11, timeframe: "MONTH" });
+    assert.deepEqual(
+      calls.filter((c) => c.tool === "get_profit_and_loss").slice(3).map((c) => [c.args.date_from, c.args.date_to]),
+      [["2025-03-01", "2026-02-28"], ["2025-03-01", "2025-10-26"]],
+    );
+    assert.deepEqual(calls.find((c) => c.tool === "get_invoices" && c.args.date_from)?.args.date_from, "2024-10-01");
+    // The balance sheet and quotes failed in this fake bridge: they are left out, the refresh still works.
+    assert.equal(parts.balances, undefined);
+    assert.equal(parts.quotes, undefined);
+    assert.equal(parts.sales?.length, 1);
     assert.equal(calls.find((c) => c.tool === "get_profit_and_loss")?.args.date_from, "2026-03-01");
 
     const snap = composeFinancialSnapshot(parts, "2026-10-26T10:00:00Z", TODAY);

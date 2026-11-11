@@ -5420,3 +5420,141 @@ table.admin-sheet .admin-status {
 .lc-services { display: grid; gap: 0.35rem; margin: 0; padding: 0; border: 0; }
 .lc-services label { display: grid; grid-template-columns: auto 1fr auto; gap: 0.6rem; align-items: center; padding: 0.45rem 0.65rem; border: 1px solid var(--admin-border); border-radius: 6px; font-size: 0.875rem; cursor: pointer; }
 .lc-services label.is-active { border-color: var(--admin-primary); background: #f3f8fe; }
+
+/* ---------------------------------------------------------------------------
+   Accounting dashboard (/admin/operations/financials/). Chart colours are the
+   validated categorical slots 1–3, a diverging red for losses and a one-hue
+   blue ramp for ordered ages. Text never wears a series colour.
+   --------------------------------------------------------------------------- */
+.acct {
+  --acct-series-1: #2a78d6;
+  --acct-series-2: #eb6834;
+  --acct-series-3: #1baf7a;
+  --acct-negative: #e34948;
+  --acct-seq-250: #86b6ef;
+  --acct-seq-350: #5598e7;
+  --acct-seq-450: #2a78d6;
+  --acct-seq-550: #1c5cab;
+  --acct-seq-650: #104281;
+  --acct-ink: #0b1f33;
+  --acct-ink-2: #52657a;
+  --acct-muted: #8a97a6;
+  --acct-grid: #eef1f5;
+  --acct-axis: #c9d2dc;
+  --acct-good: #0a7a3c;
+  --acct-bad: #b42318;
+  display: grid;
+  gap: 1.25rem;
+  color: var(--acct-ink);
+}
+.acct-switch { display: inline-flex; justify-self: start; padding: 3px; border-radius: 10px; background: #e9eef4; }
+.acct-switch button { border: 0; background: none; padding: 0.45rem 1rem; border-radius: 8px; font: inherit; font-size: 0.875rem; font-weight: 600; color: var(--acct-ink-2); cursor: pointer; }
+.acct-switch button.is-active { background: #fff; color: var(--acct-ink); box-shadow: 0 1px 3px rgba(11, 31, 51, 0.12); }
+.acct-lede { margin: -0.25rem 0 0; font-size: 0.875rem; color: var(--acct-ink-2); max-width: 70ch; }
+.acct-notice { margin: 0; padding: 0.6rem 0.85rem; border-radius: 8px; background: #fff7e6; color: #7a4a00; font-size: 0.8125rem; }
+
+/* KPI cards */
+.acct-kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(14.5rem, 1fr)); gap: 0.9rem; }
+@media (min-width: 1100px) { .acct-kpis { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+.acct-card {
+  display: grid;
+  align-content: start;
+  gap: 0.35rem;
+  min-width: 0;
+  padding: 1rem 1.1rem;
+  border: 1px solid #e3e9f0;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 1px 2px rgba(11, 31, 51, 0.04);
+}
+.acct-card--large { padding: 1.1rem 1.2rem 1rem; }
+.acct-card__head { display: flex; align-items: flex-start; justify-content: space-between; gap: 0.5rem; }
+.acct-card__head h3 { margin: 0; font-size: 0.8125rem; font-weight: 600; color: var(--acct-ink-2); }
+.acct-card__body { display: flex; align-items: flex-end; justify-content: space-between; gap: 0.75rem; }
+.acct-card__value { margin: 0; font-size: 1.45rem; font-weight: 650; letter-spacing: -0.01em; line-height: 1.15; white-space: nowrap; }
+.acct-card--large .acct-card__value { font-size: 1.85rem; }
+.acct-card--empty .acct-card__value { color: var(--acct-muted); }
+.acct-card__delta { margin: 0; font-size: 0.75rem; font-weight: 600; color: var(--acct-ink-2); }
+.acct-card__delta.is-good { color: var(--acct-good); }
+.acct-card__delta.is-bad { color: var(--acct-bad); }
+.acct-card__note { margin: 0.15rem 0 0; font-size: 0.75rem; line-height: 1.45; color: var(--acct-muted); display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.acct-card__rule { margin: 0; font-size: 0.6875rem; color: var(--acct-muted); }
+.acct-health { display: inline-flex; align-items: center; gap: 0.3rem; padding: 0.1rem 0.5rem; border-radius: 999px; font-size: 0.6875rem; font-weight: 650; white-space: nowrap; }
+.acct-health span { font-weight: 800; }
+.acct-health--good { background: #e8f6ec; color: var(--acct-good); }
+.acct-health--warning { background: #fff4dc; color: #8a5a00; }
+.acct-health--critical { background: #fdecea; color: var(--acct-bad); }
+.acct-health--estimate { background: #eef2f7; color: var(--acct-ink-2); }
+.acct-spark { width: 6rem; height: 1.75rem; flex: none; }
+.acct-spark path { fill: none; stroke: #b5c0cc; stroke-width: 1.5; stroke-linejoin: round; stroke-linecap: round; }
+.acct-spark circle { fill: var(--acct-series-1); stroke: #fff; stroke-width: 1.5; }
+
+/* Panels and charts */
+.acct-grid { display: grid; gap: 1rem; }
+@media (min-width: 1100px) {
+  .acct-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .acct-panel--wide { grid-column: 1 / -1; }
+}
+.acct-panel { display: grid; align-content: start; gap: 0.85rem; min-width: 0; padding: 1.15rem 1.25rem 1.25rem; border: 1px solid #e3e9f0; border-radius: 14px; background: #fff; }
+.acct-panel__head h3 { margin: 0; font-size: 0.975rem; font-weight: 650; }
+.acct-panel__head p { margin: 0.2rem 0 0; font-size: 0.8125rem; color: var(--acct-ink-2); }
+.acct-chart { margin: 0; display: grid; gap: 0.5rem; }
+.acct-chart__plot { position: relative; }
+.acct-chart svg { display: block; width: 100%; height: auto; overflow: visible; touch-action: pan-y; }
+.acct-gridline { stroke: var(--acct-grid); stroke-width: 1; }
+.acct-axis { stroke: var(--acct-axis); stroke-width: 1; }
+.acct-tick { fill: var(--acct-muted); font-size: 11px; font-variant-numeric: tabular-nums; }
+.acct-tick--forecast { font-style: italic; }
+.acct-forecast-zone { fill: #f6f8fb; }
+.acct-bar { transition: opacity 120ms; }
+.acct-bar.is-hover { opacity: 0.8; }
+.acct-bar--forecast { stroke-dasharray: 3 2; }
+.acct-line { fill: none; stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
+.acct-line--forecast { stroke-dasharray: 5 4; }
+.acct-area { opacity: 0.1; }
+.acct-band { opacity: 0.08; }
+.acct-dot { stroke: #fff; stroke-width: 2; }
+.acct-crosshair { stroke: #9aa7b5; stroke-width: 1; }
+.acct-legend { display: flex; flex-wrap: wrap; gap: 0.35rem 1rem; margin: 0; padding: 0; list-style: none; font-size: 0.75rem; color: var(--acct-ink-2); }
+.acct-legend li { display: inline-flex; align-items: center; gap: 0.4rem; }
+.acct-key { display: inline-block; width: 10px; height: 10px; border-radius: 3px; }
+.acct-key--line { width: 14px; height: 0; border-top: 2px solid; border-radius: 0; background: none; }
+.acct-key--forecast { width: 10px; height: 10px; border: 1.5px dashed var(--acct-muted); background: none; }
+.acct-tip { position: absolute; top: 0; z-index: 3; min-width: 10rem; padding: 0.55rem 0.7rem; border-radius: 8px; background: #0b1f33; color: #fff; font-size: 0.75rem; pointer-events: none; transform: translateX(12px); box-shadow: 0 6px 20px rgba(11, 31, 51, 0.2); }
+.acct-tip--left { transform: translateX(calc(-100% - 12px)); }
+.acct-tip__title { margin: 0 0 0.3rem; color: #c9d4e0; font-weight: 600; }
+.acct-tip__row { display: flex; align-items: center; gap: 0.45rem; margin: 0.15rem 0 0; white-space: nowrap; }
+.acct-tip__row strong { font-size: 0.8125rem; font-variant-numeric: tabular-nums; }
+.acct-tip__row span:last-child { color: #c9d4e0; }
+.acct-tip__key { width: 12px; height: 2px; border-radius: 1px; flex: none; }
+.acct-tip__range { color: #9fb0c2 !important; }
+.acct-visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* Small cards inside a panel */
+.acct-mini { display: grid; gap: 0.75rem; grid-template-columns: repeat(auto-fit, minmax(9.5rem, 1fr)); }
+.acct-mini--solo { grid-template-columns: minmax(0, 26rem); }
+.acct-mini .acct-card { padding: 0.8rem 0.9rem; box-shadow: none; background: #fafbfd; }
+.acct-mini .acct-card__value { font-size: 1.2rem; }
+.acct-mini .acct-spark { display: none; }
+
+/* Money owed */
+.acct-ages { display: grid; gap: 1.1rem; }
+.acct-age { display: grid; gap: 0.5rem; }
+.acct-age__head { display: flex; justify-content: space-between; font-size: 0.8125rem; color: var(--acct-ink-2); }
+.acct-age__head strong { color: var(--acct-ink); font-size: 0.95rem; }
+.acct-seg { display: flex; gap: 2px; height: 8px; border-radius: 999px; overflow: hidden; background: #eef1f5; }
+.acct-seg span { min-width: 3px; }
+.acct-seg__empty { flex: 1; }
+.acct-age__list { display: grid; grid-template-columns: repeat(auto-fit, minmax(9.5rem, 1fr)); gap: 0.25rem 1rem; margin: 0; padding: 0; list-style: none; font-size: 0.75rem; color: var(--acct-ink-2); }
+.acct-age__list li { display: flex; align-items: center; gap: 0.4rem; }
+.acct-age__swatch { width: 8px; height: 8px; border-radius: 2px; flex: none; }
+.acct-age__amt { margin-left: auto; color: var(--acct-ink); font-variant-numeric: tabular-nums; }
+
+/* Tables */
+.acct-table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
+.acct-table th, .acct-table td { padding: 0.55rem 0.5rem; border-bottom: 1px solid #eef1f5; text-align: right; font-variant-numeric: tabular-nums; }
+.acct-table th[scope="row"], .acct-table thead th:first-child { text-align: left; font-weight: 600; }
+.acct-table thead th { color: var(--acct-ink-2); font-size: 0.75rem; font-weight: 600; }
+.acct-details { display: grid; gap: 1rem; }
+.acct-details > summary { cursor: pointer; font-size: 0.875rem; font-weight: 600; color: var(--acct-ink-2, #52657a); }
+.acct-details[open] > summary { margin-bottom: 0.25rem; }

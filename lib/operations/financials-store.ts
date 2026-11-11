@@ -47,8 +47,10 @@ export async function refreshFinancials(trigger: SyncTrigger, options: { maxAgeM
     const rows = [
       { report: "profit_and_loss", period_from: parts.profitAndLoss.financialYearStart, period_to: today, payload: parts.profitAndLoss },
       { report: "bank_summary", period_from: null, period_to: today, payload: parts.bank },
-      { report: "receivables", period_from: null, period_to: today, payload: { docs: parts.receivables } },
+      // Sales history and Xero quotes ride with the receivables (both come from the sales ledger).
+      { report: "receivables", period_from: null, period_to: today, payload: { docs: parts.receivables, sales: parts.sales, quotes: parts.quotes } },
       { report: "payables", period_from: null, period_to: today, payload: { docs: parts.payables } },
+      ...(parts.balances ? [{ report: "balance_sheet", period_from: null, period_to: today, payload: { balances: parts.balances } }] : []),
     ].map((r) => ({ ...r, fetched_at: fetchedAt, sync_run_id: runId }));
     const { error } = await db.from("ops_financial_snapshots").insert(rows);
     if (error) throw new Error(error.message);
@@ -104,11 +106,16 @@ export async function loadLatestFinancials(db: SupabaseClient): Promise<Financia
   const byReport = new Map((rows ?? []).map((r) => [r.report as string, r.payload as unknown]));
   if (!REPORTS.every((r) => byReport.has(r))) return { state: "error", message: "The latest refresh is incomplete." };
 
+  const receivables = byReport.get("receivables") as { docs: FinancialParts["receivables"]; sales?: FinancialParts["sales"]; quotes?: FinancialParts["quotes"] };
+  const balanceSheet = byReport.get("balance_sheet") as { balances?: FinancialParts["balances"] } | undefined;
   const parts: FinancialParts = {
     profitAndLoss: byReport.get("profit_and_loss") as FinancialParts["profitAndLoss"],
     bank: byReport.get("bank_summary") as FinancialParts["bank"],
-    receivables: (byReport.get("receivables") as { docs: FinancialParts["receivables"] }).docs,
+    receivables: receivables.docs,
     payables: (byReport.get("payables") as { docs: FinancialParts["payables"] }).docs,
+    balances: balanceSheet?.balances,
+    sales: receivables.sales,
+    quotes: receivables.quotes,
   };
   const fetchedAt = (rows ?? [])[0]?.fetched_at ?? run.finished_at;
   return { state: "ready", snapshot: composeFinancialSnapshot(parts, fetchedAt, todayInSouthAfrica(new Date(fetchedAt))) };
