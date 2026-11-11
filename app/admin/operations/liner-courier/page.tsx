@@ -15,7 +15,7 @@ async function loadHistory(): Promise<{ rows: LinerCourierHistoryRow[]; missing:
   const { data, error } = await db
     .from("liner_courier_quotes")
     .select(
-      "id, created_at, updated_at, reference, customer_name, shape, inputs, area_m2, gsm, quantity, weight_kg, parcel_length_cm, parcel_width_cm, parcel_height_cm, parcel_source, depot, delivery_address, declared_value, courier_rates, rated_at, chosen_service_name, chosen_amount, formal_quote_status, rfq_id, quote_id, notes, quotes(quote_number), rfqs(rfq_number)",
+      "id, created_at, updated_at, reference, customer_name, shape, inputs, area_m2, gsm, quantity, weight_kg, parcel_length_cm, parcel_width_cm, parcel_height_cm, parcel_source, depot, delivery_address, declared_value, courier_rates, rated_at, chosen_service_name, chosen_amount, formal_quote_status, formal_quote_ref, rfq_id, quote_id, notes, quotes(quote_number), rfqs(rfq_number)",
     )
     .order("updated_at", { ascending: false })
     .limit(100);

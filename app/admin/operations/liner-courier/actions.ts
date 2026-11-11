@@ -7,8 +7,11 @@ import { canPerform } from "@/lib/auth/permissions";
 import { describeActionError } from "@/lib/admin/action-state";
 import { createClient } from "@/lib/supabase/server";
 import { createServiceRoleClient } from "@/lib/supabase/admin";
+import { writeAuditLog } from "@/lib/auth/audit";
 import {
+  cancelCourierShipment,
   COURIER_DEPOTS,
+  createCourierQuote,
   courierDepotForProvince,
   getCourierConfig,
   getCourierRates,
@@ -27,6 +30,7 @@ import {
   parcelsForQuantity,
   type LinerCourierJob,
 } from "@/lib/courier/liner-quote";
+import { savedJob, savedParcel, type LinerCourierHistoryRow } from "@/lib/courier/liner-board";
 import { addCourierLineToQuote } from "@/lib/quotes/add-courier-line";
 
 const PAGE = "/admin/operations/liner-courier/";
@@ -206,9 +210,8 @@ export async function saveLinerCourierDraftAction(request: LinerRatesRequest): P
 export type FormalQuoteStatus = "brief_copied" | "portal_opened";
 
 /**
- * Note that a formal quote was asked for through the portal / brief. The
- * Courier Guy API has no quote endpoint we can rely on (see
- * docs/development/liner-courier-quotes.md), so nothing is sent to them here.
+ * Note that a formal quote was asked for by hand (brief copied or portal
+ * opened). sendCourierQuoteAction sends one through the API instead.
  */
 export async function recordFormalQuoteAction(input: {
   historyId: string | null;
@@ -369,6 +372,128 @@ export async function findRfqOrQuoteAction(query: string): Promise<{ ok: boolean
     if (rfqs.error || quotes.error) console.error("[liner-courier] lookup:", rfqs.error?.message, quotes.error?.message);
     if (records.length === 0) return fail("No enquiry or quotation matches that number.");
     return { ok: true, message: `${records.length} found.`, records };
+  } catch (error) {
+    unstable_rethrow(error);
+    return fail(describeActionError(error));
+  }
+}
+
+export type SendQuoteResult = {
+  ok: boolean;
+  message: string;
+  /** Courier Guy's status for what it created ("quote" when it worked). */
+  status?: string;
+  trackingReference?: string | null;
+  /** True when Courier Guy booked it instead of keeping it as a quote. */
+  booked?: boolean;
+};
+
+async function loadSavedQuote(historyId: unknown) {
+  const id = uuidOrNull(historyId);
+  if (!id) return { error: "Get a rate first, so the quote is saved." } as const;
+  const db = createServiceRoleClient();
+  const { data, error } = await db.from("liner_courier_quotes").select("*").eq("id", id).maybeSingle();
+  if (error || !data) return { error: "This courier quote could not be found." } as const;
+  return { error: null, db, row: data as unknown as LinerCourierHistoryRow } as const;
+}
+
+/**
+ * Send this courier quote to The Courier Guy so it shows in their portal as a
+ * quote (a shipment with status "quote", notifications off, collection a week
+ * out). If they book it instead, the answer says so and the admin cancels it.
+ */
+export async function sendCourierQuoteAction(input: { historyId: string | null; serviceCode: string }): Promise<SendQuoteResult> {
+  try {
+    const admin = await assertAdmin({ permission: "manageOrders" });
+    const serviceCode = String(input.serviceCode ?? "").trim();
+    if (!/^[A-Za-z0-9_-]{2,20}$/.test(serviceCode)) return fail("Choose a service first.");
+    const loaded = await loadSavedQuote(input.historyId);
+    if (loaded.error !== null) return fail(loaded.error);
+    const { db, row } = loaded;
+    if (row.formal_quote_status === "api_submitted" && row.formal_quote_ref) {
+      return fail(`Already sent to The Courier Guy (${row.formal_quote_ref}). Check the Courier Guy portal before sending again.`);
+    }
+    const job = savedJob(row);
+    const check = checkJob(job);
+    if (!check.ok) return fail(`${check.error} Edit the quote first.`);
+    const config = getCourierConfig();
+    if (!config.ok) return fail(config.reason);
+    const depot: CourierDepotId = isCourierDepotId(row.depot) && config.config.depots[row.depot] ? row.depot : "pretoria";
+    const parcels = parcelsForQuantity(savedParcel(row), row.quantity);
+
+    const result = await createCourierQuote(withCourierDepot(config.config, depot), linerJobAsCourierOrder(job), parcels, serviceCode);
+    if (!result.ok) return fail(result.error);
+    const sent = result.data;
+    const ref = sent.trackingReference ?? `id ${sent.id}`;
+
+    await writeAuditLog({
+      actorUserId: admin.user.id,
+      actorEmail: admin.profile.email,
+      action: sent.isQuote ? "courier.quote_sent" : "courier.quote_booked_instead",
+      entityType: "liner_courier_quote",
+      entityId: row.id,
+      afterData: { service_code: serviceCode, shipment_id: sent.id, tracking_reference: sent.trackingReference, status: sent.status, rate: sent.rate },
+    });
+    const { error } = await db
+      .from("liner_courier_quotes")
+      .update({
+        formal_quote_status: "api_submitted",
+        formal_quote_ref: `${ref} · ${sent.status || "no status"}`.slice(0, 120),
+        updated_at: new Date().toISOString(),
+      })
+      .eq("id", row.id);
+    if (error) console.error("[liner-courier] quote reference not saved:", error.message);
+    revalidatePath(PAGE);
+
+    if (sent.isQuote) {
+      return {
+        ok: true,
+        status: sent.status,
+        trackingReference: sent.trackingReference,
+        message: `Sent to The Courier Guy as a quote (${ref}${sent.rate != null ? `, R${sent.rate.toFixed(2)}` : ""}). It is in the Courier Guy portal; nothing is booked.`,
+      };
+    }
+    return {
+      ok: false,
+      booked: true,
+      status: sent.status,
+      trackingReference: sent.trackingReference,
+      message: `The Courier Guy BOOKED this instead of saving a quote (status "${sent.status || "unknown"}", waybill ${ref}). Cancel it now${sent.trackingReference ? " with the button below or" : ""} in the Courier Guy portal. Collection is set a week out, so there is time.`,
+    };
+  } catch (error) {
+    unstable_rethrow(error);
+    return fail(describeActionError(error));
+  }
+}
+
+/** Cancel a shipment Courier Guy booked by mistake (charges reverse if not collected). */
+export async function cancelCourierQuoteAction(input: { historyId: string | null; trackingReference: string }): Promise<{ ok: boolean; message: string }> {
+  try {
+    const admin = await assertAdmin({ permission: "manageOrders" });
+    const ref = String(input.trackingReference ?? "").trim();
+    if (!/^[A-Za-z0-9-]{2,40}$/.test(ref)) return fail("No waybill number to cancel.");
+    const config = getCourierConfig();
+    if (!config.ok) return fail(config.reason);
+    const result = await cancelCourierShipment(config.config, ref);
+    if (!result.ok) return fail(`${result.error} Cancel it in the Courier Guy portal instead.`);
+    await writeAuditLog({
+      actorUserId: admin.user.id,
+      actorEmail: admin.profile.email,
+      action: "courier.quote_booking_cancelled",
+      entityType: "liner_courier_quote",
+      entityId: uuidOrNull(input.historyId),
+      afterData: { tracking_reference: ref },
+    });
+    const id = uuidOrNull(input.historyId);
+    if (id) {
+      const db = createServiceRoleClient();
+      await db
+        .from("liner_courier_quotes")
+        .update({ formal_quote_status: "none", formal_quote_ref: `${ref} · cancelled`, updated_at: new Date().toISOString() })
+        .eq("id", id);
+    }
+    revalidatePath(PAGE);
+    return { ok: true, message: `Cancelled ${ref} with The Courier Guy.` };
   } catch (error) {
     unstable_rethrow(error);
     return fail(describeActionError(error));

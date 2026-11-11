@@ -1,9 +1,12 @@
 import type { CourierConfig } from "./config.ts";
 import {
+  buildQuoteShipmentPayload,
   buildRatesPayload,
   buildShipmentPayload,
+  parseQuoteShipment,
   parseRates,
   parseShipment,
+  type CourierQuoteShipment,
   parseTracking,
   type ParcelInput,
 } from "./payloads.ts";
@@ -201,4 +204,37 @@ export async function getCourierTracking(
   const tracking = parseTracking(result.data);
   if (!tracking) return { ok: false, error: "The Courier Guy has no shipment with this tracking number." };
   return { ok: true, data: tracking };
+}
+
+/**
+ * Send a formal quote to the Courier Guy portal: a shipment with status
+ * "quote" (see buildQuoteShipmentPayload). The answer says whether it stayed
+ * a quote; if not, it was booked and must be cancelled.
+ */
+export async function createCourierQuote(
+  config: CourierConfig,
+  order: CourierOrderInput,
+  parcel: ParcelInput | ParcelInput[],
+  serviceCode: string,
+  fetcher: Fetcher = fetch,
+  now: Date = new Date(),
+): Promise<CourierResult<CourierQuoteShipment>> {
+  const payload = buildQuoteShipmentPayload(config.sender, order, parcel, serviceCode, now);
+  const result = await withoutDeclaredValueOn400(config, "shipments", payload, fetcher);
+  if (!result.ok) return result;
+  const quote = parseQuoteShipment(result.data);
+  if (!quote) {
+    return { ok: false, error: "The Courier Guy answered without a shipment. Check the Courier Guy portal before sending again." };
+  }
+  return { ok: true, data: quote, ...(result.declaredValueDropped ? { declaredValueDropped: result.declaredValueDropped } : {}) };
+}
+
+/** Cancel a shipment that has not been collected (Courier Guy reverses the charges). */
+export async function cancelCourierShipment(
+  config: CourierConfig,
+  trackingReference: string,
+  fetcher: Fetcher = fetch,
+): Promise<CourierResult<null>> {
+  const result = await request(config, "POST", "shipments/cancel", { tracking_reference: trackingReference }, fetcher);
+  return result.ok ? { ok: true, data: null } : result;
 }

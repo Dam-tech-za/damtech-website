@@ -269,3 +269,58 @@ test("saved rows give back the parcel, job and size line", async () => {
   assert.equal(savedSizeLabel({ shape: "circular", inputs: { diameter: "6", rows: "custom", wallHeight: "2.4" } }), "Round tank 6 m, 2.4 m wall");
   assert.equal(savedSizeLabel({ shape: "rectangular", inputs: { length: "4", width: "3", depth: "1.5" } }), "Rectangular 4 × 3 × 1.5 m");
 });
+
+test("formal quote: shipment payload marked as a quote, muted, collection a week out", async () => {
+  const { buildQuoteShipmentPayload, courierQuoteCollectionDate, parseQuoteShipment } = await import("./payloads.ts");
+  const sender = {
+    address: { type: "business" as const, street_address: "1 Depot", local_area: "Betty's Bay", city: "Betty's Bay", zone: "Western Cape", country: "ZA" as const, code: "7141" },
+    contact: { name: "Stores", mobile_number: "0100000000", email: "stores@example.com" },
+  };
+  const order = linerJobAsCourierOrder(job);
+  const now = new Date("2026-11-11T10:00:00Z");
+  const payload = buildQuoteShipmentPayload(sender, order, parcelsForQuantity({ lengthCm: 40, widthCm: 40, heightCm: 40, weightKg: 33.9 }, 1), "ECO", now);
+  assert.equal(payload.status, "quote");
+  assert.equal(payload.mute_notifications, true);
+  assert.equal(payload.collection_min_date, "2026-11-18");
+  assert.equal(payload.service_level_code, "ECO");
+  assert.equal(payload.customer_reference, "Q-2026-0101");
+  assert.equal(payload.declared_value, 30_000);
+  assert.equal(payload.delivery_contact.mobile_number, "082 000 0000");
+  assert.equal(courierQuoteCollectionDate(now, 0), "2026-11-11");
+
+  assert.deepEqual(parseQuoteShipment({ id: 991, status: "quote", rate: 1150 }), { id: "991", trackingReference: null, status: "quote", rate: 1150, isQuote: true });
+  const booked = parseQuoteShipment({ id: 992, status: "submitted", short_tracking_reference: "TCG9" });
+  assert.equal(booked?.isQuote, false);
+  assert.equal(booked?.trackingReference, "TCG9");
+  assert.equal(parseQuoteShipment({}), null);
+});
+
+test("formal quote: client posts to /shipments and reports quote vs booked; cancel posts the waybill", async () => {
+  const { createCourierQuote, cancelCourierShipment } = await import("./client.ts");
+  const { getCourierConfig } = await import("./config.ts");
+  const env = {
+    COURIER_GUY_API_KEY: "k", COURIER_GUY_API_URL: "https://api.shiplogic.com",
+    COURIER_SENDER_NAME: "Stores", COURIER_SENDER_PHONE: "0100000000", COURIER_SENDER_EMAIL: "s@example.com",
+    COURIER_SENDER_STREET: "1 Road", COURIER_SENDER_SUBURB: "Town", COURIER_SENDER_CITY: "Pretoria",
+    COURIER_SENDER_PROVINCE: "Gauteng", COURIER_SENDER_POSTAL_CODE: "0001",
+  };
+  const config = getCourierConfig(env);
+  assert.ok(config.ok);
+  const seen: { url: string; body: Record<string, unknown> }[] = [];
+  const answer = (reply: unknown) =>
+    (async (url: string, init: RequestInit) => {
+      seen.push({ url, body: JSON.parse(String(init.body)) });
+      return Response.json(reply);
+    }) as unknown as typeof fetch;
+  const parcel = { lengthCm: 40, widthCm: 40, heightCm: 40, weightKg: 33.9 };
+  const quoted = await createCourierQuote(config.config, linerJobAsCourierOrder(job), [parcel], "ECO", answer({ id: 5, status: "quote", rate: 1150 }));
+  assert.ok(quoted.ok && quoted.data.isQuote);
+  assert.equal(seen[0].url, "https://api.shiplogic.com/shipments");
+  assert.equal(seen[0].body.status, "quote");
+  const booked = await createCourierQuote(config.config, linerJobAsCourierOrder(job), [parcel], "ECO", answer({ id: 6, status: "submitted", short_tracking_reference: "TCG9" }));
+  assert.ok(booked.ok && !booked.data.isQuote && booked.data.trackingReference === "TCG9");
+  const cancelled = await cancelCourierShipment(config.config, "TCG9", answer({}));
+  assert.ok(cancelled.ok);
+  assert.equal(seen[2].url, "https://api.shiplogic.com/shipments/cancel");
+  assert.deepEqual(seen[2].body, { tracking_reference: "TCG9" });
+});

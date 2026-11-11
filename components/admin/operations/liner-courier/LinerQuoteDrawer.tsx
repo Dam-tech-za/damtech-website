@@ -27,7 +27,9 @@ import {
 import {
   addCourierToQuoteAction,
   findRfqOrQuoteAction,
+  cancelCourierQuoteAction,
   recordFormalQuoteAction,
+  sendCourierQuoteAction,
   type LinkedRecord,
 } from "@/app/admin/operations/liner-courier/actions";
 
@@ -72,6 +74,9 @@ function QuoteView({ row, canEditQuotes, onEdit }: Omit<Props, "row" | "onClose"
   const [found, setFound] = useState<LinkedRecord[]>([]);
   const [message, setMessage] = useState<{ ok: boolean; text: string } | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
+  // Waybill Courier Guy booked by mistake instead of saving a quote.
+  const [bookedRef, setBookedRef] = useState<string | null>(null);
+  const [sentRef, setSentRef] = useState<string | null>(row.formal_quote_status === "api_submitted" ? (row.formal_quote_ref ?? null) : null);
   const [pending, startTransition] = useTransition();
   const moreBtn = useRef<HTMLButtonElement>(null);
 
@@ -133,6 +138,32 @@ function QuoteView({ row, canEditQuotes, onEdit }: Omit<Props, "row" | "onClose"
     });
   };
 
+  const sendQuote = () => {
+    if (!chosen) return;
+    const ok = window.confirm(
+      `Send this to The Courier Guy as a quote for ${chosen.serviceName}?\n\nIt is sent as a shipment marked "quote", with SMS and email to the customer switched off and collection a week from today. If Courier Guy books it instead, you will be told and can cancel it.`,
+    );
+    if (!ok) return;
+    startTransition(async () => {
+      const result = await sendCourierQuoteAction({ historyId: saved ? row.id : null, serviceCode: chosen.serviceCode });
+      setMessage({ ok: result.ok, text: result.message });
+      if (result.status) setSentRef(`${result.trackingReference ?? "sent"} · ${result.status}`);
+      setBookedRef(result.booked ? (result.trackingReference ?? null) : null);
+    });
+  };
+
+  const cancelBooking = () => {
+    if (!bookedRef || !window.confirm(`Cancel shipment ${bookedRef} with The Courier Guy?`)) return;
+    startTransition(async () => {
+      const result = await cancelCourierQuoteAction({ historyId: saved ? row.id : null, trackingReference: bookedRef });
+      setMessage({ ok: result.ok, text: result.message });
+      if (result.ok) {
+        setBookedRef(null);
+        setSentRef(null);
+      }
+    });
+  };
+
   const menu = (label: string, run: () => void) => (
     <li>
       <button
@@ -154,6 +185,7 @@ function QuoteView({ row, canEditQuotes, onEdit }: Omit<Props, "row" | "onClose"
           <span className={`ops-peek-chip ops-tone-${LINER_QUOTE_STAGE_TONES[stage]}`}>{LINER_QUOTE_STAGE_LABELS[stage]}</span>
           {linkedQuote ? <span className="ops-peek-chip">Quote {linkedQuote.number}</span> : null}
           {row.rfqs?.rfq_number ? <span className="ops-peek-chip">RFQ {row.rfqs.rfq_number}</span> : null}
+          {sentRef ? <span className="ops-peek-chip ops-tone-purple">Courier Guy {sentRef}</span> : null}
         </div>
       </header>
 
@@ -268,9 +300,16 @@ function QuoteView({ row, canEditQuotes, onEdit }: Omit<Props, "row" | "onClose"
             Copy for WhatsApp
           </button>
         ) : null}
-        <button type="button" className={`admin-btn ${line ? "admin-btn--secondary" : "admin-btn--primary"}`} onClick={() => onEdit(row)}>
-          {rates.length ? "Edit / re-rate" : "Edit and get rate"}
-        </button>
+        {chosen && !sentRef ? (
+          <button type="button" className="admin-btn admin-btn--secondary" disabled={pending || !saved} onClick={sendQuote}>
+            {pending ? "Sending…" : "Send quote to Courier Guy"}
+          </button>
+        ) : null}
+        {!rates.length ? (
+          <button type="button" className="admin-btn admin-btn--primary" onClick={() => onEdit(row)}>
+            Edit and get rate
+          </button>
+        ) : null}
         <button
           ref={moreBtn}
           type="button"
@@ -283,6 +322,7 @@ function QuoteView({ row, canEditQuotes, onEdit }: Omit<Props, "row" | "onClose"
         </button>
         <ToolbarPopover open={menuOpen} anchorRef={moreBtn} onClose={() => setMenuOpen(false)} width={240}>
           <ul className="ops-toolbar__menu-list">
+            {rates.length ? menu("Edit / re-rate", () => onEdit(row)) : null}
             {menu("Copy Courier Guy quote brief", () => formalQuote(false))}
             {menu("Open Courier Guy portal with brief", () => formalQuote(true))}
             {address.phone ? menu("Open WhatsApp chat", () => window.open(whatsAppLink(address.phone, summary), "_blank", "noopener")) : null}
@@ -294,6 +334,13 @@ function QuoteView({ row, canEditQuotes, onEdit }: Omit<Props, "row" | "onClose"
         <p className={message.ok ? "ops-peek-muted" : "ops-peek-warn"} role={message.ok ? "status" : "alert"}>
           {message.text}
         </p>
+      ) : null}
+      {bookedRef ? (
+        <div className="lc-actions">
+          <button type="button" className="admin-btn admin-btn--danger" disabled={pending} onClick={cancelBooking}>
+            Cancel booking {bookedRef}
+          </button>
+        </div>
       ) : null}
     </div>
   );
