@@ -169,8 +169,8 @@ export const ADMIN_SECTIONS: AdminSection[] = [
   {
     id: "enquiries",
     label: "Enquiries",
-    itemIds: ["rfqs", "quotes", "orders"],
-    tabLabels: { rfqs: "Enquiries", quotes: "Quotations", orders: "Online orders" },
+    itemIds: ["rfqs", "quotes", "orders", "online-purchases"],
+    tabLabels: { rfqs: "Enquiries", quotes: "Quotations", orders: "Online orders", "online-purchases": "Online purchases" },
   },
   {
     id: "projects",

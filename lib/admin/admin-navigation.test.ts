@@ -230,6 +230,22 @@ describe("six-section menu", () => {
     assert.equal(sections.find((s) => s.section.id === "projects")?.href, "/admin/operations/projects/");
   });
 
+  it("puts every page in exactly one section, so none is left without a tab", async () => {
+    const { ADMIN_SECTIONS } = await import("./navigation.ts");
+    const inSections = ADMIN_SECTIONS.flatMap((s) => s.itemIds);
+    for (const item of ADMIN_NAV_ITEMS) {
+      assert.equal(inSections.filter((id) => id === item.id).length, 1, `${item.id} must appear in one section`);
+    }
+  });
+
+  it("shows Online purchases as a tab under Enquiries", async () => {
+    const { visibleSections, activeSectionId } = await import("./navigation.ts");
+    const items = getNavItemsForRole("owner");
+    const enquiries = visibleSections(items).find((s) => s.section.id === "enquiries");
+    assert.ok(enquiries?.tabs.some((t) => t.item.href === "/admin/operations/online-purchases/"));
+    assert.equal(activeSectionId("/admin/operations/online-purchases/", items), "enquiries");
+  });
+
   it("highlights exactly one section for a page, including detail pages", async () => {
     const { activeSectionId } = await import("./navigation.ts");
     const items = getNavItemsForRole("owner");
