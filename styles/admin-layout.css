@@ -5301,3 +5301,43 @@ table.admin-sheet .admin-status {
 .ops-track-form__wide {
   grid-column: 1 / -1;
 }
+
+/* Courier booking on the order page */
+.ops-courier {
+  display: grid;
+  gap: 0.875rem;
+  justify-items: start;
+}
+.ops-courier .ops-track-form {
+  width: 100%;
+}
+.ops-courier__rates {
+  display: grid;
+  gap: 0.5rem;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  justify-items: start;
+}
+.ops-courier__rates legend {
+  padding: 0 0 0.375rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+.ops-courier__rates label {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 0.625rem;
+  align-items: center;
+  width: 100%;
+  padding: 0.625rem 0.75rem;
+  border: 1px solid var(--admin-border, #d9dde3);
+  border-radius: 6px;
+  font-size: 0.875rem;
+  cursor: pointer;
+}
+.ops-courier__price {
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}

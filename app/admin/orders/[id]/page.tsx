@@ -9,6 +9,8 @@ import { fulfilmentLabel, isCollectionMethod } from "@/lib/shop/delivery";
 import { updateOrderStatusAction, updateOrderTrackingAction } from "../actions";
 import { PURCHASE_STAGE_LABELS, makeByDate, purchaseStage } from "@/lib/orders/purchase-stage";
 import { ResendOrderConfirmationButton } from "@/components/admin/ResendOrderConfirmationButton";
+import { CourierBookingPanel } from "@/components/admin/CourierBookingPanel";
+import { getCourierConfig } from "@/lib/courier";
 import { createClient } from "@/lib/supabase/server";
 import {
   communicationStatusLabel,
@@ -49,6 +51,15 @@ export default async function AdminOrderDetailPage({ params }: PageProps) {
   if (!order) notFound();
 
   const makeBy = makeByDate(order);
+  const canManage = canPerform(admin.profile.role, "manageOrders");
+  const courier = getCourierConfig();
+  const courierBlocked = isCollectionMethod(order.fulfilment_method)
+    ? "The customer is collecting this order, so no courier is needed."
+    : order.status === "cancelled"
+      ? "This order is cancelled."
+      : order.payment_method === "payfast" && order.payment_status !== "paid"
+        ? "Courier booking opens once the order is paid."
+        : null;
 
   const supabase = await createClient();
   const { data: history } = await supabase
@@ -203,6 +214,30 @@ export default async function AdminOrderDetailPage({ params }: PageProps) {
           </p>
         )}
       </AdminPanel>
+      {canManage ? (
+        <AdminPanel
+          title="The Courier Guy"
+          description="Get a live rate for the packed parcel, book the collection and pull tracking updates. Booking is a real order on the Courier Guy account."
+        >
+          {courier.ok ? (
+            <CourierBookingPanel
+              orderId={order.id}
+              orderReference={order.order_reference}
+              trackingNumber={order.courier_name === "The Courier Guy" ? (order.tracking_number ?? null) : null}
+              blockedReason={
+                order.tracking_number && order.courier_name !== "The Courier Guy"
+                  ? "This order already has tracking from another courier."
+                  : courierBlocked
+              }
+            />
+          ) : (
+            <p className="admin-empty__hint">
+              Not connected yet. {courier.reason}
+              {courier.missing.length > 0 ? ` Missing settings: ${courier.missing.join(", ")}.` : ""}
+            </p>
+          )}
+        </AdminPanel>
+      ) : null}
       <AdminPanel title="Customer">
         <dl className="admin-kv">
           <div>
