@@ -91,7 +91,7 @@ export function PvcCheckoutForm({
   const [province, setProvince] = useState("");
   const [collection, setCollection] = useState<CollectionPointId | "">("");
   const [payfast, setPayfast] = useState<PayfastForm | null>(null);
-  const [liveQuote, setLiveQuote] = useState<{ feeInclVatCents: number; serviceName: string } | null>(null);
+  const [liveQuote, setLiveQuote] = useState<{ feeInclVatCents: number; serviceName: string; debugReason?: string } | null>(null);
   const [submissionId] = useState(() => crypto.randomUUID());
   const [formStartedAt] = useState(() => Date.now());
   const payfastFormRef = useRef<HTMLFormElement>(null);
@@ -398,6 +398,11 @@ export function PvcCheckoutForm({
             <p className="order-submit__note" role="status">
               Delivery to your address is {formatZarExactAmount(liveQuote.feeInclVatCents / 100)} ({liveQuote.serviceName}).
               Check the total, then continue.
+            </p>
+          ) : null}
+          {liveRates && !collection && liveQuote?.debugReason ? (
+            <p className="order-submit__note" role="note">
+              Test site only, not shown to customers: the fixed fee was used because {liveQuote.debugReason}
             </p>
           ) : null}
           <p className="order-submit__note">You will be taken to PayFast to pay.</p>

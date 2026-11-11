@@ -43,9 +43,21 @@ export async function quotePvcCourierDelivery(
   fetcher: typeof fetch = fetch,
   env: Record<string, string | undefined> = process.env,
 ): Promise<CourierDeliveryQuote | null> {
-  if (!courierCheckoutRatesEnabled(env)) return null;
+  return (await quotePvcCourierDeliveryWithReason(liner, quantity, address, fetcher, env)).quote;
+}
+
+/** Same as quotePvcCourierDelivery, plus why the fixed fee was used instead. */
+export async function quotePvcCourierDeliveryWithReason(
+  liner: PvcLiner,
+  quantity: number,
+  address: CheckoutAddress,
+  fetcher: typeof fetch = fetch,
+  env: Record<string, string | undefined> = process.env,
+): Promise<{ quote: CourierDeliveryQuote | null; reason: string | null }> {
+  const fail = (reason: string) => ({ quote: null, reason });
+  if (!courierCheckoutRatesEnabled(env)) return fail("Live courier rates are switched off.");
   const config = getCourierConfig(env);
-  if (!config.ok) return null;
+  if (!config.ok) return fail(config.reason);
   const order: CourierOrderInput = {
     order_reference: "quote",
     customer_name: address.customerName,
@@ -65,10 +77,18 @@ export async function quotePvcCourierDelivery(
   const parcel = pvcLinerPackedParcel(liner);
   const from = withCourierDepot(config.config, courierDepotForProvince(config.config, address.province));
   const result = await getCourierRates(from, order, Array.from({ length: quantity }, () => parcel), fetcher);
-  if (!result.ok) return null;
+  if (!result.ok) {
+    console.error("[checkout] courier rate failed:", result.error);
+    return fail(result.error);
+  }
   const cheapest = result.data[0];
   const feeInclVatCents = Math.round(cheapest.rate * 100);
   // A zero or absurd rate means the answer was not understood: use the fixed fee.
-  if (!Number.isFinite(feeInclVatCents) || feeInclVatCents < 1000) return null;
-  return { feeInclVatCents, serviceCode: cheapest.serviceCode, serviceName: cheapest.serviceName };
+  if (!Number.isFinite(feeInclVatCents) || feeInclVatCents < 1000) {
+    return fail(`The Courier Guy returned a rate of R${cheapest.rate} for ${cheapest.serviceName}, which looks wrong.`);
+  }
+  return {
+    quote: { feeInclVatCents, serviceCode: cheapest.serviceCode, serviceName: cheapest.serviceName },
+    reason: null,
+  };
 }

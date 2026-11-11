@@ -19,7 +19,7 @@ import {
   PVC_LINER_MAX_QUANTITY,
 } from "@/lib/shop/pvc-liners";
 import { createPvcLinerOrder, pricePvcOrder } from "@/lib/shop/pvc-orders";
-import { quotePvcCourierDelivery } from "@/lib/shop/pvc-courier-delivery";
+import { quotePvcCourierDelivery, quotePvcCourierDeliveryWithReason } from "@/lib/shop/pvc-courier-delivery";
 import { enforceRateLimit } from "@/lib/rate-limit/client";
 import { publicClientRateKey, type RateLimitPolicy } from "@/lib/rate-limit/types";
 
@@ -54,7 +54,7 @@ const clean = (formData: FormData, name: string, max: number) =>
  */
 export async function quotePvcDelivery(
   formData: FormData,
-): Promise<{ feeInclVatCents: number; serviceName: string } | null> {
+): Promise<{ feeInclVatCents: number; serviceName: string; debugReason?: string } | null> {
   const liner = getPvcLinerBySku(clean(formData, "sku", 40));
   const quantity = Math.trunc(Number(formData.get("quantity") ?? "1"));
   const province = clean(formData, "province", 40);
@@ -79,10 +79,15 @@ export async function quotePvcDelivery(
     publicClientRateKey(await headers(), "public-delivery-quote"),
     DELIVERY_QUOTE_POLICY,
   );
-  const courier = limit.success ? await quotePvcCourierDelivery(liner, quantity, address) : null;
-  return courier
-    ? { feeInclVatCents: courier.feeInclVatCents, serviceName: courier.serviceName }
-    : { feeInclVatCents: fixed.feeInclVatCents, serviceName: "Standard delivery" };
+  const result = limit.success
+    ? await quotePvcCourierDeliveryWithReason(liner, quantity, address)
+    : { quote: null, reason: "Too many delivery quotes from this connection; wait a few minutes." };
+  if (result.quote) {
+    return { feeInclVatCents: result.quote.feeInclVatCents, serviceName: result.quote.serviceName };
+  }
+  // Why the fixed fee was used, shown on preview deployments only, never to live customers.
+  const debugReason = process.env.VERCEL_ENV !== "production" && result.reason ? result.reason : undefined;
+  return { feeInclVatCents: fixed.feeInclVatCents, serviceName: "Standard delivery", ...(debugReason ? { debugReason } : {}) };
 }
 
 export async function startPvcCheckout(formData: FormData): Promise<StartPvcCheckoutResult> {
