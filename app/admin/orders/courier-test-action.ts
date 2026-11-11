@@ -13,6 +13,24 @@ import {
 } from "@/lib/courier";
 import { PVC_LINERS } from "@/lib/shop/pvc-liners";
 import { pvcLinerPackedParcel } from "@/lib/shop/pvc-packing";
+import { courierCheckoutRatesEnabled } from "@/lib/shop/pvc-courier-delivery";
+
+/** Plain-language state of the checkout switch, so a wrong value is visible. */
+function checkoutSwitchLine(): CourierTestLine {
+  const raw = process.env.COURIER_CHECKOUT_RATES;
+  const on = courierCheckoutRatesEnabled();
+  return {
+    label: "Live rates at checkout",
+    ok: on,
+    message: on
+      ? "On. Checkout asks The Courier Guy once the address is complete."
+      : raw === undefined
+        ? "Off: COURIER_CHECKOUT_RATES is not set for this deployment, so checkout uses the fixed fee per province."
+        : raw.trim().toLowerCase() !== "true"
+          ? `Off: COURIER_CHECKOUT_RATES is "${raw.slice(0, 10)}" but must be exactly true.`
+          : "Off: a courier setting is missing (see above), so checkout uses the fixed fee per province.",
+  };
+}
 
 export type CourierTestLine = { label: string; ok: boolean; message: string };
 export type CourierTestResult = { ok: boolean; message: string; lines: CourierTestLine[] };
@@ -54,7 +72,7 @@ export async function testCourierConnectionAction(): Promise<CourierTestResult> 
       return {
         ok: false,
         message: `${config.reason}${config.missing.length ? ` Missing in Vercel: ${config.missing.join(", ")}.` : ""}`,
-        lines: [],
+        lines: [checkoutSwitchLine()],
       };
     }
     const byWeight = [...PVC_LINERS].sort((a, b) => pvcLinerPackedParcel(a).weightKg - pvcLinerPackedParcel(b).weightKg);
@@ -84,6 +102,7 @@ export async function testCourierConnectionAction(): Promise<CourierTestResult> 
         );
       }
     }
+    lines.unshift(checkoutSwitchLine());
     const allOk = lines.every((line) => line.ok);
     return {
       ok: allOk,
