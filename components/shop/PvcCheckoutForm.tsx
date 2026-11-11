@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useMemo, useRef, useState, useTransition, type FormEvent, type ReactNode } from "react";
+import { useEffect, useMemo, useRef, useState, useTransition, type FormEvent, type ReactNode } from "react";
 import { quotePvcDelivery, startPvcCheckout } from "@/app/actions/start-pvc-checkout";
 import { LegalSupplierDetails } from "@/components/LegalSupplierDetails";
 import { ShieldCheckIcon } from "@/components/icons/StrokeIcons";
@@ -136,10 +136,18 @@ export function PvcCheckoutForm({
         return;
       }
       setPayfast(result.payfast);
-      // Post the signed form to PayFast once React has rendered it.
-      requestAnimationFrame(() => payfastFormRef.current?.submit());
     });
   }
+
+  // Post the signed form to PayFast once React has rendered it. If the browser
+  // has not left the page after a few seconds, show a button to continue by hand.
+  const [payfastStuck, setPayfastStuck] = useState(false);
+  useEffect(() => {
+    if (!payfast) return;
+    payfastFormRef.current?.submit();
+    const timer = window.setTimeout(() => setPayfastStuck(true), 4000);
+    return () => window.clearTimeout(timer);
+  }, [payfast]);
 
   const busy = isPending || Boolean(payfast);
   const needsDeliveryQuote = liveRates && !collection && !liveQuote;
@@ -415,6 +423,14 @@ export function PvcCheckoutForm({
             </p>
           ) : null}
           <p className="order-submit__note">You will be taken to PayFast to pay.</p>
+          {payfast && payfastStuck ? (
+            <p className="order-submit__note" role="status">
+              PayFast has not opened yet.{" "}
+              <button type="submit" form="pvc-payfast-form" className="btn-primary">
+                Continue to PayFast
+              </button>
+            </p>
+          ) : null}
         </div>
       </form>
 
@@ -478,7 +494,7 @@ export function PvcCheckoutForm({
       </aside>
 
       {payfast ? (
-        <form ref={payfastFormRef} action={payfast.action} method="post" hidden aria-hidden>
+        <form id="pvc-payfast-form" ref={payfastFormRef} action={payfast.action} method="post" hidden aria-hidden>
           {payfast.fields.map((field) => (
             <input key={field.name} type="hidden" name={field.name} value={field.value} />
           ))}
