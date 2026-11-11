@@ -19,8 +19,7 @@ import {
   parsePvcLinerColour,
   PVC_LINER_CHECKOUT_PATH,
   PVC_LINER_MAX_QUANTITY,
-  PVC_LINER_ONLINE_MAX_ORDER_INCL_VAT_ZAR,
-  pvcLinerMaxOnlineQuantity,
+  pvcDeliveryChargedSeparately,
 } from "@/lib/shop/pvc-liners";
 import { createPvcLinerOrder, pricePvcOrder } from "@/lib/shop/pvc-orders";
 import {
@@ -57,13 +56,9 @@ function isOrderableLiner(sku: string, quantity: number): boolean {
     Boolean(liner) &&
     Number.isInteger(quantity) &&
     quantity >= 1 &&
-    quantity <= PVC_LINER_MAX_QUANTITY &&
-    // Larger liners and orders above the online limit go through a quote.
-    quantity <= (liner ? pvcLinerMaxOnlineQuantity(liner) : 0)
+    quantity <= PVC_LINER_MAX_QUANTITY
   );
 }
-
-const QUOTE_ONLY_MESSAGE = `Orders over R${PVC_LINER_ONLINE_MAX_ORDER_INCL_VAT_ZAR.toLocaleString("en-ZA")} incl. VAT are quoted. Lower the quantity or request a quote.`;
 
 const clean = (formData: FormData, name: string, max: number) =>
   String(formData.get(name) ?? "").trim().slice(0, max);
@@ -94,6 +89,8 @@ export async function quotePvcDelivery(
   };
   if (!liner || !fixed || !isOrderableLiner(liner.sku, quantity)) return null;
   if (!address.billingLine1 || !address.suburb || !address.city || !address.postalCode) return null;
+  // Delivery for big orders is charged separately; nothing to quote.
+  if (pvcDeliveryChargedSeparately(liner.priceInclVatZar * quantity)) return null;
 
   // A quote already worked out for this address costs nothing and is not rate limited.
   const cached = cachedPvcCourierQuote(liner, quantity, address);
@@ -124,11 +121,6 @@ export async function quotePvcDelivery(
 }
 
 export async function startPvcCheckout(formData: FormData): Promise<StartPvcCheckoutResult> {
-  const requested = getPvcLinerBySku(String(formData.get("sku") ?? ""));
-  const requestedQty = Math.trunc(Number(formData.get("quantity") ?? "1"));
-  if (requested && requestedQty > pvcLinerMaxOnlineQuantity(requested)) {
-    return { success: false, error: QUOTE_ONLY_MESSAGE, field: "quantity" };
-  }
   const parsed = parsePublicOrderFormData(formData, {
     isOrderable: isOrderableLiner,
     confirmSupplyOnlyMessage: "Confirm that the liner is made to order for your tank size.",
@@ -167,7 +159,9 @@ export async function startPvcCheckout(formData: FormData): Promise<StartPvcChec
   // Live courier rate for this address, when switched on. The customer has to
   // have seen this exact fee before we create the order and send them to pay.
   let courier = null;
-  if (!collection) {
+  // Above R30 000 the courier will not cover the parcel: delivery is charged separately.
+  const deliverySeparate = !collection && pvcDeliveryChargedSeparately(liner.priceInclVatZar * parsed.data.quantity);
+  if (!collection && !deliverySeparate) {
     courier = cachedPvcCourierQuote(liner, parsed.data.quantity, parsed.data)?.quote ?? null;
     if (!courier && courierCheckoutRatesEnabled()) {
       const quoteLimit = await enforceRateLimit(
@@ -200,7 +194,7 @@ export async function startPvcCheckout(formData: FormData): Promise<StartPvcChec
     return { success: false, error: customerMessageForCode("RATE_LIMITED", { retryAfterSeconds }) };
   }
 
-  const pricing = pricePvcOrder(liner, colour, parsed.data.quantity, delivery, collection, courier);
+  const pricing = pricePvcOrder(liner, colour, parsed.data.quantity, delivery, collection, courier, deliverySeparate);
   const created = await createPvcLinerOrder({
     data: parsed.data,
     pricing,

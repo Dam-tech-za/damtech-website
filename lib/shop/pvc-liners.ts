@@ -146,24 +146,22 @@ export function pvcLinerOrderName(liner: PvcLiner, colour: PvcLinerColour): stri
 }
 
 /**
- * Online checkout stops at this order value (incl. VAT). Courier Guy will not
- * cover a declared value above R30 000, so bigger liners and bigger orders go
- * through a quote instead. Change this one number to move the cut-off.
+ * Above this liner value (incl. VAT) delivery is not charged at checkout.
+ * Courier Guy will not cover a declared value above R30 000, so we quote the
+ * delivery afterwards and charge it separately, or the customer collects.
+ * Change this one number to move the cut-off.
  */
-export const PVC_LINER_ONLINE_MAX_ORDER_INCL_VAT_ZAR = 30_000;
+export const PVC_DELIVERY_SEPARATE_ABOVE_ZAR = 30_000;
 
-/** Whether one of this liner can be bought online (otherwise: request a quote). */
-export function isPvcLinerSoldOnline(liner: PvcLiner): boolean {
-  return liner.priceInclVatZar <= PVC_LINER_ONLINE_MAX_ORDER_INCL_VAT_ZAR;
+/** Whether delivery for this many liners is charged separately (not at checkout). */
+export function pvcDeliveryChargedSeparately(goodsInclVatZar: number): boolean {
+  return goodsInclVatZar > PVC_DELIVERY_SEPARATE_ABOVE_ZAR;
 }
 
-/** The most of this liner one online order can hold (0 when it is quote-only). */
-export function pvcLinerMaxOnlineQuantity(liner: PvcLiner): number {
-  return Math.min(PVC_LINER_MAX_QUANTITY, Math.floor(PVC_LINER_ONLINE_MAX_ORDER_INCL_VAT_ZAR / liner.priceInclVatZar));
+/** A paid delivery order with no delivery fee: delivery is charged separately. */
+export function isDeliveryChargedSeparately(fulfilmentMethod: string | null | undefined, deliveryFeeZar: unknown): boolean {
+  return fulfilmentMethod === "delivery_south_africa" && Number(deliveryFeeZar ?? 0) === 0;
 }
 
-/** Quote form with this liner, quantity and (when chosen) colour filled in. */
-export function pvcLinerQuotePath(liner: PvcLiner, quantity = 1, colour?: PvcLinerColour): string {
-  const colourPart = colour ? `&colour=${colour}` : "";
-  return `/quote/?service=${encodeURIComponent("PVC tank liner")}&liner=${encodeURIComponent(liner.sku)}&qty=${quantity}${colourPart}`;
-}
+export const PVC_DELIVERY_SEPARATE_NOTE =
+  "Delivery will be charged separately. Orders over R30 000 are above the courier's cover limit, so we send you the delivery cost before dispatch. Or choose collection.";

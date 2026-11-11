@@ -8,9 +8,8 @@ import {
   getPvcLinerBySku,
   parsePvcLinerColour,
   PVC_LINER_DEFAULT_COLOUR,
+  PVC_LINER_MAX_QUANTITY,
   PVC_LINER_PAGE_PATH,
-  pvcLinerMaxOnlineQuantity,
-  pvcLinerQuotePath,
 } from "@/lib/shop/pvc-liners";
 
 export const metadata: Metadata = {
@@ -32,11 +31,7 @@ export default async function PvcCheckoutPage({ searchParams }: PageProps) {
   if (!liner) redirect(PVC_LINER_PAGE_PATH);
   const colour = parsePvcLinerColour(first(params.colour)) ?? PVC_LINER_DEFAULT_COLOUR;
   const qty = Math.trunc(Number(first(params.qty) || "1"));
-  const requested = Number.isFinite(qty) ? Math.max(1, qty) : 1;
-  // Larger liners and orders above the online limit are quoted, not sold online.
-  const maxQuantity = pvcLinerMaxOnlineQuantity(liner);
-  if (requested > maxQuantity) redirect(pvcLinerQuotePath(liner, requested, colour));
-  const quantity = requested;
+  const quantity = Number.isFinite(qty) ? Math.min(PVC_LINER_MAX_QUANTITY, Math.max(1, qty)) : 1;
 
   return (
     <>

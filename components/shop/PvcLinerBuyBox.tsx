@@ -11,10 +11,7 @@ import {
   PVC_LINER_COLOURS,
   PVC_LINER_DEFAULT_COLOUR,
   PVC_LINER_MANUFACTURE_LABEL,
-  PVC_LINER_ONLINE_MAX_ORDER_INCL_VAT_ZAR,
-  isPvcLinerSoldOnline,
-  pvcLinerMaxOnlineQuantity,
-  pvcLinerQuotePath,
+  PVC_LINER_MAX_QUANTITY,
   type PvcLiner,
   type PvcLinerColour,
 } from "@/lib/shop/pvc-liners";
@@ -23,8 +20,6 @@ import {
 export function PvcLinerBuyBox({ liner }: { liner: PvcLiner }) {
   const [colour, setColour] = useState<PvcLinerColour>(PVC_LINER_DEFAULT_COLOUR);
   const [quantity, setQuantity] = useState(1);
-  const soldOnline = isPvcLinerSoldOnline(liner);
-  const maxQuantity = pvcLinerMaxOnlineQuantity(liner);
   const checkoutHref = `${PVC_LINER_CHECKOUT_PATH}?sku=${encodeURIComponent(liner.sku)}&colour=${colour}&qty=${quantity}`;
 
   return (
@@ -48,20 +43,12 @@ export function PvcLinerBuyBox({ liner }: { liner: PvcLiner }) {
         })}
       </div>
       <div className="catalogue-buybox">
-        {soldOnline ? (
-          <p className="catalogue-buybox__price">
-            {formatZarExactAmount(liner.priceInclVatZar)} <span className="pvc-product__vat">incl. VAT</span>
-          </p>
-        ) : (
-          <p className="catalogue-buybox__price">Price on request</p>
-        )}
+        <p className="catalogue-buybox__price">
+          {formatZarExactAmount(liner.priceInclVatZar)} <span className="pvc-product__vat">incl. VAT</span>
+        </p>
         <p className="catalogue-buybox__notice">{liner.summary}</p>
         <p className="catalogue-buybox__meta">{PVC_LINER_MANUFACTURE_LABEL}</p>
-        <p className="catalogue-buybox__meta">
-          {soldOnline
-            ? "Delivery cost is worked out from your address at checkout"
-            : `Liners over R${PVC_LINER_ONLINE_MAX_ORDER_INCL_VAT_ZAR.toLocaleString("en-ZA")} are quoted with delivery, not sold online`}
-        </p>
+        <p className="catalogue-buybox__meta">Courier cost is worked out from your address at checkout. For orders over R30 000, delivery is charged separately or you collect.</p>
         <fieldset className="pvc-picker__gsm">
           <legend className="form-label">Colour (same price)</legend>
           {PVC_LINER_COLOURS.map((option) => (
@@ -78,7 +65,6 @@ export function PvcLinerBuyBox({ liner }: { liner: PvcLiner }) {
             </label>
           ))}
         </fieldset>
-        {soldOnline ? (
         <div className="catalogue-buybox__qty">
           <label htmlFor="pvc-product-qty" className="form-label">
             Quantity
@@ -87,42 +73,23 @@ export function PvcLinerBuyBox({ liner }: { liner: PvcLiner }) {
             id="pvc-product-qty"
             type="number"
             min={1}
-            max={maxQuantity}
+            max={PVC_LINER_MAX_QUANTITY}
             step={1}
             value={quantity}
             onChange={(event) => {
               const n = Math.trunc(Number(event.target.value));
-              setQuantity(Number.isFinite(n) ? Math.min(maxQuantity, Math.max(1, n)) : 1);
+              setQuantity(Number.isFinite(n) ? Math.min(PVC_LINER_MAX_QUANTITY, Math.max(1, n)) : 1);
             }}
             className="form-input catalogue-buybox__qty-input"
           />
         </div>
-        ) : null}
-        {soldOnline ? (
-          <>
-            <p className="catalogue-buybox__line">Total: {formatZarExactAmount(liner.priceInclVatZar * quantity)}</p>
-            <Link href={checkoutHref} className="btn-primary catalogue-cta">
-              Buy now
-            </Link>
-            <p className="catalogue-buybox__help">
-              Up to {maxQuantity} online. Secure payment by card or Instant EFT through PayFast. Installation is not
-              included.{" "}
-              <Link href={pvcLinerQuotePath(liner, quantity, colour)} className="text-water hover:underline">
-                Request a quote
-              </Link>{" "}
-              for more.
-            </p>
-          </>
-        ) : (
-          <>
-            <Link href={pvcLinerQuotePath(liner, 1, colour)} className="btn-primary catalogue-cta">
-              Request Quote
-            </Link>
-            <p className="catalogue-buybox__help">
-              We confirm the price, delivery and lead time for this size. Installation can be quoted too.
-            </p>
-          </>
-        )}
+        <p className="catalogue-buybox__line">Total: {formatZarExactAmount(liner.priceInclVatZar * quantity)}</p>
+        <Link href={checkoutHref} className="btn-primary catalogue-cta">
+          Buy now
+        </Link>
+        <p className="catalogue-buybox__help">
+          Secure payment by card or Instant EFT through PayFast. Installation is not included.
+        </p>
       </div>
     </div>
   );

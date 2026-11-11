@@ -1,6 +1,5 @@
 import { CANONICAL_ORIGIN } from "../site-url.ts";
 import {
-  isPvcLinerSoldOnline,
   PVC_LINERS,
   PVC_LINER_COLOUR_IMAGES,
   PVC_LINER_COLOURS,
@@ -72,12 +71,8 @@ function productNode(liner: PvcLiner): Record<string, unknown> {
   };
 }
 
-/** Liners sold online; larger ones are quote-only and carry no offer. */
-const ONLINE_LINERS = PVC_LINERS.filter(isPvcLinerSoldOnline);
-
-/** schema.org Product for one liner's own product page (null for quote-only sizes). */
-export function buildPvcLinerProductSchema(liner: PvcLiner): Record<string, unknown> | null {
-  if (!isPvcLinerSoldOnline(liner)) return null;
+/** schema.org Product for one liner's own product page. */
+export function buildPvcLinerProductSchema(liner: PvcLiner): Record<string, unknown> {
   return {
     "@context": "https://schema.org",
     ...productNode(liner),
@@ -102,7 +97,7 @@ export function buildPvcLinerProductGroupSchema(): Record<string, unknown> {
     url: `${CANONICAL_ORIGIN}${PVC_LINER_PAGE_PATH}`,
     ...(image ? { image } : {}),
     variesBy: ["https://schema.org/size", "https://schema.org/material"],
-    hasVariant: ONLINE_LINERS.map(productNode),
+    hasVariant: PVC_LINERS.map(productNode),
   };
 }
 
@@ -138,7 +133,7 @@ export function buildPvcLinerFeedRows(
   image: { src: string } | null = PVC_LINER_MERCHANT_IMAGE,
 ): PvcLinerFeedRow[] {
   if (!image) return [];
-  return ONLINE_LINERS.map((liner) => ({
+  return PVC_LINERS.map((liner) => ({
     id: liner.sku,
     title: pvcLinerFeedTitle(liner),
     description: `${liner.summary} Made to order in 3 to 5 business days, then delivered in South Africa. Installation not included.`,

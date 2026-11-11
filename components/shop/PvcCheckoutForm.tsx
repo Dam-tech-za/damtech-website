@@ -19,7 +19,9 @@ import {
 import {
   PVC_LINER_COLOUR_IMAGES,
   PVC_LINER_MANUFACTURE_LABEL,
-  pvcLinerMaxOnlineQuantity,
+  PVC_DELIVERY_SEPARATE_NOTE,
+  PVC_LINER_MAX_QUANTITY,
+  pvcDeliveryChargedSeparately,
   PVC_LINER_PAGE_PATH,
   type PvcLiner,
   type PvcLinerColour,
@@ -97,7 +99,9 @@ export function PvcCheckoutForm({
   const [submissionId] = useState(() => crypto.randomUUID());
   const [formStartedAt] = useState(() => Date.now());
   const payfastFormRef = useRef<HTMLFormElement>(null);
-  const maxQuantity = pvcLinerMaxOnlineQuantity(liner);
+  const maxQuantity = PVC_LINER_MAX_QUANTITY;
+  // Above R30 000 the courier will not cover the parcel: delivery is charged separately.
+  const deliverySeparate = !collection && pvcDeliveryChargedSeparately(liner.priceInclVatZar * quantity);
   const summaryRef = useRef<HTMLElement>(null);
 
   // Keep the summary card in view while the form scrolls.
@@ -122,7 +126,7 @@ export function PvcCheckoutForm({
 
   const totals = useMemo(() => {
     const goodsCents = liner.priceInclVatCents * quantity;
-    if (collection) return { goods: goodsCents / 100, delivery: 0, total: goodsCents / 100 };
+    if (collection || deliverySeparate) return { goods: goodsCents / 100, delivery: 0, total: goodsCents / 100 };
     if (liveRates) {
       return {
         goods: goodsCents / 100,
@@ -136,7 +140,7 @@ export function PvcCheckoutForm({
       delivery: delivery ? delivery.feeInclVatZar : null,
       total: delivery ? (goodsCents + delivery.feeInclVatCents) / 100 : null,
     };
-  }, [liner, quantity, province, collection, liveRates, liveQuote]);
+  }, [liner, quantity, province, collection, deliverySeparate, liveRates, liveQuote]);
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -175,7 +179,7 @@ export function PvcCheckoutForm({
   }, [payfast]);
 
   const busy = isPending || Boolean(payfast);
-  const needsDeliveryQuote = liveRates && !collection && !liveQuote;
+  const needsDeliveryQuote = liveRates && !collection && !deliverySeparate && !liveQuote;
   const [quoting, setQuoting] = useState(false);
   const quotedFor = useRef("");
   // Live rates on, but no rate came back: no fee is shown and payment waits.
@@ -186,6 +190,8 @@ export function PvcCheckoutForm({
     if (!liveRates || busy) return;
     const formData = new FormData(form);
     if (formData.get("collection")) return;
+    const qty = Math.trunc(Number(formData.get("quantity") ?? "1"));
+    if (pvcDeliveryChargedSeparately(liner.priceInclVatZar * qty)) return;
     const parts = ["billingLine1", "billingLine2", "suburb", "city", "province", "postalCode", "quantity", "customerType"].map(
       (name) => String(formData.get(name) ?? "").trim(),
     );
@@ -254,7 +260,15 @@ export function PvcCheckoutForm({
           </div>
           <div>
             <dt>{collection ? "Collection" : "Delivery incl. VAT"}</dt>
-            <dd>{collection ? "No fee" : totals.delivery === null ? "Not yet worked out" : formatZarExactAmount(totals.delivery)}</dd>
+            <dd>
+              {collection
+                ? "No fee"
+                : deliverySeparate
+                  ? "Charged separately"
+                  : totals.delivery === null
+                    ? "Not yet worked out"
+                    : formatZarExactAmount(totals.delivery)}
+            </dd>
           </div>
           <div className="order-summary__rows-total">
             <dt>Total to pay</dt>
@@ -397,7 +411,7 @@ export function PvcCheckoutForm({
             id="quantity"
             label="Quantity"
             required
-            hint={`Up to ${maxQuantity} online. For more, request a quote.`}
+            hint={`Up to ${maxQuantity} per order.`}
           >
             <input
               id="quantity"
@@ -500,6 +514,8 @@ export function PvcCheckoutForm({
               <dd>
                 {collection ? (
                   <span>No fee</span>
+                ) : deliverySeparate ? (
+                  <span className="order-submit__note--problem">Charged separately</span>
                 ) : totals.delivery === null ? (
                   <span>
                     {liveRates
@@ -546,6 +562,9 @@ export function PvcCheckoutForm({
               Delivery to your address is {formatZarExactAmount(liveQuote.feeInclVatCents / 100)} ({liveQuote.serviceName}).
               Check the total, then continue.
             </p>
+          ) : null}
+          {deliverySeparate ? (
+            <p className="order-submit__note order-submit__note--problem">{PVC_DELIVERY_SEPARATE_NOTE}</p>
           ) : null}
           {liveRates && !collection && !liveQuote && quoteProblem ? (
             <p className="order-submit__note order-submit__note--problem" role="alert">

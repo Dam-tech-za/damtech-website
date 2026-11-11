@@ -17,6 +17,7 @@ import { updateOrderStatusAction, updateOrderTrackingAction } from "@/app/admin/
 import { orderHistoryAction, type OrderHistoryEntry } from "@/app/admin/operations/online-purchases/actions";
 import { communicationStatusLabel, orderStatusLabel } from "@/lib/admin/labels";
 import { formatZar } from "@/lib/estimating/money";
+import { isDeliveryChargedSeparately } from "@/lib/shop/pvc-liners";
 import type { OnlinePurchaseRow } from "@/lib/orders/list";
 import {
   purchaseAmountDue,
@@ -102,6 +103,9 @@ function OrderPeek({
   const pay = purchasePaymentPill(order);
   const place = purchaseFulfilment(order);
   const collecting = isCollectionMethod(order.fulfilment_method);
+  // Orders above the courier cover limit pay for the liner only; delivery is invoiced later.
+  const deliverySeparate =
+    order.payment_method === "payfast" && isDeliveryChargedSeparately(order.fulfilment_method, order.delivery_fee_snapshot);
   const awaitingPayfast = order.payment_method === "payfast" && order.payment_status !== "paid";
   const makeBy = makeByDate(order);
   // Forms remount after each save so their fields show the saved values.
@@ -145,7 +149,7 @@ function OrderPeek({
           <p className="ops-peek-value__amount">{formatZar(purchaseAmountDue(order))}</p>
           <p className="ops-peek-value__note">
             {order.quantity} × {formatZar(Number(order.unit_price_snapshot))} goods
-            {order.delivery_fee_snapshot == null ? " · delivery on invoice" : ` + ${formatZar(Number(order.delivery_fee_snapshot))} delivery`}
+            {order.delivery_fee_snapshot == null || deliverySeparate ? " · delivery on invoice" : ` + ${formatZar(Number(order.delivery_fee_snapshot))} delivery`}
           </p>
           <p className="ops-peek-value__pay">
             {order.payment_method === "payfast"
@@ -209,7 +213,11 @@ function OrderPeek({
               <Row label="Unit incl. VAT">{formatZar(Number(order.unit_price_snapshot))}</Row>
               <Row label="Goods incl. VAT">{formatZar(Number(order.total_price_snapshot))}</Row>
               <Row label="VAT on goods">{formatZar(Number(order.vat_amount_snapshot))}</Row>
-              <Row label="Delivery incl. VAT">{money(order.delivery_fee_snapshot, "On invoice")}</Row>
+              <Row label="Delivery incl. VAT">
+                {deliverySeparate
+                  ? "Charged separately (not paid online): quote the courier and invoice the customer"
+                  : money(order.delivery_fee_snapshot, "On invoice")}
+              </Row>
               <Row label="Order total incl. VAT">
                 <strong>{formatZar(purchaseAmountDue(order))}</strong>
               </Row>

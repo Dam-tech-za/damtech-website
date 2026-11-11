@@ -4,7 +4,7 @@ import { Hero } from "@/components/Hero";
 import { SiteSection } from "@/components/SiteSection";
 import { formatZarExactAmount } from "@/lib/catalogue/format";
 import { fulfilmentLabel, isCollectionMethod } from "@/lib/shop/delivery";
-import { PVC_LINER_MANUFACTURE_LABEL } from "@/lib/shop/pvc-liners";
+import { isDeliveryChargedSeparately, PVC_LINER_MANUFACTURE_LABEL } from "@/lib/shop/pvc-liners";
 import { getPvcOrderForCustomer } from "@/lib/shop/pvc-orders";
 
 export const metadata: Metadata = {
@@ -66,6 +66,12 @@ export default async function PvcReturnPage({ searchParams }: PageProps) {
             <dt>{collecting ? "Collection" : "Delivery to"}</dt>
             <dd>{collecting ? fulfilmentLabel(order.fulfilmentMethod, order.province).replace("Collection in ", "") : order.province}</dd>
           </div>
+          {!collecting && isDeliveryChargedSeparately(order.fulfilmentMethod, order.deliveryFeeZar) ? (
+            <div>
+              <dt>Delivery cost</dt>
+              <dd>Charged separately. We send you the cost before dispatch.</dd>
+            </div>
+          ) : null}
           <div>
             <dt>{paid ? "Paid" : "Amount"}</dt>
             <dd>{formatZarExactAmount(order.amountPaidZar ?? order.amountDueZar)} incl. VAT</dd>
