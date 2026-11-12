@@ -44,6 +44,14 @@ type Props = {
   width?: number;
   /** Target lines across the plot, e.g. a margin target. */
   refLines?: { value: number; label: string }[];
+  /** Shaded target ranges, e.g. a 45–60% margin target. */
+  refBands?: { from: number; to: number; label: string }[];
+  /**
+   * Fixed axis range. Values outside it are drawn at the edge with a red
+   * outlier dot and their real figure, so one freak month does not flatten
+   * the rest. Tooltips still show the real value.
+   */
+  domain?: { min: number; max: number };
 };
 
 const BASE_W = 680;
@@ -57,7 +65,7 @@ function barPath(x: number, w: number, y0: number, y1: number): string {
   return `M${x},${y0}V${y1 - r}Q${x},${y1} ${x + r},${y1}H${x + w - r}Q${x + w},${y1} ${x + w},${y1 - r}V${y0}Z`;
 }
 
-export function TrendChart({ labels, forecastLabels = [], series, fmt, height = 240, title, legend, width = BASE_W, refLines = [] }: Props) {
+export function TrendChart({ labels, forecastLabels = [], series, fmt, height = 240, title, legend, width = BASE_W, refLines = [], refBands = [], domain }: Props) {
   const W = width;
   const id = useId();
   const wrapRef = useRef<HTMLDivElement>(null);
@@ -81,11 +89,12 @@ export function TrendChart({ labels, forecastLabels = [], series, fmt, height = 
     for (const group of stacks.values()) pool.push(group.reduce((sum, s) => sum + (valuesAt(s, i) ?? 0), 0));
   }
   for (const r of refLines) pool.push(r.value);
-  const ticks = axisTicks(Math.min(0, ...pool), Math.max(0, ...pool));
+  const ticks = domain ? axisTicks(domain.min, domain.max) : axisTicks(Math.min(0, ...pool), Math.max(0, ...pool));
   const lo = ticks[0];
   const hi = ticks[ticks.length - 1];
   const H = height;
-  const y = (v: number) => PAD.top + ((hi - v) / (hi - lo || 1)) * (H - PAD.top - PAD.bottom);
+  const outside = (v: number) => v < lo || v > hi;
+  const y = (v: number) => PAD.top + ((hi - Math.min(hi, Math.max(lo, v))) / (hi - lo || 1)) * (H - PAD.top - PAD.bottom);
   const slot = (W - PAD.left - PAD.right) / n;
   const cx = (i: number) => PAD.left + slot * (i + 0.5);
 
@@ -104,12 +113,24 @@ export function TrendChart({ labels, forecastLabels = [], series, fmt, height = 
     let pen = false;
     for (let i = from; i <= to; i += 1) {
       const v = valuesAt(s, i);
-      if (v === null || v === undefined) {
+      // Gaps for missing months and for outliers (those get their own red dot).
+      if (v === null || v === undefined || (domain && outside(v))) {
         pen = false;
         continue;
       }
       d += `${pen ? "L" : "M"}${cx(i).toFixed(1)},${y(v).toFixed(1)}`;
       pen = true;
+    }
+    return d;
+  };
+
+  /** Faint dotted path through every in-range point, bridging the gaps left by outliers. */
+  const bridgePath = (s: Series, to: number) => {
+    let d = "";
+    for (let i = 0; i <= to; i += 1) {
+      const v = valuesAt(s, i);
+      if (v === null || v === undefined || outside(v)) continue;
+      d += `${d ? "L" : "M"}${cx(i).toFixed(1)},${y(v).toFixed(1)}`;
     }
     return d;
   };
@@ -164,6 +185,14 @@ export function TrendChart({ labels, forecastLabels = [], series, fmt, height = 
             </text>
           ))}
 
+          {refBands.map((b) => (
+            <g key={b.label} className="acct-refband">
+              <rect x={PAD.left} y={y(b.to)} width={W - PAD.left - PAD.right} height={Math.max(1, y(b.from) - y(b.to))} />
+              <text x={W - PAD.right} y={y(b.to) - 4} textAnchor="end">
+                {b.label}
+              </text>
+            </g>
+          ))}
           {/* Bands, then areas, bars, lines: data on top. */}
           {series.map((s) =>
             s.band && s.band.length ? (
@@ -224,6 +253,19 @@ export function TrendChart({ labels, forecastLabels = [], series, fmt, height = 
             .filter((s) => s.kind !== "bar")
             .map((s) => (
               <g key={`${s.name}-line`}>
+                {domain ? <path d={bridgePath(s, lastActual)} stroke={s.color} className="acct-line acct-line--bridge" /> : null}
+                {domain
+                  ? // A month with no solid line on either side (between two outliers) still gets a point.
+                    s.values.map((v, i) => {
+                      const gap = (j: number) => {
+                        const w = valuesAt(s, j);
+                        return w === null || w === undefined || outside(w);
+                      };
+                      return v !== null && v !== undefined && !outside(v) && i < lastActual && (i === 0 || gap(i - 1)) && gap(i + 1) ? (
+                        <circle key={`${s.name}-iso-${i}`} cx={cx(i)} cy={y(v)} r={3} fill={s.color} className="acct-dot" />
+                      ) : null;
+                    })
+                  : null}
                 <path d={linePath(s, 0, lastActual)} stroke={s.color} className="acct-line" />
                 {s.forecast?.length ? (
                   <path
@@ -234,10 +276,25 @@ export function TrendChart({ labels, forecastLabels = [], series, fmt, height = 
                 ) : null}
                 {(() => {
                   const v = valuesAt(s, lastActual);
-                  return v === null || v === undefined ? null : <circle cx={cx(lastActual)} cy={y(v)} r={4} fill={s.color} className="acct-dot" />;
+                  return v === null || v === undefined || outside(v) ? null : <circle cx={cx(lastActual)} cy={y(v)} r={4} fill={s.color} className="acct-dot" />;
                 })()}
               </g>
             ))}
+          {series
+            .filter((s) => s.kind !== "bar")
+            .flatMap((s, k, lines) =>
+              s.values.map((v, i) =>
+                v !== null && v !== undefined && outside(v) ? (
+                  // Several series off the scale in one month: dots side by side, labels stacked.
+                  <g key={`${s.name}-out-${i}`} className="acct-outlier">
+                    <circle cx={cx(i) + (k - (lines.length - 1) / 2) * 9} cy={y(v)} r={5} />
+                    <text x={cx(i)} y={v < lo ? y(v) - 9 - k * 12 : y(v) + 17 + k * 12} textAnchor="middle">
+                      {fmtValue(v, fmt).replace(/\.\d%$/, "%")}
+                    </text>
+                  </g>
+                ) : null,
+              ),
+            )}
           {refLines.map((r) => (
             <g key={r.label} className="acct-ref">
               <line x1={PAD.left} x2={W - PAD.right} y1={y(r.value)} y2={y(r.value)} />
@@ -264,6 +321,7 @@ export function TrendChart({ labels, forecastLabels = [], series, fmt, height = 
                   <strong>{fmtValue(v, fmt)}</strong>
                   <span>{s.name}</span>
                   {b ? <span className="acct-tip__range">{`${fmtValue(b.low, fmt)} – ${fmtValue(b.high, fmt)}`}</span> : null}
+                  {outside(v) ? <span className="acct-tip__range">off the chart</span> : null}
                 </p>
               );
             })}

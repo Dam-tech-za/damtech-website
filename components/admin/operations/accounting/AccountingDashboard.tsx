@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import type { FinancialSnapshot } from "@/lib/operations/financials";
-import { ACCOUNTING_TARGETS, monthLabel, type AccountingDashboard as Dashboard, type Metric } from "@/lib/operations/financial-metrics";
+import { ACCOUNTING_TARGETS, marginDomain, monthLabel, type AccountingDashboard as Dashboard, type Metric } from "@/lib/operations/financial-metrics";
 import { MetricCard } from "./MetricCard";
 import { fmtValue, SegmentedBar, TrendChart } from "./AcctCharts";
 
@@ -64,6 +64,13 @@ export function AccountingDashboard({ d, s }: { d: Dashboard; s: FinancialSnapsh
     { name: "Over 90 days late", value: a["90+"], color: C.age[4] },
   ];
   const m = (id: string) => byId(d.monthly, id);
+  const marginRange = marginDomain(
+    d.rows.flatMap((r) => [r.grossMargin, r.netMargin]),
+    [ACCOUNTING_TARGETS.grossMarginPercent.max, ACCOUNTING_TARGETS.grossMarginPercent.min, ACCOUNTING_TARGETS.netMarginPercent.min],
+  );
+  const outlierMonths = d.rows
+    .filter((r) => [r.grossMargin, r.netMargin].some((v) => v !== null && (v < marginRange.min || v > marginRange.max)))
+    .map((r) => r.label);
   const y = (id: string) => byId(d.yearEnd, id);
 
   return (
@@ -149,16 +156,26 @@ export function AccountingDashboard({ d, s }: { d: Dashboard; s: FinancialSnapsh
                 title="Gross and net margin per month"
                 labels={labels}
                 fmt="percent"
-                refLines={[
-                  { value: ACCOUNTING_TARGETS.grossMarginPercent.max, label: `Gross target ${ACCOUNTING_TARGETS.grossMarginPercent.max}%` },
-                  { value: ACCOUNTING_TARGETS.grossMarginPercent.min, label: `Gross target ${ACCOUNTING_TARGETS.grossMarginPercent.min}%` },
-                  { value: ACCOUNTING_TARGETS.netMarginPercent.min, label: `Net target ${ACCOUNTING_TARGETS.netMarginPercent.min}%` },
+                domain={marginRange}
+                refBands={[
+                  {
+                    from: ACCOUNTING_TARGETS.grossMarginPercent.min,
+                    to: ACCOUNTING_TARGETS.grossMarginPercent.max,
+                    label: `Gross target ${ACCOUNTING_TARGETS.grossMarginPercent.min}–${ACCOUNTING_TARGETS.grossMarginPercent.max}%`,
+                  },
                 ]}
+                refLines={[{ value: ACCOUNTING_TARGETS.netMarginPercent.min, label: `Net target ${ACCOUNTING_TARGETS.netMarginPercent.min}%` }]}
                 series={[
                   { name: "Gross margin", color: C.blue, kind: "line", values: d.rows.map((r) => r.grossMargin) },
                   { name: "Net margin", color: C.orange, kind: "line", values: d.rows.map((r) => r.netMargin) },
                 ]}
               />
+              {outlierMonths.length ? (
+                <p className="acct-chart-note">
+                  <span className="acct-outlier-key" aria-hidden="true" /> {outlierMonths.join(" and ")}: off the scale (costs far above revenue that month), shown at the
+                  edge with the real figure.
+                </p>
+              ) : null}
             </Panel>
 
             <Panel title="Money owed" sub="Open invoices and bills in Xero, by how late they are.">
