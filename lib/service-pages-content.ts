@@ -216,6 +216,10 @@ export const STEEL_TANKS_CONTENT = {
       href: "/calculators/#steel-tank-size",
       label: "Use the tank size calculator",
     },
+    {
+      href: "/blog/steel-water-tank-base-ring-beam-vs-slab/",
+      label: "Choose a tank base: sand pad, ring beam or slab",
+    },
     { href: "/dam-liners", label: "Dam Liners & Dam Lining Services" },
     { href: "/agricultural-water-storage", label: "Agricultural Water Storage" },
     { href: "/projects", label: "Tank Installation Projects" },
