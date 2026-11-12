@@ -35,6 +35,8 @@ Work in this order. Each new post should be paired with one refresh of an older 
 
 ### Priority A: fix the posts Google already shows (refresh, do not rewrite from scratch)
 
+**Status 12 Nov 2026:** all 17 older posts were rewritten to this policy (new titles, quick answers, tables, FAQs and a drawing each), keeping every URL. Judge the result in the export after about 28 and 90 days.
+
 These posts have impressions but a CTR under 1%. Rewrite the meta title, meta description, H1 and first paragraph around the query people actually use. Add a quick-answer box and a link to the money page. Keep the URL.
 
 | Post | Impr. | CTR | Pos. | Retarget to (evidence) | Money page |
@@ -52,10 +54,10 @@ These posts have impressions but a CTR under 1%. Rewrite the meta title, meta de
 |---|---|---|---|
 | Steel water tank sizes and prices in South Africa | "steel water tanks prices" (129, pos 3.2, 1 click), "water tanks sizes and prices" (48, pos 8.4), "10 000 litre steel water tank" (104, pos 12), "what is the diameter of a 10000 litre tank" | Tank product pages, `/shop/` | Tiaan |
 | Steel dams: corrugated, galvanised and panel tanks compared | "steel dams south africa" (235, pos 18), "corrugated steel dams" (203, pos 10), "pressed steel dams" (211, pos 21), "steel panel dam" (186, pos 17), "bolted steel dams" (193, pos 25), "galvanized steel dams" (111, pos 8) | `/steel-water-storage-tanks/` | Tiaan |
-| Farm dams in South Africa: earth, lined or steel? | "farm dams south africa" (193, pos 7.2, 0 clicks), "lined farm dams" (106, pos 5.0), "affordable farm dams" (88, pos 8.8), "agricultural dams south africa" (55, pos 9.2) | `/farm-dam-liners/` (499 impressions at pos 33, needs the support) | Andre or Tiaan |
+| Farm dams in South Africa: earth, lined or steel? | "farm dams south africa" (193, pos 7.2, 0 clicks), "lined farm dams" (106, pos 5.0), "affordable farm dams" (88, pos 8.8), "agricultural dams south africa" (55, pos 9.2) | `/farm-dam-liners/` (499 impressions at pos 33, needs the support). Partly covered by the 12 Nov rewrite of `/blog/dam-lining-sandy-clay-soils/` ("lined farm dams"). | Tiaan |
 | How to size and price a PVC dam liner | "pvc dam liners south africa" (152, pos 5.6), "dam liner prices in south africa" (165, pos 9.7), "how to calculate pond liner size", "dam size calculator" | `/pvc-tank-liners/`, `/calculators/` | Tiaan |
-| Steel fish ponds: sizes and what they cost | "fish pond for sale" (423, pos 7.3, 4 clicks), "how much is a fish pond" (8) | Fish pond product pages | Andre |
-| Farm dam maintenance checklist | "farm dam maintenance" (135, pos 11.8, 0 clicks), "dam maintenance" (18) | `/dam-repair-services/` | Andre |
+| Steel fish ponds: sizes and what they cost | "fish pond for sale" (423, pos 7.3, 4 clicks), "how much is a fish pond" (8) | Fish pond product pages | Tiaan |
+| ~~Farm dam maintenance checklist~~ Done 12 Nov 2026: `/blog/prevent-farm-dam-liner-failure/` now targets it | "farm dam maintenance" (135, pos 11.8, 0 clicks), "dam maintenance" (18) | `/dam-repair-services/` | Tiaan |
 
 The steel dam comparison must be honest: say clearly that Damtech supplies corrugated tanks and does not sell pressed steel or sectional panel tanks.
 
@@ -148,7 +150,7 @@ A drawing or a table often explains more than three paragraphs. Every post must 
 
 | Item | Rule |
 |---|---|
-| Meta title | 60 characters or fewer (the site adds " \| Damtech"). Main query near the start. No clickbait. |
+| Meta title | 50 characters or fewer, because the site adds " \| Damtech" (10 characters) and Google shows about 60. Main query near the start. No clickbait. |
 | Meta description | 140 to 155 characters. Says what the reader will get, in plain words. |
 | H1 | Matches the main query. One per page. |
 | Slug | Short, lower case, the main query only, no dates. Never change it after publishing. |
@@ -168,7 +170,8 @@ A drawing or a table often explains more than three paragraphs. Every post must 
 - **Technical claims** need a source. For anything beyond everyday knowledge, write or reuse a research file in `research/` first (as done for the Aluzinc and tank base posts) and keep the sources there.
 - **No invented projects, testimonials, guarantees or certifications.** Only real Damtech projects from `/projects/`.
 - **Images:** only real Damtech photos already in `public/images/`, or simple diagrams made as in section 4a. No stock or AI images shown as our work. Never edit existing photos. If a post needs a photo we do not have, list it in `docs/branding/damtech-photography-requirements.md`.
-- **Authors:** use a real named author. Tiaan de Lange (Pr.Eng, ECSA) for engineering posts: sizes, foundations, coatings, design. Andre de Lange for installation and practical posts. The engineer byline is earned only when Tiaan has checked the content.
+- **Author:** every post is by Tiaan de Lange (Pr.Eng, ECSA), as Tiaan decided on 12 Nov 2026. He reads each post before it goes live.
+- **Publish dates:** one post a week, on a Monday. New posts take the next free Monday after the newest post.
 
 ## 7. Workflow
 
