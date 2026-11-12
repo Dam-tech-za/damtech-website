@@ -1534,10 +1534,14 @@
   font-weight: 600;
 }
 
-/* Tank base cross-sections in blog posts (inline SVG in post HTML). Drawn in code, not photos. */
+/* Tank base cross-sections in blog posts. Drawn diagrams, not photos: served as WebP
+   (public/images/steel-water-tank-*-diagram|cross-section.webp). The SVG source drawings live
+   in lib/posts-data.json at commit ee599e6; the __svg rules below are kept so they can be
+   re-rendered. */
 .base-diagram {
   margin: 1.5rem 0 2rem;
 }
+.base-diagram__img,
 .base-diagram__svg {
   display: block;
   width: 100%;

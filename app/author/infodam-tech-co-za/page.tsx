@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { BlogCard } from "@/components/BlogCard";
 import { BlogPagination } from "@/components/BlogPagination";
 import { Hero } from "@/components/Hero";
@@ -35,6 +36,12 @@ export default function AuthorPage() {
       />
 
       <section className="content-wrap">
+        {pagination.items.length === 0 ? (
+          <p>
+            Our articles are now written by Tiaan de Lange, Pr.Eng.{" "}
+            <Link href="/blog/">Read them on the Damtech blog</Link>.
+          </p>
+        ) : null}
         <div className="content-grid">
           {pagination.items.map((post) => (
             <BlogCard key={post.slug} post={post} />
