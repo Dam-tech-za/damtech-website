@@ -8,7 +8,7 @@ import { createArticleSchema, createMetadata } from "@/lib/seo";
 import { DEFAULT_OG_IMAGE } from "@/lib/images";
 import { getPostBySlug, getPostSlugs, getRelatedPosts, resolvePostDescription } from "@/lib/posts";
 import { blogPostPath } from "@/lib/blog-url-moves";
-import { BLOG_AUTHOR } from "@/lib/site";
+import { BLOG_AUTHOR, NAMED_AUTHORS } from "@/lib/site";
 import {
   LazyCTA as CTA,
   LazyInternalServiceLinks as InternalServiceLinks,
@@ -94,7 +94,18 @@ export default async function BlogPostPage({ params }: Props) {
             <p className="dt-article-hero__meta">
               By{" "}
               {post.author ? (
-                <span className="dt-article-hero__author">{post.author}</span>
+                <>
+                  <span className="dt-article-hero__author">{post.author}</span>
+                  {NAMED_AUTHORS[post.author] ? (
+                    <>
+                      , {NAMED_AUTHORS[post.author].credential}
+                      <span className="dt-article-hero__credential">
+                        {" "}
+                        ({NAMED_AUTHORS[post.author].credentialNote})
+                      </span>
+                    </>
+                  ) : null}
+                </>
               ) : (
                 <Link href={BLOG_AUTHOR.path} className="dt-article-hero__author">
                   {BLOG_AUTHOR.name}

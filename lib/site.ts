@@ -90,6 +90,33 @@ export const BLOG_AUTHOR = {
 } as const;
 
 /**
+ * Named blog authors with a professional credential. The byline shows
+ * `credential` and `credentialNote`; Article schema gets jobTitle and
+ * hasCredential. Keys must match `author` in lib/posts-data.json exactly.
+ */
+export const NAMED_AUTHORS: Record<
+  string,
+  {
+    credential: string;
+    credentialNote: string;
+    jobTitle: string;
+    credentialName: string;
+    recognizedBy: { name: string; url: string };
+  }
+> = {
+  "Tiaan de Lange": {
+    credential: "Pr.Eng",
+    credentialNote: "ECSA-registered Professional Engineer",
+    jobTitle: "Mechanical Engineer",
+    credentialName: "Professional Engineer (Pr.Eng), ECSA registration no. 202504039",
+    recognizedBy: {
+      name: "Engineering Council of South Africa (ECSA)",
+      url: "https://www.ecsa.co.za/",
+    },
+  },
+};
+
+/**
  * Operating bases — Damtech works from these locations but clients do not visit.
  * Keep street addresses out of LocalBusiness schema and marketing NAP.
  * The registered physical address is published on legal and order pages
