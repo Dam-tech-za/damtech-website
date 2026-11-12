@@ -7,6 +7,7 @@ import {
   healthAbove,
   healthBelow,
   linearForecast,
+  marginDomain,
   targetStatus,
   monthRows,
   operatingCashFlow,
@@ -257,5 +258,18 @@ describe("Owner targets", () => {
     const net = d.monthly.find((m) => m.id === "net-margin");
     assert.equal(net?.target?.label, "Target 20%+");
     assert.equal(net?.target?.status, "on");
+  });
+});
+
+describe("Margins chart range", () => {
+  it("keeps freak months out of the axis range and counts them as outliers", () => {
+    // June and August had almost no revenue: gross −732%, net −1035%.
+    const gross = [58, 52, 55, 41, -732, 60, -732.2, 40.5];
+    const net = [30, 22, 18, 5, -980, 35, -1034.9, 18];
+    const d = marginDomain([...gross, ...net], [60, 45, 20]);
+    assert.deepEqual(d, { min: -10, max: 70, outliers: 4 });
+    assert.deepEqual(marginDomain([-35, 12, 64]), { min: -40, max: 70, outliers: 0 });
+    assert.deepEqual(marginDomain([null, null]), { min: 0, max: 10, outliers: 0 });
+    assert.deepEqual(marginDomain([-10, 50]), { min: -20, max: 60, outliers: 0 });
   });
 });

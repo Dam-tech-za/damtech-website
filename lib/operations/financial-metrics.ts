@@ -126,6 +126,27 @@ export function operatingCashFlow(rows: MonthRow[], monthEnds: BalancePoint[], m
   });
 }
 
+/**
+ * Axis range for the margins chart. Months beyond ±100% (costs more than
+ * double the revenue, usually a month with almost no invoicing) are outliers:
+ * they are left out of the range and shown as red dots at the edge. The range
+ * always covers 0% and the targets, rounded out to 10%.
+ */
+export function marginDomain(values: (number | null)[], cover: number[] = []): { min: number; max: number; outliers: number } {
+  const all = values.filter((v): v is number => v !== null && Number.isFinite(v));
+  const normal = all.filter((v) => v >= -100 && v <= 100);
+  const pool = [0, ...normal, ...cover];
+  const outliers = all.length - normal.length;
+  // Room below zero when there are outliers, so their red dots sit clearly under the 0% line.
+  const lowest = Math.min(...pool, outliers > 0 ? -1 : 0);
+  return {
+    // Headroom above the top value so a target is not drawn on the edge.
+    min: lowest < 0 ? Math.floor((lowest - 0.01) / 10) * 10 : 0,
+    max: Math.ceil((Math.max(...pool) + 0.01) / 10) * 10,
+    outliers,
+  };
+}
+
 // ---------------------------------------------------------------------------
 // Forecasts
 // ---------------------------------------------------------------------------

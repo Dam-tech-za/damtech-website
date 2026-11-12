@@ -5574,3 +5574,11 @@ a.acct-card--link:focus-visible { outline: 2px solid var(--admin-focus-ring, #2b
 .acct-panel__head--row { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; }
 .acct-panel__link { flex: none; font-size: 0.8125rem; font-weight: 600; color: var(--admin-primary, #026bc6); text-decoration: none; }
 .acct-panel__link:hover { text-decoration: underline; }
+/* Margins chart: target band and outlier months */
+.acct-refband rect { fill: #0a7a3c; opacity: 0.07; }
+.acct-refband text { fill: #0a7a3c; font-size: 10px; font-weight: 600; opacity: 0.8; }
+.acct-outlier circle { fill: var(--acct-negative, #e34948); stroke: #fff; stroke-width: 2; }
+.acct-outlier text { fill: var(--acct-bad, #b42318); font-size: 10px; font-weight: 700; }
+.acct-chart-note { display: flex; align-items: center; gap: 0.45rem; margin: 0; font-size: 0.75rem; color: var(--acct-ink-2, #52657a); }
+.acct-outlier-key { width: 9px; height: 9px; border-radius: 50%; background: var(--acct-negative, #e34948); flex: none; }
+.acct-line--bridge { stroke-width: 1.5; stroke-dasharray: 1 4; opacity: 0.7; }
