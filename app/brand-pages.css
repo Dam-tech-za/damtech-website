@@ -1529,3 +1529,102 @@
   color: #b42318;
   font-weight: 600;
 }
+
+/* Tank base cross-sections in blog posts (inline SVG in post HTML). Drawn in code, not photos. */
+.base-diagram {
+  margin: 1.5rem 0 2rem;
+}
+.base-diagram__svg {
+  display: block;
+  width: 100%;
+  max-width: 34rem;
+  height: auto;
+  background: var(--dt-paper);
+  border: 1px solid var(--dt-line);
+  border-radius: var(--dt-radius);
+}
+.base-diagram__caption {
+  margin-top: 0.6rem;
+  max-width: 34rem;
+  color: var(--dt-ink-2);
+  font-size: 0.95rem;
+}
+.base-diagram__steel {
+  fill: none;
+  stroke: var(--dt-ink);
+  stroke-width: 4;
+  stroke-linecap: round;
+}
+.base-diagram__liner {
+  fill: none;
+  stroke: var(--dt-blue);
+  stroke-width: 3;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+.base-diagram__water {
+  fill: var(--dt-blue-soft);
+  opacity: 0.6;
+}
+.base-diagram__sand {
+  fill: var(--dt-sand);
+  stroke: none;
+}
+.base-diagram__grain {
+  fill: #b59a63;
+}
+.base-diagram__geo {
+  fill: none;
+  stroke: var(--dt-stone);
+  stroke-width: 1.5;
+  stroke-dasharray: 5 4;
+}
+.base-diagram__concrete {
+  fill: var(--dt-stone-light);
+  stroke: var(--dt-stone);
+  stroke-width: 1.5;
+}
+.base-diagram__rebar {
+  fill: var(--dt-charcoal);
+}
+.base-diagram__separator {
+  fill: var(--dt-charcoal);
+}
+.base-diagram__stone {
+  fill: var(--dt-stone);
+  stroke: var(--dt-paper);
+  stroke-width: 1;
+}
+.base-diagram__ground {
+  stroke: none;
+}
+.base-diagram__hatch-line {
+  stroke: var(--dt-stone-light);
+  stroke-width: 1.5;
+}
+.base-diagram__surface {
+  fill: none;
+  stroke: var(--dt-stone);
+  stroke-width: 1.5;
+}
+.base-diagram__centre {
+  fill: none;
+  stroke: var(--dt-stone);
+  stroke-width: 1;
+  stroke-dasharray: 10 4 2 4;
+}
+.base-diagram__lead {
+  fill: none;
+  stroke: var(--dt-ink);
+  stroke-width: 1;
+  stroke-dasharray: 3 3;
+}
+.base-diagram__label {
+  font-size: 14px;
+  font-weight: 600;
+  fill: var(--dt-ink);
+}
+.base-diagram__small {
+  font-size: 11px;
+  fill: var(--dt-stone);
+}
