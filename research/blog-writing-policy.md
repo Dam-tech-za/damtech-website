@@ -98,12 +98,51 @@ Tiaan wants posts that a farmer or homeowner understands on the first read.
 - **Answer first.** The answer to the main query goes in the first 100 words, then a "Quick answer" table or short list.
 - **Short sentences.** Aim for under 20 words. One idea per paragraph. Two to four sentences per paragraph.
 - **Plain words.** Say "the wall of the tank", not "the shell". Explain every technical term the first time ("a ring beam, the concrete ring the tank stands on").
-- **Show, don't lecture.** Use tables for sizes, prices and comparisons. Use simple SVG diagrams where a drawing helps (as in the tank base posts).
+- **Show, don't lecture.** Every post uses sketches, illustrations and tables so people understand it at a glance. See section 4a.
 - **Headings as questions.** Write H2s the way people search ("How thick should a sand pad be?"). Use the query list for wording.
 - **Length.** 900 to 1 500 words for most posts. Engineering guides may go to about 2 500 words only when the reader needs the detail; the tank base posts are the upper limit.
 - **Phone first.** No wide tables with more than four columns. Check the post on a phone before publishing.
 - **South African English** (galvanised, metre, colour). Where people search with the US spelling, mention it once naturally, e.g. "galvanised (often spelled galvanized)".
 - **Units.** Metric, with a space: 150 mm, 10 000 litres, 2.3 m.
+
+## 4a. Sketches, illustrations and tables
+
+A drawing or a table often explains more than three paragraphs. Every post must have them.
+
+**What every post needs**
+
+- **At least one table.** Use it for the quick answer, and for any sizes, prices or comparisons.
+- **At least one sketch or illustration** of the main idea. If the post compares options, draw each option. If it gives sizes, draw the sizes on the sketch. The tank base posts are the standard: [sand pad, ring beam or slab](/blog/steel-water-tank-base-ring-beam-vs-slab/) and [tank base sizes](/blog/steel-water-tank-base-sizes/).
+- **Put the visual next to the text it explains.** Don't stack all the drawings at the end.
+
+**How the drawings look**
+
+- Flat, simple cross-sections or plan views in the brand colours (the `base-diagram__*` styles), like the tank base drawings.
+- Labels in plain words ("Steel wall", "Liner on compacted fill"), not codes. Dimensions in mm, in bold.
+- Say "Not to scale" in the caption when it is not to scale.
+- A drawing is a drawing. Never make it look like a photo of a Damtech job.
+
+**How to publish them: WebP images, not HTML**
+
+1. Draw the sketch as an SVG in `docs/design/diagrams/<file-name>.svg`, using the `base-diagram__*` classes. The six tank base drawings in that folder are the templates.
+2. Render it to WebP: `node scripts/render-diagrams.mjs docs/design/diagrams/<file-name>.svg`. It writes `public/images/<file-name>.webp` at 3x size (1260 px wide) and prints the width and height.
+3. Put it in the post like this:
+
+   ```html
+   <figure class="base-diagram"><img src="/images/steel-water-tank-ring-beam-size-diagram.webp" alt="Steel water tank ring beam size: 300 mm wide by 500 mm deep, 150 mm above the ground, with four Y12 bars and links" width="1260" height="912" class="base-diagram__img" loading="lazy" /><figcaption class="base-diagram__caption"><strong>Ring beam sizes.</strong> 300 mm wide and 500 mm deep … Not to scale.</figcaption></figure>
+   ```
+
+   The site serves it in the right size for each screen.
+
+**Image SEO**
+
+| Item | Rule | Example |
+|---|---|---|
+| File name | Lower case, hyphens, says what the drawing shows, with the main query | `steel-water-tank-ring-beam-size-diagram.webp` |
+| Alt text | One sentence of up to about 125 characters. Says what the drawing shows, with the key numbers. Uses the main query once, naturally. No "image of", no keyword lists. | "Steel water tank sand pad size: 150 mm thick at the wall, rising 1 in 120 to the centre and 575 mm wider than the tank" |
+| Caption | Bold label, then one or two plain sentences | "**Sand pad sizes.** 150 mm thick at the wall …" |
+| Width and height | Always set, from the render script output | `width="1260" height="810"` |
+| Format | WebP. Photos stay as they are; only drawings go through the render script. | |
 
 ## 5. SEO checklist for every post
 
@@ -116,6 +155,7 @@ Tiaan wants posts that a farmer or homeowner understands on the first read.
 | Opening | Main query (or a natural variant) in the first sentence. |
 | Internal links | At least one link to the money page with a descriptive anchor ("steel water tank sizes", not "click here"). One or two links to related posts. Add a link **back** from the money page or a related post to the new post. |
 | End of post | One clear action: quote form, calculator, shop or WhatsApp. One, not five. |
+| Visuals | At least one table and one sketch or illustration, published as WebP with a descriptive file name, alt text, caption, width and height (section 4a). |
 | FAQ | Three to five questions, taken from real queries in the export. |
 | Category | Set `category` in `lib/posts-data.json` (Dam Liner Guides, Steel Reservoirs, Borehole & Irrigation, Leak Repair, Waterproofing). |
 | Dates | `date` is the publish date; update `modified` when the content changes materially. |
@@ -127,7 +167,7 @@ Tiaan wants posts that a farmer or homeowner understands on the first read.
 - **Prices:** only prices already approved and published on the site (product pages, the PVC liner prices in the shop). Otherwise say "ask us for a quote".
 - **Technical claims** need a source. For anything beyond everyday knowledge, write or reuse a research file in `research/` first (as done for the Aluzinc and tank base posts) and keep the sources there.
 - **No invented projects, testimonials, guarantees or certifications.** Only real Damtech projects from `/projects/`.
-- **Images:** only real Damtech photos already in `public/images/`, or simple diagrams. No stock or AI images shown as our work. Never edit existing photos. If a post needs a photo we do not have, list it in `docs/branding/damtech-photography-requirements.md`.
+- **Images:** only real Damtech photos already in `public/images/`, or simple diagrams made as in section 4a. No stock or AI images shown as our work. Never edit existing photos. If a post needs a photo we do not have, list it in `docs/branding/damtech-photography-requirements.md`.
 - **Authors:** use a real named author. Tiaan de Lange (Pr.Eng, ECSA) for engineering posts: sizes, foundations, coatings, design. Andre de Lange for installation and practical posts. The engineer byline is earned only when Tiaan has checked the content.
 
 ## 7. Workflow

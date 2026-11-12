@@ -7,7 +7,21 @@ type ProseProps = {
 
 type ParsedBlock =
   | { type: "html"; content: string }
-  | { type: "image"; src: string; alt: string; width?: number; height?: number };
+  | {
+      type: "image";
+      src: string;
+      alt: string;
+      width?: number;
+      height?: number;
+      /** Inner HTML of a <figcaption> that sat with the image in the post. */
+      caption?: string;
+      /** Class of the post's own <figure>, e.g. "base-diagram" for drawn diagrams. */
+      figureClass?: string;
+    };
+
+// A whole <figure> holding one image and a caption, or a bare <img>.
+const FIGURE_OR_IMG =
+  /<figure\b([^>]*)>\s*(<img\b[^>]*>)\s*<figcaption\b[^>]*>([\s\S]*?)<\/figcaption>\s*<\/figure>|<img\b[^>]*>/gi;
 
 function parseProseHtml(html: string): ParsedBlock[] {
   // Unwrap images that sit alone inside <p> or <figure>. Splitting the HTML at an
@@ -18,7 +32,7 @@ function parseProseHtml(html: string): ParsedBlock[] {
     "$2",
   );
   const blocks: ParsedBlock[] = [];
-  const imgPattern = /<img\b[^>]*>/gi;
+  const imgPattern = new RegExp(FIGURE_OR_IMG.source, "gi");
   let lastIndex = 0;
   let match: RegExpExecArray | null;
 
@@ -30,7 +44,9 @@ function parseProseHtml(html: string): ParsedBlock[] {
       });
     }
 
-    const tag = match[0];
+    const tag = match[2] ?? match[0];
+    const caption = match[3]?.trim();
+    const figureClass = match[1]?.match(/\bclass="([\w\s-]+)"/i)?.[1];
     const src =
       tag.match(/\bsrc="([^"]+)"/i)?.[1] ??
       tag.match(/\bdata-src="([^"]+)"/i)?.[1] ??
@@ -46,9 +62,11 @@ function parseProseHtml(html: string): ParsedBlock[] {
         alt,
         ...(width > 0 ? { width } : {}),
         ...(height > 0 ? { height } : {}),
+        ...(caption ? { caption } : {}),
+        ...(figureClass ? { figureClass } : {}),
       });
     } else {
-      blocks.push({ type: "html", content: tag });
+      blocks.push({ type: "html", content: match[0] });
     }
 
     lastIndex = match.index + match[0].length;
@@ -81,6 +99,29 @@ export function Prose({ html }: ProseProps) {
             ? block.width / block.height
             : 16 / 9;
 
+        if (block.figureClass === "base-diagram" && block.width && block.height) {
+          // Drawn diagram: show the whole drawing at its own size, with its caption.
+          return (
+            <figure key={`img-${index}`} className="base-diagram">
+              <Image
+                src={block.src}
+                alt={block.alt}
+                width={block.width}
+                height={block.height}
+                loading="lazy"
+                className="base-diagram__img"
+                sizes="(max-width: 600px) 100vw, 544px"
+              />
+              {block.caption ? (
+                <figcaption
+                  className="base-diagram__caption"
+                  dangerouslySetInnerHTML={{ __html: block.caption }}
+                />
+              ) : null}
+            </figure>
+          );
+        }
+
         return (
           <figure key={`img-${index}`} className="my-8 overflow-hidden rounded-2xl">
             <div
@@ -97,6 +138,9 @@ export function Prose({ html }: ProseProps) {
                 sizes="(max-width: 768px) 100vw, 720px"
               />
             </div>
+            {block.caption ? (
+              <figcaption dangerouslySetInnerHTML={{ __html: block.caption }} />
+            ) : null}
           </figure>
         );
       })}
