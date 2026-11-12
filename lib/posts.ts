@@ -74,15 +74,16 @@ export function rewriteBlogHtml(html: string): string {
     const rewrite = Object.values(BLOG_IMAGE_REWRITES).find((item) => item.src === src);
     const alt = rewrite?.alt ?? tag.match(/\balt="([^"]*)"/i)?.[1] ?? "";
 
-    // Keep intrinsic size (prevents layout shift) and a class for styling, when the post sets them.
-    const width = tag.match(/\bwidth="(\d+)"/i)?.[1];
-    const height = tag.match(/\bheight="(\d+)"/i)?.[1];
-    const className = tag.match(/\bclass="([\w\s-]+)"/i)?.[1];
-    const extra =
-      (width && height ? ` width="${width}" height="${height}"` : "") +
-      (className ? ` class="${className}"` : "");
+    // Drawn diagrams (section 4a of research/blog-writing-policy.md) keep their real size and
+    // class so they render uncropped. Legacy WordPress images are left exactly as before.
+    let extra = "";
+    if (/\bclass="base-diagram__img"/i.test(tag)) {
+      const width = tag.match(/\bwidth="(\d+)"/i)?.[1];
+      const height = tag.match(/\bheight="(\d+)"/i)?.[1];
+      extra = (width && height ? ` width="${width}" height="${height}"` : "") + ` class="base-diagram__img" decoding="async"`;
+    }
 
-    return `<img src="${src}" alt="${alt.replace(/"/g, "&quot;")}"${extra} loading="lazy" decoding="async" />`;
+    return `<img src="${src}" alt="${alt.replace(/"/g, "&quot;")}"${extra} loading="lazy" />`;
   });
 
   output = output.replace(/<h1\b([^>]*)>/gi, "<h2$1>").replace(/<\/h1>/gi, "</h2>");
