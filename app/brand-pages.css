@@ -799,6 +799,10 @@
   text-underline-offset: 3px;
 }
 
+.dt-article-hero__credential {
+  color: var(--dt-stone);
+}
+
 /* Sidebar trust/contact cards share the inline CTA look but are narrow:
    no decorative ring (it would sit under the list text). */
 .site-trust-panel__card::after,
@@ -1627,4 +1631,24 @@
 .base-diagram__small {
   font-size: 11px;
   fill: var(--dt-stone);
+}
+.base-diagram__dim {
+  fill: none;
+  stroke: var(--dt-ink);
+  stroke-width: 1.25;
+}
+.base-diagram__ext {
+  fill: none;
+  stroke: var(--dt-stone);
+  stroke-width: 1;
+}
+.base-diagram__dim-text {
+  font-size: 13px;
+  font-weight: 700;
+  fill: var(--dt-ink);
+}
+.base-diagram__link {
+  fill: none;
+  stroke: var(--dt-charcoal);
+  stroke-width: 1.5;
 }

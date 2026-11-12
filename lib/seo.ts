@@ -17,6 +17,7 @@ import {
   BLOG_AUTHOR,
   GOOGLE_SITE_VERIFICATION,
   HEAD_OFFICE,
+  NAMED_AUTHORS,
   OFFICES,
   phoneTel,
   SERVICE_AREA_PROVINCES,
@@ -567,6 +568,27 @@ export function createServiceSchema({
   return schema;
 }
 
+function namedAuthorSchema(name: string) {
+  const profile = NAMED_AUTHORS[name];
+  if (!profile) return { "@type": "Person", name };
+  return {
+    "@type": "Person",
+    name,
+    jobTitle: profile.jobTitle,
+    worksFor: { "@id": `${siteConfig.domain}/#organization` },
+    hasCredential: {
+      "@type": "EducationalOccupationalCredential",
+      credentialCategory: "Professional registration",
+      name: profile.credentialName,
+      recognizedBy: {
+        "@type": "Organization",
+        name: profile.recognizedBy.name,
+        url: profile.recognizedBy.url,
+      },
+    },
+  };
+}
+
 export function createArticleSchema({
   title,
   description,
@@ -595,7 +617,7 @@ export function createArticleSchema({
     datePublished,
     dateModified,
     author: authorName
-      ? { "@type": "Person", name: authorName }
+      ? namedAuthorSchema(authorName)
       : {
           "@type": "Person",
           name: BLOG_AUTHOR.name,
