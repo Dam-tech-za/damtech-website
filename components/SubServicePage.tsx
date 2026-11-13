@@ -34,6 +34,8 @@ type SubServicePageProps = {
 function imageForPage(page: SubServicePageConfig) {
   if (page.slug === "hdpe-dam-lining") return SITE_IMAGES.damLiners;
   if (page.slug === "torch-on-dam-lining") return SITE_IMAGES.bitumen;
+  if (page.slug === "concrete-reservoir-repair") return SITE_IMAGES.bitumen;
+  if (page.slug === "concrete-waterproofing") return SITE_IMAGES.bitumen;
   if (page.slug === "dam-repair-services") return SITE_IMAGES.damRepair;
   if (page.slug === "reservoir-lining") return SITE_IMAGES.reservoir;
   if (page.slug === "pvc-dam-lining") return SITE_IMAGES.damLiners;

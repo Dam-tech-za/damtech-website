@@ -81,6 +81,12 @@ const SERVICE_PAGES: readonly InternalServiceLink[] = [
       "Flexible PVC liners for ponds, steel tanks and smaller farm reservoirs.",
   },
   {
+    href: "/concrete-reservoir-repair/",
+    label: "Cement Reservoir Repair",
+    description:
+      "Leaking cement dams, concrete reservoirs and water tanks restored with a bonded torch-on lining.",
+  },
+  {
     href: "/torch-on-dam-lining/",
     label: "Torch-On Dam Lining",
     description:

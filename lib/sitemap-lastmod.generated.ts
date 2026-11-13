@@ -7,6 +7,8 @@ export const SITEMAP_LASTMOD: Readonly<Record<string, string>> = {
   "/blog": "2026-10-27",
   "/calculators": "2026-10-27",
   "/calculators/quote-preparation": "2026-07-15",
+  "/concrete-reservoir-repair": "2026-11-13",
+  "/concrete-waterproofing": "2026-11-13",
   "/contact": "2026-10-27",
   "/dam-liners": "2026-10-27",
   "/dam-lining-cost-south-africa": "2026-10-27",
