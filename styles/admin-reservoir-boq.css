@@ -508,3 +508,105 @@
     margin-top: 6mm;
   }
 }
+
+/* Wall sheet drilling sketch (below the BOQ, before the roof). */
+.rboq-drills {
+  display: grid;
+  gap: 1.25rem;
+}
+
+@media (min-width: 1200px) {
+  .rboq-drills {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.rboq-drill {
+  display: grid;
+  gap: 0.4rem;
+  margin: 0;
+  padding: 0.85rem 1rem 1rem;
+  border: 1px solid var(--admin-border);
+  border-radius: 10px;
+  background: #ffffff;
+  break-inside: avoid;
+}
+
+.rboq-drill__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.25rem 0.75rem;
+  font-size: 0.8125rem;
+  color: var(--admin-text-muted);
+}
+
+.rboq-drill__head strong {
+  font-size: 0.9375rem;
+  color: #031926;
+}
+
+.rboq-drill__svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.rboq-drill__sheet {
+  fill: none;
+  stroke: #031926;
+  stroke-width: 1.6;
+  stroke-linejoin: round;
+}
+
+.rboq-drill__gap {
+  fill: #ffffff;
+}
+
+.rboq-drill__break {
+  fill: none;
+  stroke: #031926;
+  stroke-width: 1;
+}
+
+.rboq-drill__valley {
+  stroke: #d9e2ec;
+  stroke-width: 0.8;
+}
+
+.rboq-drill__hole {
+  fill: #ffffff;
+  stroke: #c2410c;
+  stroke-width: 1.6;
+}
+
+.rboq-drill__note {
+  margin: 0;
+  font-size: 0.75rem;
+  color: var(--admin-text-muted);
+}
+
+.rboq-dim line {
+  stroke: #5b6b7c;
+  stroke-width: 0.8;
+}
+
+.rboq-dim text {
+  font-size: 11px;
+  font-weight: 600;
+  fill: #031926;
+}
+
+@media print {
+  .rboq-drills {
+    display: block;
+  }
+
+  .rboq-drills > * + * {
+    margin-top: 4mm;
+  }
+
+  .rboq-drill {
+    border-color: #c9d2dc;
+  }
+}
