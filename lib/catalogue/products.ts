@@ -793,9 +793,9 @@ export const CATALOGUE_PRODUCTS: readonly CatalogueProduct[] = [
     slug: "livestock-water-trough",
     name: "Round Livestock Water Trough",
     h1: "Round Livestock Water Trough",
-    seoTitle: "Livestock Water Trough for Cattle | R4 999 | Damtech",
+    seoTitle: "Cattle Water Trough | Steel Livestock Trough R4 999 | Damtech",
     seoDescription:
-      "Round livestock and cattle water trough for R4 999 incl. VAT. 1.5 m diameter × 381 mm high. Supply only; transport and installation excluded.",
+      "Round galvanised steel cattle and livestock water trough, R4 999 incl. VAT. 1.5 m diameter × 381 mm high. Supply only; transport and installation excluded.",
     feedTitle: "Round Galvanised Livestock Water Trough",
     merchantEligible: true,
     heroCopy:

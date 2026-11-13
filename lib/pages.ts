@@ -65,18 +65,18 @@ export const PAGE_SEO: Record<StaticPageKey, PageSeoEntry> = {
   "steel-tanks": {
     title: "Steel Water Tanks for Sale South Africa | Prices",
     description:
-      "Corrugated steel water tanks in South Africa, 10 000 L to 500 000 L+. Supplied as a kit or installed by Damtech. Fixed kit prices incl. VAT in the shop.",
+      "Steel water tanks for sale in South Africa: 10 000 L to 100 000 L kits from R13 999 incl. VAT, and corrugated steel reservoirs to 500 000 L+ installed.",
     path: "/steel-water-storage-tanks",
     h1: "Corrugated Steel Water Tanks for Sale in South Africa",
     serviceName: "Corrugated Steel Water Tank Supply",
     image: IMAGE_PATHS.tulbaghWesternCapeSteelWaterTankProject,
   },
   waterproofing: {
-    title: "Waterproofing Betty's Bay, Kleinmond & Grabouw | Damtech",
+    title: "Waterproofing Services | Roof, Bitumen Torch-On & Damp | Damtech",
     description:
-      "Roof, damp and leak waterproofing for homes in Betty's Bay, Kleinmond, Pringle Bay, Rooi-Els, Hermanus and Grabouw, plus Pretoria. Written quotes.",
+      "Bitumen torch-on roof waterproofing, damp proofing and leak repair for homes in Pretoria and the Overstrand: Betty's Bay, Kleinmond, Hermanus and Grabouw.",
     path: "/waterproofing",
-    h1: "Roof & Home Waterproofing in Betty's Bay, Kleinmond and Grabouw",
+    h1: "Roof, Damp & Bitumen Torch-On Waterproofing for Homes",
     serviceName: "Home waterproofing",
     image: IMAGE_PATHS.bitumenTorchOnWaterproofingDamtech,
   },

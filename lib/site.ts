@@ -224,9 +224,9 @@ export const SERVICES_DROPDOWN_LINKS: NavLink[] = [
   { href: "/reservoir-lining", label: "Reservoir Lining" },
   { href: "/dam-repair-services", label: "Leaking Dam Repair" },
   { href: "/dam-lining-cost-south-africa", label: "Dam Lining Cost Guide" },
-  { href: "/farm-dam-liners", label: "Farm Dam Liners" },
+  { href: "/farm-dam-liners", label: "Farm & Earth Dam Liners" },
   { href: "/mining-dam-liners", label: "Mining Dam Liners" },
-  { href: "/agricultural-water-storage", label: "Agricultural Water Storage" },
+  { href: "/agricultural-water-storage", label: "Steel Reservoirs & Farm Storage" },
   { href: "/western-cape-dam-liners", label: "Western Cape Dam Liners" },
 ];
 
@@ -311,9 +311,9 @@ export const FOOTER_SERVICE_LINKS: NavLink[] = [
   { href: "/reservoir-lining", label: "Reservoir Lining" },
   { href: "/dam-repair-services", label: "Leaking Dam Repair" },
   { href: "/dam-lining-cost-south-africa", label: "Dam Lining Cost Guide" },
-  { href: "/farm-dam-liners", label: "Farm Dam Liners" },
+  { href: "/farm-dam-liners", label: "Farm & Earth Dam Liners" },
   { href: "/mining-dam-liners", label: "Mining Dam Liners" },
-  { href: "/agricultural-water-storage", label: "Agricultural Water Storage" },
+  { href: "/agricultural-water-storage", label: "Steel Reservoirs & Farm Storage" },
   { href: "/western-cape-dam-liners", label: "Western Cape Dam Liners" },
 ];
 

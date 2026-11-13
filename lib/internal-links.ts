@@ -112,7 +112,7 @@ const SERVICE_PAGES: readonly InternalServiceLink[] = [
   },
   {
     href: "/farm-dam-liners/",
-    label: "Farm Dam Linings",
+    label: "Farm Dam Lining & Earth Dam Liners",
     description:
       "HDPE and PVC dam linings for agricultural dams, livestock water and irrigation storage.",
   },
@@ -124,15 +124,15 @@ const SERVICE_PAGES: readonly InternalServiceLink[] = [
   },
   {
     href: "/waterproofing/",
-    label: "Home waterproofing",
+    label: "Waterproofing Services",
     description:
-      "Roof, damp and leak waterproofing for homes in Pretoria and Gauteng.",
+      "Bitumen torch-on roof waterproofing, damp proofing and leak repair for homes in Pretoria and the Overstrand.",
   },
   {
     href: "/agricultural-water-storage/",
-    label: "Agricultural Water Storage",
+    label: "Steel Reservoirs & Farm Water Storage",
     description:
-      "Integrated dam, tank and irrigation storage solutions for farms and game reserves.",
+      "Corrugated steel irrigation reservoirs, lined dams and tank storage for farms and game reserves.",
   },
   {
     href: "/projects/",

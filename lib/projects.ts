@@ -231,7 +231,7 @@ export const PROJECT_CASE_STUDIES: ProjectCaseStudy[] = [
     relatedServices: [
       { href: "/dam-liners", label: "Dam Linings" },
       { href: "/western-cape-dam-liners", label: "Western Cape Dam Linings" },
-      { href: "/agricultural-water-storage", label: "Agricultural Water Storage" },
+      { href: "/agricultural-water-storage", label: "Steel reservoirs and farm water storage" },
     ],
     seo: {
       title: "HDPE Dam Lining Stellenbosch Project | Damtech South Africa",
@@ -305,7 +305,7 @@ export const PROJECT_CASE_STUDIES: ProjectCaseStudy[] = [
         label: "100 000L steel water reservoir",
       },
       { href: "/reservoir-lining", label: "Reservoir lining" },
-      { href: "/agricultural-water-storage", label: "Agricultural water storage" },
+      { href: "/agricultural-water-storage", label: "Steel reservoirs and farm water storage" },
       { href: "/calculators", label: "Work out the tank size you need" },
       { href: "/quote", label: "Request a steel reservoir quote" },
     ],
@@ -364,7 +364,7 @@ export const PROJECT_CASE_STUDIES: ProjectCaseStudy[] = [
       { href: "/dam-liners", label: "Dam linings" },
       { href: "/mpumalanga-dam-liners", label: "Mpumalanga dam linings" },
       { href: "/farm-dam-liners", label: "Farm dam liners" },
-      { href: "/agricultural-water-storage", label: "Agricultural water storage" },
+      { href: "/agricultural-water-storage", label: "Steel reservoirs and farm water storage" },
       { href: "/quote", label: "Request a dam lining quote" },
     ],
     seo: {
@@ -419,7 +419,7 @@ export const PROJECT_CASE_STUDIES: ProjectCaseStudy[] = [
       ),
     ],
     relatedServices: [
-      { href: "/steel-water-storage-tanks", label: "View steel water tank services" },
+      { href: "/steel-water-storage-tanks", label: "Steel water tanks for sale: sizes and prices" },
       {
         href: "/steel-water-storage-tanks/10000-litre-water-tank/",
         label: "10 000L corrugated steel water tank kit",
@@ -499,7 +499,7 @@ export const PROJECT_CASE_STUDIES: ProjectCaseStudy[] = [
     relatedServices: [
       { href: "/dam-liners", label: "Dam Linings" },
       { href: "/western-cape-dam-liners", label: "Western Cape Dam Linings" },
-      { href: "/farm-dam-liners", label: "Farm Dam Linings" },
+      { href: "/farm-dam-liners", label: "Farm dam lining and earth dam liners" },
     ],
     seo: {
       title: "Grabouw HDPE Dam Lining Project | Damtech South Africa",
@@ -624,7 +624,7 @@ export const PROJECT_CASE_STUDIES: ProjectCaseStudy[] = [
     relatedServices: [
       { href: "/dam-liners", label: "Dam Linings" },
       { href: "/pretoria-dam-liners", label: "Pretoria Dam Linings" },
-      { href: "/agricultural-water-storage", label: "Agricultural Water Storage" },
+      { href: "/agricultural-water-storage", label: "Steel reservoirs and farm water storage" },
     ],
     seo: {
       title: "Centurion HDPE Dam Lining Project | Damtech South Africa",

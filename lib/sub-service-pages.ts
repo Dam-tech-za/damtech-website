@@ -40,9 +40,9 @@ export type SubServicePageConfig = {
 
 export const HDPE_DAM_LINING_PAGE: SubServicePageConfig = {
   slug: "hdpe-dam-lining",
-  title: "HDPE Dam Lining South Africa | Geomembrane | Damtech",
+  title: "HDPE Dam Lining & Geomembrane Liners South Africa | Damtech",
   description:
-    "HDPE geomembrane dam lining in 1 mm–2 mm for farm dams, irrigation reservoirs and mining ponds. Welded, tested seams and installation across South Africa.",
+    "HDPE dam lining supplied and installed: UV-resistant 1 mm–2 mm geomembrane liners for farm dams, reservoirs and mining ponds. Welded, tested seams. Free quote.",
   h1: "HDPE Dam Lining",
   image: IMAGE_PATHS.hdpeDamLiningFieldInstallation,
   serviceName: "HDPE Dam Lining",
@@ -122,7 +122,7 @@ export const HDPE_DAM_LINING_PAGE: SubServicePageConfig = {
     },
     { href: "/dam-liners", label: "All Dam Lining Types" },
     { href: "/pvc-dam-lining", label: "PVC Dam Lining" },
-    { href: "/farm-dam-liners", label: "Farm Dam Linings" },
+    { href: "/farm-dam-liners", label: "Farm dam lining and earth dam liners" },
     { href: "/mining-dam-liners", label: "Mining Dam Linings" },
     { href: "/projects", label: "HDPE Project Gallery" },
     { href: "/quote", label: "Request an HDPE Dam Lining Quote" },
@@ -219,7 +219,7 @@ export const PVC_DAM_LINING_PAGE: SubServicePageConfig = {
     { href: "/dam-liners", label: "All Dam Lining Types" },
     { href: "/hdpe-dam-lining", label: "HDPE Dam Lining" },
     { href: "/steel-water-storage-tanks", label: "Steel Water Tanks" },
-    { href: "/farm-dam-liners", label: "Farm Dam Linings" },
+    { href: "/farm-dam-liners", label: "Farm dam lining and earth dam liners" },
     { href: "/quote", label: "Request a PVC Dam Lining Quote" },
   ],
   projectDetailMatch: /HDPE|PVC|dam lining/i,
@@ -694,7 +694,7 @@ export const DAM_LINING_COST_PAGE: SubServicePageConfig = {
     },
     { href: "/hdpe-dam-lining", label: "HDPE Dam Lining" },
     { href: "/pvc-dam-lining", label: "PVC Dam Linings" },
-    { href: "/farm-dam-liners", label: "Farm Dam Linings" },
+    { href: "/farm-dam-liners", label: "Farm dam lining and earth dam liners" },
     { href: "/quote", label: "Request a Quote" },
   ],
   projectDetailMatch: /HDPE|m²/i,

@@ -182,6 +182,16 @@ export const STEEL_TANKS_CONTENT = {
         "Fixed-price supply-only kits are listed in the Damtech shop for 10 000 L, 20 000 L, 50 000 L and 100 000 L, plus fish-pond and livestock-trough kits. We also supply corrugated Z275 galvanised and AZ150 Aluzinc tanks from approximately 11 kL up to 500 kL and larger on request, in diameters from 3 m to 17 m and a range of ring heights. See the capacity tables below or contact us for a full schedule.",
     },
     {
+      question: "How much does a steel water tank cost?",
+      answer:
+        "The supply-only kits have fixed prices including VAT: R13 999 for 10 000 L, R18 999 for 20 000 L, R31 999 for 50 000 L and R43 999 for 100 000 L. Transport and installation are excluded from kit prices. Larger reservoirs, roofs and installation are quoted for the site.",
+    },
+    {
+      question: "Is a corrugated steel tank the same as a pressed steel or sectional tank?",
+      answer:
+        "No. A pressed steel or sectional tank is a square or rectangular tank bolted together from flat panels, often on a stand. Damtech supplies round corrugated steel tanks: curved, bolted corrugated sheets with a PVC liner inside, built on a prepared base at ground level. Farmers also call them steel dams, zinc dams or sinkdamme. Both types are modular and are assembled on site.",
+    },
+    {
       question: "How long does installation take?",
       answer:
         "A typical 250 kL reservoir takes roughly 3–5 days on site once the base is prepared, including assembly, lining and commissioning. Smaller tanks can be faster; complex sites or custom fittings may need longer.",
@@ -220,8 +230,12 @@ export const STEEL_TANKS_CONTENT = {
       href: "/blog/steel-water-tank-base-ring-beam-vs-slab/",
       label: "Choose a tank base: sand pad, ring beam or slab",
     },
+    {
+      href: "/steel-water-storage-tanks/livestock-water-trough/",
+      label: "Cattle and livestock water trough",
+    },
     { href: "/dam-liners", label: "Dam Liners & Dam Lining Services" },
-    { href: "/agricultural-water-storage", label: "Agricultural Water Storage" },
+    { href: "/agricultural-water-storage", label: "Steel reservoirs and farm water storage" },
     { href: "/projects", label: "Tank Installation Projects" },
     { href: "/faq", label: "Reservoir FAQ" },
     { href: "/quote", label: "Request a Steel Tank Invoice" },
@@ -337,9 +351,9 @@ export const SERVICES_OVERVIEW_CARDS = [
     cta: "Reservoir lining",
   },
   {
-    title: "Agricultural Water Storage",
+    title: "Steel Reservoirs & Farm Water Storage",
     description:
-      "Integrated dam, tank and irrigation storage for farms, game lodges and borehole backup systems.",
+      "Corrugated steel irrigation reservoirs, lined dams and tank storage for farms, game lodges and borehole backup systems.",
     href: "/agricultural-water-storage",
     cta: "Farm water storage",
   },

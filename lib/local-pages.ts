@@ -98,8 +98,8 @@ export const LOCAL_LANDING_PAGES: LocalLandingPage[] = [
     ],
     relatedLocations: [
       { href: "/johannesburg-dam-liners", label: "Johannesburg" },
-      { href: "/farm-dam-liners", label: "Farm dam linings" },
-      { href: "/agricultural-water-storage", label: "Agricultural water storage" },
+      { href: "/farm-dam-liners", label: "Farm dam lining and earth dam liners" },
+      { href: "/agricultural-water-storage", label: "Steel reservoirs and farm water storage" },
       { href: "/mpumalanga-dam-liners", label: "Mpumalanga" },
     ],
   },
@@ -225,12 +225,16 @@ export const LOCAL_LANDING_PAGES: LocalLandingPage[] = [
         href: "/projects/hoedspruit-bitumen-dam-lining",
         label: "Hoedspruit bitumen dam lining",
       },
+      {
+        href: "/projects/tzaneen-torch-on-bitumen-concrete-dam-18m",
+        label: "Tzaneen 18 m concrete dam, torch-on bitumen",
+      },
     ],
     relatedLocations: [
       { href: "/mpumalanga-dam-liners", label: "Mpumalanga" },
-      { href: "/farm-dam-liners", label: "Farm dam linings" },
+      { href: "/farm-dam-liners", label: "Farm dam lining and earth dam liners" },
       { href: "/mining-dam-liners", label: "Mining dam linings" },
-      { href: "/agricultural-water-storage", label: "Agricultural water storage" },
+      { href: "/agricultural-water-storage", label: "Steel reservoirs and farm water storage" },
     ],
   },
   {
@@ -285,6 +289,10 @@ export const LOCAL_LANDING_PAGES: LocalLandingPage[] = [
       },
     ],
     relatedProjects: [
+      {
+        href: "/projects/barberton-pecan-farm-hdpe-dam-lining",
+        label: "Barberton pecan farm HDPE dam lining",
+      },
       {
         href: "/steel-water-storage-tanks",
         label: "Steel water tanks",
@@ -374,8 +382,8 @@ export const LOCAL_LANDING_PAGES: LocalLandingPage[] = [
       },
     ],
     relatedLocations: [
-      { href: "/farm-dam-liners", label: "Farm dam linings" },
-      { href: "/agricultural-water-storage", label: "Agricultural water storage" },
+      { href: "/farm-dam-liners", label: "Farm dam lining and earth dam liners" },
+      { href: "/agricultural-water-storage", label: "Steel reservoirs and farm water storage" },
       { href: "/calculators", label: "Use the dam lining area calculator" },
       { href: "/quote", label: "Request a Western Cape quote" },
       { href: "/dam-liners", label: "Dam Liners overview" },
@@ -443,7 +451,7 @@ export const LOCAL_LANDING_PAGES: LocalLandingPage[] = [
     ],
     relatedLocations: [
       { href: "/western-cape-dam-liners", label: "Western Cape dam liners" },
-      { href: "/farm-dam-liners", label: "Farm dam linings" },
+      { href: "/farm-dam-liners", label: "Farm dam lining and earth dam liners" },
       { href: "/waterproofing-grabouw", label: "Waterproofing in Grabouw" },
       { href: "/calculators", label: "Use the dam lining area calculator" },
       { href: "/quote", label: "Request an Overberg quote" },
@@ -451,10 +459,10 @@ export const LOCAL_LANDING_PAGES: LocalLandingPage[] = [
   },
   {
     slug: "farm-dam-liners",
-    title: "Farm Dam Linings | HDPE & PVC South Africa | Damtech",
+    title: "Farm Dam Lining & Earth Dam Liners South Africa | Damtech",
     description:
-      "Protect irrigation, livestock and borehole water storage with farm dam linings installed by Damtech. HDPE and PVC lining for farms across South Africa.",
-    h1: "Farm Dam Linings",
+      "Earth dam liners and farm dam lining installed across South Africa. HDPE and PVC liners that stop seepage in irrigation, livestock and borehole storage dams.",
+    h1: "Farm Dam Lining & Earth Dam Liners",
     heroDescription:
       "Stop losing irrigation and livestock water to seepage. Damtech installs farm dam linings matched to soil type, herd pressure, pivot schedules and how you actually use stored water.",
     image: IMAGE_PATHS.grabouwHdpeDamLiningAfter,
@@ -478,6 +486,11 @@ export const LOCAL_LANDING_PAGES: LocalLandingPage[] = [
       "Leak survey, patch welding and crest repairs",
     ],
     faqs: [
+      {
+        question: "What is the best liner for an earth dam?",
+        answer:
+          "For most farm earth dams it is a welded HDPE liner, in 1 mm, 1.5 mm or 2 mm depending on depth and puncture risk, laid over a prepared bed with geotextile where the ground is stony. PVC suits smaller ponds and steel tanks, and bitumen torch-on is for cement dams with sound walls. We look at the soil, the dam size and how the water is used before we recommend one.",
+      },
       {
         question: "How much water can a farm dam lining save?",
         answer:
@@ -507,8 +520,11 @@ export const LOCAL_LANDING_PAGES: LocalLandingPage[] = [
     relatedLocations: [
       { href: "/western-cape-dam-liners", label: "Dam Linings Western Cape" },
       { href: "/limpopo-dam-liners", label: "Limpopo" },
-      { href: "/agricultural-water-storage", label: "Agricultural water storage" },
+      { href: "/agricultural-water-storage", label: "Steel reservoirs and farm water storage" },
       { href: "/dam-liners", label: "Dam linings overview" },
+      { href: "/hdpe-dam-lining", label: "HDPE dam lining" },
+      { href: "/dam-lining-cost-south-africa", label: "Dam lining cost" },
+      { href: "/blog/dam-lining-sandy-clay-soils/", label: "Lined farm dams on sandy and clay soil" },
     ],
   },
   {
@@ -541,6 +557,11 @@ export const LOCAL_LANDING_PAGES: LocalLandingPage[] = [
       "Steel tanks for supplementary process storage",
     ],
     faqs: [
+      {
+        question: "Do you supply water storage tanks for mines?",
+        answer:
+          "Yes. Where an earth dam does not fit on an active pit or plant, we supply and install corrugated steel water storage tanks with a PVC liner, from about 11 kL to 500 kL and larger. Tell us what the water is and share any analysis, because process water chemistry decides whether the standard liner is suitable.",
+      },
       {
         question: "Is HDPE suitable for mining process water?",
         answer:
@@ -581,12 +602,12 @@ export const LOCAL_LANDING_PAGES: LocalLandingPage[] = [
   },
   {
     slug: "agricultural-water-storage",
-    title: "Agricultural Water Storage Solutions | Damtech South Africa",
+    title: "Steel Reservoirs & Farm Water Storage South Africa | Damtech",
     description:
-      "Agricultural water storage with HDPE dam linings and steel water tanks. Integrated solutions for irrigation, livestock and borehole backup in South Africa.",
-    h1: "Agricultural Water Storage Solutions",
+      "Corrugated steel reservoirs and lined farm dams for irrigation, livestock and borehole water storage in South Africa. Galvanised or Aluzinc, 11 kL to 500 kL+.",
+    h1: "Steel Reservoirs & Agricultural Water Storage",
     heroDescription:
-      "Plan farm water security with lined earth dams, steel reservoirs and maintenance — integrated storage for irrigation, livestock and borehole backup.",
+      "Corrugated steel irrigation reservoirs, lined earth dams and maintenance, planned together so the farm has water for irrigation, livestock and borehole backup.",
     image: IMAGE_PATHS.damtechWaterStorageHero,
     serviceName: "Agricultural Water Storage",
     schemaOffers: AGRICULTURAL_STORAGE_SCHEMA_OFFERS,
@@ -609,6 +630,16 @@ export const LOCAL_LANDING_PAGES: LocalLandingPage[] = [
       "Leak repair and preventative maintenance",
     ],
     faqs: [
+      {
+        question: "What is a corrugated steel reservoir?",
+        answer:
+          "It is a round tank built from bolted corrugated steel sheets with a PVC liner inside that holds the water. Farmers also call it a steel dam, zinc dam or sinkdam. Damtech supplies them in Z275 galvanised steel or AZ150 Aluzinc, from about 11 kL to 500 kL and larger, with optional roofs.",
+      },
+      {
+        question: "Can a steel irrigation reservoir be sized for my farm?",
+        answer:
+          "Yes. Diameters run from 3 m to 17 m in ring heights of 1.55 m, 2.3 m and 3.05 m, so the tank can be matched to daily irrigation demand, borehole yield and the space available. The 10 000 L to 100 000 L kits have fixed prices in the shop; larger reservoirs and installation are quoted for the site.",
+      },
       {
         question: "Should I choose a dam lining or steel tank first?",
         answer:
@@ -633,13 +664,19 @@ export const LOCAL_LANDING_PAGES: LocalLandingPage[] = [
     relatedProjects: [
       { href: "/projects/stellenbosch-hdpe-dam-liner", label: "Stellenbosch HDPE dam" },
       { href: "/projects/grabouw-hdpe-farm-dam", label: "Grabouw farm dam" },
+      { href: "/projects/tulbagh-steel-water-tank", label: "Tulbagh steel water tank" },
+      {
+        href: "/projects/western-cape-steel-reservoir-12m",
+        label: "12 m steel reservoir, Western Cape",
+      },
       {
         href: "/shop/#popular-tank-sizes",
         label: "Steel water tank sizes and prices",
       },
     ],
     relatedLocations: [
-      { href: "/farm-dam-liners", label: "Farm dam linings" },
+      { href: "/steel-water-storage-tanks", label: "Steel water tanks for sale" },
+      { href: "/farm-dam-liners", label: "Farm dam lining and earth dam liners" },
       { href: "/western-cape-dam-liners", label: "Dam Linings Western Cape" },
       { href: "/calculators", label: "Plan water storage with Damtech’s calculators" },
       {
