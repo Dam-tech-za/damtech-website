@@ -174,8 +174,52 @@ export const RESERVOIR_LINING_INTRO: ServiceIntroConfig = {
   ribbonFacts: ["Farms & mines", "Containment", "Practical install"],
 };
 
+export const CONCRETE_RESERVOIR_REPAIR_INTRO: ServiceIntroConfig = {
+  eyebrow: "CEMENT RESERVOIR REPAIR",
+  heading: "Restore a leaking cement reservoir instead of rebuilding it",
+  description:
+    "If the walls and floor are still sound, a leaking cement reservoir or concrete dam can be relined with a bonded torch-on bitumen membrane so it holds water again.",
+  trustPoints: [
+    { label: "Assessed before quoting", icon: "check" },
+    { label: "Bonded torch-on membrane", icon: "shield" },
+    { label: "Floor, walls and outlets", icon: "droplet" },
+  ],
+  primaryCta: {
+    label: "Request a reservoir repair quote",
+    href: "/quote/?service=Reservoir+repair",
+  },
+  secondaryCta: { label: "How torch-on lining works", href: "/torch-on-dam-lining" },
+  image: SITE_IMAGES.bitumen.image,
+  imageAlt: SITE_IMAGES.bitumen.alt,
+  ribbonFacts: ["Cement dams", "Concrete reservoirs", "Water tanks"],
+};
+
+export const CONCRETE_WATERPROOFING_INTRO: ServiceIntroConfig = {
+  eyebrow: "CONCRETE WATERPROOFING",
+  heading: "Waterproofing for concrete that holds water",
+  description:
+    "Torch-on bitumen membranes bonded to prepared concrete on reservoirs, cement dams, water tanks, canals and retaining walls.",
+  trustPoints: [
+    { label: "Structure assessed first", icon: "check" },
+    { label: "Bonded, lapped membrane", icon: "shield" },
+    { label: "Written quote and warranty terms", icon: "droplet" },
+  ],
+  primaryCta: { label: "Request a waterproofing quote", href: "/quote" },
+  secondaryCta: {
+    label: "Cement reservoir repair",
+    href: "/concrete-reservoir-repair",
+  },
+  image: SITE_IMAGES.bitumen.image,
+  imageAlt: SITE_IMAGES.bitumen.alt,
+  ribbonFacts: ["Reservoirs & dams", "Tanks & canals", "Walls & slabs"],
+};
+
 export function getSubServiceIntro(slug: string): ServiceIntroConfig | null {
   switch (slug) {
+    case "concrete-reservoir-repair":
+      return CONCRETE_RESERVOIR_REPAIR_INTRO;
+    case "concrete-waterproofing":
+      return CONCRETE_WATERPROOFING_INTRO;
     case "hdpe-dam-lining":
       return HDPE_DAM_LINING_INTRO;
     case "pvc-dam-lining":

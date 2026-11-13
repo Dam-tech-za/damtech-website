@@ -461,7 +461,7 @@ export const LOCAL_LANDING_PAGES: LocalLandingPage[] = [
     slug: "farm-dam-liners",
     title: "Farm Dam Lining & Earth Dam Liners South Africa | Damtech",
     description:
-      "Earth dam liners and farm dam lining installed across South Africa. HDPE and PVC liners that stop seepage in irrigation, livestock and borehole storage dams.",
+      "Earth dam liners and farm dam lining installed across South Africa. HDPE and PVC liners that stop seepage in irrigation, livestock and borehole dams.",
     h1: "Farm Dam Lining & Earth Dam Liners",
     heroDescription:
       "Stop losing irrigation and livestock water to seepage. Damtech installs farm dam linings matched to soil type, herd pressure, pivot schedules and how you actually use stored water.",
@@ -604,7 +604,7 @@ export const LOCAL_LANDING_PAGES: LocalLandingPage[] = [
     slug: "agricultural-water-storage",
     title: "Steel Reservoirs & Farm Water Storage South Africa | Damtech",
     description:
-      "Corrugated steel reservoirs and lined farm dams for irrigation, livestock and borehole water storage in South Africa. Galvanised or Aluzinc, 11 kL to 500 kL+.",
+      "Corrugated steel reservoirs and lined farm dams for irrigation, livestock and borehole storage in South Africa. Galvanised or Aluzinc, 11 kL to 500 kL+.",
     h1: "Steel Reservoirs & Agricultural Water Storage",
     heroDescription:
       "Corrugated steel irrigation reservoirs, lined earth dams and maintenance, planned together so the farm has water for irrigation, livestock and borehole backup.",

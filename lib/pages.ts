@@ -72,7 +72,7 @@ export const PAGE_SEO: Record<StaticPageKey, PageSeoEntry> = {
     image: IMAGE_PATHS.tulbaghWesternCapeSteelWaterTankProject,
   },
   waterproofing: {
-    title: "Waterproofing Services | Roof, Bitumen Torch-On & Damp | Damtech",
+    title: "Waterproofing Services | Bitumen Torch-On & Damp | Damtech",
     description:
       "Bitumen torch-on roof waterproofing, damp proofing and leak repair for homes in Pretoria and the Overstrand: Betty's Bay, Kleinmond, Hermanus and Grabouw.",
     path: "/waterproofing",

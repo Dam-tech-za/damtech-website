@@ -874,7 +874,7 @@ const TORCH_ON_WATERPROOFING: ResidentialPageConfig = {
   kind: "guide",
   title: "Torch-On Waterproofing | Bitumen Roof Membranes | Damtech",
   description:
-    "Torch-on bitumen waterproofing for flat roofs, slabs and parapets: where it suits, how it is installed, how long it lasts and when a liquid system is better.",
+    "Torch-on bitumen waterproofing for flat roofs, slabs and parapets: where it suits, how it is installed, its lifespan and when a liquid system is better.",
   h1: "Torch-On Waterproofing for Homes",
   breadcrumbLabel: "Torch-on guide",
   heroEyebrow: "Guide · Modified bitumen membranes",

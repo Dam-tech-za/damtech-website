@@ -32,3 +32,11 @@ A test in `lib/catalogue/catalogue.test.ts` fails if the prices quoted in the hu
 2. Resubmit `https://www.dam-tech.co.za/sitemap.xml` after deploy.
 3. Request indexing for `/waterproofing/`, `/farm-dam-liners/`, `/agricultural-water-storage/`, `/steel-water-storage-tanks/` and `/hdpe-dam-lining/`.
 4. Recheck positions and CTR for these pages 4 weeks after deploy.
+
+## Concrete reservoir pages (13 Nov 2026, branch `concrete-reservoir-pages`)
+From the owner's Keyword Planner export (South Africa, Nov 2025 – Oct 2026; volumes are bands).
+- New `/concrete-waterproofing/`: targets "concrete waterproofing", "cement waterproofing" (100–1 000 a month each).
+- New `/concrete-reservoir-repair/`: targets cement reservoir, cement dam and concrete water tank repair and sealer terms (10–100 each; "dam sealing" 100–1 000). "Concrete reservoir repair" itself has no reported volume.
+- Proof used: the published Tzaneen and Hoedspruit torch-on projects only. No new prices, warranties or project facts.
+- Also trimmed four descriptions and the `/waterproofing/` title from the earlier change to fit display length.
+- Owner still to confirm: whether Damtech does structural crack repair itself, and drinking-water suitability of the membrane (the pages say both are confirmed per quote).

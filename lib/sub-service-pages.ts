@@ -42,7 +42,7 @@ export const HDPE_DAM_LINING_PAGE: SubServicePageConfig = {
   slug: "hdpe-dam-lining",
   title: "HDPE Dam Lining & Geomembrane Liners South Africa | Damtech",
   description:
-    "HDPE dam lining supplied and installed: UV-resistant 1 mm–2 mm geomembrane liners for farm dams, reservoirs and mining ponds. Welded, tested seams. Free quote.",
+    "HDPE dam lining supplied and installed: UV-resistant 1 mm–2 mm geomembrane liners for farm dams, reservoirs and mining ponds. Welded seams. Free quote.",
   h1: "HDPE Dam Lining",
   image: IMAGE_PATHS.hdpeDamLiningFieldInstallation,
   serviceName: "HDPE Dam Lining",
@@ -319,6 +319,8 @@ export const TORCH_ON_DAM_LINING_PAGE: SubServicePageConfig = {
       href: "/calculators/#waterproofing-area",
       label: "Estimate waterproofing area → Waterproofing Area Calculator",
     },
+    { href: "/concrete-reservoir-repair", label: "Cement reservoir repair and restoration" },
+    { href: "/concrete-waterproofing", label: "Concrete waterproofing" },
     { href: "/dam-liners", label: "All Dam Lining Types" },
     { href: "/hdpe-dam-lining", label: "HDPE Dam Lining" },
     { href: "/waterproofing/", label: "Home waterproofing" },
@@ -714,6 +716,257 @@ export const DAM_LINING_COST_PAGE: SubServicePageConfig = {
     "Share dam dimensions, photos and location — we will provide a quote based on your site.",
 };
 
+export const CONCRETE_RESERVOIR_REPAIR_PAGE: SubServicePageConfig = {
+  slug: "concrete-reservoir-repair",
+  title: "Cement Reservoir Repair | Leaking Concrete Dams | Damtech",
+  description:
+    "Leaking cement reservoir or concrete dam? Damtech restores round cement dams, reservoirs and water tanks with a bonded torch-on bitumen lining. Free quote.",
+  h1: "Cement Reservoir Repair & Restoration",
+  image: IMAGE_PATHS.torchOnConcreteDam18mTzaneen,
+  serviceName: "Cement Reservoir Repair",
+  schemaOffers: [
+    "Leaking cement reservoir repair",
+    "Concrete dam relining with torch-on bitumen",
+    "Concrete water tank waterproofing",
+    "Round cement dam restoration",
+    "Canal and rigid reservoir lining",
+  ],
+  parent: { href: "/concrete-waterproofing", label: "Concrete Waterproofing" },
+  heroEyebrow: "Cement dams · Concrete reservoirs · Water tanks",
+  heroDescription:
+    "A cracked or seeping cement reservoir can usually be restored instead of rebuilt. Damtech prepares the concrete and lines it with a heat-bonded torch-on bitumen membrane so it holds water again.",
+  intro:
+    "Round cement dams and concrete reservoirs are on farms, lodges and estates across South Africa, and many of them leak. Hairline cracks, moving joints, a failed coating or a leaking pipe sleeve let water out a little at a time until the level will not hold. If the walls and floor are still structurally sound, the reservoir does not need to be demolished. Damtech cleans and primes the concrete and bonds a torch-on bitumen membrane over the floor and walls, so the membrane holds the water and the concrete only has to carry the load.",
+  benefits: [
+    "Restores a leaking cement reservoir without rebuilding it",
+    "Membrane is heat-bonded to the primed concrete, floor and walls",
+    "3 mm and 4 mm torch-on membranes",
+    "Laps, corners, outlets and pipe penetrations detailed with extra layers",
+    "15–20 year typical service life on well-prepared concrete (conditions apply; not a guarantee)",
+    "Supplier-backed material warranty where stated in the quotation",
+  ],
+  specsHeading: "Cement reservoir repair at a glance",
+  specs: [
+    { label: "Structures", value: "Round cement dams, concrete reservoirs, water tanks, canals" },
+    { label: "System", value: "Torch-on modified bitumen membrane" },
+    { label: "Membrane thickness", value: "3 mm and 4 mm" },
+    { label: "Typical service life", value: "Typically 15–20 years*" },
+    { label: "Before lining", value: "Clean, dry, primed concrete; structural cracks repaired first" },
+  ],
+  sections: [
+    {
+      id: "why-cement-reservoirs-leak",
+      heading: "Why cement reservoirs and concrete dams leak",
+      paragraphs: [
+        "Concrete is rigid and the ground under it is not. Seasonal movement, heat and age open cracks in the floor and at the joint where the wall meets the floor. Older plaster and cement coatings lose their bond and let water in behind them, and pipes cast through the wall often leak around the sleeve.",
+        "The signs are a water level that drops when nothing is being used, wet patches or white salt stains on the outside of the wall, and green growth along a crack line. The sooner it is assessed the smaller the repair, because water moving through a crack keeps widening it.",
+      ],
+    },
+    {
+      id: "dam-sealer-or-lining",
+      heading: "Dam sealer or a bonded lining?",
+      paragraphs: [
+        "Pour-in dam sealers and brush-on cement coatings are sold for leaking dams. They can help where seepage is slow and spread across a surface. They are a poor match for a rigid reservoir with cracks or joints that move, because a thin coating cracks again when the concrete moves.",
+        "A torch-on bitumen membrane is a continuous sheet, 3 mm or 4 mm thick, bonded to the concrete and lapped at every joint. It bridges hairline cracks and moves with the structure. That is why we recommend relining when a cement reservoir has already been patched or sealed and is leaking again.",
+      ],
+    },
+    {
+      id: "how-we-restore",
+      heading: "How Damtech restores a cement reservoir",
+      paragraphs: [
+        "We start with photos or a site visit to check that the walls and floor are sound and to find where the water is getting out. The reservoir is emptied, cleaned and left to dry. Loose plaster and failed coatings are removed, and the concrete is primed.",
+        "The membrane is then torched on in planned runs across the floor and up the walls, with continuous laps. Corners, the wall-to-floor joint, outlets and pipe penetrations get extra layers, because that is where rigid reservoirs leak first. Torch-on is hot work and is done by trained applicators with fire precautions in place.",
+      ],
+    },
+    {
+      id: "when-structural-repair-comes-first",
+      heading: "When structural repair comes first",
+      paragraphs: [
+        "A membrane waterproofs the reservoir. It does not hold a failing wall together. Wide or stepped cracks, bulging walls and exposed or rusting reinforcing steel must be repaired before lining, and we say so in the written quote before any work starts.",
+        "Where the concrete is past saving, a corrugated steel reservoir with a PVC liner can be the more economical replacement. We quote that as a separate option so you can compare the two.",
+      ],
+    },
+    {
+      id: "what-we-need-to-quote",
+      heading: "What we need to quote",
+      paragraphs: [
+        "Send the diameter (or length and width), the wall height, photos of the inside and outside, and the town. Tell us what the water is used for and whether the reservoir can be emptied. Most cement reservoir repairs can be priced from that; larger or badly cracked structures are inspected on site first.",
+      ],
+    },
+  ],
+  faqs: [
+    {
+      question: "Can a leaking cement reservoir be repaired without rebuilding it?",
+      answer:
+        "Usually, if the walls and floor are structurally sound. The concrete is cleaned, dried and primed, and a torch-on bitumen membrane is bonded over the floor and walls so the membrane holds the water. Severely cracked or unstable structures need structural repair first.",
+    },
+    {
+      question: "Will a dam sealer fix my cement dam?",
+      answer:
+        "It may slow a small, spread-out seep. It is unlikely to last on cracks or joints that move, because a thin coating cracks again with the concrete. A bonded 3 mm or 4 mm torch-on membrane bridges hairline cracks and is the more durable repair for a rigid reservoir.",
+    },
+    {
+      question: "How long does a torch-on lining last in a cement reservoir?",
+      answer:
+        "Typically 15–20 years on well-prepared concrete. That is a typical range, not a guarantee; it depends on the surface preparation, sun exposure and how the reservoir is used and maintained. Warranty terms are set out in the written quote.",
+    },
+    {
+      question: "Does the reservoir have to be empty?",
+      answer:
+        "Yes. The concrete must be clean and dry for the primer and membrane to bond, so the reservoir is drained and dried before work starts. Tell us if stock or irrigation depends on it and we will plan the work around a temporary supply.",
+    },
+    {
+      question: "Do you repair concrete water tanks and canals too?",
+      answer:
+        "Yes. The same torch-on system is used on concrete water tanks, irrigation canals and other rigid water-retaining structures. Earth dams are different: they are lined with HDPE or PVC.",
+    },
+    {
+      question: "Which areas do you cover?",
+      answer:
+        "Damtech works nationwide. Completed torch-on reservoir work includes an 18 m round concrete dam near Tzaneen and a 550 m² cement dam at Hoedspruit. Send your location and photos for a quote.",
+    },
+  ],
+  relatedLinks: [
+    { href: "/concrete-waterproofing", label: "Concrete waterproofing" },
+    { href: "/torch-on-dam-lining", label: "Torch-on dam lining: the system" },
+    { href: "/reservoir-lining", label: "Reservoir lining and relining" },
+    { href: "/dam-repair-services", label: "Leaking dam repair (lined earth dams)" },
+    { href: "/steel-water-storage-tanks", label: "Steel water tanks, if replacement is cheaper" },
+    {
+      href: "/calculators/#waterproofing-area",
+      label: "Estimate the area to be lined",
+    },
+  ],
+  projectDetailMatch: /Bitumen/i,
+  relatedProjectSlugs: [
+    "tzaneen-torch-on-bitumen-concrete-dam-18m",
+    "hoedspruit-bitumen-dam-lining",
+  ],
+  relatedPostSlugs: ["farm-dam-leak-repair", "farm-dam-water-saving-tips"],
+  projectsSectionTitle: "Cement reservoir and concrete dam projects",
+  sectionCtaTitle: "Leaking cement reservoir?",
+  ctaTitle: "Request a Cement Reservoir Repair Quote",
+  ctaDescription:
+    "Send the size, photos and location of your cement reservoir or concrete dam. We will tell you whether it can be restored and what it involves.",
+};
+
+export const CONCRETE_WATERPROOFING_PAGE: SubServicePageConfig = {
+  slug: "concrete-waterproofing",
+  title: "Concrete Waterproofing | Reservoirs, Dams & Tanks | Damtech",
+  description:
+    "Concrete waterproofing for reservoirs, cement dams, water tanks, canals and retaining walls. Bonded torch-on bitumen membranes, installed in South Africa.",
+  h1: "Concrete Waterproofing",
+  image: IMAGE_PATHS.bitumenTorchOnWaterproofingDamtech,
+  serviceName: "Concrete Waterproofing",
+  schemaOffers: [
+    "Concrete reservoir waterproofing",
+    "Cement dam waterproofing",
+    "Concrete water tank waterproofing",
+    "Canal lining",
+    "Retaining wall and slab waterproofing",
+  ],
+  parent: { href: "/services", label: "Services" },
+  heroEyebrow: "Bitumen torch-on · Water-retaining concrete",
+  heroDescription:
+    "Damtech waterproofs concrete that has to hold water or keep it out: reservoirs, cement dams, water tanks, canals, retaining walls and slabs. We use a bonded torch-on bitumen membrane, or a liquid system where the detail calls for it.",
+  intro:
+    "Concrete is strong but it is not waterproof. It cracks as it cures and moves with heat and with the ground under it, and water finds every crack and joint. Waterproofing puts a continuous membrane over the concrete so the membrane, not the concrete, stops the water. Damtech's main system for concrete is a torch-on modified bitumen membrane, heat-bonded to the primed surface and lapped at every joint.",
+  benefits: [
+    "One contractor for reservoirs, cement dams, tanks, canals, walls and slabs",
+    "Torch-on membrane bonded to primed concrete",
+    "3 mm and 4 mm membranes",
+    "Liquid-applied systems where torch-on does not suit the detail",
+    "Written quote that names the system and why",
+    "Supplier-backed material warranty where stated in the quotation",
+  ],
+  specsHeading: "Concrete waterproofing at a glance",
+  specs: [
+    { label: "Water-retaining", value: "Reservoirs, cement dams, water tanks, canals" },
+    { label: "Keeping water out", value: "Retaining walls, foundations, flat concrete roofs" },
+    { label: "Main system", value: "Torch-on modified bitumen, 3 mm and 4 mm" },
+    { label: "Preparation", value: "Clean, dry, primed concrete" },
+    { label: "Warranty", value: "Confirmed per project in the written quote" },
+  ],
+  sections: [
+    {
+      id: "what-we-waterproof",
+      heading: "Concrete structures we waterproof",
+      paragraphs: [
+        "Most of our concrete waterproofing is on structures that hold water: round cement dams, concrete reservoirs, water tanks and irrigation canals on farms, lodges, estates and commercial sites. A leaking cement reservoir is usually restored by relining it, not rebuilt; that work has its own page.",
+        "We also waterproof concrete that has to keep water out: retaining walls, foundation walls and flat concrete roof slabs. For houses, see the home waterproofing pages, which cover roofs, damp and balconies.",
+      ],
+    },
+    {
+      id: "membrane-or-coating",
+      heading: "Membrane, cementitious coating or sealer?",
+      paragraphs: [
+        "Cementitious coatings and sealers are brushed or sprayed onto the concrete and form a thin, rigid layer. They work on sound concrete that does not move. When the concrete cracks, the coating cracks with it.",
+        "A torch-on membrane is a flexible bitumen sheet, 3 mm or 4 mm thick, bonded to the surface with continuous laps. It bridges hairline cracks and tolerates movement, which is why we use it on reservoirs, dams and canals. Where there are many pipes or awkward shapes, a reinforced liquid-applied system can be the neater answer. We assess the structure and name the system in the quote.",
+      ],
+    },
+    {
+      id: "how-it-is-done",
+      heading: "How concrete waterproofing is done",
+      paragraphs: [
+        "Preparation decides whether the system lasts. The concrete is cleaned, loose or failed material is removed, and the surface is dried and primed. The membrane is torched on with overlapped, sealed laps, and corners, joints, outlets and penetrations are detailed with extra layers.",
+        "Torch-on is hot work with an open flame. It is carried out by trained applicators with fire precautions, and it is not used where the flame is a risk.",
+      ],
+    },
+    {
+      id: "cost",
+      heading: "What concrete waterproofing costs",
+      paragraphs: [
+        "The price depends on the area, the condition of the concrete, access and how much preparation and detailing is needed, so we do not publish a rate per square metre. Send the dimensions, photos and location and you will get a written quote that sets out the work, the system and the warranty terms.",
+      ],
+    },
+  ],
+  faqs: [
+    {
+      question: "What is the best waterproofing for concrete that holds water?",
+      answer:
+        "For reservoirs, cement dams, tanks and canals we recommend a bonded torch-on bitumen membrane, because it is flexible, continuous and bridges hairline cracks. Thin rigid coatings tend to crack again when the concrete moves.",
+    },
+    {
+      question: "Can you waterproof old or cracked concrete?",
+      answer:
+        "Often, once the concrete has been assessed. Hairline cracks are bridged by the membrane. Wide, stepped or moving cracks and damaged reinforcing need structural repair first, and the quote says so before work starts.",
+    },
+    {
+      question: "Is torch-on bitumen suitable for drinking water?",
+      answer:
+        "Tell us if the water is for human consumption. Suitability depends on the membrane specified and any treatment or testing you require, and we confirm it in the quote rather than assume it.",
+    },
+    {
+      question: "Do you waterproof concrete roofs and retaining walls?",
+      answer:
+        "Yes. Flat concrete roofs, retaining walls and foundation walls are waterproofed with torch-on or a liquid-applied system, depending on the surface. Home roofs and damp problems are quoted through our home waterproofing service.",
+    },
+    {
+      question: "What warranty applies?",
+      answer:
+        "Up to 10 years supplier-backed material warranty where stated in the quotation, plus 12 months Damtech workmanship warranty from practical completion unless otherwise agreed in writing. Coverage, exclusions and maintenance requirements are confirmed per project.",
+    },
+  ],
+  relatedLinks: [
+    { href: "/concrete-reservoir-repair", label: "Cement reservoir repair and restoration" },
+    { href: "/torch-on-dam-lining", label: "Torch-on dam lining" },
+    { href: "/reservoir-lining", label: "Reservoir lining" },
+    { href: "/waterproofing/", label: "Home waterproofing services" },
+    { href: "/foundation-waterproofing/", label: "Foundation and retaining wall waterproofing" },
+    { href: "/torch-on-waterproofing/", label: "Torch-on waterproofing guide" },
+  ],
+  projectDetailMatch: /Bitumen/i,
+  relatedProjectSlugs: [
+    "tzaneen-torch-on-bitumen-concrete-dam-18m",
+    "hoedspruit-bitumen-dam-lining",
+  ],
+  projectsSectionTitle: "Concrete waterproofing projects",
+  sectionCtaTitle: "Need concrete waterproofed?",
+  ctaTitle: "Request a Concrete Waterproofing Quote",
+  ctaDescription:
+    "Tell us what the structure is, its size and location, and send photos. We will recommend a system and give you a written quote.",
+};
+
 export const SUB_SERVICE_PAGES: SubServicePageConfig[] = [
   HDPE_DAM_LINING_PAGE,
   PVC_DAM_LINING_PAGE,
@@ -721,6 +974,8 @@ export const SUB_SERVICE_PAGES: SubServicePageConfig[] = [
   DAM_REPAIR_SERVICES_PAGE,
   RESERVOIR_LINING_PAGE,
   DAM_LINING_COST_PAGE,
+  CONCRETE_RESERVOIR_REPAIR_PAGE,
+  CONCRETE_WATERPROOFING_PAGE,
 ];
 
 export function getSubServicePage(slug: string): SubServicePageConfig | undefined {
