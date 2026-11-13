@@ -119,6 +119,18 @@ describe("water tank product pages", () => {
     (product) => product.categoryId === "corrugated-steel-water-tanks",
   );
 
+  it("keeps the hub description and price FAQ in step with the catalogue prices", () => {
+    const here = dirname(fileURLToPath(import.meta.url));
+    const pages = readFileSync(join(here, "..", "pages.ts"), "utf8");
+    const content = readFileSync(join(here, "..", "service-pages-content.ts"), "utf8");
+    const amount = (n: number) => `R${String(n).replace(/\B(?=(\d{3})+(?!\d))/g, " ")}`;
+    const cheapest = Math.min(...waterTanks.map((p) => p.priceInclVatZar));
+    assert.ok(pages.includes(`kits from ${amount(cheapest)} incl. VAT`));
+    for (const tank of waterTanks) {
+      assert.ok(content.includes(`${amount(tank.priceInclVatZar)} for`), tank.sku);
+    }
+  });
+
   it("uses unique titles, descriptions, H1s, heroes, FAQs and CTAs", () => {
     assert.equal(waterTanks.length, 4);
     assert.equal(new Set(waterTanks.map((p) => p.seoTitle)).size, 4);
