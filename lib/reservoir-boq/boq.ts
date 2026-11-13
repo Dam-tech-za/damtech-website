@@ -297,6 +297,61 @@ export function roofSheetCuts(diameterM: number, coverM: number, slopeDeg: numbe
   return [...counts.entries()].map(([lengthM, count]) => ({ lengthM, count })).sort((a, b) => b.lengthM - a.lengthM);
 }
 
+/** Seam hole lines, mm from the sheet end: 2 lines at 35 / 65, 3 lines at 35 / 75 / 115 (150 mm end lap). */
+export function seamHoleOffsetsMm(boltLines: number, edgeMm = 35): number[] {
+  return boltLines === 3 ? [edgeMm, edgeMm + 40, edgeMm + 80] : boltLines === 2 ? [edgeMm, edgeMm + 30] : [edgeMm];
+}
+
+export type SheetDrillPattern = {
+  /** Rings that share this pattern, bottom first. */
+  rings: number[];
+  /** Sheets to drill (all plies). */
+  sheets: number;
+  cutLengthMm: number;
+  sheetHeightMm: number;
+  endLapMm: number;
+  /** Hole lines from each sheet end, mm. */
+  lineOffsetsMm: number[];
+  holesPerLine: number;
+  /** One hole in every valley: the corrugation pitch, mm. */
+  pitchMm: number;
+  /** First and last hole from the bottom and top edge (half a pitch: the middle of the first valley). */
+  firstHoleMm: number;
+};
+
+/**
+ * Drilling pattern for the vertical seams of the wall sheets, one per
+ * distinct ring layout. Holes go in every valley along each bolt line, at
+ * both ends of the sheet; row-seam holes along the top and bottom are not
+ * part of it. Cut length follows the diameter asked for, as in the BOQ.
+ */
+export function sheetDrillPatterns(settings: BoqSettings, wall: WallDesign, diameterM: number): SheetDrillPattern[] {
+  const circumference = Math.PI * diameterM;
+  const sheetHeightMm = Math.round(settings.ring_height_m * 1000);
+  const patterns: SheetDrillPattern[] = [];
+  for (const ring of wall.rings) {
+    const cutLengthMm = Math.round(roundUp(circumference / ring.sheets + ring.end_lap_m, 0.001) * 1000);
+    const pitchMm = Math.round((settings.ring_height_m * 1000 * 10) / Math.max(1, ring.bolts_per_line)) / 10;
+    const pattern = {
+      cutLengthMm,
+      sheetHeightMm,
+      endLapMm: Math.round(ring.end_lap_m * 1000),
+      lineOffsetsMm: seamHoleOffsetsMm(ring.bolt_lines, settings.edge_mm),
+      holesPerLine: ring.bolts_per_line,
+      pitchMm,
+      firstHoleMm: Math.round(pitchMm * 5) / 10,
+    };
+    const same = patterns.find(
+      (p) => p.cutLengthMm === pattern.cutLengthMm && p.holesPerLine === pattern.holesPerLine && p.lineOffsetsMm.join() === pattern.lineOffsetsMm.join(),
+    );
+    if (same) {
+      same.rings.push(ring.ring);
+      same.sheets += ring.sheets * ring.plies;
+    } else patterns.push({ rings: [ring.ring], sheets: ring.sheets * ring.plies, ...pattern });
+  }
+  return patterns;
+}
+
 const sectionKind = (section: string) =>
   section.startsWith("RB") ? "Round bar" : section.startsWith("FB") ? "Flat bar" : "Angle";
 
@@ -327,7 +382,7 @@ export function buildReservoirBoq(
       qty: count,
       lengthEachM: round(cut, 3),
       totalM: round(count * cut, 1),
-      note: `${ring.bolt_lines} bolt lines per seam, ${Math.round(ring.end_lap_m * 1000)} mm end lap (holes at ${ring.bolt_lines === 3 ? "35 / 75 / 115" : "35 / 65"} mm from the sheet end)`,
+      note: `${ring.bolt_lines} bolt lines per seam, ${Math.round(ring.end_lap_m * 1000)} mm end lap (holes at ${seamHoleOffsetsMm(ring.bolt_lines, settings.edge_mm).join(" / ")} mm from the sheet end)`,
     });
   }
   lines.push({

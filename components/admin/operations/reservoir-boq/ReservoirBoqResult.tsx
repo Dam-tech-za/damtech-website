@@ -1,7 +1,8 @@
-import { buildReservoirBoq, designDiameter, isStandardSize, type BoqLine, type BoqSection, type BoqSelection, type BoqSettings, type RoofDesign, type WallDesign } from "@/lib/reservoir-boq/boq";
+import { buildReservoirBoq, designDiameter, isStandardSize, sheetDrillPatterns, type BoqLine, type BoqSection, type BoqSelection, type BoqSettings, type RoofDesign, type WallDesign } from "@/lib/reservoir-boq/boq";
 import { AdminInfoBanner, AdminPanel } from "@/components/admin/ui";
 import { TrussSketch } from "@/components/admin/operations/reservoir-boq/TrussSketch";
 import { InfoHover } from "@/components/admin/operations/reservoir-boq/InfoHover";
+import { SheetDrillSketch } from "@/components/admin/operations/reservoir-boq/SheetDrillSketch";
 
 type Props = {
   settings: BoqSettings;
@@ -110,6 +111,13 @@ export function ReservoirBoqResult({ settings, wall, roof, selection, reference 
             })}
           </table>
         </div>
+      </AdminPanel>
+
+      <AdminPanel
+        title="Wall sheet drilling"
+        description="Holes for the vertical seams, at both ends of every wall sheet. One sketch per ring layout; the length is not to scale, the dimensions are in mm."
+      >
+        <SheetDrillSketch patterns={sheetDrillPatterns(settings, wall, diameterM)} />
       </AdminPanel>
 
       {selection.roof && roof ? (

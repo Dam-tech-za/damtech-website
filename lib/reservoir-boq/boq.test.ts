@@ -9,6 +9,8 @@ import {
   packBars,
   roofSheetCuts,
   roofStock,
+  seamHoleOffsetsMm,
+  sheetDrillPatterns,
   trussMembers,
   type BoqSettings,
   type RoofDesign,
@@ -125,5 +127,33 @@ describe("reservoir BOQ", () => {
     assert.equal(fixture.roof4.trusses, 1);
     const stock = roofStock(fixture.roof4, 4, 6);
     assert.ok(stock.every((s) => s.bars >= 1));
+  });
+});
+
+describe("wall sheet drilling", () => {
+  it("places the seam hole lines from the sheet end", () => {
+    assert.deepEqual(seamHoleOffsetsMm(2), [35, 65]);
+    assert.deepEqual(seamHoleOffsetsMm(3), [35, 75, 115]);
+  });
+
+  it("gives one drilling pattern per distinct ring layout, a hole in every valley", () => {
+    const patterns = sheetDrillPatterns(fixture.settings, fixture.wall, 9);
+    // 9 m x 3 rings: the bottom ring has 3 bolt lines and a 150 mm lap; rings 2 and 3 share 2 lines and a 100 mm lap.
+    assert.equal(patterns.length, 2);
+    const [bottom, upper] = patterns;
+    assert.deepEqual(bottom.rings, [1]);
+    assert.deepEqual(bottom.lineOffsetsMm, [35, 75, 115]);
+    assert.equal(bottom.endLapMm, 150);
+    assert.deepEqual(upper.rings, [2, 3]);
+    assert.deepEqual(upper.lineOffsetsMm, [35, 65]);
+    assert.equal(upper.holesPerLine, 10);
+    assert.equal(upper.pitchMm, 76.2);
+    assert.equal(upper.firstHoleMm, 38.1);
+    assert.equal(upper.sheetHeightMm, 762);
+    // Same cut length as the BOQ line: π × 9 / 10 sheets + 100 mm lap, rounded up to the mm.
+    assert.equal(upper.cutLengthMm, 2928);
+    const boq = buildReservoirBoq(fixture.settings, fixture.wall, fixture.roof, { diameterM: 9, rings: 3, roof: true, linerGsm: 550 });
+    assert.equal(line(boq, "Wall sheet, ring 2").lengthEachM, upper.cutLengthMm / 1000);
+    assert.equal(upper.sheets, 20);
   });
 });
