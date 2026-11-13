@@ -65,7 +65,7 @@ export const PROVINCE_LANDING_PAGES: LocalLandingPage[] = [
       { href: "/mpumalanga-dam-liners", label: "Mpumalanga" },
       { href: "/free-state-dam-liners", label: "Free State" },
       { href: "/eastern-cape-dam-liners", label: "Eastern Cape" },
-      { href: "/farm-dam-liners", label: "Farm dam linings" },
+      { href: "/farm-dam-liners", label: "Farm dam lining and earth dam liners" },
     ],
   },
   {
@@ -265,7 +265,7 @@ export const PROVINCE_LANDING_PAGES: LocalLandingPage[] = [
       { href: "/kwazulu-natal-dam-liners", label: "KwaZulu-Natal" },
       { href: "/north-west-dam-liners", label: "North West" },
       { href: "/northern-cape-dam-liners", label: "Northern Cape" },
-      { href: "/farm-dam-liners", label: "Farm dam linings" },
+      { href: "/farm-dam-liners", label: "Farm dam lining and earth dam liners" },
     ],
   },
   {
@@ -330,7 +330,7 @@ export const PROVINCE_LANDING_PAGES: LocalLandingPage[] = [
       { href: "/kwazulu-natal-dam-liners", label: "KwaZulu-Natal" },
       { href: "/western-cape-dam-liners", label: "Western Cape" },
       { href: "/free-state-dam-liners", label: "Free State" },
-      { href: "/agricultural-water-storage", label: "Agricultural water storage" },
+      { href: "/agricultural-water-storage", label: "Steel reservoirs and farm water storage" },
     ],
   },
 ];

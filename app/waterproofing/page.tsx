@@ -40,11 +40,11 @@ const WARRANTY_SUMMARY = `${WARRANTY_PUBLIC.bullets[0]}, plus ${WARRANTY_PUBLIC.
 
 const SECTIONS = [
   {
-    id: "overstrand",
-    heading: "Waterproofing in Betty's Bay, Kleinmond, Pringle Bay and Grabouw",
+    id: "bitumen-torch-on",
+    heading: "Bitumen torch-on waterproofing",
     paragraphs: [
-      "Damtech assesses and waterproofs homes from Rooi-Els, Pringle Bay and Betty's Bay to Kleinmond, Hermanus and Gansbaai, and inland to Grabouw and the Elgin valley. Site assessments are free in Rooi-Els, Pringle Bay, Betty's Bay and Kleinmond.",
-      "Coastal houses fail differently from Highveld houses. Most rain falls in winter, often driven sideways by strong wind, and salt air corrodes metal flashings, fixings and gutters. Wind-driven rain frequently enters through parapets, window heads and wall junctions rather than the roof covering, so we inspect the walls and flashings as well as the roof before recommending a system.",
+      "Bitumen torch-on is the system most people mean when they ask for bitumen waterproofing: a modified-bitumen membrane, heat-welded with a gas torch onto a primed surface, with overlapped and sealed laps. Damtech installs it on flat concrete roofs, parapets, box gutters and retaining walls where the surface is sound and falls carry the water to an outlet.",
+      "It is not the right answer everywhere. On roofs with many pipes, awkward details or timber close by, a liquid-applied system can be safer and neater. The written quote names the system and why it suits your roof. The torch-on waterproofing guide explains how the membrane is installed and where its limits are; cement dams and reservoirs are covered by our separate torch-on dam lining service.",
     ],
   },
   {
@@ -85,6 +85,14 @@ const SECTIONS = [
     paragraphs: [
       "Not every wet ceiling has a hole you can see. Water can travel along a slab, a conduit or a parapet and appear metres away from the entry point.",
       "We check the roof, walls, balconies and plumbing penetrations, and we tell you if the leak is a waterproofing failure or something a plumber should fix first. Leak detection is part of the assessment, not a separate priced product on this page.",
+    ],
+  },
+  {
+    id: "overstrand",
+    heading: "Waterproofing in Betty's Bay, Kleinmond, Pringle Bay and Grabouw",
+    paragraphs: [
+      "Damtech assesses and waterproofs homes from Rooi-Els, Pringle Bay and Betty's Bay to Kleinmond, Hermanus and Gansbaai, and inland to Grabouw and the Elgin valley. Site assessments are free in Rooi-Els, Pringle Bay, Betty's Bay and Kleinmond.",
+      "Coastal houses fail differently from Highveld houses. Most rain falls in winter, often driven sideways by strong wind, and salt air corrodes metal flashings, fixings and gutters. Wind-driven rain frequently enters through parapets, window heads and wall junctions rather than the roof covering, so we inspect the walls and flashings as well as the roof before recommending a system.",
     ],
   },
   {
@@ -133,6 +141,11 @@ const PROCESS_STEPS: readonly ProcessStep[] = [
 
 const FAQS: ServiceFaqItem[] = [
   {
+    question: "Do you install bitumen torch-on waterproofing?",
+    answer:
+      "Yes. We install torch-on bitumen membranes on flat concrete roofs, parapets, box gutters and retaining walls, and liquid-applied systems where torch-on does not suit the roof. The written quote names the system we recommend and why.",
+  },
+  {
     question: "Do you waterproof homes in Betty's Bay, Kleinmond and Grabouw?",
     answer:
       "Yes. From our Betty's Bay base we assess and waterproof homes in Rooi-Els, Pringle Bay, Betty's Bay, Kleinmond, Hermanus, Gansbaai and Grabouw. Site assessments are free in Rooi-Els, Pringle Bay, Betty's Bay and Kleinmond; further afield we quote from photos or confirm the call-out fee first.",
@@ -170,6 +183,7 @@ const FAQS: ServiceFaqItem[] = [
 
 const SERVICE_TYPES = [
   "Roof waterproofing",
+  "Bitumen torch-on waterproofing",
   "Damp proofing",
   "Leak detection",
 ] as const;
@@ -260,7 +274,11 @@ export default function WaterproofingPage() {
             { href: "/waterproofing-pretoria/", label: "Waterproofing in Pretoria" },
             {
               href: "/torch-on-waterproofing/",
-              label: "Torch-on waterproofing guide",
+              label: "Bitumen torch-on waterproofing guide",
+            },
+            {
+              href: "/torch-on-dam-lining/",
+              label: "Torch-on lining for cement dams",
             },
             {
               href: "/waterproofing-membranes-and-coatings/",

@@ -347,6 +347,14 @@ const WATERPROOFING_PRETORIA: ResidentialPageConfig = {
       ],
     },
     {
+      id: "pretoria-damp-proofing",
+      heading: "Damp proofing, basements, balconies and showers in Pretoria",
+      paragraphs: [
+        "Damp on an interior wall is not always a roof leak. A tide mark low on the wall that stays damp in dry weather points to rising damp; a patch that appears after a storm points to the roof, a parapet or an exterior wall; and a stain below a bathroom or balcony usually means the membrane under the tiles has failed. We check which one it is before we quote, so you do not pay for the wrong repair.",
+        "Below-ground rooms and basements take water through the walls and the floor joint, and are treated differently from a wall above ground. Our foundation waterproofing and damp-proofing page explains the difference and what can and cannot be promised for a room below ground level.",
+      ],
+    },
+    {
       id: "pretoria-services",
       heading: "What we do for Pretoria homeowners",
       paragraphs: [
@@ -382,6 +390,11 @@ const WATERPROOFING_PRETORIA: ResidentialPageConfig = {
       question: "Can you treat rising damp and retaining walls too?",
       answer:
         "Yes. As well as roofs we treat rising damp and waterproof retaining and foundation walls — common on sloped Pretoria East stands where retaining walls were not waterproofed or drained on the soil side.",
+    },
+    {
+      question: "Do you do damp proofing, balconies and showers in Pretoria?",
+      answer:
+        "Yes. We assess damp interior and exterior walls, below-ground rooms, balcony slabs and shower floors in Pretoria and Centurion. We first find out whether the moisture is rising damp, a failed membrane or a leaking pipe, and the written quote says what we will treat and what a builder or plumber must fix first. If tiles have to be lifted, the quote says so before work starts.",
     },
     {
       question: "What does it cost?",
@@ -859,9 +872,9 @@ const WATERPROOFING_GRABOUW: ResidentialPageConfig = {
 const TORCH_ON_WATERPROOFING: ResidentialPageConfig = {
   slug: "torch-on-waterproofing",
   kind: "guide",
-  title: "Torch-On Waterproofing for Homes | How It Works | Damtech",
+  title: "Torch-On Waterproofing | Bitumen Roof Membranes | Damtech",
   description:
-    "A guide to torch-on bitumen waterproofing for house roofs: where it suits, how it is installed, its limits, and when a liquid system is better instead.",
+    "Torch-on bitumen waterproofing for flat roofs, slabs and parapets: where it suits, how it is installed, how long it lasts and when a liquid system is better.",
   h1: "Torch-On Waterproofing for Homes",
   breadcrumbLabel: "Torch-on guide",
   heroEyebrow: "Guide · Modified bitumen membranes",

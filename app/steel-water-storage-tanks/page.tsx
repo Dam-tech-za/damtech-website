@@ -42,6 +42,12 @@ import { STEEL_TANKS_CONTENT, STEEL_TANKS_SCHEMA_OFFERS } from "@/lib/service-pa
 
 import { getProjectsMatching } from "@/lib/projects";
 
+import Link from "next/link";
+
+import { CatalogueProductGrid } from "@/components/catalogue/CatalogueProductGrid";
+
+import { getWaterStorageProducts } from "@/lib/catalogue";
+
 const seo = PAGE_SEO["steel-tanks"];
 
 export const metadata = createPageMetadata(seo);
@@ -204,6 +210,27 @@ export default function SteelTanksPage() {
         title="Steel tank installations"
         projects={getProjectsMatching(/steel|tank|reservoir/i, 4)}
       />
+
+      <CatalogueProductGrid
+        id="steel-water-tank-prices"
+        eyebrow="PRICES INCL. VAT"
+        title="Steel Water Tank Sizes and Prices"
+        intro="Four corrugated steel water tank kits with fixed prices, each with a PVC liner. Prices include 15% VAT. Kits are supply-only: transport and installation are excluded and quoted separately."
+        products={getWaterStorageProducts()}
+        variant="tanks"
+      >
+        <div className="catalogue-secondary-actions">
+          <Link className="btn-secondary catalogue-cta" href="/shop/#fish-ponds-aquaculture">
+            Fish pond kits
+          </Link>
+          <Link
+            className="btn-secondary catalogue-cta"
+            href="/steel-water-storage-tanks/livestock-water-trough/"
+          >
+            Cattle water trough
+          </Link>
+        </div>
+      </CatalogueProductGrid>
 
       <SiteSection tone="muted">
         <SectionCta
