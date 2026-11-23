@@ -9,6 +9,10 @@ export type ReservoirBoqFormValues = {
   height: "2" | "3" | "4" | "custom";
   customRings: string;
   roof: "yes" | "no";
+  /** Roof slope in degrees as typed in the address ("" = the default). */
+  roofSlope: string;
+  /** Design wind uplift in kPa as typed in the address ("" = the default). */
+  roofUplift: string;
   liner: "550" | "800";
   reference: string;
 };
@@ -20,14 +24,27 @@ type Props = {
   diameters: number[];
   /** Ring counts in the table, e.g. 1 to 5. */
   rings: number[];
+  /** Roof slope options in degrees (calculator r15+); empty on older data. */
+  slopeOptions: number[];
+  slopeDefault?: number;
+  /** Design wind uplift options in kPa (calculator r16+); empty on older data. */
+  upliftOptions: number[];
+  upliftDefault?: number;
 };
+
+const upliftLabel = (kpa: number) => (kpa === 0 ? "0 kPa (no wind design)" : `${kpa} kPa`);
 
 const heightLabel = (rings: number, ringHeightM: number) => `${(rings * ringHeightM).toFixed(3)} m (${rings} ring${rings === 1 ? "" : "s"})`;
 
 /** Selection boxes for the BOQ. A plain GET form: the choices live in the address, so a design can be bookmarked or shared. */
-export function ReservoirBoqForm({ values, ringHeightM, diameters, rings }: Props) {
+export function ReservoirBoqForm({ values, ringHeightM, diameters, rings, slopeOptions, slopeDefault, upliftOptions, upliftDefault }: Props) {
   const [sizeType, setSizeType] = useState(values.sizeType);
   const [height, setHeight] = useState(values.height);
+  const [roof, setRoof] = useState(values.roof);
+  const pick = (typed: string, options: number[], fallback?: number) =>
+    options.map(String).includes(typed) ? typed : String(fallback ?? options[0] ?? "");
+  const slope = pick(values.roofSlope, slopeOptions, slopeDefault);
+  const uplift = pick(values.roofUplift, upliftOptions, upliftDefault);
   const whole = diameters.filter((d) => Number.isInteger(d));
   const list = sizeType === "standard" ? whole : diameters;
   const diameter = list.map(String).includes(values.diameter) ? values.diameter : String(list[0] ?? "");
@@ -76,11 +93,36 @@ export function ReservoirBoqForm({ values, ringHeightM, diameters, rings }: Prop
       ) : null}
       <label className="rboq-form__field">
         <span>Roof</span>
-        <AdminSelect name="roof" defaultValue={values.roof}>
+        <AdminSelect name="roof" value={roof} onChange={(e) => setRoof(e.target.value as "yes" | "no")}>
           <option value="yes">Roof</option>
           <option value="no">No roof</option>
         </AdminSelect>
       </label>
+      {roof === "yes" && slopeOptions.length > 0 ? (
+        <label className="rboq-form__field">
+          <span>Roof slope</span>
+          <AdminSelect name="slope" defaultValue={slope}>
+            {slopeOptions.map((s) => (
+              <option key={s} value={s}>
+                {s} degrees{s === slopeDefault ? " (standard)" : ""}
+              </option>
+            ))}
+          </AdminSelect>
+        </label>
+      ) : null}
+      {roof === "yes" && upliftOptions.length > 0 ? (
+        <label className="rboq-form__field">
+          <span>Wind uplift (design)</span>
+          <AdminSelect name="uplift" defaultValue={uplift}>
+            {upliftOptions.map((u) => (
+              <option key={u} value={u}>
+                {upliftLabel(u)}
+                {u === upliftDefault ? " - default" : ""}
+              </option>
+            ))}
+          </AdminSelect>
+        </label>
+      ) : null}
       <label className="rboq-form__field">
         <span>Liner</span>
         <AdminSelect name="liner" defaultValue={values.liner}>

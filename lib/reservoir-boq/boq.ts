@@ -31,6 +31,12 @@ export type BoqSettings = {
   roof_sheet: string;
   edge_mm: number;
   loads: { uplift_kpa: string; imposed_kpa: string };
+  /** Calculator r15+: roof slope options (degrees) and the default. */
+  roof_slope_options_deg?: number[];
+  roof_slope_default_deg?: number;
+  /** Calculator r16+: design wind uplift options on the roof (kPa) and the default (0 = no wind design). */
+  roof_uplift_options_kpa?: number[];
+  roof_uplift_default_kpa?: number;
 };
 
 export type WallRing = {
@@ -100,6 +106,11 @@ export type RoofDesign = {
   panel_m: number;
   uplift_kpa: string;
   imposed_kpa: string;
+  /** Calculator r15+: the slope the roof was designed to (degrees, as text) and its rise above the wall top. */
+  roof_slope_deg?: string | null;
+  rise_above_wall_mm?: number;
+  /** Calculator r16+: the design wind uplift chosen for this roof (kPa, as text). "0" = not designed for wind. */
+  roof_uplift_kpa?: string | null;
 };
 
 export type BoqSelection = {
@@ -107,6 +118,10 @@ export type BoqSelection = {
   rings: number;
   roof: boolean;
   linerGsm: 550 | 800;
+  /** Roof slope in degrees (e.g. 5 or 7.5). Left out: the default design row. */
+  roofSlopeDeg?: number;
+  /** Design wind uplift in kPa (0, 0.25, 0.5). Left out: the default design row. */
+  roofUpliftKpa?: number;
 };
 
 export type BoqSection = "Wall" | "Liner" | "Roof sheeting" | "Roof steel (raw stock)";
@@ -182,12 +197,22 @@ export function designDiameter(diameterM: number): number {
   return roundUp(diameterM, 0.5);
 }
 
+/**
+ * Design rows to read. Roof rows (calculator r16): `roof:<D>` is the default (5 deg slope, 0 kPa uplift);
+ * `roof:<D>:<slope>:<uplift>` is one slope and uplift choice, e.g. roof:8:7.5:0.25.
+ */
 export function designKeys(selection: BoqSelection): { wall: string; roof: string | null } {
   const d = designDiameter(selection.diameterM);
+  const chosen = selection.roofSlopeDeg !== undefined && selection.roofUpliftKpa !== undefined;
   return {
     wall: `wall:${d}:${selection.rings}:${selection.roof ? 1 : 0}`,
-    roof: selection.roof ? `roof:${d}` : null,
+    roof: selection.roof ? (chosen ? `roof:${d}:${selection.roofSlopeDeg}:${selection.roofUpliftKpa}` : `roof:${d}`) : null,
   };
+}
+
+/** True when the roof row was designed without any wind uplift (calculator r16 default). */
+export function roofHasNoWindDesign(roof: RoofDesign): boolean {
+  return Number(roof.roof_uplift_kpa ?? roof.uplift_kpa) === 0;
 }
 
 /** True when the size is on the standard list (whole metres within the range for that number of rings). */
@@ -472,7 +497,9 @@ export function buildReservoirBoq(
   let stock: StockLine[] = [];
   let cuts: RoofSheetCut[] = [];
   if (selection.roof && roof) {
-    const roofArea = round(area / Math.cos((settings.roof_pitch_deg * Math.PI) / 180), 2);
+    // r15+: roof area on the slope this roof was designed to; older rows fall back to the settings pitch
+    const slopeDeg = roof.roof_slope_deg != null ? Number(roof.roof_slope_deg) : settings.roof_pitch_deg;
+    const roofArea = round(area / Math.cos((slopeDeg * Math.PI) / 180), 2);
     cuts = roofSheetCuts(d, settings.roof_sheet_cover_m, roof.slope_deg);
     lines.push({
       section: "Roof sheeting",

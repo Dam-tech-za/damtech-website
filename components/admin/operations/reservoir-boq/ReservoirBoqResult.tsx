@@ -1,4 +1,4 @@
-import { buildReservoirBoq, designDiameter, isStandardSize, sheetDrillPatterns, type BoqLine, type BoqSection, type BoqSelection, type BoqSettings, type RoofDesign, type WallDesign } from "@/lib/reservoir-boq/boq";
+import { buildReservoirBoq, designDiameter, isStandardSize, roofHasNoWindDesign, sheetDrillPatterns, type BoqLine, type BoqSection, type BoqSelection, type BoqSettings, type RoofDesign, type WallDesign } from "@/lib/reservoir-boq/boq";
 import { AdminInfoBanner, AdminPanel } from "@/components/admin/ui";
 import { TrussSketch } from "@/components/admin/operations/reservoir-boq/TrussSketch";
 import { InfoHover } from "@/components/admin/operations/reservoir-boq/InfoHover";
@@ -57,6 +57,14 @@ export function ReservoirBoqResult({ settings, wall, roof, selection, reference 
             <dt>Wall, bottom ring to top</dt>
             <dd>{wall.pattern}</dd>
           </div>
+          {selection.roof && roof ? (
+            <div>
+              <dt>Roof</dt>
+              <dd>
+                {roof.slope_deg.toFixed(1)} degrees, {Number(roof.uplift_kpa) === 0 ? "no wind design (0 kPa uplift)" : `designed for ${roof.uplift_kpa} kPa uplift`}
+              </dd>
+            </div>
+          ) : null}
         </dl>
       </header>
 
@@ -64,6 +72,13 @@ export function ReservoirBoqResult({ settings, wall, roof, selection, reference 
         <AdminInfoBanner tone="warning">
           This is not a standard size. {boq.designDiameterM !== diameterM ? `The wall gauges, bolt lines and roof steel are those of the ${boq.designDiameterM} m design; sheet cut lengths use ${diameterM} m. ` : ""}
           Check with André before ordering.
+        </AdminInfoBanner>
+      ) : null}
+
+      {selection.roof && roof && roofHasNoWindDesign(roof) ? (
+        <AdminInfoBanner tone="warning">
+          This roof is designed for 0 kPa wind uplift: the trusses are not checked for wind lifting the roof and have no bottom-chord tie lines. On an
+          exposed or windy site choose 0.25 or 0.5 kPa and Calculate again.
         </AdminInfoBanner>
       ) : null}
 

@@ -10,13 +10,13 @@ import { ReservoirBoqResult } from "@/components/admin/operations/reservoir-boq/
 
 export const metadata: Metadata = { title: "Reservoir BOQ" };
 
-type Search = { type?: string; d?: string; h?: string; rings?: string; roof?: string; liner?: string; ref?: string };
+type Search = { type?: string; d?: string; h?: string; rings?: string; roof?: string; slope?: string; uplift?: string; liner?: string; ref?: string };
 type PageProps = { searchParams: Promise<Search> };
 
 const header = (
   <AdminPageHeader
     title="Reservoir BOQ"
-    description="Pick the size and whether it has a roof, then Calculate. The list shows what to buy for that reservoir; with a roof it also shows the truss design."
+    description="Pick the size, whether it has a roof and, with a roof, its slope and design wind uplift, then Calculate. The list shows what to buy for that reservoir; with a roof it also shows the truss design."
   />
 );
 
@@ -27,6 +27,8 @@ function formValues(sp: Search): ReservoirBoqFormValues {
     height: sp.h === "2" || sp.h === "4" || sp.h === "custom" ? sp.h : "3",
     customRings: sp.rings ?? "3",
     roof: sp.roof === "no" ? "no" : "yes",
+    roofSlope: (sp.slope ?? "").slice(0, 6),
+    roofUplift: (sp.uplift ?? "").slice(0, 6),
     liner: sp.liner === "800" ? "800" : "550",
     reference: (sp.ref ?? "").slice(0, 80),
   };
@@ -55,7 +57,14 @@ async function ReservoirBoqPageInner({ searchParams }: PageProps) {
 
   const diameterM = Number(values.diameter);
   const rings = values.height === "custom" ? Number(values.customRings) : Number(values.height);
-  const selection: BoqSelection = { diameterM, rings, roof: values.roof === "yes", linerGsm: values.liner === "800" ? 800 : 550 };
+  // Roof slope and design uplift (calculator r16): both come from the form; without them the default roof row is used.
+  const slopeDeg = values.roofSlope === "" ? NaN : Number(values.roofSlope);
+  const upliftKpa = values.roofUplift === "" ? NaN : Number(values.roofUplift);
+  const roofChoice =
+    Number.isFinite(slopeDeg) && Number.isFinite(upliftKpa) && slopeDeg > 0 && slopeDeg <= 30 && upliftKpa >= 0 && upliftKpa <= 5
+      ? { roofSlopeDeg: slopeDeg, roofUpliftKpa: upliftKpa }
+      : {};
+  const selection: BoqSelection = { diameterM, rings, roof: values.roof === "yes", linerGsm: values.liner === "800" ? 800 : 550, ...roofChoice };
   const validNumbers = Number.isFinite(diameterM) && Number.isInteger(rings) && diameterM >= 1 && diameterM <= 50 && rings >= 1 && rings <= 6;
 
   const load = asked && validNumbers ? await loadReservoirDesign(db, selection) : await loadReservoirSettings(db);
@@ -83,7 +92,16 @@ async function ReservoirBoqPageInner({ searchParams }: PageProps) {
   const form = (
     <div className="rboq-noprint">
       <AdminPanel title="Reservoir">
-        <ReservoirBoqForm values={values} ringHeightM={settings.ring_height_m} diameters={settings.diameters_m} rings={settings.rings} />
+        <ReservoirBoqForm
+          values={values}
+          ringHeightM={settings.ring_height_m}
+          diameters={settings.diameters_m}
+          rings={settings.rings}
+          slopeOptions={settings.roof_slope_options_deg ?? []}
+          slopeDefault={settings.roof_slope_default_deg}
+          upliftOptions={settings.roof_uplift_options_kpa ?? []}
+          upliftDefault={settings.roof_uplift_default_kpa}
+        />
       </AdminPanel>
     </div>
   );
