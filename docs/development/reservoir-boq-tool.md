@@ -26,6 +26,7 @@ Diameters run from 3 m to 17 m in 0.5 m steps, rings 1 to 5. A diameter between 
 | `supabase/migrations/20261110090000_reservoir_designs.sql` | table (RLS on, service role only) |
 | `supabase/migrations/20261110090100_reservoir_designs_seed.sql` | the 320 design rows, r13 (upserts, safe to re-run) |
 | `supabase/migrations/20261110120000_reservoir_designs_r14.sql` | the same 320 rows on r14; **run this one to update a database already loaded with r13** |
+| `supabase/migrations/20261123120000_reservoir_designs_r16.sql` | 552 rows on r16 (roof slope and design uplift options, see below); **run this one to update a database already loaded with r14** |
 | `lib/reservoir-boq/boq.ts` | pure BOQ logic: order lines, 6 m bar packing, sheet cutting guide |
 | `lib/reservoir-boq/boq.test.ts`, `fixture.json` | unit tests against calculator output |
 | `lib/reservoir-boq/store.ts` | reads the rows |
@@ -55,8 +56,23 @@ Until step 3 is done the page shows "The reservoir designs are not loaded yet" a
 
 In `damtech-ai-operations`, after a parameter change: `PYTHONPATH=. python docs/website-boq-tool/export_designs.py`. Copy the new `reservoir_designs_seed.sql` over the seed migration under a new timestamped file name (or run it in the SQL editor), and copy `reservoir_designs_fixture.json` to `lib/reservoir-boq/fixture.json`; update the expected numbers in `boq.test.ts` if they moved.
 
+## Roof slope and wind uplift (calculator r16, 23 Nov 2026)
+
+The form has two extra boxes when Roof is chosen:
+
+- **Roof slope**: 5 degrees (standard) or 7.5 degrees. The truss depth follows the slope (8 m: 500 mm at 5 degrees, 700 mm at 7.5 degrees).
+- **Wind uplift (design)**: 0 kPa (default, no wind design), 0.25 kPa or 0.5 kPa. With 0 kPa the trusses have no bottom-chord tie lines and the
+  page shows a warning; 0.25 and 0.5 kPa add the tie lines and heavier members the calculator needs.
+
+Calculate reads the roof row `roof:<D>:<slope>:<uplift>` (e.g. `roof:8:7.5:0.25`); the BOQ, cutting list, truss sketch and printout all come
+from that row. An address without `slope` and `uplift` reads `roof:<D>`, which is the default (5 degrees, 0 kPa). The settings row lists the
+options (`roof_slope_options_deg`, `roof_uplift_options_kpa`) and defaults. To load r16: run
+`supabase/migrations/20261123120000_reservoir_designs_r16.sql` (upserts only, safe to re-run), then check
+`select kind, count(*) from public.reservoir_designs group by kind;` gives settings 1, wall 290, roof 261 (on a database that had r14 the
+old roof rows are overwritten in place; none are deleted).
+
 ## Limits
 
-- Standard roof only (0.25 kPa uplift). The high-strength roof is not in the table.
+- Standard roof only (0, 0.25 or 0.5 kPa design uplift). The high-strength roof (1.0 kPa) is not in the table.
 - Quantities are for ordering; they do not replace the engineer's sign-off.
 - Not priced: ridge cap along the centre truss. Bar counts assume 6 m stock and no cutting allowance beyond offcuts.

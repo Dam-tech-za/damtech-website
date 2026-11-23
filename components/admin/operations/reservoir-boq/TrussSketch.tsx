@@ -226,7 +226,10 @@ export function TrussSketch({ roof, diameterM }: Props) {
           </div>
           <div>
             <dt>Roof slope</dt>
-            <dd>{roof.slope_deg.toFixed(1)} degrees, falling from the centre to the rim all round</dd>
+            <dd>
+              {roof.slope_deg.toFixed(1)} degrees, falling from the centre to the rim all round
+              {roof.rise_above_wall_mm ? `; the roof rises about ${roof.rise_above_wall_mm} mm above the wall top` : ""}
+            </dd>
           </div>
           <div>
             <dt>Chords</dt>
@@ -245,7 +248,9 @@ export function TrussSketch({ roof, diameterM }: Props) {
           <div>
             <dt>Design loads</dt>
             <dd>
-              {roof.imposed_kpa} kPa imposed, {roof.uplift_kpa} kPa net uplift; highest member utilisation {roof.max_util.toFixed(2)}; deflection{" "}
+              {roof.imposed_kpa} kPa imposed,{" "}
+              {Number(roof.uplift_kpa) === 0 ? "0 kPa net uplift (not designed for wind)" : `${roof.uplift_kpa} kPa net uplift`}; highest member utilisation{" "}
+              {roof.max_util.toFixed(2)}; deflection{" "}
               {roof.defl_actual_mm.toFixed(1)} mm (limit {roof.defl_limit_mm.toFixed(0)} mm)
             </dd>
           </div>

@@ -8,6 +8,7 @@ import {
   isStandardSize,
   packBars,
   roofSheetCuts,
+  roofHasNoWindDesign,
   roofStock,
   seamHoleOffsetsMm,
   sheetDrillPatterns,
@@ -17,13 +18,18 @@ import {
   type WallDesign,
 } from "./boq.ts";
 
-// Rows exported by the DamTech calculator (parameter file r14): 9 m x 3 rings roofed wall, 12 m x 4 rings open wall, 9 m and 4 m roofs.
+// Rows exported by the DamTech calculator (parameter file r16): 9 m x 3 rings roofed wall, 12 m x 4 rings open wall, 9 m and 4 m default
+// roofs (5 deg slope, 0 kPa uplift), and the 8 m roof at 5 deg / 0, 0.25 and 0.5 kPa and at 7.5 deg / 0 kPa.
 const fixture = JSON.parse(readFileSync(new URL("./fixture.json", import.meta.url), "utf8")) as {
   settings: BoqSettings;
   wall: WallDesign;
   wallOpen12x4: WallDesign;
   roof: RoofDesign;
   roof4: RoofDesign;
+  roof8: RoofDesign;
+  roof8steep: RoofDesign;
+  roof8uplift025: RoofDesign;
+  roof8uplift05: RoofDesign;
 };
 
 const line = (boq: ReturnType<typeof buildReservoirBoq>, item: string) => {
@@ -38,6 +44,9 @@ describe("reservoir BOQ", () => {
     assert.equal(designDiameter(7.2), 7.5);
     assert.deepEqual(designKeys({ diameterM: 9, rings: 3, roof: true, linerGsm: 550 }), { wall: "wall:9:3:1", roof: "roof:9" });
     assert.deepEqual(designKeys({ diameterM: 7.2, rings: 2, roof: false, linerGsm: 550 }), { wall: "wall:7.5:2:0", roof: null });
+    // r16: a chosen slope and design uplift read their own roof row
+    assert.equal(designKeys({ diameterM: 8, rings: 3, roof: true, linerGsm: 550, roofSlopeDeg: 7.5, roofUpliftKpa: 0.25 }).roof, "roof:8:7.5:0.25");
+    assert.equal(designKeys({ diameterM: 7.8, rings: 3, roof: true, linerGsm: 550, roofSlopeDeg: 5, roofUpliftKpa: 0 }).roof, "roof:8:5:0");
   });
 
   it("knows the standard sizes", () => {
@@ -56,13 +65,13 @@ describe("reservoir BOQ", () => {
     assert.equal(ring1.lengthEachM, 2.978);
     assert.match(ring1.note ?? "", /3 bolt lines/);
     assert.equal(line(boq, "Wall sheet, ring 2").lengthEachM, 2.928);
-    // design counts plus 2% spare, rounded up: 700 vertical, 2 x 189 row seams, 72 roof bolts
+    // design counts plus 2% spare, rounded up: 700 vertical, 2 x 189 row seams; roof bolts: truss ends only (no tie lines at 0 kPa)
     assert.equal(line(boq, "Seam bolts M10, vertical seams").qty, 714);
     assert.equal(line(boq, "Seam bolts M10, row seams (Optional)").qty, 386);
     assert.equal(line(boq, "PVC liner 550 gsm").qty, 143.6);
-    assert.equal(line(boq, "Roof screws").qty, 388);
-    assert.equal(line(boq, "Roof bolts M12").qty, 74);
-    assert.equal(line(boq, "Hot-dip galvanising").qty, 251);
+    assert.equal(line(boq, "Roof screws").qty, 384);
+    assert.equal(line(boq, "Roof bolts M12").qty, 21);
+    assert.equal(line(boq, "Hot-dip galvanising").qty, 214);
     assert.equal(line(boq, "End plates 4 mm").qty, 10);
     assert.ok(!boq.lines.some((l) => l.item === "Top stiffener ring"));
     assert.ok(!boq.lines.some((l) => l.item === "Intermediate wind ring"));
@@ -81,8 +90,10 @@ describe("reservoir BOQ", () => {
     const web = stock.find((s) => s.section === "L 25x25x2.5");
     assert.ok(web && Math.abs(web.neededM - fixture.roof.web_m["L 25x25x2.5"]) < 0.5, String(web?.neededM));
     assert.equal(web.alternative, "L 25x25x2");
-    const tie = stock.find((s) => s.section === "FB 25x3");
-    assert.ok(tie && Math.abs(tie.neededM - fixture.roof.bottom_tie_m) < 0.2);
+    // r16 default 0 kPa uplift: no bottom-chord tie lines; with 0.25 kPa the 8 m roof needs them
+    assert.ok(!stock.some((s) => s.section === "FB 25x3"));
+    const tie = roofStock(fixture.roof8uplift025, 8, 6).find((s) => s.section === "FB 25x3");
+    assert.ok(tie && Math.abs(tie.neededM - fixture.roof8uplift025.bottom_tie_m) < 0.2);
     for (const s of stock) assert.ok(s.bars * s.barM + 1e-9 >= s.neededM, s.section);
   });
 
@@ -118,9 +129,23 @@ describe("reservoir BOQ", () => {
     const { ribs, diagonals } = trussMembers(centre);
     assert.equal(ribs.reduce((n, m) => n + m.count, 0), 23);
     assert.equal(diagonals.reduce((n, m) => n + m.count, 0), 22);
-    assert.equal(ribs[0].lengthM, 0.65);
+    assert.equal(ribs[0].lengthM, 0.55);
     assert.equal(ribs[0].count, 1);
     assert.ok(diagonals.every((m) => m.section === "L 25x25x2.5" && m.count % 2 === 0));
+  });
+
+  it("follows the roof slope and design uplift choice (calculator r16)", () => {
+    assert.equal(fixture.settings.roof_uplift_default_kpa, 0);
+    assert.deepEqual(fixture.settings.roof_uplift_options_kpa, [0, 0.25, 0.5]);
+    assert.deepEqual(fixture.settings.roof_slope_options_deg, [5, 7.5]);
+    assert.equal(fixture.roof8.depth_centre_mm, 500);
+    assert.equal(fixture.roof8steep.depth_centre_mm, 700);
+    assert.ok(roofHasNoWindDesign(fixture.roof8));
+    assert.ok(!roofHasNoWindDesign(fixture.roof8uplift025));
+    assert.equal(fixture.roof8.bottom_tie_m, 0);
+    assert.ok(fixture.roof8uplift025.bottom_tie_m > 0 && fixture.roof8uplift05.bottom_tie_m >= fixture.roof8uplift025.bottom_tie_m);
+    assert.ok(Number(fixture.roof8.steel_kg) < Number(fixture.roof8uplift025.steel_kg));
+    assert.ok(Number(fixture.roof8uplift025.steel_kg) < Number(fixture.roof8uplift05.steel_kg));
   });
 
   it("handles a single ridge truss on a small tank", () => {
