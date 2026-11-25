@@ -135,6 +135,7 @@ export const HDPE_DAM_LINING_PAGE: SubServicePageConfig = {
   ],
   relatedPostSlugs: [
     "hdpe-dam-liner-benefits",
+    "hdpe-vs-lldpe-dam-liner",
     "dam-lining-sandy-clay-soils",
     "prevent-farm-dam-liner-failure",
   ],
